@@ -1,0 +1,92 @@
+
+buildscript {
+	ext {
+		springBootVersion = '2.0.3.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'ru.gazprom-neft'
+
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	maven{
+		url 'http://repo.maven.apache.org/maven2/'
+	}
+	maven { url "http://maven.vaadin.com/vaadin-addons" }
+//	url 'http://repo.maven.apache.org/'
+//	//mavenCentral()
+}
+
+
+def activitiVersion = "6.0.0"
+def	vaadinVersion = '8.5.1'//'10.0.2'//
+def vaadinSpringVersion = "3.1.0"//'10.0.2'//
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+ 
+        if (details.requested.name == 'log4j' || details.requested.name == 'slf4j-log4j12') {
+            details.useTarget "org.slf4j:log4j-over-slf4j:1.7.6"
+        }
+	}
+}
+
+dependencyManagement {
+	imports {
+	  mavenBom "com.vaadin:vaadin-bom:${vaadinVersion}"
+	}
+  }
+
+dependencies {
+//	compile('javax.xml.bind:jaxb-api:2.2.7')
+//	compile('com.sun.xml.bind:jaxb-core')
+//	compile('com.sun.xml.bind:jaxb-impl')
+//	compile('javax.activation:activation')
+	compile("com.vaadin:vaadin-spring-boot-starter:${vaadinSpringVersion}")
+	compile("com.vaadin:vaadin-spring-boot-starter:${vaadinSpringVersion}:javadoc")
+	//compile("com.vaadin:vaadin-grid-flow:1.1.0")
+	compile("com.vaadin:vaadin-push")
+//	compile("com.vaadin:flow:10.0.1")
+	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
+	compile group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0'
+	compile group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.0'
+	compile group: 'javax.activation', name: 'activation', version: '1.1.1'
+	
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+
+	 
+//	compile('org.springframework.boot:spring-boot-starter-mail')
+//	compile('org.springframework.boot:spring-boot-starter-security')
+	compile('org.springframework.boot:spring-boot-starter-web')
+//	compile('org.springframework.boot:spring-boot-starter-tomcat')
+	compile('org.springframework.boot:spring-boot-starter-actuator')
+	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+
+	compile("org.activiti:activiti-engine:${activitiVersion}")
+    compile("org.activiti:activiti-spring:${activitiVersion}")
+    compile("org.activiti:activiti-rest:${activitiVersion}")
+    compile("org.activiti:activiti-json-converter:${activitiVersion}")
+	compile("org.activiti:activiti-spring-boot-starter-security:${activitiVersion}")
+	
+	
+	compile group: 'org.apache.commons', name: 'commons-dbcp2', version: '2.5.0'
+
+    compile("org.codehaus.groovy:groovy")
+
+	runtime('org.postgresql:postgresql')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	//testCompile('org.springframework.security:spring-security-test')
+}
