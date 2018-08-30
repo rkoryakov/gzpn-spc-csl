@@ -25,5 +25,5 @@
 /nbdist/
 /.nb-gradle/
 /gradle.properties
-/app.log.2018-08-29.0.gz
-/app.log
+/*.gz
+/*.log
