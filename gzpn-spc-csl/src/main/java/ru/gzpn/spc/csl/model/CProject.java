@@ -5,6 +5,6 @@ import javax.persistence.Entity;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 
 @Entity
-public class CProject extends BaseEntity implements ICProject {
+public class CProject extends ACLBasedEntity implements ICProject {
 
 }

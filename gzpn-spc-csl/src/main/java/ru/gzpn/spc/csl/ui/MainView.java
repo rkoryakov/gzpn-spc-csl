@@ -13,10 +13,15 @@ import com.vaadin.ui.themes.ValoTheme;
 @Push(transport = Transport.WEBSOCKET_XHR) // Websocket would bypass the filter chain, Websocket+XHR works
 @Theme(ValoTheme.THEME_NAME) // Looks nicer
 public class MainView extends UI {
+	private String taskId;
 
 	@Override
 	protected void init(VaadinRequest request) {
-		// TODO Auto-generated method stub
 
+		getSession().addRequestHandler((vsession, vrequest, vresponse) -> {
+
+			this.taskId = vrequest.getParameter("taskId");
+			return false;
+		});
 	}
 }
