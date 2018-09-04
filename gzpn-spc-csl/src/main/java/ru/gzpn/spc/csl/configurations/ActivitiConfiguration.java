@@ -26,7 +26,6 @@ public class ActivitiConfiguration {
 	public ProcessEngineFactoryBean processEngine() {
 		ProcessEngineFactoryBean result = new ProcessEngineFactoryBean();
 		result.setProcessEngineConfiguration(processEngineConfiguration());
-
 		return result;
 	}
 
@@ -34,7 +33,6 @@ public class ActivitiConfiguration {
 	public ProcessEngineConfigurationImpl processEngineConfiguration() {
 		SpringProcessEngineConfiguration configuration = new SpringProcessEngineConfiguration();
 		configuration.setDataSource(dataSource);
-
 		return configuration;
 	}
 
