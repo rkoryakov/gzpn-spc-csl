@@ -12,6 +12,7 @@ import javax.persistence.Version;
 public abstract class BaseEntity {
 
 	@Id
+
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spc_csl_gen")
 	@SequenceGenerator(name = "spc_csl_gen", initialValue = 1, allocationSize = 1, schema = "spc_csl_schema")
 	@Column(updatable = false, nullable = false)
