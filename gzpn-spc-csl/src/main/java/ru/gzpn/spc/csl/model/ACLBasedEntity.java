@@ -5,7 +5,7 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.annotations.Type;
 
-import ru.gzpn.spc.csl.model.interfaces.IAccessControlList;
+import ru.gzpn.spc.csl.model.jsontypes.ACLJson;
 
 /**
  * Access control list of particular entity object
@@ -17,5 +17,13 @@ public abstract class ACLBasedEntity extends BaseEntity {
 
 	@Column
 	@Type(type = "ACLJsonType")
-	IAccessControlList acl;
+	ACLJson acl;
+
+	public ACLJson getAcl() {
+		return acl;
+	}
+
+	public void setAcl(ACLJson acl) {
+		this.acl = acl;
+	}
 }

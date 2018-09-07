@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.model.jsontypes.acl;
+package ru.gzpn.spc.csl.model.jsontypes;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -18,9 +18,7 @@ import org.hibernate.usertype.UserType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ru.gzpn.spc.csl.model.AccessControlList;
-
-public class ACLJsonType implements UserType {
+public abstract class BaseJsonType implements UserType {
 
 	@Override
 	public int[] sqlTypes() {
@@ -28,8 +26,8 @@ public class ACLJsonType implements UserType {
 	}
 
 	@Override
-	public Class<AccessControlList> returnedClass() {
-		return AccessControlList.class;
+	public Class<?> returnedClass() {
+		return Object.class;
 	}
 
 	@Override
