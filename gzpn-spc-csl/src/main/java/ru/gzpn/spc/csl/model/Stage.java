@@ -3,9 +3,11 @@ package ru.gzpn.spc.csl.model;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import ru.gzpn.spc.csl.model.interfaces.IStage;
+
 @Entity
-@Table(name = "spc_csl_stages", schema = "spc_csl_schema")
-public class Stage extends BaseEntity {
+@Table(schema = "spc_csl_schema", name = "stages")
+public class Stage extends BaseEntity implements IStage {
 	private String name;
 
 	public String getName() {

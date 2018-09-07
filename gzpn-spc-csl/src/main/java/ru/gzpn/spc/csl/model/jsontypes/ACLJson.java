@@ -1,7 +1,26 @@
-package ru.gzpn.spc.csl.model;
+package ru.gzpn.spc.csl.model.jsontypes;
 
-import ru.gzpn.spc.csl.model.interfaces.IAccessControlList;
+import java.io.Serializable;
+import java.util.List;
 
-public class AccessControlList implements IAccessControlList {
+public class ACLJson implements Serializable {
+	List<String> readOnlyRoles;
+	List<String> editRoles;
+
+	public List<String> getReadOnlyRoles() {
+		return readOnlyRoles;
+	}
+
+	public void setReadOnlyRoles(List<String> readOnlyRoles) {
+		this.readOnlyRoles = readOnlyRoles;
+	}
+
+	public List<String> getEditRoles() {
+		return editRoles;
+	}
+
+	public void setEditRoles(List<String> editRoles) {
+		this.editRoles = editRoles;
+	}
 
 }

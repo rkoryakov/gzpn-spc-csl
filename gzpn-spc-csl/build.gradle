@@ -56,7 +56,7 @@ dependencies {
 //	compile('com.sun.xml.bind:jaxb-impl')
 //	compile('javax.activation:activation')
 	compile("com.vaadin:vaadin-spring-boot-starter:${vaadinSpringVersion}")
-	compile("com.vaadin:vaadin-spring-boot-starter:${vaadinSpringVersion}:javadoc")
+//	compile("com.vaadin:vaadin-spring-boot-starter:${vaadinSpringVersion}:javadoc")
 	//compile("com.vaadin:vaadin-grid-flow:1.1.0")
 	compile("com.vaadin:vaadin-push")
 //	compile("com.vaadin:flow:10.0.1")
