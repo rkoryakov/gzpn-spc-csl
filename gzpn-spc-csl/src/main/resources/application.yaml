@@ -21,7 +21,7 @@
 
  app:
    datasource:
-     url: jdbc:postgresql://localhost:5432/activiti
+     url: jdbc:postgresql://localhost:5432/spc-csl
      removeAbandoned: true
      initialSize: 5
      maxActive: 10
