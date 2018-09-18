@@ -13,11 +13,11 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import ru.gzpn.spc.csl.model.BaseEntity;
 import ru.gzpn.spc.csl.model.HProject;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
-import ru.gzpn.spc.csl.ui.MainView;
+import ru.gzpn.spc.csl.ui.MainUI;
 
 @Configuration
 @EnableJpaRepositories(basePackageClasses = { BaseEntity.class })
-@ComponentScan(basePackageClasses = { BaseEntity.class, ICProject.class, MainView.class })
+@ComponentScan(basePackageClasses = { BaseEntity.class, ICProject.class, MainUI.class })
 public class BaseConfiguration {
 	@Bean
 	@ConfigurationProperties(prefix = "app.datasource")
