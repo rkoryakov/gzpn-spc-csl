@@ -1,5 +1,7 @@
 package ru.gzpn.spc.csl.ui;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.annotations.Push;
@@ -9,6 +11,11 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.navigator.SpringViewProvider;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.MenuBar.Command;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -28,10 +35,13 @@ public class MainUI extends UI {
 	@Autowired
 	ErrorView errorView;
 
-	private String taskId = null;
+	private String taskId;
+	private Locale locale;
 
 	private Panel viewContainer;
-	private VerticalLayout verticalLayout;
+	private VerticalLayout mainLayout;
+	private HorizontalLayout head;
+	private MenuBar menuBar;
 	private Navigator navigator;
 
 	@Override
@@ -39,23 +49,45 @@ public class MainUI extends UI {
 
 		getSession().addRequestHandler((vsession, vrequest, vresponse) -> {
 			this.taskId = vrequest.getParameter("taskId");
+			this.locale = vrequest.getLocale();
 			return false;
 		});
 
-		verticalLayout = new VerticalLayout();
-		verticalLayout.setMargin(true);
-		verticalLayout.setSpacing(true);
+		// Main layout
+		mainLayout = createMainLayout();
+		setContent(mainLayout);
 
-		setContent(verticalLayout);
+		// Menu
+		menuBar = createMenu();
+		head.addComponent(menuBar);
 
+		// View container
 		viewContainer = new Panel();
 		viewContainer.setSizeFull();
-		verticalLayout.addComponent(viewContainer);
-		verticalLayout.setExpandRatio(viewContainer, 1.0f);
+		mainLayout.addComponents(head, viewContainer);
+		mainLayout.setExpandRatio(viewContainer, 1.0f);
+
+		getPage().setTitle("");
 
 		navigator = new Navigator(this, viewContainer);
 		navigator.addProvider(viewProvider);
 		navigator.setErrorView(errorView);
 		viewProvider.setAccessDeniedViewClass(AccessDeniedView.class);
+	}
+
+	private VerticalLayout createMainLayout() {
+		VerticalLayout result = new VerticalLayout();
+		result.setMargin(true);
+		result.setSpacing(true);
+		result.setSizeFull();
+		return result;
+	}
+
+	private MenuBar createMenu() {
+		MenuBar menu = new MenuBar();
+		final Command menuCommand = selectedItem -> Notification.show("Action " + selectedItem.getText(), Type.TRAY_NOTIFICATION);
+		// TODO: use ResourceBundleMessageSource to get localize messages
+		// menu.addItem(caption, VaadinIcons.FILE, menuCommand);
+		return menu;
 	}
 }
