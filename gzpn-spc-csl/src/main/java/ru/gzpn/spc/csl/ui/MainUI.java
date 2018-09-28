@@ -1,13 +1,14 @@
 package ru.gzpn.spc.csl.ui;
 
-import java.util.Locale;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.navigator.SpringViewProvider;
@@ -30,13 +31,15 @@ import ru.gzpn.spc.csl.ui.views.ErrorView;
 public class MainUI extends UI {
 
 	@Autowired
-	SpringViewProvider viewProvider;
+	private SpringViewProvider viewProvider;
 
 	@Autowired
-	ErrorView errorView;
+	private ErrorView errorView;
+
+	@Autowired
+	MessageSource messageSource;
 
 	private String taskId;
-	private Locale locale;
 
 	private Panel viewContainer;
 	private VerticalLayout mainLayout;
@@ -49,11 +52,11 @@ public class MainUI extends UI {
 
 		getSession().addRequestHandler((vsession, vrequest, vresponse) -> {
 			this.taskId = vrequest.getParameter("taskId");
-			this.locale = vrequest.getLocale();
 			return false;
 		});
 
-		// Main layout
+		// Main layout & head
+		head = new HorizontalLayout();
 		mainLayout = createMainLayout();
 		setContent(mainLayout);
 
@@ -85,9 +88,10 @@ public class MainUI extends UI {
 
 	private MenuBar createMenu() {
 		MenuBar menu = new MenuBar();
-		final Command menuCommand = selectedItem -> Notification.show("Action " + selectedItem.getText(), Type.TRAY_NOTIFICATION);
-		// TODO: use ResourceBundleMessageSource to get localize messages
-		// menu.addItem(caption, VaadinIcons.FILE, menuCommand);
+		final Command menuCommand = selectedItem -> Notification.show("Action " + selectedItem.getText(),
+				Type.TRAY_NOTIFICATION);
+		String itemCaption = messageSource.getMessage("menu.menuItem1", null, VaadinSession.getCurrent().getLocale());
+		menu.addItem(itemCaption, VaadinIcons.FILE, menuCommand);
 		return menu;
 	}
 }

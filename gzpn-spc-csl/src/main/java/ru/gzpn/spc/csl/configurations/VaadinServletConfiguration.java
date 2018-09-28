@@ -11,7 +11,7 @@ import ru.gzpn.spc.csl.ui.MainUI;
 
 @Component("vaadinServlet")
 @SuppressWarnings("serial")
-@com.vaadin.annotations.VaadinServletConfiguration(productionMode = false, ui = MainUI.class, widgetset = "ru.gzpn.spc.csl.WidgetSet")
+@com.vaadin.annotations.VaadinServletConfiguration(productionMode = false, ui = MainUI.class/*, widgetset = "ru.gzpn.spc.csl.WidgetSet"*/)
 public class VaadinServletConfiguration extends SpringVaadinServlet {
 
 	@Override
@@ -28,5 +28,4 @@ public class VaadinServletConfiguration extends SpringVaadinServlet {
 			return systemMessages;
 		});
 	}
-
 }

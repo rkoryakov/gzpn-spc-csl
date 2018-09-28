@@ -4,9 +4,11 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
@@ -19,6 +21,14 @@ import ru.gzpn.spc.csl.ui.MainUI;
 @EnableJpaRepositories(basePackageClasses = { BaseEntity.class })
 @ComponentScan(basePackageClasses = { BaseEntity.class, ICProject.class, MainUI.class })
 public class BaseConfiguration {
+
+	@Bean
+	public MessageSource messageSource() {
+		final ResourceBundleMessageSource bundleMessageSource = new ResourceBundleMessageSource();
+		bundleMessageSource.setBasename("i18n/captions");
+		return bundleMessageSource;
+	}
+
 	@Bean
 	@ConfigurationProperties(prefix = "app.datasource")
 	public BasicDataSource dataSource() {
