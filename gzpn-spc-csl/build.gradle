@@ -69,7 +69,7 @@ dependencies {
 	//compile("com.vaadin:vaadin-grid-flow:1.1.0")
 	compile("com.vaadin:vaadin-push")
 	compile("com.vaadin:vaadin-client-compiled")
-	compile("com.vaadin:vaadin-themes")
+	compile("com.vaadin:vaadin-themes:${vaadinVersion}")
 //	compile("com.vaadin:flow:10.0.1")
 	compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
 	compile group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0'
