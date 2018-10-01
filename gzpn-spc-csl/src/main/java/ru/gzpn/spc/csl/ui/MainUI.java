@@ -92,7 +92,7 @@ public class MainUI extends UI {
 
 		ThemeResource resource = new ThemeResource("img/Logo.png");
 		Image image = new Image("", resource);
-		head.addComponent(image, "top:15px; left:15px");
+		head.addComponent(image, "top:10px; left:15px");
 		head.addComponent(logoutLink, "top:25px; right:25px");
 
 		return head;
