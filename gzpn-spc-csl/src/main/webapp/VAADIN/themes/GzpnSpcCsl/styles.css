@@ -14779,3 +14779,9 @@ div.v-layout.v-horizontal.v-widget {
 	width: 19px;
 	overflow: hidden;
 }
+
+.GzpnSpcCsl .gzpn-head {
+	background-color: #fafafa;
+	background-image: -webkit-linear-gradient(top, #d2e2f1 2%, #fafafa 98%);
+	background-image: linear, to bottom, #d2e2f1 2%, #fafafa 98%;
+}

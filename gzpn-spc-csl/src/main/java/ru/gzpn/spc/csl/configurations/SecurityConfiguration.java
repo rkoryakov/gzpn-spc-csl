@@ -33,7 +33,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.authorizeRequests().anyRequest().authenticated() // User must be authenticated to access
 																	// any part of the application
 				.and().formLogin()./* loginPage("/login"). */permitAll() // Login page is accessible to anybody
-				.and().logout().logoutUrl("/logout").permitAll() // Logout
+				.and().logout().logoutSuccessUrl("/").permitAll() // Logout
 				// success
 				// page
 				// is accessible to

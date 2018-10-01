@@ -36,5 +36,10 @@
 @mixin gzpnspccsl {
 	@include valo;
 
-	/* Add your theme selectors here */
+	.gzpn-head {
+		background-color: #fafafa;
+		background-image: -webkit-linear-gradient(top, #d2e2f1 2%, #fafafa 98%);
+		background-image: linear-gradient(to bottom,#d2e2f1 2%, #fafafa 98%);
+	}
+	
 }
