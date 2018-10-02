@@ -14,6 +14,8 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.VerticalLayout;
 
+import ru.gzpn.spc.csl.ui.admin.UsersAndRoles;
+
 @SpringView(name = "adminView")
 public class AdminView extends VerticalLayout implements View{
 	
@@ -24,25 +26,12 @@ public class AdminView extends VerticalLayout implements View{
 		setMargin(true);
 		setSpacing(true);
 		TabSheet tabSet = new TabSheet();
-		tabSet.addTab(adminViewCreateUserOrRole(), "Администрирование учетных записей");
-		tabSet.addTab(adminViewCreateUserOrRole(), "Анализ бизнес процесса");
-		tabSet.addTab(adminViewCreateUserOrRole(), "Данные справочников");
+		UsersAndRoles admin = new UsersAndRoles();
+		UsersAndRoles business = new UsersAndRoles();
+		UsersAndRoles directory = new UsersAndRoles();
+		tabSet.addTab(admin, "Администрирование учетных записей");
+		tabSet.addTab(business, "Анализ бизнес процесса");
+		tabSet.addTab(directory, "Данные справочников");
 		addComponent(tabSet);
-	}
-	
-	public VerticalLayout adminViewCreateUserOrRole() {
-		setMargin(true);
-		setSpacing(true);
-		HorizontalLayout headerHorizont = new HorizontalLayout();
-		HorizontalLayout bodyHorizontTop = new HorizontalLayout();
-		HorizontalLayout bodyHorizontBottom = new HorizontalLayout();
-		HorizontalLayout bottomHorizont = new HorizontalLayout();
-		VerticalLayout resultPage = new VerticalLayout();
-		headerHorizont.addComponents(new ComboBox<>(), new NativeSelect<>(), new Button("Create"));
-		bodyHorizontTop.addComponents(new TextField(), new Button("Find"), new TextField(), new Button("Find"));
-		bodyHorizontBottom.addComponent(new TwinColSelect<>());
-		bottomHorizont.addComponents(new Button("Save"), new Button("Cancel"));
-		resultPage.addComponents(headerHorizont,bodyHorizontTop,bodyHorizontBottom,bottomHorizont);
-		return resultPage;
 	}
 }
