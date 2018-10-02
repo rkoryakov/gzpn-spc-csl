@@ -85,6 +85,11 @@ public class MainUI extends UI {
 		String labelString = messageSource.getMessage("main.ui.logout", null, VaadinSession.getCurrent().getLocale());
 		Link logoutLink = new Link(labelString, new ExternalResource("logout"));
 		logoutLink.setIcon(VaadinIcons.EXIT);
+//		CssLayout layout = new CssLayout();
+//		ComboBox<String> box = new ComboBox<String>();
+//		layout.addComponents(new Button("..."), box);
+//	 	layout.setStyleName("v-component-group");
+//		head.addComponent(layout);
 
 		head.setStyleName("gzpn-head");
 		head.setHeight(80.0f, Unit.PIXELS);

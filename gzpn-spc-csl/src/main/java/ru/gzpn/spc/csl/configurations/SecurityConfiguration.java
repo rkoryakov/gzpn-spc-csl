@@ -32,18 +32,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.csrf().disable() // Use Vaadin's CSRF protection
 				.authorizeRequests().anyRequest().authenticated() // User must be authenticated to access
 																	// any part of the application
-				.and().formLogin()./* loginPage("/login"). */permitAll() // Login page is accessible to anybody
+				.and().formLogin().loginPage("/login").permitAll() // Login page is accessible to anybody
 				.and().logout().logoutUrl("/logout").permitAll() // Logout
 				// success
 				// page
 				// is accessible to
 				// anybody
-				.and().sessionManagement().sessionFixation().newSession(); // Create completely new session
+				.and().sessionManagement().sessionFixation().newSession(); // Create
+																			// completely
+																			// new
+																			// session
 	}
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/css/*"); // Static resources are ignored
+		web.ignoring().antMatchers("/css/*", "/VAADIN/themes/**");
 	}
 
 	@Bean
