@@ -1,5 +1,8 @@
 package ru.gzpn.spc.csl.ui.admin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
@@ -23,7 +26,7 @@ public class UsersAndRoles extends VerticalLayout {
 	public UsersAndRoles() {
 		headerHorizont.addComponents(addComboBox(), addNativeSelect(), addButtonCreate());
 		bodyHorizontTop.addComponents(addJoinLL(), addJoinLR());
-		bodyHorizontBottom.addComponent(new TwinColSelect<>());
+		bodyHorizontBottom.addComponent(addTwinColSelect());
 		bottomHorizont.addComponents(addButtonSave(), addButtonCancel());
 		resultPage.addComponents(headerHorizont,bodyHorizontTop,bodyHorizontBottom,bottomHorizont);
 		addComponent(resultPage);
@@ -35,7 +38,12 @@ public class UsersAndRoles extends VerticalLayout {
 	}
 	
 	private NativeSelect<String> addNativeSelect() {
-		NativeSelect<String> natS = new NativeSelect<>();
+		List<String> data = new ArrayList<>();
+		data.add("Users");
+		data.add("Roles");
+		NativeSelect<String> natS = new NativeSelect<>(null, data);
+		natS.setEmptySelectionAllowed(false);
+		natS.setSelectedItem(data.get(0));
 		return natS;
 	}
 	
@@ -57,6 +65,12 @@ public class UsersAndRoles extends VerticalLayout {
 		ComboBox<String> comboB = new ComboBox<>();
 		JoinedLayout<Button, ComboBox<String>> rightF = new JoinedLayout(comboB, findButtonR);
 		return rightF;
+	}
+	
+	private TwinColSelect<String> addTwinColSelect() {
+		List<String> dataD = new ArrayList<>();
+		TwinColSelect<String> twinCol = new TwinColSelect<>(null, dataD);
+		return twinCol;
 	}
 	
 	private Button addButtonSave() {
