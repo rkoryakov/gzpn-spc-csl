@@ -37,13 +37,13 @@ public class UsersAndRoles extends VerticalLayout {
 	
 	private Button addButtonSave() {
 		Button saveButton = new Button("Save");
-		saveButton.addClickListener(event -> Notification.show("Save user", Type.HUMANIZED_MESSAGE));
+		saveButton.addClickListener(event -> Notification.show("Save user", Type.TRAY_NOTIFICATION));
 		return saveButton;
 	}
 	
 	private Button addButtonCancel() {
 		Button cancelButton = new Button("Cancel");
-		cancelButton.addClickListener(event -> Notification.show("Cancel", Type.HUMANIZED_MESSAGE));
+		cancelButton.addClickListener(event -> Notification.show("Cancel", Type.WARNING_MESSAGE));
 		return cancelButton;
 	}
 }
