@@ -21,7 +21,7 @@
 
  app:
    datasource:
-     url: jdbc:postgresql://localhost:5432/activiti
+     url: jdbc:postgresql://localhost:5432/spc-csl
      removeAbandoned: true
      initialSize: 5
      maxActive: 10
@@ -41,3 +41,4 @@
      close-idle-sessions: true
 # The session timeout should be a multiple of the heartbeat interval
      heartbeat-interval: 15
+     

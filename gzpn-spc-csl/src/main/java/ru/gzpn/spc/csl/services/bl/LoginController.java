@@ -28,4 +28,15 @@ public class LoginController {
 		model.addAttribute("contextPath", serverProperties.getServlet().getContextPath() + "/login");
 		return "login";
 	}
+
+	@GetMapping("/sessionExpired")
+	public String sessionExpired(@RequestParam(value = "session", required = false) String session, Model model) {
+		if (session != null) {
+			model.addAttribute("session", session);
+		}
+
+		model.addAttribute("contextPath", serverProperties.getServlet().getContextPath());
+
+		return "sessionExpired";
+	}
 }
