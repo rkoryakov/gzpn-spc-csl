@@ -2,14 +2,14 @@ package ru.gzpn.spc.csl.ui.admin;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.TwinColSelect;
 import com.vaadin.ui.VerticalLayout;
+
+import ru.gzpn.spc.csl.ui.components.JoinedLayout;
 
 public class UsersAndRoles extends VerticalLayout {
 	
@@ -20,12 +20,34 @@ public class UsersAndRoles extends VerticalLayout {
 	private VerticalLayout resultPage = new VerticalLayout();
 	
 	public UsersAndRoles() {
-		headerHorizont.addComponents(new ComboBox<>(), new NativeSelect<>(), addButtonCreate());
-		bodyHorizontTop.addComponents(new TextField(), new Button("Find"), new TextField(), new Button("Find"));
+		headerHorizont.addComponents(addJoinCBNS(), addButtonCreate());
+		bodyHorizontTop.addComponents(addJoinLL(), addJoinLR());
 		bodyHorizontBottom.addComponent(new TwinColSelect<>());
 		bottomHorizont.addComponents(addButtonSave(), addButtonCancel());
 		resultPage.addComponents(headerHorizont,bodyHorizontTop,bodyHorizontBottom,bottomHorizont);
 		addComponent(resultPage);
+	}
+
+	private JoinedLayout addJoinCBNS() {
+		ComboBox<String> comboB = new ComboBox<>();
+		NativeSelect<String> natS = new NativeSelect<>();
+		JoinedLayout<ComboBox<String>, NativeSelect<String>> cbns = new JoinedLayout<>(comboB, natS);
+		return cbns;
+	}
+	
+	private JoinedLayout addJoinLR() {
+		Button findButtonL = new Button("FindL");
+		ComboBox<String> comboB = new ComboBox<>();
+		JoinedLayout<Button, ComboBox<String>> leftF = new JoinedLayout<>(findButtonL, comboB);
+		return leftF;
+	}
+
+
+	private JoinedLayout addJoinLL() {
+		Button findButtonR = new Button("FindR");
+		ComboBox<String> comboB = new ComboBox<>();
+		JoinedLayout<Button, ComboBox<String>> rightF = new JoinedLayout(findButtonR, comboB);
+		return rightF;
 	}
 
 
