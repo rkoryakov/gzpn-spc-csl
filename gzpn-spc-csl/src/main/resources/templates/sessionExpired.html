@@ -84,7 +84,7 @@
 	#form {
 			height: 100%;
 			display: flex;
-			background-color: rgba(245,245,245,.2);
+			background-color: rgba(235,235,235,.2);
 			justify-content: center;
     }
     /* Responsive behaviour */	
@@ -105,7 +105,7 @@
         	height:64px;
 	    }
 	    #info, #form {
-	      height: 450px;
+	      height: 220px;
 	      box-shadow: 0 2px 3px rgba(0,0,0,.2);
 	    }
 	    #info {
@@ -114,7 +114,7 @@
 	      border-radius: 5px 0 0 5px;
 	    }
 	    #form {
-	      width: 320px;
+	      width: 360px;
 	      padding: 28px;
 	      border-radius: 0 5px 5px 0;
 	    }
@@ -200,19 +200,19 @@
 	</style>
 </head>
 <body onload="init()">
-	<div id="info">
-		<div id="logo"></div>
-		<h1>SPC CSL Demo</h1>
-		<p>admin + admin <br> user + user</p>
-	</div>
+<!-- 	<div id="info"> -->
+<!-- 		<div id="logo"></div> -->
+<!-- 		<h1>SPC CSL Demo</h1> -->
+<!-- 		<p>admin + admin <br> user + user</p> -->
+<!-- 	</div> -->
 	<div id="form">
 		<form th:action="${contextPath}" method="post">
-			<h2>Sign in</h2>
-			<label id="login-label" for="login">Login</label>
+			<h2>Your session has expired</h2>
+			<!-- <label id="login-label" for="login">Login</label>
 			<input type="text" id="login" name="username" aria-labelledby="login-label" autofocus>
 			<label id="password-label" for="password">Password</label>
-			<input type="password" id="password" name="password" aria-labelledby="password-label">
-			<button id="button-submit" type="submit">Sign in</button>
+			<input type="password" id="password" name="password" aria-labelledby="password-label"> -->
+			<button id="button-submit" type="submit">Reenter</button>
 		</form>
 	</div>
 </body>

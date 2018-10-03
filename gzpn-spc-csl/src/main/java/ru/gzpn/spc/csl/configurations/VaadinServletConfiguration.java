@@ -11,7 +11,10 @@ import ru.gzpn.spc.csl.ui.MainUI;
 
 @Component("vaadinServlet")
 @SuppressWarnings("serial")
-@com.vaadin.annotations.VaadinServletConfiguration(productionMode = false, ui = MainUI.class/*, widgetset = "ru.gzpn.spc.csl.WidgetSet"*/)
+@com.vaadin.annotations.VaadinServletConfiguration(productionMode = false, ui = MainUI.class/*
+																							 * , widgetset =
+																							 * "ru.gzpn.spc.csl.WidgetSet"
+																							 */)
 public class VaadinServletConfiguration extends SpringVaadinServlet {
 
 	@Override
@@ -22,9 +25,10 @@ public class VaadinServletConfiguration extends SpringVaadinServlet {
 			// Don't show any messages, redirect immediately to the session expired URL
 			systemMessages.setSessionExpiredNotificationEnabled(false);
 			// Force a logout to also end the HTTP session and not only the Vaadin session
-			systemMessages.setSessionExpiredURL("logout");
+			systemMessages.setSessionExpiredURL("sessionExpired");
 			// Don't show any message, reload the page instead
 			systemMessages.setCommunicationErrorNotificationEnabled(false);
+
 			return systemMessages;
 		});
 	}
