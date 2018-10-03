@@ -2,6 +2,7 @@ package ru.gzpn.spc.csl.ui.admin;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Notification;
@@ -20,7 +21,7 @@ public class UsersAndRoles extends VerticalLayout {
 	private VerticalLayout resultPage = new VerticalLayout();
 	
 	public UsersAndRoles() {
-		headerHorizont.addComponents(addJoinCBNS(), addButtonCreate());
+		headerHorizont.addComponents(addComboBox(), addNativeSelect(), addButtonCreate());
 		bodyHorizontTop.addComponents(addJoinLL(), addJoinLR());
 		bodyHorizontBottom.addComponent(new TwinColSelect<>());
 		bottomHorizont.addComponents(addButtonSave(), addButtonCancel());
@@ -28,33 +29,34 @@ public class UsersAndRoles extends VerticalLayout {
 		addComponent(resultPage);
 	}
 
-	private JoinedLayout addJoinCBNS() {
+	private ComboBox<String> addComboBox() {
 		ComboBox<String> comboB = new ComboBox<>();
-		NativeSelect<String> natS = new NativeSelect<>();
-		JoinedLayout<ComboBox<String>, NativeSelect<String>> cbns = new JoinedLayout<>(comboB, natS);
-		return cbns;
+		return comboB;
 	}
 	
-	private JoinedLayout addJoinLR() {
-		Button findButtonL = new Button("FindL");
-		ComboBox<String> comboB = new ComboBox<>();
-		JoinedLayout<Button, ComboBox<String>> leftF = new JoinedLayout<>(findButtonL, comboB);
-		return leftF;
+	private NativeSelect<String> addNativeSelect() {
+		NativeSelect<String> natS = new NativeSelect<>();
+		return natS;
 	}
-
-
-	private JoinedLayout addJoinLL() {
-		Button findButtonR = new Button("FindR");
-		ComboBox<String> comboB = new ComboBox<>();
-		JoinedLayout<Button, ComboBox<String>> rightF = new JoinedLayout(findButtonR, comboB);
-		return rightF;
-	}
-
-
+	
 	private Button addButtonCreate() {
 		Button createButton = new Button("Create");
 		createButton.addClickListener(event -> Notification.show("The button was clicked", Type.HUMANIZED_MESSAGE));
 		return createButton;
+	}
+	
+	private JoinedLayout<Button, ComboBox<String>> addJoinLL() {
+		Button findButtonL = new Button("FindL");
+		ComboBox<String> comboB = new ComboBox<>();
+		JoinedLayout<Button, ComboBox<String>> leftF = new JoinedLayout(comboB, findButtonL);
+		return leftF;
+	}
+
+	private JoinedLayout<Button, ComboBox<String>> addJoinLR() {
+		Button findButtonR = new Button("FindR");
+		ComboBox<String> comboB = new ComboBox<>();
+		JoinedLayout<Button, ComboBox<String>> rightF = new JoinedLayout(comboB, findButtonR);
+		return rightF;
 	}
 	
 	private Button addButtonSave() {
