@@ -1,5 +1,7 @@
 package ru.gzpn.spc.csl.ui;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 
@@ -26,6 +28,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.ui.views.AccessDeniedView;
+import ru.gzpn.spc.csl.ui.views.AdminView;
 import ru.gzpn.spc.csl.ui.views.ErrorView;
 
 @SuppressWarnings("serial")
@@ -33,6 +36,7 @@ import ru.gzpn.spc.csl.ui.views.ErrorView;
 @Push(transport = Transport.WEBSOCKET_XHR) // Websocket would bypass the filter chain, Websocket+XHR works
 @Theme("GzpnSpcCsl")
 public class MainUI extends UI {
+	public static final Logger logger = LoggerFactory.getLogger(MainUI.class);
 
 	@Autowired
 	private SpringViewProvider viewProvider;
@@ -53,31 +57,30 @@ public class MainUI extends UI {
 
 	@Override
 	protected void init(VaadinRequest request) {
-
 		getSession().addRequestHandler((vsession, vrequest, vresponse) -> {
 			this.taskId = vrequest.getParameter("taskId");
+			logger.debug("taskId = " + taskId);
 			return false;
 		});
 
-		// Main layout & head
-		head = createHead();
 		mainLayout = createMainLayout();
+		viewContainer = new Panel();
+		navigator = new Navigator(this, viewContainer);
+		head = createHead();
 
 		setContent(mainLayout);
 
 		// View container
-		viewContainer = new Panel();
 		viewContainer.setSizeFull();
 		mainLayout.addComponents(head, viewContainer);
 		mainLayout.setExpandRatio(viewContainer, 1.0f);
 
 		getPage().setTitle("");
 
-		navigator = new Navigator(this, viewContainer);
 		navigator.addProvider(viewProvider);
 		navigator.setErrorView(errorView);
+		navigator.navigateTo(AdminView.ADMIN_VIEW);
 		viewProvider.setAccessDeniedViewClass(AccessDeniedView.class);
-
 	}
 
 	private AbsoluteLayout createHead() {
@@ -97,8 +100,8 @@ public class MainUI extends UI {
 
 		ThemeResource resource = new ThemeResource("img/Logo.png");
 		Image image = new Image("", resource);
-		head.addComponent(image, "top:10px; left:15px");
-		head.addComponent(exit, "top:25px; right:25px");
+		head.addComponent(image, "top:5px; left:15px");
+		head.addComponent(exit, "top:20px; right:15px");
 
 		return head;
 	}

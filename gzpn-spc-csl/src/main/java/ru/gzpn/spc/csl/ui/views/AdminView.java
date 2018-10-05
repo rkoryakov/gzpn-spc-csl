@@ -13,7 +13,7 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 
-import ru.gzpn.spc.csl.ui.admin.UsersAndRoles;
+import ru.gzpn.spc.csl.ui.admin.UsersAndRolesTab;
 
 @SpringView(name = AdminView.ADMIN_VIEW)
 @UIScope
@@ -33,9 +33,9 @@ public class AdminView extends VerticalLayout implements View {
 	@PostConstruct
 	public void init() {
 		TabSheet tabSet = new TabSheet();
-		UsersAndRoles admin = new UsersAndRoles(identityService);
-		UsersAndRoles business = new UsersAndRoles(identityService);
-		UsersAndRoles directory = new UsersAndRoles(identityService);
+		UsersAndRolesTab admin = new UsersAndRolesTab(identityService);
+		UsersAndRolesTab business = new UsersAndRolesTab(identityService);
+		UsersAndRolesTab directory = new UsersAndRolesTab(identityService);
 		tabSet.addTab(admin, "Admin");
 		tabSet.addTab(business, "BPM");
 		tabSet.addTab(directory, "Directory");

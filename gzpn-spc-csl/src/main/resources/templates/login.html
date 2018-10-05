@@ -73,7 +73,7 @@
     }
 	html, body {
 			height: 100%;
-			font: 100 16px/1.55 "Open Sans", sans-serif;
+			font: 100 20px/1.55 "Calibri", sans-serif;
 			margin: 0;
 	}
 	#info {
@@ -202,17 +202,17 @@
 <body onload="init()">
 	<div id="info">
 		<div id="logo"></div>
-		<h1>SPC CSL Demo</h1>
+		<h1 th:text="#{logon.label.title}"></h1>
 		<p>admin + admin <br> user + user</p>
 	</div>
 	<div id="form">
 		<form th:action="${contextPath}" method="post">
-			<h2>Sign in</h2>
-			<label id="login-label" for="login">Login</label>
+			<h2 th:text="#{logon.label.signin}"></h2>
+			<label id="login-label" for="login" th:text="#{logon.label.login}"></label>
 			<input type="text" id="login" name="username" aria-labelledby="login-label" autofocus>
-			<label id="password-label" for="password">Password</label>
+			<label id="password-label" for="password" th:text="#{logon.label.password}"></label>
 			<input type="password" id="password" name="password" aria-labelledby="password-label">
-			<button id="button-submit" type="submit">Sign in</button>
+			<button id="button-submit" type="submit" th:text="#{logon.button.signin}"></button>
 		</form>
 	</div>
 </body>

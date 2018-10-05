@@ -11,21 +11,26 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
 import ru.gzpn.spc.csl.model.HProject;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.services.bl.LoginController;
 import ru.gzpn.spc.csl.ui.MainUI;
-import ru.gzpn.spc.csl.ui.admin.UsersAndRoles;
+import ru.gzpn.spc.csl.ui.admin.UsersAndRolesTab;
 import ru.gzpn.spc.csl.ui.views.AdminView;
 
 @Configuration
 @EnableJpaRepositories(basePackageClasses = { BaseEntity.class })
 @ComponentScan(basePackageClasses = { BaseEntity.class, ICProject.class, MainUI.class, LoginController.class,
-		AdminView.class, UsersAndRoles.class })
+		AdminView.class, UsersAndRolesTab.class })
 public class BaseConfiguration {
 
+	/**
+	 * Vaadin local texts
+	 */
 	@Bean
 	public MessageSource messageSource() {
 		final ResourceBundleMessageSource bundleMessageSource = new ResourceBundleMessageSource();
@@ -42,5 +47,11 @@ public class BaseConfiguration {
 	@Bean
 	public LocalContainerEntityManagerFactoryBean projectEntityManagerFactory(EntityManagerFactoryBuilder builder) {
 		return builder.dataSource(dataSource()).packages(HProject.class).persistenceUnit("projects").build();
+	}
+
+	@Bean
+	public LocaleResolver localeResolver() {
+		SessionLocaleResolver slr = new SessionLocaleResolver();
+		return slr;
 	}
 }

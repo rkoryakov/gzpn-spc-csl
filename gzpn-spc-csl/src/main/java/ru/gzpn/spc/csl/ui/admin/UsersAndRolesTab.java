@@ -20,24 +20,28 @@ import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.ui.components.JoinedLayout;
 
-public class UsersAndRoles extends VerticalLayout {
+public class UsersAndRolesTab extends VerticalLayout {
 
-	public static final Logger logger = LoggerFactory.getLogger(UsersAndRoles.class);
+	public static final Logger logger = LoggerFactory.getLogger(UsersAndRolesTab.class);
 
-	IdentityService identityService;
+	private IdentityService identityService;
 
-	private HorizontalLayout headerHorizont = new HorizontalLayout();
-	private HorizontalLayout bodyHorizontTop = new HorizontalLayout();
-	private HorizontalLayout bodyHorizontBottom = new HorizontalLayout();
-	private HorizontalLayout bottomHorizont = new HorizontalLayout();
-	private VerticalLayout resultPage = new VerticalLayout();
-	private ComboBox<String> searchUserGroup = createSearchUserGroup();
+	private ComboBox<String> searchUserGroup;
+	private HorizontalLayout headerHorizont;
+	private HorizontalLayout bodyHorizontTop;
+	private HorizontalLayout bodyHorizontBottom;
+	private HorizontalLayout bottomHorizont;
+	private VerticalLayout resultPage;
 
-	public UsersAndRoles() {
-	}
-
-	public UsersAndRoles(IdentityService identityService) {
+	public UsersAndRolesTab(IdentityService identityService) {
 		this.identityService = identityService;
+		bodyHorizontTop = new HorizontalLayout();
+		headerHorizont = new HorizontalLayout();
+		bodyHorizontBottom = new HorizontalLayout();
+		bottomHorizont = new HorizontalLayout();
+		resultPage = new VerticalLayout();
+		searchUserGroup = createSearchUserGroup();
+
 		headerHorizont.addComponents(searchUserGroup, addNativeSelect(), addButtonCreate());
 		bodyHorizontTop.addComponents(addJoinLL(), addJoinLR());
 		bodyHorizontBottom.addComponent(addTwinColSelect());
