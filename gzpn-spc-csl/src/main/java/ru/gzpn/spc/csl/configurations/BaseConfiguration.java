@@ -17,10 +17,13 @@ import ru.gzpn.spc.csl.model.HProject;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.services.bl.LoginController;
 import ru.gzpn.spc.csl.ui.MainUI;
+import ru.gzpn.spc.csl.ui.admin.UsersAndRoles;
+import ru.gzpn.spc.csl.ui.views.AdminView;
 
 @Configuration
 @EnableJpaRepositories(basePackageClasses = { BaseEntity.class })
-@ComponentScan(basePackageClasses = { BaseEntity.class, ICProject.class, MainUI.class, LoginController.class })
+@ComponentScan(basePackageClasses = { BaseEntity.class, ICProject.class, MainUI.class, LoginController.class,
+		AdminView.class, UsersAndRoles.class })
 public class BaseConfiguration {
 
 	@Bean

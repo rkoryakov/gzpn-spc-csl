@@ -77,6 +77,7 @@ public class MainUI extends UI {
 		navigator.addProvider(viewProvider);
 		navigator.setErrorView(errorView);
 		viewProvider.setAccessDeniedViewClass(AccessDeniedView.class);
+
 	}
 
 	private AbsoluteLayout createHead() {
@@ -89,12 +90,6 @@ public class MainUI extends UI {
 			getPage().setLocation("logout");
 		});
 		exit.addStyleName(ValoTheme.BUTTON_LINK);
-
-//		CssLayout layout = new CssLayout();
-//		ComboBox<String> box = new ComboBox<String>();
-//		layout.addComponents(new Button("..."), box);
-//	 	layout.setStyleName("v-component-group");
-//		head.addComponent(layout);
 
 		head.setStyleName("gzpn-head");
 		head.setHeight(80.0f, Unit.PIXELS);

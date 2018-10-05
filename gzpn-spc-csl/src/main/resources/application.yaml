@@ -40,5 +40,5 @@
    servlet: 
      close-idle-sessions: true
 # The session timeout should be a multiple of the heartbeat interval
-     heartbeat-interval: 15
+     heartbeat-interval: 60
      
