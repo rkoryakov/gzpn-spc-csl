@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.vaadin.spring.access.ViewAccessControl;
 import com.vaadin.ui.UI;
 
+import ru.gzpn.spc.csl.services.bl.Roles;
 import ru.gzpn.spc.csl.ui.views.AdminView;
 
 @Component
@@ -31,7 +32,7 @@ public class VaadinAccessController implements ViewAccessControl {
 			if (beanName != null) {
 				switch (beanName) {
 				case AdminView.ADMIN_VIEW:
-					result = authorities.contains("ADMIN_ROLE");
+					result = authorities.contains(Roles.ADMIN_ROLE.toString());
 					break;
 				case "view n":
 					break;

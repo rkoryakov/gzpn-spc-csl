@@ -1,9 +1,14 @@
 package ru.gzpn.spc.csl.ui;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
@@ -27,6 +32,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import ru.gzpn.spc.csl.services.bl.Roles;
 import ru.gzpn.spc.csl.ui.views.AccessDeniedView;
 import ru.gzpn.spc.csl.ui.views.AdminView;
 import ru.gzpn.spc.csl.ui.views.ErrorView;
@@ -40,10 +46,8 @@ public class MainUI extends UI {
 
 	@Autowired
 	private SpringViewProvider viewProvider;
-
 	@Autowired
 	private ErrorView errorView;
-
 	@Autowired
 	MessageSource messageSource;
 
@@ -63,10 +67,10 @@ public class MainUI extends UI {
 			return false;
 		});
 
+		head = createHead();
 		mainLayout = createMainLayout();
 		viewContainer = new Panel();
 		navigator = new Navigator(this, viewContainer);
-		head = createHead();
 
 		setContent(mainLayout);
 
@@ -79,8 +83,30 @@ public class MainUI extends UI {
 
 		navigator.addProvider(viewProvider);
 		navigator.setErrorView(errorView);
-		navigator.navigateTo(AdminView.ADMIN_VIEW);
 		viewProvider.setAccessDeniedViewClass(AccessDeniedView.class);
+		navigateByRole();
+	}
+
+	private void navigateByRole() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Set<String> authorities = authentication.getAuthorities().stream().map(a -> a.getAuthority())
+				.collect(Collectors.toSet());
+
+		if (authorities.contains(Roles.CREATOR_ROLE.toString())) {
+			navigator.navigateTo("");
+		} else if (authorities.contains(Roles.ADMIN_ROLE.toString())) {
+			navigator.navigateTo(AdminView.ADMIN_VIEW);
+		} else if (authorities.contains(Roles.APPROVER_NTC_ROLE.toString())) {
+			navigator.navigateTo("");
+		} else if (authorities.contains(Roles.CONTRACT_ES_ROLE.toString())) {
+			navigator.navigateTo("");
+		} else if (authorities.contains(Roles.CONTRACT_EX_ROLE.toString())) {
+			navigator.navigateTo("");
+		} else if (authorities.contains(Roles.EXPERT_ES_ROLE.toString())) {
+			navigator.navigateTo("");
+		} else if (authorities.contains(Roles.USER_ROLE.toString())) {
+			navigator.navigateTo("");
+		}
 	}
 
 	private AbsoluteLayout createHead() {
