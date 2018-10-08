@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.activiti.engine.IdentityService;
+import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 	private TextField searchUserGroup;
 	private NativeSelect<String> selectUserGroup;
 	private HorizontalLayout headerHorizont;
-	private VerticalLayout bodyLayout;
+	private HorizontalLayout bodyLayout;
 	private VerticalLayout resultPage;
 
 	public UsersAndRolesTab(IdentityService identityService) {
@@ -52,10 +53,10 @@ public class UsersAndRolesTab extends VerticalLayout {
 	 * init or refresh all the componet's data
 	 */
 	public void refreshData() {
-		List<String> list = identityService.createUserQuery().list().stream().map(m -> m.getId())
-				.collect(Collectors.toList());
-		ListDataProvider<String> dataProvider = new ListDataProvider<>(list);
-		//searchUserGroup.setDataProvider(dataProvider);
+//		List<String> list = identityService.createUserQuery().list().stream().map(m -> m.getId())
+//				.collect(Collectors.toList());
+//		ListDataProvider<String> dataProvider = new ListDataProvider<>(list);
+//		searchUserGroup.setDataProvider(dataProvider);
 	}
 
 	private TextField createSearchUserGroup() {
@@ -71,7 +72,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		NativeSelect<String> natS = new NativeSelect<>(null, data);
 		natS.setEmptySelectionAllowed(false);
 		natS.setSelectedItem(data.get(0));
-		
+
 		return natS;
 	}
 
@@ -81,19 +82,34 @@ public class UsersAndRolesTab extends VerticalLayout {
 		return createButton;
 	}
 	
-	private VerticalLayout dataLayout() {
-		VerticalLayout vertL = new VerticalLayout();
-		Collection<User> us = identityService.createUserQuery().list();
-		ListDataProvider<User> dataProvider = DataProvider.ofCollection(us);
-		Grid<User> grid = new Grid<>();
-		grid.addColumn(User :: getId).setCaption("Id");
-		grid.addColumn(User :: getFirstName).setCaption("First Name");
-		grid.addColumn(User :: getLastName).setCaption("Last Name");
-		grid.addColumn(User :: getEmail).setCaption("Email");
+	private HorizontalLayout dataLayout() {
+		HorizontalLayout horL = new HorizontalLayout();
 		
-		grid.setDataProvider(dataProvider);
-		vertL.addComponent(grid);
-		return vertL;
+		if(createSelectUserGroup().getSelectedItem().get().equals("Users")) {
+			Collection<User> us = identityService.createUserQuery().list();
+			ListDataProvider<User> dataProvider = DataProvider.ofCollection(us);
+
+			Grid<User> grid = new Grid<>();
+			grid.addColumn(User :: getId).setCaption("Login");
+			grid.addColumn(User :: getFirstName).setCaption("First Name");
+			grid.addColumn(User :: getLastName).setCaption("Last Name");
+			grid.addColumn(User :: getEmail).setCaption("Email");
+		
+			grid.setDataProvider(dataProvider);
+			horL.addComponent(grid);
+		}
+		else if(createSelectUserGroup().getSelectedItem().get().equals("Roles")) {
+			Collection<Group> gr = identityService.createGroupQuery().list();
+			ListDataProvider<Group> dataProviderr = DataProvider.ofCollection(gr);
+
+			Grid<Group> grid = new Grid<>();
+			grid.addColumn(Group :: getId).setCaption("Id");
+			grid.addColumn(Group :: getName).setCaption("Name");
+			grid.addColumn(Group :: getType).setCaption("Type");
+			grid.setDataProvider(dataProviderr);
+			horL.addComponent(grid);
+		}
+		return horL;
 	}
 
 }
