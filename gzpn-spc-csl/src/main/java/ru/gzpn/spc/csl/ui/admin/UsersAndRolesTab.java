@@ -3,7 +3,6 @@ package ru.gzpn.spc.csl.ui.admin;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
@@ -28,24 +27,24 @@ public class UsersAndRolesTab extends VerticalLayout {
 
 	private IdentityService identityService;
 
-	//private ComboBox<String> searchUserGroup;
 	private TextField searchUserGroup;
 	private NativeSelect<String> selectUserGroup;
 	private HorizontalLayout headerHorizont;
-	private HorizontalLayout bodyLayout;
 	private VerticalLayout resultPage;
+	private Grid<UserTemplate> gridUser;
+	private Grid<Group> gridGroup;
 
 	public UsersAndRolesTab(IdentityService identityService) {
 		this.identityService = identityService;
 		headerHorizont = new HorizontalLayout();
-		bodyLayout = dataLayout();
 		resultPage = new VerticalLayout();
+		gridUser = createGridUser();
+		gridGroup = createGridGroup();
 		searchUserGroup = createSearchUserGroup();
 		selectUserGroup = createSelectUserGroup();
 
-		headerHorizont.addComponents(searchUserGroup, selectUserGroup, addButtonCreate());
-		resultPage.addComponents(headerHorizont, bodyLayout);
-		refreshData();
+		headerHorizont.addComponents(searchUserGroup, selectUserGroup, buttonCreate());
+		resultPage.addComponents(headerHorizont, gridUser, gridGroup);
 		addComponent(resultPage);
 	}
 
@@ -65,51 +64,71 @@ public class UsersAndRolesTab extends VerticalLayout {
 		return filterTextField;
 	}
 	
+	private Grid<UserTemplate> createGridUser() {
+		List<User> userList = identityService.createUserQuery().list();
+		List<UserTemplate> userTemplateList = new ArrayList<>();
+		
+		for(User request : userList) {
+			UserTemplate user = new UserTemplate();
+			user.setId(request.getId());
+			user.setFirstName(request.getFirstName());
+			user.setLastName(request.getLastName());
+			user.setEmail(request.getEmail());
+			user.setPassword(request.getPassword());
+			user.setEdit(new Button());
+			user.setDelete(new Button());
+			userTemplateList.add((UserTemplate) user);
+		}
+		
+		ListDataProvider<UserTemplate> dataProvider = DataProvider.ofCollection(userTemplateList);
+		Grid<UserTemplate> grid = new Grid<>();
+		grid.addColumn(UserTemplate :: getId).setCaption("Login");
+		grid.addColumn(UserTemplate :: getFirstName).setCaption("First Name");
+		grid.addColumn(UserTemplate :: getLastName).setCaption("Last Name");
+		grid.addColumn(UserTemplate :: getEmail).setCaption("Email");
+		grid.addComponentColumn(UserTemplate :: getEdit).setCaption("Edit");
+		grid.addComponentColumn(UserTemplate :: getDelete).setCaption("Delete");
+		grid.setDataProvider(dataProvider);
+		grid.setColumnReorderingAllowed(true);
+		return grid;
+	}
+	
+	private Grid<Group> createGridGroup() {
+		Collection<Group> gr = identityService.createGroupQuery().list();
+		ListDataProvider<Group> dataProvider = DataProvider.ofCollection(gr);
+		Grid<Group> grid = new Grid<>();
+		grid.addColumn(Group :: getId).setCaption("Id");
+		grid.addColumn(Group :: getName).setCaption("Name");
+		grid.addColumn(Group :: getType).setCaption("Type");
+		grid.setDataProvider(dataProvider);
+		gridGroup = grid;
+		return grid;
+	}
+	
 	private NativeSelect<String> createSelectUserGroup() {
 		List<String> data = new ArrayList<>();
 		data.add("Users");
 		data.add("Roles");
-		NativeSelect<String> natS = new NativeSelect<>(null, data);
-		natS.setEmptySelectionAllowed(false);
-		natS.setSelectedItem(data.get(0));
-
-		return natS;
+		NativeSelect<String> nativeSelect = new NativeSelect<>(null, data);
+		nativeSelect.setEmptySelectionAllowed(false);
+		nativeSelect.setSelectedItem(data.get(0));
+		gridGroup.setVisible(false);
+		nativeSelect.addSelectionListener(event ->{
+			if (event.getSelectedItem().get().equals(data.get(0))) {
+				gridUser.setVisible(true);
+				gridGroup.setVisible(false);
+			}
+			else if(event.getSelectedItem().get().equals(data.get(1))) {
+				gridUser.setVisible(false);
+				gridGroup.setVisible(true);
+			}
+		});
+		return nativeSelect;
 	}
 
-	private Button addButtonCreate() {
+	private Button buttonCreate() {
 		Button createButton = new Button("Create");
 		createButton.addClickListener(event -> Notification.show("The button was clicked", Type.HUMANIZED_MESSAGE));
 		return createButton;
 	}
-	
-	private HorizontalLayout dataLayout() {
-		HorizontalLayout horL = new HorizontalLayout();
-		
-		if(createSelectUserGroup().getSelectedItem().get().equals("Users")) {
-			Collection<User> us = identityService.createUserQuery().list();
-			ListDataProvider<User> dataProvider = DataProvider.ofCollection(us);
-
-			Grid<User> grid = new Grid<>();
-			grid.addColumn(User :: getId).setCaption("Login");
-			grid.addColumn(User :: getFirstName).setCaption("First Name");
-			grid.addColumn(User :: getLastName).setCaption("Last Name");
-			grid.addColumn(User :: getEmail).setCaption("Email");
-		
-			grid.setDataProvider(dataProvider);
-			horL.addComponent(grid);
-		}
-		else if(createSelectUserGroup().getSelectedItem().get().equals("Roles")) {
-			Collection<Group> gr = identityService.createGroupQuery().list();
-			ListDataProvider<Group> dataProviderr = DataProvider.ofCollection(gr);
-
-			Grid<Group> grid = new Grid<>();
-			grid.addColumn(Group :: getId).setCaption("Id");
-			grid.addColumn(Group :: getName).setCaption("Name");
-			grid.addColumn(Group :: getType).setCaption("Type");
-			grid.setDataProvider(dataProviderr);
-			horL.addComponent(grid);
-		}
-		return horL;
-	}
-
 }
