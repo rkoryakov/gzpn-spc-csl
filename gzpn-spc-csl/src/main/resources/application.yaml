@@ -32,7 +32,7 @@
    port: 8081
    servlet:
      session:
-       timeout: 60
+       timeout: 135
 # Use a custom context path since this makes things a bit trickier than deploying at the root
      context-path: /demo
 # We don't want Vaadin's heart beat signal to keep the session alive
@@ -40,5 +40,5 @@
    servlet: 
      close-idle-sessions: true
 # The session timeout should be a multiple of the heartbeat interval
-     heartbeat-interval: 60
+     heartbeat-interval: 40
      

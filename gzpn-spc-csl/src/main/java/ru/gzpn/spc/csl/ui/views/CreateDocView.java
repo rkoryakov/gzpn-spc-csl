@@ -11,11 +11,15 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 
-@SpringView(name = CreateDocView.CREATE_DOC_VIEW)
+@SpringView(name = CreateDocView.NAME)
 @UIScope
 public class CreateDocView extends VerticalLayout implements View {
-	public static final String CREATE_DOC_VIEW = "CreateDocView";
+	public static final String NAME = "createDocView";
 	public static final Logger logger = LoggerFactory.getLogger(CreateDocView.class);
+
+	public CreateDocView() {
+		logger.debug("[CreateDocView] is called");
+	}
 
 	@Override
 	public void enter(ViewChangeEvent event) {

@@ -25,8 +25,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.Command;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -35,6 +33,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import ru.gzpn.spc.csl.services.bl.Roles;
 import ru.gzpn.spc.csl.ui.views.AccessDeniedView;
 import ru.gzpn.spc.csl.ui.views.AdminView;
+import ru.gzpn.spc.csl.ui.views.CreateDocView;
 import ru.gzpn.spc.csl.ui.views.ErrorView;
 
 @SuppressWarnings("serial")
@@ -71,12 +70,12 @@ public class MainUI extends UI {
 		mainLayout = createMainLayout();
 		viewContainer = new Panel();
 		navigator = new Navigator(this, viewContainer);
-
+		menuBar = createMenu();
 		setContent(mainLayout);
 
 		// View container
 		viewContainer.setSizeFull();
-		mainLayout.addComponents(head, viewContainer);
+		mainLayout.addComponents(head, menuBar, viewContainer);
 		mainLayout.setExpandRatio(viewContainer, 1.0f);
 
 		getPage().setTitle("");
@@ -93,7 +92,7 @@ public class MainUI extends UI {
 				.collect(Collectors.toSet());
 
 		if (authorities.contains(Roles.CREATOR_ROLE.toString())) {
-			navigator.navigateTo("");
+			navigator.navigateTo(CreateDocView.NAME);
 		} else if (authorities.contains(Roles.ADMIN_ROLE.toString())) {
 			navigator.navigateTo(AdminView.ADMIN_VIEW);
 		} else if (authorities.contains(Roles.APPROVER_NTC_ROLE.toString())) {
@@ -105,18 +104,19 @@ public class MainUI extends UI {
 		} else if (authorities.contains(Roles.EXPERT_ES_ROLE.toString())) {
 			navigator.navigateTo("");
 		} else if (authorities.contains(Roles.USER_ROLE.toString())) {
-			navigator.navigateTo("");
+			navigator.navigateTo(CreateDocView.NAME);
 		}
 	}
 
 	private AbsoluteLayout createHead() {
 		AbsoluteLayout head = new AbsoluteLayout();
 
-		String exitString = messageSource.getMessage("main.ui.logout", null, VaadinSession.getCurrent().getLocale());
+		String exitString = getI18nText("main.ui.logout");
 		Button exit = new Button(exitString);
 		exit.setIcon(VaadinIcons.EXIT);
 		exit.addClickListener(listener -> {
 			getPage().setLocation("logout");
+			VaadinSession.getCurrent().close();
 		});
 		exit.addStyleName(ValoTheme.BUTTON_LINK);
 
@@ -141,11 +141,25 @@ public class MainUI extends UI {
 	}
 
 	private MenuBar createMenu() {
-		MenuBar menu = new MenuBar();
-		final Command menuCommand = selectedItem -> Notification.show("Action " + selectedItem.getText(),
-				Type.TRAY_NOTIFICATION);
-		String itemCaption = messageSource.getMessage("menu.menuItem1", null, VaadinSession.getCurrent().getLocale());
-		menu.addItem(itemCaption, VaadinIcons.FILE, menuCommand);
+		final MenuBar menu = new MenuBar();
+		final Command cCreateDocument = item -> this.navigator.navigateTo(CreateDocView.NAME);
+		final Command cCotractRegister = item -> {
+		};
+		final Command cEstimateRegister = item -> {
+		};
+
+		String sCreateDocument = getI18nText("main.ui.menu.createDocument");
+		String sCotractRegister = getI18nText("main.ui.menu.cotractRegister");
+		String sEstimateRegister = getI18nText("main.ui.menu.estimateRegister");
+
+		menu.addItem(sCreateDocument, VaadinIcons.FILE_ADD, cCreateDocument);
+		menu.addItem(sCotractRegister, VaadinIcons.FILE_TREE_SMALL, cCotractRegister);
+		menu.addItem(sEstimateRegister, VaadinIcons.FILE_TREE_SUB, cEstimateRegister);
+		// menu.setStyleName(ValoTheme.M);
 		return menu;
+	}
+
+	private String getI18nText(String key) {
+		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
 	}
 }

@@ -11,8 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
 import ru.gzpn.spc.csl.model.HProject;
@@ -49,9 +47,9 @@ public class BaseConfiguration {
 		return builder.dataSource(dataSource()).packages(HProject.class).persistenceUnit("projects").build();
 	}
 
-	@Bean
-	public LocaleResolver localeResolver() {
-		SessionLocaleResolver slr = new SessionLocaleResolver();
-		return slr;
-	}
+//	@Bean
+//	public LocaleResolver localeResolver() {
+//		SessionLocaleResolver slr = new SessionLocaleResolver();
+//		return slr;
+//	}
 }
