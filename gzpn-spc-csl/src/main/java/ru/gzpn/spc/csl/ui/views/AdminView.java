@@ -15,11 +15,11 @@ import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.ui.admin.UsersAndRolesTab;
 
-@SpringView(name = AdminView.ADMIN_VIEW)
+@SpringView(name = AdminView.NAME)
 @UIScope
 public class AdminView extends VerticalLayout implements View {
 
-	public static final String ADMIN_VIEW = "adminView";
+	public static final String NAME = "adminView";
 	public static final Logger logger = LoggerFactory.getLogger(AdminView.class);
 
 	@Autowired

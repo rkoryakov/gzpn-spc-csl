@@ -14,7 +14,9 @@ import com.vaadin.ui.UI;
 
 import ru.gzpn.spc.csl.services.bl.Roles;
 import ru.gzpn.spc.csl.ui.views.AdminView;
+import ru.gzpn.spc.csl.ui.views.ContractRegisterView;
 import ru.gzpn.spc.csl.ui.views.CreateDocView;
+import ru.gzpn.spc.csl.ui.views.EstimateRegisterView;
 
 @Component
 public class VaadinAccessController implements ViewAccessControl {
@@ -29,13 +31,19 @@ public class VaadinAccessController implements ViewAccessControl {
 			Set<String> authorities = authentication.getAuthorities().stream().map(a -> a.getAuthority())
 					.collect(Collectors.toSet());
 
-			logger.debug("name: {}, authorities {}", authentication.getName(), authorities);
+			logger.debug("beanName {}, name: {}, authorities {}", beanName, authentication.getName(), authorities);
 			if (beanName != null) {
 				switch (beanName) {
-				case AdminView.ADMIN_VIEW:
+				case AdminView.NAME:
 					result = authorities.contains(Roles.ADMIN_ROLE.toString());
 					break;
 				case CreateDocView.NAME:
+					result = authorities.contains(Roles.USER_ROLE.toString());
+					break;
+				case ContractRegisterView.NAME:
+					result = authorities.contains(Roles.USER_ROLE.toString());
+					break;
+				case EstimateRegisterView.NAME:
 					result = authorities.contains(Roles.USER_ROLE.toString());
 					break;
 				}

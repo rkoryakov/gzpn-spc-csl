@@ -18,6 +18,7 @@ public class CreateDocView extends VerticalLayout implements View {
 	public static final Logger logger = LoggerFactory.getLogger(CreateDocView.class);
 
 	public CreateDocView() {
+
 		logger.debug("[CreateDocView] is called");
 	}
 
@@ -38,4 +39,5 @@ public class CreateDocView extends VerticalLayout implements View {
 		logger.debug("[getViewComponent] is called");
 		return View.super.getViewComponent();
 	}
+
 }

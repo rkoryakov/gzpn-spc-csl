@@ -25,6 +25,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.Command;
+import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -33,8 +34,10 @@ import com.vaadin.ui.themes.ValoTheme;
 import ru.gzpn.spc.csl.services.bl.Roles;
 import ru.gzpn.spc.csl.ui.views.AccessDeniedView;
 import ru.gzpn.spc.csl.ui.views.AdminView;
+import ru.gzpn.spc.csl.ui.views.ContractRegisterView;
 import ru.gzpn.spc.csl.ui.views.CreateDocView;
 import ru.gzpn.spc.csl.ui.views.ErrorView;
+import ru.gzpn.spc.csl.ui.views.EstimateRegisterView;
 
 @SuppressWarnings("serial")
 @SpringUI
@@ -94,7 +97,7 @@ public class MainUI extends UI {
 		if (authorities.contains(Roles.CREATOR_ROLE.toString())) {
 			navigator.navigateTo(CreateDocView.NAME);
 		} else if (authorities.contains(Roles.ADMIN_ROLE.toString())) {
-			navigator.navigateTo(AdminView.ADMIN_VIEW);
+			navigator.navigateTo(AdminView.NAME);
 		} else if (authorities.contains(Roles.APPROVER_NTC_ROLE.toString())) {
 			navigator.navigateTo("");
 		} else if (authorities.contains(Roles.CONTRACT_ES_ROLE.toString())) {
@@ -143,19 +146,42 @@ public class MainUI extends UI {
 	private MenuBar createMenu() {
 		final MenuBar menu = new MenuBar();
 		final Command cCreateDocument = item -> this.navigator.navigateTo(CreateDocView.NAME);
-		final Command cCotractRegister = item -> {
-		};
-		final Command cEstimateRegister = item -> {
-		};
+		final Command cContractRegister = item -> this.navigator.navigateTo(ContractRegisterView.NAME);
+		final Command cEstimateRegister = item -> this.navigator.navigateTo(EstimateRegisterView.NAME);
 
 		String sCreateDocument = getI18nText("main.ui.menu.createDocument");
-		String sCotractRegister = getI18nText("main.ui.menu.cotractRegister");
+		String sContractRegister = getI18nText("main.ui.menu.cotractRegister");
 		String sEstimateRegister = getI18nText("main.ui.menu.estimateRegister");
 
-		menu.addItem(sCreateDocument, VaadinIcons.FILE_ADD, cCreateDocument);
-		menu.addItem(sCotractRegister, VaadinIcons.FILE_TREE_SMALL, cCotractRegister);
-		menu.addItem(sEstimateRegister, VaadinIcons.FILE_TREE_SUB, cEstimateRegister);
-		// menu.setStyleName(ValoTheme.M);
+		MenuItem createDocumentItem = menu.addItem(sCreateDocument, VaadinIcons.FILE_ADD, cCreateDocument);
+		MenuItem contractRegisterItem = menu.addItem(sContractRegister, VaadinIcons.FILE_TREE_SMALL, cContractRegister);
+		MenuItem estimateRegisterItem = menu.addItem(sEstimateRegister, VaadinIcons.FILE_TREE_SUB, cEstimateRegister);
+		createDocumentItem.setCheckable(true);
+		contractRegisterItem.setCheckable(true);
+		estimateRegisterItem.setCheckable(true);
+
+		this.navigator.addViewChangeListener(listener -> {
+
+			switch (listener.getViewName()) {
+			case CreateDocView.NAME:
+				createDocumentItem.setChecked(true);
+				contractRegisterItem.setChecked(false);
+				estimateRegisterItem.setChecked(false);
+				break;
+			case ContractRegisterView.NAME:
+				contractRegisterItem.setChecked(true);
+				createDocumentItem.setChecked(false);
+				estimateRegisterItem.setChecked(false);
+				break;
+			case EstimateRegisterView.NAME:
+				estimateRegisterItem.setChecked(true);
+				contractRegisterItem.setChecked(false);
+				createDocumentItem.setChecked(false);
+				break;
+			default:
+			}
+			return true;
+		});
 		return menu;
 	}
 
