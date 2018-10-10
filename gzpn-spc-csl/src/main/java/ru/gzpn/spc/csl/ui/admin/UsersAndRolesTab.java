@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.NativeSelect;
@@ -20,6 +21,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 public class UsersAndRolesTab extends VerticalLayout {
 
@@ -32,7 +34,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 	private HorizontalLayout headerHorizont;
 	private VerticalLayout resultPage;
 	private Grid<UserTemplate> gridUser;
-	private Grid<Group> gridGroup;
+	private Grid<GroupTemplate> gridGroup;
 
 	public UsersAndRolesTab(IdentityService identityService) {
 		this.identityService = identityService;
@@ -48,9 +50,6 @@ public class UsersAndRolesTab extends VerticalLayout {
 		addComponent(resultPage);
 	}
 
-	/**
-	 * init or refresh all the componet's data
-	 */
 	public void refreshData() {
 //		List<String> list = identityService.createUserQuery().list().stream().map(m -> m.getId())
 //				.collect(Collectors.toList());
@@ -58,6 +57,13 @@ public class UsersAndRolesTab extends VerticalLayout {
 //		searchUserGroup.setDataProvider(dataProvider);
 	}
 
+	private List<String> data(){
+		List<String> data = new ArrayList<>();
+		data.add("Users");
+		data.add("Roles");
+		return data;
+	}
+	
 	private TextField createSearchUserGroup() {
 		TextField filterTextField = new TextField();
 		
@@ -75,7 +81,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 			user.setLastName(request.getLastName());
 			user.setEmail(request.getEmail());
 			user.setPassword(request.getPassword());
-			user.setEdit(new Button());
+			user.setEdit(buttonEditUser());
 			user.setDelete(new Button());
 			userTemplateList.add((UserTemplate) user);
 		}
@@ -93,42 +99,82 @@ public class UsersAndRolesTab extends VerticalLayout {
 		return grid;
 	}
 	
-	private Grid<Group> createGridGroup() {
-		Collection<Group> gr = identityService.createGroupQuery().list();
-		ListDataProvider<Group> dataProvider = DataProvider.ofCollection(gr);
-		Grid<Group> grid = new Grid<>();
-		grid.addColumn(Group :: getId).setCaption("Id");
-		grid.addColumn(Group :: getName).setCaption("Name");
-		grid.addColumn(Group :: getType).setCaption("Type");
+	private Grid<GroupTemplate> createGridGroup() {
+		List<Group> groupList = identityService.createGroupQuery().list();
+		List<GroupTemplate> groupTemplateList = new ArrayList<>();
+		
+		for(Group request : groupList) {
+			GroupTemplate group = new GroupTemplate();
+			group.setId(request.getId());
+			group.setName(request.getName());
+			group.setType(request.getType());
+			group.setEdit(buttonEditGroup());
+			group.setDelete(new Button());
+			groupTemplateList.add((GroupTemplate) group);
+		}
+		
+		ListDataProvider<GroupTemplate> dataProvider = DataProvider.ofCollection(groupTemplateList);
+		Grid<GroupTemplate> grid = new Grid<>();
+		grid.addColumn(GroupTemplate :: getId).setCaption("Id");
+		grid.addColumn(GroupTemplate :: getName).setCaption("Name");
+		grid.addColumn(GroupTemplate :: getType).setCaption("Type");
+		grid.addComponentColumn(GroupTemplate :: getEdit).setCaption("Edit");
+		grid.addComponentColumn(GroupTemplate :: getDelete).setCaption("Delete");
 		grid.setDataProvider(dataProvider);
-		gridGroup = grid;
 		return grid;
 	}
 	
 	private NativeSelect<String> createSelectUserGroup() {
-		List<String> data = new ArrayList<>();
-		data.add("Users");
-		data.add("Roles");
-		NativeSelect<String> nativeSelect = new NativeSelect<>(null, data);
+		NativeSelect<String> nativeSelect = new NativeSelect<>(null, data());
 		nativeSelect.setEmptySelectionAllowed(false);
-		nativeSelect.setSelectedItem(data.get(0));
+		nativeSelect.setSelectedItem(data().get(0));
 		gridGroup.setVisible(false);
 		nativeSelect.addSelectionListener(event ->{
-			if (event.getSelectedItem().get().equals(data.get(0))) {
+			if (event.getSelectedItem().get().equals(data().get(0))) {
 				gridUser.setVisible(true);
 				gridGroup.setVisible(false);
 			}
-			else if(event.getSelectedItem().get().equals(data.get(1))) {
+			else if(event.getSelectedItem().get().equals(data().get(1))) {
 				gridUser.setVisible(false);
 				gridGroup.setVisible(true);
 			}
 		});
+		
 		return nativeSelect;
 	}
-
+	
 	private Button buttonCreate() {
 		Button createButton = new Button("Create");
-		createButton.addClickListener(event -> Notification.show("The button was clicked", Type.HUMANIZED_MESSAGE));
 		return createButton;
+	}
+	
+	private Button buttonEditUser() {
+		Button editButton = new Button();
+		editButton.addClickListener(event -> getUI().addWindow(formUser()));
+		return editButton;
+	}
+	
+	private Button buttonEditGroup() {
+		Button editButton = new Button();
+		editButton.addClickListener(event -> getUI().addWindow(formGroup()));
+		return editButton;
+	}
+	
+	private Window formUser() {
+		final Window window = new Window("User");
+		window.setWidth(300.0f, Unit.PIXELS);
+        final FormLayout content = new FormLayout();
+        content.setMargin(true);
+        window.setContent(content);
+		return window;
+	}
+	
+	private Window formGroup() {
+		final Window window = new Window("Group");
+		window.setWidth(300.0f, Unit.PIXELS);
+        final FormLayout content = new FormLayout();
+        content.setMargin(true);
+        window.setContent(content);
+		return window;
 	}
 }
