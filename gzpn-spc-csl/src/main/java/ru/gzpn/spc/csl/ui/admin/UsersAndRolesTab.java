@@ -1,7 +1,6 @@
 package ru.gzpn.spc.csl.ui.admin;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.activiti.engine.IdentityService;
@@ -9,25 +8,28 @@ import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.NativeSelect;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 public class UsersAndRolesTab extends VerticalLayout {
 
+	private MessageSource messageSource;
+	
 	public static final Logger logger = LoggerFactory.getLogger(UsersAndRolesTab.class);
-
+	//public static final String ITEM_GROUP = "Group";
 	private IdentityService identityService;
+	
 
 	private TextField searchUserGroup;
 	private NativeSelect<String> selectUserGroup;
@@ -36,8 +38,9 @@ public class UsersAndRolesTab extends VerticalLayout {
 	private Grid<UserTemplate> gridUser;
 	private Grid<GroupTemplate> gridGroup;
 
-	public UsersAndRolesTab(IdentityService identityService) {
+	public UsersAndRolesTab(IdentityService identityService, MessageSource messageSource) {
 		this.identityService = identityService;
+		this.messageSource = messageSource;
 		headerHorizont = new HorizontalLayout();
 		resultPage = new VerticalLayout();
 		gridUser = createGridUser();
@@ -64,6 +67,14 @@ public class UsersAndRolesTab extends VerticalLayout {
 		return data;
 	}
 	
+	public MessageSource getMessageSource() {
+		return messageSource;
+	}
+
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+
 	private TextField createSearchUserGroup() {
 		TextField filterTextField = new TextField();
 		
@@ -144,7 +155,17 @@ public class UsersAndRolesTab extends VerticalLayout {
 	}
 	
 	private Button buttonCreate() {
-		Button createButton = new Button("Create");
+		String nameCreateButton = getI18nText("adminView.button.nameCreateButton");
+		
+		Button createButton = new Button(nameCreateButton);
+		createButton.addClickListener(event -> {
+			if(selectUserGroup.getSelectedItem().get().equals(data().get(0))) {
+				getUI().addWindow(formUser());
+			}
+			else if(selectUserGroup.getSelectedItem().get().equals(data().get(1))) {
+				getUI().addWindow(formGroup());
+			}
+		});
 		return createButton;
 	}
 	
@@ -176,5 +197,9 @@ public class UsersAndRolesTab extends VerticalLayout {
         content.setMargin(true);
         window.setContent(content);
 		return window;
+	}
+	
+	private String getI18nText(String key) {
+		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
 	}
 }

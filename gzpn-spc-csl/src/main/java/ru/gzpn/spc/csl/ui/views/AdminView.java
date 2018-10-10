@@ -6,6 +6,7 @@ import org.activiti.engine.IdentityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 
 import com.vaadin.navigator.View;
 import com.vaadin.spring.annotation.SpringView;
@@ -24,6 +25,8 @@ public class AdminView extends VerticalLayout implements View {
 
 	@Autowired
 	IdentityService identityService;
+	@Autowired
+	MessageSource messageSource;
 
 	public AdminView() {
 		setMargin(true);
@@ -33,12 +36,8 @@ public class AdminView extends VerticalLayout implements View {
 	@PostConstruct
 	public void init() {
 		TabSheet tabSet = new TabSheet();
-		UsersAndRolesTab admin = new UsersAndRolesTab(identityService);
-		UsersAndRolesTab business = new UsersAndRolesTab(identityService);
-		UsersAndRolesTab directory = new UsersAndRolesTab(identityService);
+		UsersAndRolesTab admin = new UsersAndRolesTab(identityService, messageSource);
 		tabSet.addTab(admin, "Admin");
-		tabSet.addTab(business, "BPM");
-		tabSet.addTab(directory, "Directory");
 		addComponent(tabSet);
 	}
 }
