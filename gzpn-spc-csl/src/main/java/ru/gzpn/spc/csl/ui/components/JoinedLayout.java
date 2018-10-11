@@ -5,6 +5,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.TextField;
 
 public class JoinedLayout<E1 extends AbstractComponent, E2 extends AbstractComponent> extends CssLayout {
 	
@@ -20,7 +21,7 @@ public class JoinedLayout<E1 extends AbstractComponent, E2 extends AbstractCompo
 	}
 
 	private <T extends AbstractComponent> void checkTypes(T component) {
-		if(!((component instanceof Button) || (component instanceof ComboBox) || (component instanceof NativeSelect))) {
+		if(!((component instanceof Button) || (component instanceof ComboBox) || (component instanceof NativeSelect) || (component instanceof TextField))) {
 			throw new IllegalArgumentException(component.getClass().getName() + " isn't supported by JoinedLayout");
 		}
 	}

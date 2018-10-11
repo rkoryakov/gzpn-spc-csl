@@ -19,26 +19,22 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 public class UsersAndRolesTab extends VerticalLayout {
 
-	private MessageSource messageSource;
-
 	public static final Logger logger = LoggerFactory.getLogger(UsersAndRolesTab.class);
 	private IdentityService identityService;
-
+	private MessageSource messageSource;
 	private TextField searchUserGroup;
-	private NativeSelect<String> selectUserGroup;
 	private HorizontalLayout headerHorizont;
 	private VerticalLayout resultPage;
 	private Grid<UserTemplate> gridUser;
 	private Grid<GroupTemplate> gridGroup;
-
-	private ComboBox<EnumUserGroup> selectUserGroupC;
+	private ComboBox<EnumUserGroup> selectUserGroup;
+	//private JoinedLayout<TextField , ComboBox<EnumUserGroup>> joi;
 
 	public UsersAndRolesTab(IdentityService identityService, MessageSource messageSource) {
 		this.identityService = identityService;
@@ -49,31 +45,46 @@ public class UsersAndRolesTab extends VerticalLayout {
 		gridGroup = createGridGroup();
 		searchUserGroup = createSearchUserGroup();
 		selectUserGroup = createSelectUserGroup();
-
-		selectUserGroupC = createSelectUserGroupC();
-
-		headerHorizont.addComponents(searchUserGroup, selectUserGroup, selectUserGroupC, buttonCreate());
+		//joi = new JoinedLayout<>(searchUserGroup, selectUserGroup);
+				
+		headerHorizont.addComponents(searchUserGroup, selectUserGroup, buttonCreate());
 		resultPage.addComponents(headerHorizont, gridUser, gridGroup);
 		addComponent(resultPage);
 	}
+	
+	public MessageSource getMessageSource() {
+		return messageSource;
+	}
 
-	private ComboBox<EnumUserGroup> createSelectUserGroupC() {
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+
+	private ComboBox<EnumUserGroup> createSelectUserGroup() {
 		ComboBox<EnumUserGroup> comboBox = new ComboBox<>();
 		comboBox.setItems(EnumSet.allOf(EnumUserGroup.class));
-
+		comboBox.setTextInputAllowed(false);
 		comboBox.setEmptySelectionAllowed(false);
 		comboBox.setSelectedItem(EnumUserGroup.USERS);
-
+		gridGroup.setVisible(false);
+		
 		comboBox.setItemCaptionGenerator(item -> {
-			String result = getI18nText("<user's key>"); // TODO: Add localized key
-
-			if (comboBox.getSelectedItem().get() == EnumUserGroup.GROUPS) {
-				result = getI18nText("<group's key>"); // TODO: Add localized key
+			String result = getI18nText("adminView.caption.usersKey");
+			if (item == EnumUserGroup.GROUPS) {
+				result = getI18nText("adminView.caption.groupsKey");
 			}
-
 			return result;
 		});
-
+		
+		comboBox.addSelectionListener(event -> {
+			if (event.getSelectedItem().get().equals(EnumUserGroup.USERS)) {
+				gridUser.setVisible(true);
+				gridGroup.setVisible(false);
+			} else if (event.getSelectedItem().get().equals(EnumUserGroup.GROUPS)) {
+				gridUser.setVisible(false);
+				gridGroup.setVisible(true);
+			}
+		});
 		return comboBox;
 	}
 
@@ -82,21 +93,6 @@ public class UsersAndRolesTab extends VerticalLayout {
 //				.collect(Collectors.toList());
 //		ListDataProvider<String> dataProvider = new ListDataProvider<>(list);
 //		searchUserGroup.setDataProvider(dataProvider);
-	}
-
-	private List<String> data() {
-		List<String> data = new ArrayList<>();
-		data.add("Users");
-		data.add("Roles");
-		return data;
-	}
-
-	public MessageSource getMessageSource() {
-		return messageSource;
-	}
-
-	public void setMessageSource(MessageSource messageSource) {
-		this.messageSource = messageSource;
 	}
 
 	private TextField createSearchUserGroup() {
@@ -116,7 +112,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 			user.setLastName(request.getLastName());
 			user.setEmail(request.getEmail());
 			user.setPassword(request.getPassword());
-			user.setEdit(buttonEditUser());
+			user.setEdit(buttonEditUser(request));
 			user.setDelete(new Button());
 			userTemplateList.add((UserTemplate) user);
 		}
@@ -172,41 +168,22 @@ public class UsersAndRolesTab extends VerticalLayout {
 		return grid;
 	}
 
-	private NativeSelect<String> createSelectUserGroup() {
-		NativeSelect<String> nativeSelect = new NativeSelect<>(null, data());
-		nativeSelect.setEmptySelectionAllowed(false);
-		nativeSelect.setSelectedItem(data().get(0));
-		gridGroup.setVisible(false);
-		nativeSelect.addSelectionListener(event -> {
-			if (event.getSelectedItem().get().equals(data().get(0))) {
-				gridUser.setVisible(true);
-				gridGroup.setVisible(false);
-			} else if (event.getSelectedItem().get().equals(data().get(1))) {
-				gridUser.setVisible(false);
-				gridGroup.setVisible(true);
-			}
-		});
-
-		return nativeSelect;
-	}
-
 	private Button buttonCreate() {
 		String nameCreateButton = getI18nText("adminView.button.nameCreateButton");
 
 		Button createButton = new Button(nameCreateButton);
-		/*
-		 * createButton.addClickListener(event -> {
-		 * if(selectUserGroup.getSelectedItem().get().equals(data().get(0))) {
-		 * getUI().addWindow(formUser()); } else
-		 * if(selectUserGroup.getSelectedItem().get().equals(data().get(1))) {
-		 * getUI().addWindow(formGroup(req)); } });
-		 */
+		  createButton.addClickListener(event -> {
+		  if(selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.USERS)) {
+		  getUI().addWindow(formUser(null)); } else
+		  if(selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.GROUPS)) {
+		  getUI().addWindow(formGroup(null)); } });
+		 
 		return createButton;
 	}
 
-	private Button buttonEditUser() {
+	private Button buttonEditUser(User user) {
 		Button editButton = new Button();
-		editButton.addClickListener(event -> getUI().addWindow(formUser()));
+		editButton.addClickListener(event -> getUI().addWindow(formUser(user)));
 		return editButton;
 	}
 
@@ -215,78 +192,128 @@ public class UsersAndRolesTab extends VerticalLayout {
 		editButton.addClickListener(event -> getUI().addWindow(formGroup(group)));
 		return editButton;
 	}
-
-	private Window formUser() {
-
+	
+	private Window formUser(User currentUser) {
+		
+		String userWindowCaption = getI18nText("adminView.caption.userKey");
 		String loginCaption = getI18nText("adminView.caption.login");
 		String firstNameCaption = getI18nText("adminView.caption.firstName");
 		String lastNameCaption = getI18nText("adminView.caption.lastName");
 		String emailCaption = getI18nText("adminView.caption.email");
+		String newPasswordCaption = getI18nText("adminView.caption.newPasswordCaption");
 		String nameSaveButton = getI18nText("adminView.button.nameSaveButton");
-
-		final Window window = new Window("User");
+		
+		final Window window = new Window(userWindowCaption);
 		window.setModal(true);
 		window.setResizable(false);
 		window.setWidth(300.0f, Unit.PIXELS);
-
 		final FormLayout content = new FormLayout();
 		content.setMargin(true);
 		content.addStyleName("outlined");
-
-		final TextField loginField = new TextField(loginCaption, "");
-		loginField.setWidth(100.0f, Unit.PERCENTAGE);
-		content.addComponent(loginField);
-
-		final TextField firstNameField = new TextField(firstNameCaption, "");
-		firstNameField.setWidth(100.0f, Unit.PERCENTAGE);
-		content.addComponent(firstNameField);
-
-		final TextField lastNameField = new TextField(lastNameCaption, "");
-		lastNameField.setWidth(100.0f, Unit.PERCENTAGE);
-		content.addComponent(lastNameField);
-
-		final TextField emailField = new TextField(emailCaption, "");
-		emailField.setWidth(100.0f, Unit.PERCENTAGE);
-		content.addComponent(emailField);
-
+		
+		final TextField loginField;
+		final TextField firstNameField;
+		final TextField lastNameField;
+		final TextField emailField;
+		final TextField newPasswordField;
 		Button saveButton = new Button(nameSaveButton);
+		
+		if (currentUser != null) {
+			loginField = new TextField(loginCaption, currentUser.getId());
+			firstNameField = new TextField(firstNameCaption, currentUser.getFirstName() == null ? "" : currentUser.getFirstName());
+			lastNameField = new TextField(lastNameCaption, currentUser.getLastName() == null ? "" : currentUser.getLastName());
+			emailField = new TextField(emailCaption, currentUser.getEmail() == null ? "" : currentUser.getEmail());
+			newPasswordField = new TextField(newPasswordCaption, "");
+		}
+			
+		else {
+			loginField = new TextField(loginCaption, "");
+			firstNameField = new TextField(firstNameCaption, "");
+			lastNameField = new TextField(lastNameCaption, "");
+			emailField = new TextField(emailCaption, "");
+			newPasswordField = new TextField(newPasswordCaption, "");
+		}
+		
+		loginField.setWidth(90.0f, Unit.PERCENTAGE);
+		firstNameField.setWidth(90.0f, Unit.PERCENTAGE);
+		lastNameField.setWidth(90.0f, Unit.PERCENTAGE);
+		emailField.setWidth(90.0f, Unit.PERCENTAGE);
+		newPasswordField.setWidth(90.0f, Unit.PERCENTAGE);
+		
+		content.addComponent(loginField);
+		content.addComponent(firstNameField);
+		content.addComponent(lastNameField);
+		content.addComponent(emailField);
+		content.addComponent(newPasswordField);
 		content.addComponent(saveButton);
-
+		
 		window.setContent(content);
+		
+		saveButton.addClickListener(event -> {
+			
+			User user = identityService.createUserQuery().userId(loginField.getValue()).singleResult();
+			if (user == null) {
+				user = identityService.newUser(loginField.getValue());
+				user.setFirstName(firstNameField.getValue());
+				user.setLastName(lastNameField.getValue());
+				user.setEmail(emailField.getValue());
+				user.setPassword(newPasswordField.getValue());
+				identityService.saveUser(user);
+			}
+			else {
+				user.setFirstName(firstNameField.getValue());
+				user.setLastName(lastNameField.getValue());
+				user.setEmail(emailField.getValue());
+				user.setPassword(newPasswordField.getValue());
+				identityService.saveUser(user);
+			}
+			
+		});
+		
 		return window;
 	}
 
-	private Window formGroup(Group gt) {
-
+	private Window formGroup(Group currentGroup) {
+		
+		String groupWindowCaption = getI18nText("adminView.caption.groupKey");
 		String idCaption = getI18nText("adminView.caption.id");
 		String nameCaption = getI18nText("adminView.caption.nameRoles");
 		String typeCaption = getI18nText("adminView.caption.typeRoles");
 		String nameSaveButton = getI18nText("adminView.button.nameSaveButton");
 
-		final Window window = new Window("Group");
+		final Window window = new Window(groupWindowCaption);
 		window.setModal(true);
 		window.setResizable(false);
 		window.setWidth(300.0f, Unit.PIXELS);
-
 		final FormLayout content = new FormLayout();
 		content.setMargin(true);
 		content.addStyleName("outlined");
-
-		final TextField idField = new TextField(idCaption, gt.getId());
-		idField.setWidth(100.0f, Unit.PERCENTAGE);
-		content.addComponent(idField);
-
-		final TextField nameField = new TextField(nameCaption, gt.getName());
-		nameField.setWidth(100.0f, Unit.PERCENTAGE);
-		content.addComponent(nameField);
-
-		final TextField typeField = new TextField(typeCaption, gt.getType());
-		typeField.setWidth(100.0f, Unit.PERCENTAGE);
-		content.addComponent(typeField);
-
+		
+		final TextField idField;
+		final TextField nameField;
+		final TextField typeField;
 		Button saveButton = new Button(nameSaveButton);
+		
+		if (currentGroup != null) {
+		idField = new TextField(idCaption, currentGroup.getId());
+		nameField = new TextField(nameCaption, currentGroup.getName());
+		typeField = new TextField(typeCaption, currentGroup.getType());
+		}
+		
+		else {
+			idField = new TextField(idCaption, "");
+			nameField = new TextField(nameCaption, "");
+			typeField = new TextField(typeCaption, "");
+		}
+		idField.setWidth(90.0f, Unit.PERCENTAGE);
+		nameField.setWidth(90.0f, Unit.PERCENTAGE);
+		typeField.setWidth(90.0f, Unit.PERCENTAGE);
+		
+		content.addComponent(idField);
+		content.addComponent(nameField);
+		content.addComponent(typeField);
 		content.addComponent(saveButton);
-
+		
 		window.setContent(content);
 		return window;
 	}
