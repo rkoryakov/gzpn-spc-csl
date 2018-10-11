@@ -19,6 +19,9 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -113,7 +116,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 			user.setEmail(request.getEmail());
 			user.setPassword(request.getPassword());
 			user.setEdit(buttonEditUser(request));
-			user.setDelete(new Button());
+			user.setDelete(buttonDeleteUser(request));
 			userTemplateList.add((UserTemplate) user);
 		}
 
@@ -147,7 +150,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 			group.setName(request.getName());
 			group.setType(request.getType());
 			group.setEdit(buttonEditGroup(request));
-			group.setDelete(new Button());
+			group.setDelete(buttonDeleteGroup(request));
 			groupTemplateList.add((GroupTemplate) group);
 		}
 
@@ -186,11 +189,35 @@ public class UsersAndRolesTab extends VerticalLayout {
 		editButton.addClickListener(event -> getUI().addWindow(formUser(user)));
 		return editButton;
 	}
-
+	
+	private Button buttonDeleteUser(User request) {
+		Button deleteButton = new Button();
+		Button okButton = new Button("OK");
+		deleteButton.addClickListener(event -> {
+			Window win = new Window();
+			win.setModal(true);
+			win.setResizable(false);
+			win.setWidth(200.0f, Unit.PIXELS);
+			VerticalLayout l = new VerticalLayout();
+			l.addComponent(okButton);
+			okButton.setSizeFull();
+			win.setContent(l);
+			getUI().addWindow(win);
+		});
+		okButton.addClickListener(event -> identityService.deleteUser(request.getId()));
+		return deleteButton;
+	}
+	
 	private Button buttonEditGroup(Group group) {
 		Button editButton = new Button();
 		editButton.addClickListener(event -> getUI().addWindow(formGroup(group)));
 		return editButton;
+	}
+	
+	private Button buttonDeleteGroup(Group request) {
+		Button deleteButton = new Button();
+		deleteButton.addClickListener(event -> identityService.deleteGroup(request.getId()));
+		return deleteButton;
 	}
 	
 	private Window formUser(User currentUser) {
@@ -220,6 +247,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		
 		if (currentUser != null) {
 			loginField = new TextField(loginCaption, currentUser.getId());
+			loginField.setReadOnly(true);
 			firstNameField = new TextField(firstNameCaption, currentUser.getFirstName() == null ? "" : currentUser.getFirstName());
 			lastNameField = new TextField(lastNameCaption, currentUser.getLastName() == null ? "" : currentUser.getLastName());
 			emailField = new TextField(emailCaption, currentUser.getEmail() == null ? "" : currentUser.getEmail());
@@ -250,7 +278,6 @@ public class UsersAndRolesTab extends VerticalLayout {
 		window.setContent(content);
 		
 		saveButton.addClickListener(event -> {
-			
 			User user = identityService.createUserQuery().userId(loginField.getValue()).singleResult();
 			if (user == null) {
 				user = identityService.newUser(loginField.getValue());
@@ -260,16 +287,14 @@ public class UsersAndRolesTab extends VerticalLayout {
 				user.setPassword(newPasswordField.getValue());
 				identityService.saveUser(user);
 			}
-			else {
+			else if (user.getId() != null) {
 				user.setFirstName(firstNameField.getValue());
 				user.setLastName(lastNameField.getValue());
 				user.setEmail(emailField.getValue());
 				user.setPassword(newPasswordField.getValue());
 				identityService.saveUser(user);
 			}
-			
 		});
-		
 		return window;
 	}
 
@@ -295,9 +320,10 @@ public class UsersAndRolesTab extends VerticalLayout {
 		Button saveButton = new Button(nameSaveButton);
 		
 		if (currentGroup != null) {
-		idField = new TextField(idCaption, currentGroup.getId());
-		nameField = new TextField(nameCaption, currentGroup.getName());
-		typeField = new TextField(typeCaption, currentGroup.getType());
+			idField = new TextField(idCaption, currentGroup.getId());
+			idField.setReadOnly(true);
+			nameField = new TextField(nameCaption, currentGroup.getName());
+			typeField = new TextField(typeCaption, currentGroup.getType());
 		}
 		
 		else {
@@ -315,6 +341,22 @@ public class UsersAndRolesTab extends VerticalLayout {
 		content.addComponent(saveButton);
 		
 		window.setContent(content);
+		
+		saveButton.addClickListener(event -> {
+			Group group = identityService.createGroupQuery().groupId(idField.getValue()).singleResult();
+			if (group == null) {
+				group = identityService.newGroup(idField.getValue());
+				group.setName(nameField.getValue());
+				group.setType(typeField.getValue());
+				identityService.saveGroup(group);
+			}
+			else if (group.getId() != null) {
+				group.setName(nameField.getValue());
+				group.setType(typeField.getValue());
+				identityService.saveGroup(group);
+			}
+		});
+		
 		return window;
 	}
 
