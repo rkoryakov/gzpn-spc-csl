@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.components;
+package ru.gzpn.spc.csl.ui.common;
 
 public class ProjectNodeFilter {
 

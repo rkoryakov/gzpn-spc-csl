@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.components;
+package ru.gzpn.spc.csl.ui.common;
 
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Button;

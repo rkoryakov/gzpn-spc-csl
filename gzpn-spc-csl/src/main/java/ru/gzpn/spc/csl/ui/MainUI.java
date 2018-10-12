@@ -65,7 +65,7 @@ public class MainUI extends UI {
 	protected void init(VaadinRequest request) {
 		getSession().addRequestHandler((vsession, vrequest, vresponse) -> {
 			this.taskId = vrequest.getParameter("taskId");
-			logger.debug("taskId = " + taskId);
+			logger.debug("taskId {}", taskId);
 			return false;
 		});
 
@@ -161,7 +161,6 @@ public class MainUI extends UI {
 		estimateRegisterItem.setCheckable(true);
 
 		this.navigator.addViewChangeListener(listener -> {
-
 			switch (listener.getViewName()) {
 			case CreateDocView.NAME:
 				createDocumentItem.setChecked(true);
