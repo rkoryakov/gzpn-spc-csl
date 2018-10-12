@@ -19,9 +19,6 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -192,19 +189,25 @@ public class UsersAndRolesTab extends VerticalLayout {
 	
 	private Button buttonDeleteUser(User request) {
 		Button deleteButton = new Button();
+		Window win = new Window();
 		Button okButton = new Button("OK");
+		Button closeButton = new Button("Отмена");
+		HorizontalLayout l = new HorizontalLayout();
 		deleteButton.addClickListener(event -> {
-			Window win = new Window();
 			win.setModal(true);
+			win.setClosable(false);
 			win.setResizable(false);
-			win.setWidth(200.0f, Unit.PIXELS);
-			VerticalLayout l = new VerticalLayout();
+			win.setWidth(300.0f, Unit.PIXELS);
 			l.addComponent(okButton);
+			l.addComponent(closeButton);
 			okButton.setSizeFull();
+			closeButton.setSizeFull();
 			win.setContent(l);
 			getUI().addWindow(win);
 		});
 		okButton.addClickListener(event -> identityService.deleteUser(request.getId()));
+		okButton.addClickListener(event -> win.close());
+		closeButton.addClickListener(event -> win.close());
 		return deleteButton;
 	}
 	
