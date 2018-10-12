@@ -15,13 +15,14 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import ru.gzpn.spc.csl.model.BaseEntity;
 import ru.gzpn.spc.csl.model.HProject;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.services.bl.LoginController;
 import ru.gzpn.spc.csl.ui.MainUI;
 import ru.gzpn.spc.csl.ui.admin.UsersAndRolesTab;
 import ru.gzpn.spc.csl.ui.views.AdminView;
 
 @Configuration
-@EnableJpaRepositories(basePackageClasses = { BaseEntity.class })
+@EnableJpaRepositories(basePackageClasses = { IHProject.class })
 @ComponentScan(basePackageClasses = { BaseEntity.class, ICProject.class, MainUI.class, LoginController.class,
 		AdminView.class, UsersAndRolesTab.class })
 public class BaseConfiguration {
