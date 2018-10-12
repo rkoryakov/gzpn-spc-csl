@@ -205,8 +205,10 @@ public class UsersAndRolesTab extends VerticalLayout {
 			win.setContent(l);
 			getUI().addWindow(win);
 		});
-		okButton.addClickListener(event -> identityService.deleteUser(request.getId()));
-		okButton.addClickListener(event -> win.close());
+		okButton.addClickListener(event -> {
+			identityService.deleteUser(request.getId());
+			 win.close();
+		});
 		closeButton.addClickListener(event -> win.close());
 		return deleteButton;
 	}
