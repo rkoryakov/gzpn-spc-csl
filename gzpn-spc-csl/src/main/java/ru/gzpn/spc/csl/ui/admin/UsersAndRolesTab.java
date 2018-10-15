@@ -37,9 +37,6 @@ public class UsersAndRolesTab extends VerticalLayout {
 	private Grid<UserTemplate> gridUser;
 	private Grid<GroupTemplate> gridGroup;
 	private ComboBox<EnumUserGroup> selectUserGroup;
-	private ClickListener okDeleteClick;
-	
-	//private JoinedLayout<TextField , ComboBox<EnumUserGroup>> joi;
 
 	public UsersAndRolesTab(IdentityService identityService, MessageSource messageSource) {
 		this.identityService = identityService;
@@ -50,11 +47,12 @@ public class UsersAndRolesTab extends VerticalLayout {
 		gridGroup = createGridGroup();
 		searchUserGroup = createSearchUserGroup();
 		selectUserGroup = createSelectUserGroup();
-		//joi = new JoinedLayout<>(searchUserGroup, selectUserGroup);
 				
 		headerHorizont.addComponents(searchUserGroup, selectUserGroup, buttonCreate());
 		resultPage.addComponents(headerHorizont, gridUser, gridGroup);
+
 		addComponent(resultPage);
+		this.setSizeFull();
 	}
 	
 	public MessageSource getMessageSource() {
@@ -118,7 +116,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 			user.setEmail(request.getEmail());
 			user.setPassword(request.getPassword());
 			user.setEdit(buttonEditUser(request));
-			user.setDelete(buttonDeleteUser(request));
+			user.setDelete(buttonDeleteUser(request.getId()));
 			userTemplateList.add((UserTemplate) user);
 		}
 
@@ -139,6 +137,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		grid.addComponentColumn(UserTemplate::getDelete).setCaption(deleteCaption);
 		grid.setDataProvider(dataProvider);
 		grid.setColumnReorderingAllowed(true);
+		//grid.setStyleName("table-layout: auto");
 		return grid;
 	}
 
@@ -152,7 +151,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 			group.setName(request.getName());
 			group.setType(request.getType());
 			group.setEdit(buttonEditGroup(request));
-			group.setDelete(buttonDeleteGroup(request));
+			group.setDelete(buttonDeleteGroup(request.getId()));
 			groupTemplateList.add((GroupTemplate) group);
 		}
 
@@ -170,6 +169,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		grid.addComponentColumn(GroupTemplate::getEdit).setCaption(editCaption);
 		grid.addComponentColumn(GroupTemplate::getDelete).setCaption(deleteCaption);
 		grid.setDataProvider(dataProvider);
+		
 		return grid;
 	}
 
@@ -179,28 +179,30 @@ public class UsersAndRolesTab extends VerticalLayout {
 		Button createButton = new Button(nameCreateButton);
 		  createButton.addClickListener(event -> {
 		  if(selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.USERS)) {
-		  getUI().addWindow(formUser(null)); } else
-		  if(selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.GROUPS)) {
+		  getUI().addWindow(formUser(null));
+		  } 
+		  else if(selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.GROUPS)) {
 		  getUI().addWindow(formGroup(null)); } });
-		 
+		  
 		return createButton;
 	}
 
 	private Button buttonEditUser(User user) {
 		Button editButton = new Button();
 		editButton.addClickListener(event -> getUI().addWindow(formUser(user)));
+
 		return editButton;
 	}
 	
-	private Button buttonDeleteUser(User request) {
+	private Button buttonDeleteUser(String user) {
 		Button deleteButton = new Button();
 		String textInfo = getI18nText("adminView.ConfirmDialog.deleteUser.info");
 		String textOKButton = getI18nText("adminView.ConfirmDialog.deleteUser.ok");
 		String textCloseButton = getI18nText("adminView.ConfirmDialog.deleteUser.close");
-		okDeleteClick = event -> identityService.deleteUser(request.getId());
+		ClickListener okDeleteClick = event -> identityService.deleteUser(user);
 		deleteButton.addClickListener(event -> {
 			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
-			getUI().addWindow(box);
+			getUI().addWindow(box);		
 		});
 		return deleteButton;
 	}
@@ -208,12 +210,20 @@ public class UsersAndRolesTab extends VerticalLayout {
 	private Button buttonEditGroup(Group group) {
 		Button editButton = new Button();
 		editButton.addClickListener(event -> getUI().addWindow(formGroup(group)));
+
 		return editButton;
 	}
 	
-	private Button buttonDeleteGroup(Group request) {
+	private Button buttonDeleteGroup(String group) {
 		Button deleteButton = new Button();
-		deleteButton.addClickListener(event -> identityService.deleteGroup(request.getId()));
+		String textInfo = getI18nText("adminView.ConfirmDialog.deleteGroup.info");
+		String textOKButton = getI18nText("adminView.ConfirmDialog.deleteUser.ok");
+		String textCloseButton = getI18nText("adminView.ConfirmDialog.deleteUser.close");
+		ClickListener okDeleteClick = event -> identityService.deleteGroup(group);
+		deleteButton.addClickListener(event -> {
+			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
+			getUI().addWindow(box);
+		});
 		return deleteButton;
 	}
 	

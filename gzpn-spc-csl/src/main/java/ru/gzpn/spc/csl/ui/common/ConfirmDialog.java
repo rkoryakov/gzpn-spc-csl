@@ -12,17 +12,16 @@ public class ConfirmDialog extends Window {
 	private Button okButton;
 	private Button closeButton;
 	private VerticalLayout body;
-	//private String textInfoBox;
-	//private ClickListener listener;
+	private String textInfoBox;
+	private ClickListener listener;
 	
 	public ConfirmDialog(String textInfoBox, String textOK, String textClose, ClickListener listener) {
-		//this.textInfoBox = textInfoBox;
-		//this.listener = listener;
+		this.textInfoBox = textInfoBox;
+		this.listener = listener;
 		body = createVerticalLayout(textInfoBox, textOK, textClose, listener);
 		this.setModal(true);
 		this.setClosable(false);
 		this.setResizable(false);
-		this.setWidth(400.0f, Unit.PIXELS);
 		this.setContent(body);	
 	}
 
@@ -46,8 +45,8 @@ public class ConfirmDialog extends Window {
 		HorizontalLayout top = new HorizontalLayout();
 		HorizontalLayout bottom = new HorizontalLayout();
 		Label textInfo = new Label(textLabel);
-		top.setSizeFull();
 		top.addComponent(textInfo);
+		top.setSizeFull();
 		okButton = createOKButton(textOKButton, listener);
 		closeButton = createCloseButton(textCloseButton);
 		bottom.addComponents(okButton, closeButton);
