@@ -24,8 +24,21 @@ public class ConfirmDialog extends Window {
 		this.setResizable(false);
 		this.setContent(body);	
 	}
+	
+	public ConfirmDialog(String textInfoBox, ClickListener listener) {
+		this.textInfoBox = textInfoBox;
+		this.listener = listener;
+		body = createVerticalLayout(textInfoBox, null, null, listener);
+		this.setModal(true);
+		this.setClosable(false);
+		this.setResizable(false);
+		this.setContent(body);	
+	}
 
 	private Button createCloseButton(String textCloseButton) {
+		if(textCloseButton.isEmpty()) {
+			textCloseButton = "Close";
+		}
 		Button closeBut = new Button(textCloseButton);
 		closeBut.setSizeFull();
 		closeBut.addClickListener(event -> this.close());
@@ -33,6 +46,9 @@ public class ConfirmDialog extends Window {
 	}
 
 	private Button createOKButton(String textOKButton, ClickListener listener) {
+		if(textOKButton.isEmpty()) {
+			textOKButton = "OK";
+		}
 		Button okBut = new Button(textOKButton);
 		okBut.setSizeFull();
 		okBut.addClickListener(listener);
