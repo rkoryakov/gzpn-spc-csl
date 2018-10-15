@@ -15,6 +15,7 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 	@Override
 	public int getChildCount(HierarchicalQuery<BaseEntity, EntityFilter> query) {
 		int result = 0;
+
 		BaseEntity parent = query.getParent();
 
 		if (parent instanceof ICProject) {

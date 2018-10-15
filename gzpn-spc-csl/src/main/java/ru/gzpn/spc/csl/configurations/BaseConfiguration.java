@@ -18,17 +18,20 @@ import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.services.bl.LoginController;
 import ru.gzpn.spc.csl.ui.MainUI;
-import ru.gzpn.spc.csl.ui.admin.UsersAndRolesTab;
 import ru.gzpn.spc.csl.ui.views.AdminView;
 
 @Configuration
-@EnableJpaRepositories(basePackageClasses = { IHProject.class }, entityManagerFactoryRef = "projectEntityManagerFactory")
-@ComponentScan(basePackageClasses = { BaseEntity.class, ICProject.class, MainUI.class, LoginController.class,
-		AdminView.class, UsersAndRolesTab.class })
+@EnableJpaRepositories(basePackageClasses = {IHProject.class }, 
+					   entityManagerFactoryRef = "projectEntityManagerFactory")
+@ComponentScan(basePackageClasses = { BaseEntity.class, 
+									  ICProject.class, 
+									  MainUI.class, 
+									  LoginController.class,
+									  AdminView.class })
 public class BaseConfiguration {
 
 	/**
-	 * Vaadin local texts
+	 * UI local texts
 	 */
 	@Bean
 	public MessageSource messageSource() {
