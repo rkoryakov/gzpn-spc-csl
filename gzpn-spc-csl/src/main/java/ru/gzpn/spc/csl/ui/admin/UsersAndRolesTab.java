@@ -15,6 +15,7 @@ import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
@@ -22,6 +23,8 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+
+import ru.gzpn.spc.csl.ui.common.ConfirmDialog;
 
 public class UsersAndRolesTab extends VerticalLayout {
 
@@ -34,6 +37,8 @@ public class UsersAndRolesTab extends VerticalLayout {
 	private Grid<UserTemplate> gridUser;
 	private Grid<GroupTemplate> gridGroup;
 	private ComboBox<EnumUserGroup> selectUserGroup;
+	private ClickListener okDeleteClick;
+	
 	//private JoinedLayout<TextField , ComboBox<EnumUserGroup>> joi;
 
 	public UsersAndRolesTab(IdentityService identityService, MessageSource messageSource) {
@@ -189,27 +194,14 @@ public class UsersAndRolesTab extends VerticalLayout {
 	
 	private Button buttonDeleteUser(User request) {
 		Button deleteButton = new Button();
-		Window win = new Window();
-		Button okButton = new Button("OK");
-		Button closeButton = new Button("Отмена");
-		HorizontalLayout l = new HorizontalLayout();
+		String textInfo = getI18nText("adminView.ConfirmDialog.deleteUser.info");
+		String textOKButton = getI18nText("adminView.ConfirmDialog.deleteUser.ok");
+		String textCloseButton = getI18nText("adminView.ConfirmDialog.deleteUser.close");
+		okDeleteClick = event -> identityService.deleteUser(request.getId());
 		deleteButton.addClickListener(event -> {
-			win.setModal(true);
-			win.setClosable(false);
-			win.setResizable(false);
-			win.setWidth(300.0f, Unit.PIXELS);
-			l.addComponent(okButton);
-			l.addComponent(closeButton);
-			okButton.setSizeFull();
-			closeButton.setSizeFull();
-			win.setContent(l);
-			getUI().addWindow(win);
+			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
+			getUI().addWindow(box);
 		});
-		okButton.addClickListener(event -> {
-			identityService.deleteUser(request.getId());
-			 win.close();
-		});
-		closeButton.addClickListener(event -> win.close());
 		return deleteButton;
 	}
 	
