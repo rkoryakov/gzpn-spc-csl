@@ -22,7 +22,7 @@ import ru.gzpn.spc.csl.ui.admin.UsersAndRolesTab;
 import ru.gzpn.spc.csl.ui.views.AdminView;
 
 @Configuration
-@EnableJpaRepositories(basePackageClasses = { IHProject.class })
+@EnableJpaRepositories(basePackageClasses = { IHProject.class }, entityManagerFactoryRef = "projectEntityManagerFactory")
 @ComponentScan(basePackageClasses = { BaseEntity.class, ICProject.class, MainUI.class, LoginController.class,
 		AdminView.class, UsersAndRolesTab.class })
 public class BaseConfiguration {

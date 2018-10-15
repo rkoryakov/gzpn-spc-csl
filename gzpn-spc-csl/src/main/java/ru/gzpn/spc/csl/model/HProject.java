@@ -42,4 +42,12 @@ public class HProject extends ACLBasedEntity implements IHProject {
 		this.name = name;
 	}
 
+	public List<ICProject> getCapitalProjects() {
+		return capitalProjects;
+	}
+
+	public void setCapitalProjects(List<ICProject> capitalProjects) {
+		this.capitalProjects = capitalProjects;
+	}
+
 }
