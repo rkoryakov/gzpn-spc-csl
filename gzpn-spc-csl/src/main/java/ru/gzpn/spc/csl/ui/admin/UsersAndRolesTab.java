@@ -37,6 +37,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 	private Grid<UserTemplate> gridUser;
 	private Grid<GroupTemplate> gridGroup;
 	private ComboBox<EnumUserGroup> selectUserGroup;
+	private DataProvider<UserTemplate, String> dataProviderUser;
 
 	public UsersAndRolesTab(IdentityService identityService, MessageSource messageSource) {
 		this.identityService = identityService;
@@ -105,10 +106,10 @@ public class UsersAndRolesTab extends VerticalLayout {
 	}
 
 	private Grid<UserTemplate> createGridUser() {
-		List<User> userList = identityService.createUserQuery().list();
-		List<UserTemplate> userTemplateList = new ArrayList<>();
+		//List<User> userList = identityService.createUserQuery().list();
+		//Stream<UserTemplate> userTemplateList = null;
 
-		for (User request : userList) {
+		/*for (User request : userList) {
 			UserTemplate user = new UserTemplate();
 			user.setId(request.getId());
 			user.setFirstName(request.getFirstName());
@@ -118,7 +119,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 			user.setEdit(buttonEditUser(request));
 			user.setDelete(buttonDeleteUser(request.getId()));
 			userTemplateList.add((UserTemplate) user);
-		}
+		}*/
 
 		String editCaption = getI18nText("adminView.caption.edit");
 		String deleteCaption = getI18nText("adminView.caption.delete");
@@ -127,7 +128,27 @@ public class UsersAndRolesTab extends VerticalLayout {
 		String lastNameCaption = getI18nText("adminView.caption.lastName");
 		String emailCaption = getI18nText("adminView.caption.email");
 
-		ListDataProvider<UserTemplate> dataProvider = DataProvider.ofCollection(userTemplateList);
+		dataProviderUser = DataProvider.fromFilteringCallbacks(
+				  query -> {
+				    int offset = query.getOffset();
+				    int limit = query.getLimit();
+				    List<User> userList = identityService.createUserQuery().listPage(offset, limit);
+				    return userList.stream().map(m->{
+				    	UserTemplate user = new UserTemplate();
+				    	user.setId(m.getId());
+				    	user.setFirstName(m.getFirstName());
+				    	user.setLastName(m.getLastName());
+				    	user.setEmail(m.getEmail());
+				    	user.setPassword(m.getPassword());
+				    	user.setEdit(buttonEditUser(m));
+						user.setDelete(buttonDeleteUser(m.getId()));
+						return user;
+				    });
+				  },
+				  query -> {return identityService.createUserQuery().listPage(query.getOffset(), query.getLimit()).size();}                                                                   //getPersonService().getPersonCount()
+				);
+
+		//ListDataProvider<UserTemplate> dataProvider = DataProvider.ofCollection(userTemplateList);
 		Grid<UserTemplate> grid = new Grid<>();
 		grid.addColumn(UserTemplate::getId).setCaption(loginCaption);
 		grid.addColumn(UserTemplate::getFirstName).setCaption(firstNameCaption);
@@ -135,7 +156,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		grid.addColumn(UserTemplate::getEmail).setCaption(emailCaption);
 		grid.addComponentColumn(UserTemplate::getEdit).setCaption(editCaption);
 		grid.addComponentColumn(UserTemplate::getDelete).setCaption(deleteCaption);
-		grid.setDataProvider(dataProvider);
+		grid.setDataProvider(dataProviderUser);
 		grid.setColumnReorderingAllowed(true);
 		//grid.setStyleName("table-layout: auto");
 		return grid;
@@ -180,6 +201,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		  createButton.addClickListener(event -> {
 		  if(selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.USERS)) {
 		  getUI().addWindow(formUser(null));
+		  
 		  } 
 		  else if(selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.GROUPS)) {
 		  getUI().addWindow(formGroup(null)); } });
@@ -293,6 +315,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 				user.setEmail(emailField.getValue());
 				user.setPassword(newPasswordField.getValue());
 				identityService.saveUser(user);
+				dataProviderUser.refreshAll();
 			}
 			else if (user.getId() != null) {
 				user.setFirstName(firstNameField.getValue());
@@ -300,8 +323,10 @@ public class UsersAndRolesTab extends VerticalLayout {
 				user.setEmail(emailField.getValue());
 				user.setPassword(newPasswordField.getValue());
 				identityService.saveUser(user);
+				dataProviderUser.refreshAll();
 			}
 		});
+
 		return window;
 	}
 
