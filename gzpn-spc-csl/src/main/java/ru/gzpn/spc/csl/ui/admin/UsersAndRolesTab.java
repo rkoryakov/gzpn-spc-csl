@@ -2,6 +2,7 @@ package ru.gzpn.spc.csl.ui.admin;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
@@ -36,7 +37,10 @@ public class UsersAndRolesTab extends VerticalLayout {
 	private Grid<GroupTemplate> gridGroup;
 	private ComboBox<EnumUserGroup> selectUserGroup;
 	private DataProvider<UserTemplate, String> dataProviderUser;
+	//private ConfigurableFilterDataProvider<UserTemplate, Void, String> dataProviderUser;
+	//private ConfigurableFilterDataProvider<UserTemplate, Void, String> wrapper;
 	private DataProvider<GroupTemplate, String> dataProviderGroup;
+
 
 	public UsersAndRolesTab(IdentityService identityService, MessageSource messageSource) {
 		this.identityService = identityService;
@@ -93,7 +97,18 @@ public class UsersAndRolesTab extends VerticalLayout {
 
 	private TextField createSearchUserGroup() {
 		TextField filterTextField = new TextField();
-
+		filterTextField.addValueChangeListener(event -> {
+				  if(selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.USERS)) {  
+					  //wrapper.setFilter(event.getValue());
+				  }
+				  else if(selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.GROUPS)) {
+//					  dataProviderGroup.setFilter(GroupTemplate::getId, name -> {
+//			                String nameLower = name == null ? "" : name.toLowerCase(Locale.ENGLISH);
+//			                String filterLower = event.getValue().toLowerCase(Locale.ENGLISH);
+//			                return nameLower.contains(filterLower);
+//			            });
+				  } 
+        });
 		return filterTextField;
 	}
 
@@ -108,9 +123,13 @@ public class UsersAndRolesTab extends VerticalLayout {
 
 		dataProviderUser = DataProvider.fromFilteringCallbacks(
 				  query -> {
+					  
+					String filter = query.getFilter().orElse(null);
 				    int offset = query.getOffset();
 				    int limit = query.getLimit();
-				    List<User> userList = identityService.createUserQuery().listPage(offset, limit);
+				    List<User> userList = identityService.createUserQuery().listPage(offset, limit).stream().filter(u->{
+						  return u.getId().startsWith(filter);
+					  }).collect(Collectors.toList());
 				    return userList.stream().map(m->{
 				    	UserTemplate user = new UserTemplate();
 				    	user.setId(m.getId());
@@ -124,7 +143,10 @@ public class UsersAndRolesTab extends VerticalLayout {
 				    });
 				  },
 				  query -> {
-					  return identityService.createUserQuery().listPage(query.getOffset(), query.getLimit()).size();
+					  String filter = query.getFilter().orElse(null);
+					  return identityService.createUserQuery().listPage(query.getOffset(), query.getLimit()).stream().filter(u->{
+						  return u.getId().startsWith(filter);
+					  }).collect(Collectors.toList()).size();
 					  }
 				);
 
@@ -133,9 +155,10 @@ public class UsersAndRolesTab extends VerticalLayout {
 		grid.addColumn(UserTemplate::getFirstName).setCaption(firstNameCaption);
 		grid.addColumn(UserTemplate::getLastName).setCaption(lastNameCaption);
 		grid.addColumn(UserTemplate::getEmail).setCaption(emailCaption);
-		grid.addComponentColumn(UserTemplate::getEdit).setCaption(editCaption).setWidth(125.0);
-		grid.addComponentColumn(UserTemplate::getDelete).setCaption(deleteCaption).setWidth(125.0);
+		grid.addComponentColumn(UserTemplate::getEdit).setCaption(editCaption).setWidth(105.0);
+		grid.addComponentColumn(UserTemplate::getDelete).setCaption(deleteCaption).setWidth(105.0);
 		grid.setDataProvider(dataProviderUser);
+		
 		grid.setColumnReorderingAllowed(true);
 		grid.setWidth(70, Unit.PERCENTAGE);
 		//grid.setStyleName("table-layout: auto");
@@ -174,8 +197,8 @@ public class UsersAndRolesTab extends VerticalLayout {
 		grid.addColumn(GroupTemplate::getId).setCaption(idCaption);
 		grid.addColumn(GroupTemplate::getName).setCaption(nameCaption);
 		grid.addColumn(GroupTemplate::getType).setCaption(typeCaption);
-		grid.addComponentColumn(GroupTemplate::getEdit).setCaption(editCaption).setWidth(125.0);
-		grid.addComponentColumn(GroupTemplate::getDelete).setCaption(deleteCaption).setWidth(125.0);
+		grid.addComponentColumn(GroupTemplate::getEdit).setCaption(editCaption).setWidth(105.0);
+		grid.addComponentColumn(GroupTemplate::getDelete).setCaption(deleteCaption).setWidth(105.0);
 		grid.setDataProvider(dataProviderGroup);
 		grid.setWidth(70, Unit.PERCENTAGE);
 		//grid.setStyleName("table-layout: auto");
