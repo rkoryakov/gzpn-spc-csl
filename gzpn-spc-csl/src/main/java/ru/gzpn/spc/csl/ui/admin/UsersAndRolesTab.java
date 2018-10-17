@@ -121,11 +121,13 @@ public class UsersAndRolesTab extends VerticalLayout {
 		String emailCaption = getI18nText("adminView.caption.email");
 
 		userDataProvider = DataProvider.fromFilteringCallbacks(query -> {
-			int offset = query.getOffset();
-			int limit = query.getLimit();
-			List<User> userList = identityService.createUserQuery().listPage(offset, limit).stream().filter(user -> {
-				return user.getId().startsWith(query.getFilter().orElse(""));
-			}).collect(Collectors.toList());
+
+			List<User> userList = identityService.createUserQuery().list()
+					.stream()
+						.filter(user -> {
+							return user.getId().startsWith(query.getFilter().orElse(""));
+						}).collect(Collectors.toList());
+			
 			return userList.stream().map(m -> {
 				UserTemplate user = new UserTemplate();
 				user.setId(m.getId());
@@ -138,10 +140,11 @@ public class UsersAndRolesTab extends VerticalLayout {
 				return user;
 			});
 		}, query -> {
-			return identityService.createUserQuery().listPage(query.getOffset(), query.getLimit()).stream()
-					.filter(user -> {
-						return user.getId().startsWith(query.getFilter().orElse(""));
-					}).collect(Collectors.toList()).size();
+			return identityService.createUserQuery().list()
+					.stream()
+						.filter(user -> {
+							return user.getId().startsWith(query.getFilter().orElse(""));
+						}).collect(Collectors.toList()).size();
 		});
 
 		userFilter = userDataProvider.withConfigurableFilter();
@@ -155,7 +158,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		grid.setDataProvider(userFilter);
 		grid.setColumnReorderingAllowed(true);
 		grid.setWidth(70, Unit.PERCENTAGE);
-		// grid.setStyleName("table-layout: auto");
+
 		return grid;
 	}
 
@@ -168,9 +171,10 @@ public class UsersAndRolesTab extends VerticalLayout {
 		String typeCaption = getI18nText("adminView.caption.typeRoles");
 
 		groupDataProvider = DataProvider.fromFilteringCallbacks(query -> {
-			int offset = query.getOffset();
-			int limit = query.getLimit();
-			List<Group> groupList = identityService.createGroupQuery().listPage(offset, limit)
+
+			logger.debug("query.getOffset() {}", query.getOffset());
+			logger.debug("query.getLimit() {}", query.getLimit());
+			List<Group> groupList = identityService.createGroupQuery().list()
 					.stream()
 						.filter(group -> {
 							return group.getId().startsWith(query.getFilter().orElse(""));
@@ -186,11 +190,14 @@ public class UsersAndRolesTab extends VerticalLayout {
 				return group;
 			});
 		}, query -> {
-			return identityService.createGroupQuery().listPage(query.getOffset(), query.getLimit())
+			
+			int count = identityService.createGroupQuery().list()
 					.stream()
 					.filter(group -> {
 						return group.getId().startsWith(query.getFilter().orElse(""));
 					}).collect(Collectors.toList()).size();
+	
+			return count;
 		});
 
 		groupFilter = groupDataProvider.withConfigurableFilter();
@@ -202,7 +209,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		grid.addComponentColumn(GroupTemplate::getDelete).setCaption(deleteCaption).setWidth(105.0);
 		grid.setDataProvider(groupFilter);
 		grid.setWidth(70, Unit.PERCENTAGE);
-		// grid.setStyleName("table-layout: auto");
+
 		return grid;
 	}
 
