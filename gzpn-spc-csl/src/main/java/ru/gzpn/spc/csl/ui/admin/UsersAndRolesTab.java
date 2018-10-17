@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 
+import com.vaadin.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Button;
@@ -36,11 +37,10 @@ public class UsersAndRolesTab extends VerticalLayout {
 	private Grid<UserTemplate> gridUser;
 	private Grid<GroupTemplate> gridGroup;
 	private ComboBox<EnumUserGroup> selectUserGroup;
-	private DataProvider<UserTemplate, String> dataProviderUser;
-	//private ConfigurableFilterDataProvider<UserTemplate, Void, String> dataProviderUser;
-	//private ConfigurableFilterDataProvider<UserTemplate, Void, String> wrapper;
-	private DataProvider<GroupTemplate, String> dataProviderGroup;
-
+	private DataProvider<UserTemplate, String> userDataProvider;
+	private DataProvider<GroupTemplate, String> groupDataProvider;
+	private ConfigurableFilterDataProvider<UserTemplate, Void, String> userFilter;
+	private ConfigurableFilterDataProvider<GroupTemplate, Void, String> groupFilter;
 
 	public UsersAndRolesTab(IdentityService identityService, MessageSource messageSource) {
 		this.identityService = identityService;
@@ -51,14 +51,14 @@ public class UsersAndRolesTab extends VerticalLayout {
 		gridGroup = createGridGroup();
 		searchUserGroup = createSearchUserGroup();
 		selectUserGroup = createSelectUserGroup();
-				
+
 		headerHorizont.addComponents(searchUserGroup, selectUserGroup, buttonCreate());
 		resultPage.addComponents(headerHorizont, gridUser, gridGroup);
 		resultPage.setSizeFull();
 		addComponent(resultPage);
 		this.setSizeFull();
 	}
-	
+
 	public MessageSource getMessageSource() {
 		return messageSource;
 	}
@@ -74,7 +74,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		comboBox.setEmptySelectionAllowed(false);
 		comboBox.setSelectedItem(EnumUserGroup.USERS);
 		gridGroup.setVisible(false);
-		
+
 		comboBox.setItemCaptionGenerator(item -> {
 			String result = getI18nText("adminView.caption.usersKey");
 			if (item == EnumUserGroup.GROUPS) {
@@ -82,7 +82,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 			}
 			return result;
 		});
-		
+
 		comboBox.addSelectionListener(event -> {
 			if (event.getSelectedItem().get().equals(EnumUserGroup.USERS)) {
 				gridUser.setVisible(true);
@@ -91,24 +91,23 @@ public class UsersAndRolesTab extends VerticalLayout {
 				gridUser.setVisible(false);
 				gridGroup.setVisible(true);
 			}
+			searchUserGroup.setValue("");
 		});
 		return comboBox;
 	}
 
 	private TextField createSearchUserGroup() {
 		TextField filterTextField = new TextField();
+
 		filterTextField.addValueChangeListener(event -> {
-				  if(selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.USERS)) {  
-					  //wrapper.setFilter(event.getValue());
-				  }
-				  else if(selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.GROUPS)) {
-//					  dataProviderGroup.setFilter(GroupTemplate::getId, name -> {
-//			                String nameLower = name == null ? "" : name.toLowerCase(Locale.ENGLISH);
-//			                String filterLower = event.getValue().toLowerCase(Locale.ENGLISH);
-//			                return nameLower.contains(filterLower);
-//			            });
-				  } 
-        });
+			if (selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.USERS)) {
+				userFilter.setFilter(event.getValue());
+				userFilter.refreshAll();
+			} else if (selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.GROUPS)) {
+				groupFilter.setFilter(event.getValue());
+				groupFilter.refreshAll();
+			}
+		});
 		return filterTextField;
 	}
 
@@ -121,35 +120,31 @@ public class UsersAndRolesTab extends VerticalLayout {
 		String lastNameCaption = getI18nText("adminView.caption.lastName");
 		String emailCaption = getI18nText("adminView.caption.email");
 
-		dataProviderUser = DataProvider.fromFilteringCallbacks(
-				  query -> {
-					  
-					String filter = query.getFilter().orElse(null);
-				    int offset = query.getOffset();
-				    int limit = query.getLimit();
-				    List<User> userList = identityService.createUserQuery().listPage(offset, limit).stream().filter(u->{
-						  return u.getId().startsWith(filter);
-					  }).collect(Collectors.toList());
-				    return userList.stream().map(m->{
-				    	UserTemplate user = new UserTemplate();
-				    	user.setId(m.getId());
-				    	user.setFirstName(m.getFirstName());
-				    	user.setLastName(m.getLastName());
-				    	user.setEmail(m.getEmail());
-				    	user.setPassword(m.getPassword());
-				    	user.setEdit(buttonEditUser(m));
-						user.setDelete(buttonDeleteUser(m.getId()));
-						return user;
-				    });
-				  },
-				  query -> {
-					  String filter = query.getFilter().orElse(null);
-					  return identityService.createUserQuery().listPage(query.getOffset(), query.getLimit()).stream().filter(u->{
-						  return u.getId().startsWith(filter);
-					  }).collect(Collectors.toList()).size();
-					  }
-				);
+		userDataProvider = DataProvider.fromFilteringCallbacks(query -> {
+			int offset = query.getOffset();
+			int limit = query.getLimit();
+			List<User> userList = identityService.createUserQuery().listPage(offset, limit).stream().filter(user -> {
+				return user.getId().startsWith(query.getFilter().orElse(""));
+			}).collect(Collectors.toList());
+			return userList.stream().map(m -> {
+				UserTemplate user = new UserTemplate();
+				user.setId(m.getId());
+				user.setFirstName(m.getFirstName());
+				user.setLastName(m.getLastName());
+				user.setEmail(m.getEmail());
+				user.setPassword(m.getPassword());
+				user.setEdit(buttonEditUser(m));
+				user.setDelete(buttonDeleteUser(m.getId()));
+				return user;
+			});
+		}, query -> {
+			return identityService.createUserQuery().listPage(query.getOffset(), query.getLimit()).stream()
+					.filter(user -> {
+						return user.getId().startsWith(query.getFilter().orElse(""));
+					}).collect(Collectors.toList()).size();
+		});
 
+		userFilter = userDataProvider.withConfigurableFilter();
 		Grid<UserTemplate> grid = new Grid<>();
 		grid.addColumn(UserTemplate::getId).setCaption(loginCaption);
 		grid.addColumn(UserTemplate::getFirstName).setCaption(firstNameCaption);
@@ -157,11 +152,10 @@ public class UsersAndRolesTab extends VerticalLayout {
 		grid.addColumn(UserTemplate::getEmail).setCaption(emailCaption);
 		grid.addComponentColumn(UserTemplate::getEdit).setCaption(editCaption).setWidth(105.0);
 		grid.addComponentColumn(UserTemplate::getDelete).setCaption(deleteCaption).setWidth(105.0);
-		grid.setDataProvider(dataProviderUser);
-		
+		grid.setDataProvider(userFilter);
 		grid.setColumnReorderingAllowed(true);
 		grid.setWidth(70, Unit.PERCENTAGE);
-		//grid.setStyleName("table-layout: auto");
+		// grid.setStyleName("table-layout: auto");
 		return grid;
 	}
 
@@ -172,36 +166,43 @@ public class UsersAndRolesTab extends VerticalLayout {
 		String idCaption = getI18nText("adminView.caption.id");
 		String nameCaption = getI18nText("adminView.caption.nameRoles");
 		String typeCaption = getI18nText("adminView.caption.typeRoles");
-		
-		dataProviderGroup = DataProvider.fromFilteringCallbacks(
-				  query -> {
-				    int offset = query.getOffset();
-				    int limit = query.getLimit();
-				    List<Group> groupList = identityService.createGroupQuery().listPage(offset, limit);
-				    return groupList.stream().map(m->{
-				    	GroupTemplate group = new GroupTemplate();
-						group.setId(m.getId());
-						group.setName(m.getName());
-						group.setType(m.getType());
-						group.setEdit(buttonEditGroup(m));
-						group.setDelete(buttonDeleteGroup(m.getId()));
-						return group;
-				    });
-				  },
-				  query -> {
-					  return identityService.createGroupQuery().listPage(query.getOffset(), query.getLimit()).size();
-					  }
-				);
 
+		groupDataProvider = DataProvider.fromFilteringCallbacks(query -> {
+			int offset = query.getOffset();
+			int limit = query.getLimit();
+			List<Group> groupList = identityService.createGroupQuery().listPage(offset, limit)
+					.stream()
+						.filter(group -> {
+							return group.getId().startsWith(query.getFilter().orElse(""));
+						}).collect(Collectors.toList());
+			
+			return groupList.stream().map(m -> {
+				GroupTemplate group = new GroupTemplate();
+				group.setId(m.getId());
+				group.setName(m.getName());
+				group.setType(m.getType());
+				group.setEdit(buttonEditGroup(m));
+				group.setDelete(buttonDeleteGroup(m.getId()));
+				return group;
+			});
+		}, query -> {
+			return identityService.createGroupQuery().listPage(query.getOffset(), query.getLimit())
+					.stream()
+					.filter(group -> {
+						return group.getId().startsWith(query.getFilter().orElse(""));
+					}).collect(Collectors.toList()).size();
+		});
+
+		groupFilter = groupDataProvider.withConfigurableFilter();
 		Grid<GroupTemplate> grid = new Grid<>();
 		grid.addColumn(GroupTemplate::getId).setCaption(idCaption);
 		grid.addColumn(GroupTemplate::getName).setCaption(nameCaption);
 		grid.addColumn(GroupTemplate::getType).setCaption(typeCaption);
 		grid.addComponentColumn(GroupTemplate::getEdit).setCaption(editCaption).setWidth(105.0);
 		grid.addComponentColumn(GroupTemplate::getDelete).setCaption(deleteCaption).setWidth(105.0);
-		grid.setDataProvider(dataProviderGroup);
+		grid.setDataProvider(groupFilter);
 		grid.setWidth(70, Unit.PERCENTAGE);
-		//grid.setStyleName("table-layout: auto");
+		// grid.setStyleName("table-layout: auto");
 		return grid;
 	}
 
@@ -209,14 +210,15 @@ public class UsersAndRolesTab extends VerticalLayout {
 		String nameCreateButton = getI18nText("adminView.button.nameCreateButton");
 
 		Button createButton = new Button(nameCreateButton);
-		  createButton.addClickListener(event -> {
-		  if(selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.USERS)) {
-		  getUI().addWindow(formUser(null));
-		  
-		  } 
-		  else if(selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.GROUPS)) {
-		  getUI().addWindow(formGroup(null)); } });
-		  
+		createButton.addClickListener(event -> {
+			if (selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.USERS)) {
+				getUI().addWindow(formUser(null));
+
+			} else if (selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.GROUPS)) {
+				getUI().addWindow(formGroup(null));
+			}
+		});
+
 		return createButton;
 	}
 
@@ -225,7 +227,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		editButton.addClickListener(event -> getUI().addWindow(formUser(user)));
 		return editButton;
 	}
-	
+
 	private Button buttonDeleteUser(String user) {
 		Button deleteButton = new Button();
 		String textInfo = getI18nText("adminView.ConfirmDialog.deleteUser.info");
@@ -233,22 +235,22 @@ public class UsersAndRolesTab extends VerticalLayout {
 		String textCloseButton = getI18nText("adminView.ConfirmDialog.deleteUser.close");
 		ClickListener okDeleteClick = event -> {
 			identityService.deleteUser(user);
-			dataProviderUser.refreshAll();
+			userDataProvider.refreshAll();
 		};
 		deleteButton.addClickListener(event -> {
 			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
 			getUI().addWindow(box);
 		});
-		
+
 		return deleteButton;
 	}
-	
+
 	private Button buttonEditGroup(Group group) {
 		Button editButton = new Button();
 		editButton.addClickListener(event -> getUI().addWindow(formGroup(group)));
 		return editButton;
 	}
-	
+
 	private Button buttonDeleteGroup(String group) {
 		Button deleteButton = new Button();
 		String textInfo = getI18nText("adminView.ConfirmDialog.deleteGroup.info");
@@ -256,7 +258,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		String textCloseButton = getI18nText("adminView.ConfirmDialog.deleteUser.close");
 		ClickListener okDeleteClick = event -> {
 			identityService.deleteGroup(group);
-			dataProviderGroup.refreshAll();
+			groupDataProvider.refreshAll();
 		};
 		deleteButton.addClickListener(event -> {
 			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
@@ -264,9 +266,9 @@ public class UsersAndRolesTab extends VerticalLayout {
 		});
 		return deleteButton;
 	}
-	
+
 	private Window formUser(User currentUser) {
-		
+
 		String userWindowCaption = getI18nText("adminView.caption.userKey");
 		String loginCaption = getI18nText("adminView.caption.login");
 		String firstNameCaption = getI18nText("adminView.caption.firstName");
@@ -274,7 +276,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		String emailCaption = getI18nText("adminView.caption.email");
 		String newPasswordCaption = getI18nText("adminView.caption.newPasswordCaption");
 		String nameSaveButton = getI18nText("adminView.button.nameSaveButton");
-		
+
 		final Window window = new Window(userWindowCaption);
 		window.setModal(true);
 		window.setResizable(false);
@@ -282,23 +284,25 @@ public class UsersAndRolesTab extends VerticalLayout {
 		final FormLayout content = new FormLayout();
 		content.setMargin(true);
 		content.addStyleName("outlined");
-		
+
 		final TextField loginField;
 		final TextField firstNameField;
 		final TextField lastNameField;
 		final TextField emailField;
 		final TextField newPasswordField;
 		Button saveButton = new Button(nameSaveButton);
-		
+
 		if (currentUser != null) {
 			loginField = new TextField(loginCaption, currentUser.getId());
 			loginField.setReadOnly(true);
-			firstNameField = new TextField(firstNameCaption, currentUser.getFirstName() == null ? "" : currentUser.getFirstName());
-			lastNameField = new TextField(lastNameCaption, currentUser.getLastName() == null ? "" : currentUser.getLastName());
+			firstNameField = new TextField(firstNameCaption,
+					currentUser.getFirstName() == null ? "" : currentUser.getFirstName());
+			lastNameField = new TextField(lastNameCaption,
+					currentUser.getLastName() == null ? "" : currentUser.getLastName());
 			emailField = new TextField(emailCaption, currentUser.getEmail() == null ? "" : currentUser.getEmail());
 			newPasswordField = new TextField(newPasswordCaption, "");
 		}
-			
+
 		else {
 			loginField = new TextField(loginCaption, "");
 			firstNameField = new TextField(firstNameCaption, "");
@@ -306,22 +310,22 @@ public class UsersAndRolesTab extends VerticalLayout {
 			emailField = new TextField(emailCaption, "");
 			newPasswordField = new TextField(newPasswordCaption, "");
 		}
-		
+
 		loginField.setWidth(90.0f, Unit.PERCENTAGE);
 		firstNameField.setWidth(90.0f, Unit.PERCENTAGE);
 		lastNameField.setWidth(90.0f, Unit.PERCENTAGE);
 		emailField.setWidth(90.0f, Unit.PERCENTAGE);
 		newPasswordField.setWidth(90.0f, Unit.PERCENTAGE);
-		
+
 		content.addComponent(loginField);
 		content.addComponent(firstNameField);
 		content.addComponent(lastNameField);
 		content.addComponent(emailField);
 		content.addComponent(newPasswordField);
 		content.addComponent(saveButton);
-		
+
 		window.setContent(content);
-		
+
 		saveButton.addClickListener(event -> {
 			User user = identityService.createUserQuery().userId(loginField.getValue()).singleResult();
 			if (user == null) {
@@ -331,15 +335,14 @@ public class UsersAndRolesTab extends VerticalLayout {
 				user.setEmail(emailField.getValue());
 				user.setPassword(newPasswordField.getValue());
 				identityService.saveUser(user);
-				dataProviderUser.refreshAll();
-			}
-			else if (user.getId() != null) {
+				userDataProvider.refreshAll();
+			} else if (user.getId() != null) {
 				user.setFirstName(firstNameField.getValue());
 				user.setLastName(lastNameField.getValue());
 				user.setEmail(emailField.getValue());
 				user.setPassword(newPasswordField.getValue());
 				identityService.saveUser(user);
-				dataProviderUser.refreshAll();
+				userDataProvider.refreshAll();
 			}
 		});
 
@@ -347,7 +350,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 	}
 
 	private Window formGroup(Group currentGroup) {
-		
+
 		String groupWindowCaption = getI18nText("adminView.caption.groupKey");
 		String idCaption = getI18nText("adminView.caption.id");
 		String nameCaption = getI18nText("adminView.caption.nameRoles");
@@ -361,19 +364,19 @@ public class UsersAndRolesTab extends VerticalLayout {
 		final FormLayout content = new FormLayout();
 		content.setMargin(true);
 		content.addStyleName("outlined");
-		
+
 		final TextField idField;
 		final TextField nameField;
 		final TextField typeField;
 		Button saveButton = new Button(nameSaveButton);
-		
+
 		if (currentGroup != null) {
 			idField = new TextField(idCaption, currentGroup.getId());
 			idField.setReadOnly(true);
 			nameField = new TextField(nameCaption, currentGroup.getName());
 			typeField = new TextField(typeCaption, currentGroup.getType());
 		}
-		
+
 		else {
 			idField = new TextField(idCaption, "");
 			nameField = new TextField(nameCaption, "");
@@ -382,14 +385,14 @@ public class UsersAndRolesTab extends VerticalLayout {
 		idField.setWidth(90.0f, Unit.PERCENTAGE);
 		nameField.setWidth(90.0f, Unit.PERCENTAGE);
 		typeField.setWidth(90.0f, Unit.PERCENTAGE);
-		
+
 		content.addComponent(idField);
 		content.addComponent(nameField);
 		content.addComponent(typeField);
 		content.addComponent(saveButton);
-		
+
 		window.setContent(content);
-		
+
 		saveButton.addClickListener(event -> {
 			Group group = identityService.createGroupQuery().groupId(idField.getValue()).singleResult();
 			if (group == null) {
@@ -397,16 +400,15 @@ public class UsersAndRolesTab extends VerticalLayout {
 				group.setName(nameField.getValue());
 				group.setType(typeField.getValue());
 				identityService.saveGroup(group);
-				dataProviderGroup.refreshAll();
-			}
-			else if (group.getId() != null) {
+				groupDataProvider.refreshAll();
+			} else if (group.getId() != null) {
 				group.setName(nameField.getValue());
 				group.setType(typeField.getValue());
 				identityService.saveGroup(group);
-				dataProviderGroup.refreshAll();
+				groupDataProvider.refreshAll();
 			}
 		});
-		
+
 		return window;
 	}
 

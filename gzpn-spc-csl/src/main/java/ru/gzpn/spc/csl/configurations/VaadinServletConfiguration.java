@@ -26,7 +26,6 @@ public class VaadinServletConfiguration extends SpringVaadinServlet {
 			systemMessages.setSessionExpiredNotificationEnabled(false);
 			// Force a logout to also end the HTTP session and not only the Vaadin session
 			systemMessages.setSessionExpiredURL("logout");
-			logger.debug("setSessionExpiredURL {}", systemMessages.getSessionExpiredURL());
 			// Don't show any message, reload the page instead
 			systemMessages.setCommunicationErrorNotificationEnabled(false);
 
