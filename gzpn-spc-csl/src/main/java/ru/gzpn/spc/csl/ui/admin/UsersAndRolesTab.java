@@ -20,6 +20,8 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -136,7 +138,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 				user.setEmail(m.getEmail());
 				user.setPassword(m.getPassword());
 				user.setEdit(buttonEditUser(m));
-				user.setDelete(buttonDeleteUser(m.getId()));
+				user.setDelete(buttonDeleteUser(m));
 				return user;
 			});
 		}, query -> {
@@ -186,14 +188,12 @@ public class UsersAndRolesTab extends VerticalLayout {
 				group.setName(m.getName());
 				group.setType(m.getType());
 				group.setEdit(buttonEditGroup(m));
-				group.setDelete(buttonDeleteGroup(m.getId()));
+				group.setDelete(buttonDeleteGroup(m));
 				return group;
 			});
 		}, query -> {
 			
-			int count = identityService.createGroupQuery().list()
-					.stream()
-					.filter(group -> {
+			int count = identityService.createGroupQuery().list().stream().filter(group -> {
 						return group.getId().startsWith(query.getFilter().orElse(""));
 					}).collect(Collectors.toList()).size();
 	
@@ -225,7 +225,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 				getUI().addWindow(formGroup(null));
 			}
 		});
-
+		
 		return createButton;
 	}
 
@@ -235,20 +235,23 @@ public class UsersAndRolesTab extends VerticalLayout {
 		return editButton;
 	}
 
-	private Button buttonDeleteUser(String user) {
+	private Button buttonDeleteUser(User user) {
 		Button deleteButton = new Button();
+		String userWindowCaption = getI18nText("adminView.caption.userKey");
+		String notificationDeleted = getI18nText("adminView.notification.user.deleted");
 		String textInfo = getI18nText("adminView.ConfirmDialog.deleteUser.info");
 		String textOKButton = getI18nText("adminView.ConfirmDialog.deleteUser.ok");
 		String textCloseButton = getI18nText("adminView.ConfirmDialog.deleteUser.close");
 		ClickListener okDeleteClick = event -> {
-			identityService.deleteUser(user);
+			identityService.deleteUser(user.getId());
 			userDataProvider.refreshAll();
+			Notification.show(userWindowCaption.concat(" ").concat(user.getId()).concat(notificationDeleted), Type.WARNING_MESSAGE);
 		};
+		
 		deleteButton.addClickListener(event -> {
 			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
 			getUI().addWindow(box);
 		});
-
 		return deleteButton;
 	}
 
@@ -258,19 +261,23 @@ public class UsersAndRolesTab extends VerticalLayout {
 		return editButton;
 	}
 
-	private Button buttonDeleteGroup(String group) {
+	private Button buttonDeleteGroup(Group group) {
 		Button deleteButton = new Button();
+		String groupWindowCaption = getI18nText("adminView.caption.groupKey");
+		String notificationDeleted = getI18nText("adminView.notification.group.deleted");
 		String textInfo = getI18nText("adminView.ConfirmDialog.deleteGroup.info");
 		String textOKButton = getI18nText("adminView.ConfirmDialog.deleteUser.ok");
 		String textCloseButton = getI18nText("adminView.ConfirmDialog.deleteUser.close");
 		ClickListener okDeleteClick = event -> {
-			identityService.deleteGroup(group);
+			identityService.deleteGroup(group.getId());
 			groupDataProvider.refreshAll();
+			Notification.show(groupWindowCaption.concat(" ").concat(group.getId()).concat(notificationDeleted), Type.WARNING_MESSAGE);
 		};
 		deleteButton.addClickListener(event -> {
 			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
 			getUI().addWindow(box);
 		});
+		
 		return deleteButton;
 	}
 
@@ -282,7 +289,11 @@ public class UsersAndRolesTab extends VerticalLayout {
 		String lastNameCaption = getI18nText("adminView.caption.lastName");
 		String emailCaption = getI18nText("adminView.caption.email");
 		String newPasswordCaption = getI18nText("adminView.caption.newPasswordCaption");
+		String passwordCaption = getI18nText("adminView.caption.passwordCaption");
 		String nameSaveButton = getI18nText("adminView.button.nameSaveButton");
+		String notificationChanged = getI18nText("adminView.notification.user.change");
+		String notificationCreated = getI18nText("adminView.notification.user.created");
+		
 
 		final Window window = new Window(userWindowCaption);
 		window.setModal(true);
@@ -315,7 +326,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 			firstNameField = new TextField(firstNameCaption, "");
 			lastNameField = new TextField(lastNameCaption, "");
 			emailField = new TextField(emailCaption, "");
-			newPasswordField = new TextField(newPasswordCaption, "");
+			newPasswordField = new TextField(passwordCaption, "");
 		}
 
 		loginField.setWidth(90.0f, Unit.PERCENTAGE);
@@ -342,13 +353,17 @@ public class UsersAndRolesTab extends VerticalLayout {
 				user.setEmail(emailField.getValue());
 				user.setPassword(newPasswordField.getValue());
 				identityService.saveUser(user);
+				Notification.show(userWindowCaption.concat(" ").concat(user.getId()).concat(notificationCreated), Type.TRAY_NOTIFICATION);
 				userDataProvider.refreshAll();
+				window.close();
+				
 			} else if (user.getId() != null) {
 				user.setFirstName(firstNameField.getValue());
 				user.setLastName(lastNameField.getValue());
 				user.setEmail(emailField.getValue());
 				user.setPassword(newPasswordField.getValue());
 				identityService.saveUser(user);
+				Notification.show(userWindowCaption.concat(" ").concat(user.getId()).concat(notificationChanged), Type.TRAY_NOTIFICATION);
 				userDataProvider.refreshAll();
 			}
 		});
@@ -363,6 +378,8 @@ public class UsersAndRolesTab extends VerticalLayout {
 		String nameCaption = getI18nText("adminView.caption.nameRoles");
 		String typeCaption = getI18nText("adminView.caption.typeRoles");
 		String nameSaveButton = getI18nText("adminView.button.nameSaveButton");
+		String notificationChanged = getI18nText("adminView.notification.group.change");
+		String notificationCreated = getI18nText("adminView.notification.group.created");
 
 		final Window window = new Window(groupWindowCaption);
 		window.setModal(true);
@@ -407,11 +424,15 @@ public class UsersAndRolesTab extends VerticalLayout {
 				group.setName(nameField.getValue());
 				group.setType(typeField.getValue());
 				identityService.saveGroup(group);
+				Notification.show(groupWindowCaption.concat(" ").concat(group.getId()).concat(notificationCreated), Type.TRAY_NOTIFICATION);
 				groupDataProvider.refreshAll();
+				window.close();
+				
 			} else if (group.getId() != null) {
 				group.setName(nameField.getValue());
 				group.setType(typeField.getValue());
 				identityService.saveGroup(group);
+				Notification.show(groupWindowCaption.concat(" ").concat(group.getId()).concat(notificationChanged), Type.TRAY_NOTIFICATION);
 				groupDataProvider.refreshAll();
 			}
 		});
