@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package ru.gzpn.spc.csl.model;
 
 import javax.persistence.Column;

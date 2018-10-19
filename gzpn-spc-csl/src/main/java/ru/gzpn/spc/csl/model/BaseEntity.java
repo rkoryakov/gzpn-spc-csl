@@ -13,8 +13,10 @@ import javax.persistence.Version;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import ru.gzpn.spc.csl.ui.createdoc.NodeHolder;
+
 @MappedSuperclass
-public abstract class BaseEntity {
+public abstract class BaseEntity extends NodeHolder {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spc_csl_gen")
@@ -48,5 +50,4 @@ public abstract class BaseEntity {
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
-
 }

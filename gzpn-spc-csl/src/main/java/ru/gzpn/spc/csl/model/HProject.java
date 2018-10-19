@@ -16,11 +16,14 @@ import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IHProject;
 
 @Entity
-@NamedQueries({ @NamedQuery(name = "HProject.groupById", query = "SELECT hp FROM HProject hp GROUP BY hp.projectId") })
+@NamedQueries({ @NamedQuery(name = "HProject.groupById", query = "SELECT hp FROM HProject hp GROUP BY ?1") })
 
-@Table(name = "havy_projects", schema = "spc_csl_schema", indexes = {
+@Table(name = "havy_projects", schema = "spc_csl_schema", 
+	indexes = {
 		@Index(name = "spc_csl_idx_prjid", columnList = "projectId", unique = true),
-		@Index(name = "spc_csl_idx_prjname", columnList = "name") })
+		@Index(name = "spc_csl_idx_prjname", columnList = "name") 
+	}
+)
 public class HProject extends ACLBasedEntity implements IHProject {
 	private String projectId;
 	private String name;

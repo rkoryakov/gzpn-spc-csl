@@ -155,7 +155,8 @@ public class MainUI extends UI {
 
 		MenuItem createDocumentItem = menu.addItem(sCreateDocument, VaadinIcons.FILE_ADD, cCreateDocument);
 		MenuItem contractRegisterItem = menu.addItem(sContractRegister, VaadinIcons.FILE_TREE_SMALL, cContractRegister);
-		MenuItem estimateRegisterItem = menu.addItem(sEstimateRegister, VaadinIcons.FILE_TREE_SUB, cEstimateRegister);
+		MenuItem estimateRegisterItem = menu.addItem(sEstimateRegister, VaadinIcons.CALC_BOOK, cEstimateRegister);
+	
 		createDocumentItem.setCheckable(true);
 		contractRegisterItem.setCheckable(true);
 		estimateRegisterItem.setCheckable(true);

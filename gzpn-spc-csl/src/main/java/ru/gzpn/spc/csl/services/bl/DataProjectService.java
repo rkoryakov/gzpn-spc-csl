@@ -11,8 +11,9 @@ import ru.gzpn.spc.csl.model.interfaces.IHProjectRepository;
 @Service
 @Transactional
 public class DataProjectService {
-	public static Logger logger = LoggerFactory.getLogger(DataProjectService.class);
+	public static final Logger logger = LoggerFactory.getLogger(DataProjectService.class);
 	@Autowired
-	IHProjectRepository repository;
-
+	private IHProjectRepository repository;
+	
+	
 }

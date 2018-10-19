@@ -57,6 +57,10 @@ public class ActivitiConfiguration {
 
 		try {
 			identityService.createMembership(admin.getId(), administrators.getId());
+		} catch (RuntimeException re) {
+			logger.debug("Activiti Membership exists");
+		}
+		try {
 			identityService.createMembership(user.getId(), users.getId());
 		} catch (RuntimeException re) {
 			logger.debug("Activiti Membership exists");

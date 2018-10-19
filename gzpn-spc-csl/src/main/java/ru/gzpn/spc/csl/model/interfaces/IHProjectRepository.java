@@ -14,6 +14,8 @@ public interface IHProjectRepository extends JpaRepository<HProject, Long> {
 
 //	@Query(value = "SELECT * FROM spc_csl_schema.stages s", nativeQuery = true)
 //	public List<Object[]> getCountOfStages();
+	
+	
 //	@Query(value = "SELECT s FROM Stage s", nativeQuery = false)
 //	public List<Stage> getCountOfStages();
 }
