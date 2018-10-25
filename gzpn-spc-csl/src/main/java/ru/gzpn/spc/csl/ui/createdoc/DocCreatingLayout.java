@@ -16,11 +16,13 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	private MessageSource messageSource;
 	private VerticalLayout leftLayot;
 	private VerticalLayout rightLayout;
+
 	private TreeGrid<NodeHolder> projectTree;
 	
 	public DocCreatingLayout(DataProjectService projectService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.messageSource = messageSource;
+		setSizeFull();
 		setSplitPosition(50.0f, Unit.PERCENTAGE);
 		addStyleName(ValoTheme.SPLITPANEL_LARGE);
 		setFirstComponent(createLeftLayout());

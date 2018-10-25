@@ -37,7 +37,6 @@ public class CreateDocView extends VerticalLayout implements View {
 	@PostConstruct
 	void init() {
 		DocCreatingLayout layout = new DocCreatingLayout(projectService, messageSource);
-		layout.setSizeFull();
 		addComponent(layout);
 	}
 
