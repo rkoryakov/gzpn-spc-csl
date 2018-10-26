@@ -12,7 +12,6 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
-import ru.gzpn.spc.csl.model.BaseEntity;
 import ru.gzpn.spc.csl.model.HProject;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IHProject;
@@ -23,7 +22,7 @@ import ru.gzpn.spc.csl.ui.views.AdminView;
 @Configuration
 @EnableJpaRepositories(basePackageClasses = {IHProject.class }, 
 					   entityManagerFactoryRef = "projectEntityManagerFactory")
-@ComponentScan(basePackageClasses = { BaseEntity.class, 
+@ComponentScan(basePackageClasses = { String.class, 
 									  ICProject.class, 
 									  MainUI.class, 
 									  LoginController.class,

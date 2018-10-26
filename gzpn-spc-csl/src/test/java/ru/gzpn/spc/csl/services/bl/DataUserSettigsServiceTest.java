@@ -1,9 +1,7 @@
 package ru.gzpn.spc.csl.services.bl;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Collections;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,9 +18,12 @@ public class DataUserSettigsServiceTest {
 	
 	@Test
 	public void getNodesOrder() {
-		assertTrue("The size of resulting Map is " + settigsService.getNodesOrder().size(), settigsService.getNodesOrder().size() == 3);
-		assertThat(settigsService.getNodesOrder()).containsKeys("HProject", "CProject", "Phase");
-		assertThat(settigsService.getNodesOrder()).containsValue(Collections.emptyList());
-		settigsService.getNodesOrder().forEach((k, o) -> System.out.println("key " + k + " value " + o));
+		assertTrue("The size of resulting Map is " + settigsService.getDefaultNodesPath().size(), settigsService.getDefaultNodesPath().size() == 4);
+	}
+	
+	@Test
+	public void testAccessToEm() {
+		settigsService.logger.debug("geEntityManager(UserSettings.class) = {}", settigsService.geEntityManager());
+		assertNotNull(settigsService.geEntityManager());
 	}
 }

@@ -1,18 +1,21 @@
 package ru.gzpn.spc.csl.services.bl;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Deque;
+
+import javax.persistence.EntityManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.gzpn.spc.csl.model.UserSettings;
 import ru.gzpn.spc.csl.model.interfaces.IUserSettingsRepository;
+import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 @Service
 @Transactional
@@ -20,13 +23,18 @@ public class DataUserSettigsService {
 	public static final Logger logger = LoggerFactory.getLogger(DataUserSettigsService.class);
 	@Autowired
 	private IUserSettingsRepository repository;
+	@Autowired
+	private JpaContext jpaContext;
 	
-	public LinkedHashMap<String, List<String>> getNodesOrder() {
+	public Deque<NodeWrapper> getDefaultNodesPath() {
 		
-		List<String> hproject = Arrays.asList("HProject", "projectId", "name");
-		List<String> cproject = Arrays.asList("CProject", "name");
-		List<String> phase = Arrays.asList("Phase");
-		Stream.of(hproject, cproject, phase).collect(Collectors.toMap(obj->obj.get(0), obj->obj.subList(1, obj.size())));
-		return Stream.of(hproject, cproject, phase).collect(Collectors.toMap(obj->obj.get(0), obj->obj.subList(1, obj.size()), (k, o)->k, LinkedHashMap::new));
+		return new ArrayDeque<>(Arrays.asList(new NodeWrapper("HProject", "projectId"), 
+				new NodeWrapper("HProject", "name"),
+				new NodeWrapper("CProject", "name"),
+				new NodeWrapper("Phase", null))); 
+	}
+	
+	public EntityManager geEntityManager() {
+		return jpaContext.getEntityManagerByManagedType(UserSettings.class);
 	}
 }
