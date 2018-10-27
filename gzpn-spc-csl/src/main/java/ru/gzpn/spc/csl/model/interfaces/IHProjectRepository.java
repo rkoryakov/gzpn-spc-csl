@@ -20,4 +20,7 @@ public interface IHProjectRepository extends JpaRepository<HProject, Long> {
 	
 	@Query(value = "SELECT s FROM Stage s", nativeQuery = false)
 	public List<Stage> getStages();
+	
+	public long groupByPrjIdCount();
+	public long groupByNameCount();
 }

@@ -23,7 +23,9 @@ public class DataUserSettigsServiceTest {
 	
 	@Test
 	public void testAccessToEm() {
-		settigsService.logger.debug("geEntityManager(UserSettings.class) = {}", settigsService.geEntityManager());
+		DataUserSettigsService.logger.debug("geEntityManager(UserSettings.class) = {}", settigsService.geEntityManager());
 		assertNotNull(settigsService.geEntityManager());
+		DataUserSettigsService.logger.debug("select s from Stage s - {}", settigsService.geEntityManager().createQuery("select s from Stage s").getResultList());
+		DataUserSettigsService.logger.debug("select s from Stage s - {}", settigsService.geEntityManager().createNamedQuery("Stage.groupBy").setParameter("groupField", "s.name").getResultList());
 	}
 }

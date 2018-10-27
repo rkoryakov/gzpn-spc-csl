@@ -1,11 +1,17 @@
 package ru.gzpn.spc.csl.model;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import ru.gzpn.spc.csl.model.interfaces.IStage;
 
 @Entity
+@NamedQueries({ 
+	@NamedQuery(name = "Stage.groupByNameCount", query = "SELECT COUNT(s) FROM Stage s GROUP BY s.name")
+	
+})
 @Table(schema = "spc_csl_schema", name = "stages")
 public class Stage extends BaseEntity implements IStage {
 	private String name;
@@ -16,5 +22,10 @@ public class Stage extends BaseEntity implements IStage {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	@Override
+	public String toString() {
+		return "name: " + getName() + " id: " + getId();
 	}
 }

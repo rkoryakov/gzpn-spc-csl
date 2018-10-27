@@ -1,13 +1,13 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
-public class NodeWrapper {
+public class GroupWrapper {
 	private String entityName;
-	private String groupByFiled;
+	private String groupFiled;
 	
-	public NodeWrapper(String entityName, String groupByFiled) {
+	public GroupWrapper(String entityName, String groupByFiled) {
 		super();
 		this.entityName = entityName;
-		this.groupByFiled = groupByFiled;
+		this.groupFiled = groupByFiled;
 	}
 	
 	public String getEntityName() {
@@ -17,9 +17,9 @@ public class NodeWrapper {
 		this.entityName = entityName;
 	}
 	public String getGroupByFiled() {
-		return groupByFiled;
+		return groupFiled;
 	}
 	public void setGroupByFiled(String groupByFiled) {
-		this.groupByFiled = groupByFiled;
+		this.groupFiled = groupByFiled;
 	}
 }

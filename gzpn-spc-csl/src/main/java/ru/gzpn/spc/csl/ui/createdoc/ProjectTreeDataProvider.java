@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.data.provider.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.data.provider.HierarchicalQuery;
 
+import ru.gzpn.spc.csl.model.Entities;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IStage;
@@ -32,7 +33,7 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 
 		if (parent instanceof ICProject) {
 			// TODO: check the current node and grouping fields (NodeWalker)
-			NodeWrapper currentNode = parent.pollCurrent();
+			GroupWrapper currentNode = parent.pollCurrent();
 		
 			
 		} else if (parent instanceof IStage) {
@@ -43,9 +44,18 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 			// TODO: get the first entity & grouping fields from the user's settings
 			// execute query and get the result
 			
-			 NodeWrapper nodeWrapper = userSettigsService.getDefaultNodesPath().poll();
+			 GroupWrapper nodeWrapper = userSettigsService.getDefaultNodesPath().poll();
 			 
-			 
+			 switch (Entities.valueOf(nodeWrapper.getEntityName().toUpperCase())) {
+			 case HPROJECT:
+				 break;
+			 case CPROJECT:
+				 break;
+			 case PHASE:
+				 break;
+			 case STAGE:
+				 break;
+			 }
 		}
 
 		return result;

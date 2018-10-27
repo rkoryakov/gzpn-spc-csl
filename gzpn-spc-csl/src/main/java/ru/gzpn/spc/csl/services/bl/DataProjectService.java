@@ -1,6 +1,7 @@
 package ru.gzpn.spc.csl.services.bl;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.persistence.EntityManager;
 
@@ -41,12 +42,38 @@ public class DataProjectService {
 		return hpRepository.count();
 	}
 	
+	public long getHProjectGroupCount(String field) {
+		long count = -1;
+		switch (field) {
+		case HProject.FILED_NAME:
+			count = hpRepository.groupByNameCount();
+			break;
+		case HProject.FILED_PROJECT_ID:
+			count = hpRepository.groupByPrjIdCount();
+			break;
+		}
+		return count;
+	}
+	
 	public List<CProject> getCProjects() {
 		return cpRepository.findAll();
 	}
 	
 	public long getCProjectsCount() {
 		return cpRepository.count();
+	}
+	
+	public long getCProjectsGroupCount(String field) {
+		long count = -1;
+		switch (field) {
+		case CProject.FILED_NAME:
+			count = hpRepository.groupByNameCount();
+			break;
+		case CProject.FILED_PROJECT_ID:
+			count = hpRepository.groupByPrjIdCount();
+			break;
+		}
+		return count;
 	}
 	
 	public List<Phase> getPhases() {
@@ -57,7 +84,13 @@ public class DataProjectService {
 		return phaseRepository.count();
 	}
 	
-	public EntityManager geEntityManager(Class<?> c) {
-		return jpaContext.getEntityManagerByManagedType(c.getClass());
+	public EntityManager geEntityManager() {
+		return jpaContext.getEntityManagerByManagedType(HProject.class);
+	}
+	
+	public <T> T executeByField(Supplier<T> suplier, String field) {
+		T result = null;
+		
+		return result;
 	}
 }

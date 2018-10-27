@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.UserSettings;
 import ru.gzpn.spc.csl.model.interfaces.IUserSettingsRepository;
-import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
+import ru.gzpn.spc.csl.ui.createdoc.GroupWrapper;
 
 @Service
 @Transactional
@@ -26,12 +26,12 @@ public class DataUserSettigsService {
 	@Autowired
 	private JpaContext jpaContext;
 	
-	public Deque<NodeWrapper> getDefaultNodesPath() {
+	public Deque<GroupWrapper> getDefaultNodesPath() {
 		
-		return new ArrayDeque<>(Arrays.asList(new NodeWrapper("HProject", "projectId"), 
-				new NodeWrapper("HProject", "name"),
-				new NodeWrapper("CProject", "name"),
-				new NodeWrapper("Phase", null))); 
+		return new ArrayDeque<>(Arrays.asList(new GroupWrapper("HProject", "projectId"), 
+				new GroupWrapper("HProject", "name"),
+				new GroupWrapper("CProject", "name"),
+				new GroupWrapper("Phase", null))); 
 	}
 	
 	public EntityManager geEntityManager() {

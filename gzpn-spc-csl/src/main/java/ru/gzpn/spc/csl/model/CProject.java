@@ -19,6 +19,9 @@ import ru.gzpn.spc.csl.model.interfaces.IStage;
 			}
 )
 public class CProject extends ACLBasedEntity implements ICProject {
+	public static final String FILED_NAME = "name";
+	public static final String FILED_PROJECT_ID = "projectId";
+	
 	private String projectId;
 	private String name;
 

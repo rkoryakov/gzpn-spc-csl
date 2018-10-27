@@ -12,21 +12,21 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class NodeTracker {
 	private static final Logger logger = LoggerFactory.getLogger(NodeTracker.class);
-	private Deque<NodeWrapper> nodePath;
+	private Deque<GroupWrapper> nodePath;
 	
 	public boolean trackNext(NodeTracker node) {
 		node.setNodePath(nodePath);
 		return !nodePath.isEmpty();
 	}
 	
-	public NodeWrapper pollCurrent() {
+	public GroupWrapper pollCurrent() {
 		return nodePath.poll();
 	}
 	
-	public Deque<NodeWrapper> getNodePath() {
+	public Deque<GroupWrapper> getNodePath() {
 		return nodePath;
 	}
-	public void setNodePath(Deque<NodeWrapper> nodePath) {
+	public void setNodePath(Deque<GroupWrapper> nodePath) {
 		this.nodePath = nodePath;
 	}
 }

@@ -16,7 +16,13 @@ import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IHProject;
 
 @Entity
-@NamedQueries({ @NamedQuery(name = "HProject.groupById", query = "SELECT hp FROM HProject hp GROUP BY ?1") })
+@NamedQueries({
+	@NamedQuery(name = "HProject.groupByName", query = "SELECT hp.name FROM HProject hp GROUP BY hp.name"),
+	@NamedQuery(name = "HProject.groupByPrjId", query = "SELECT hp.projectId FROM HProject hp GROUP BY hp.projectId"),
+	
+	@NamedQuery(name = "HProject.groupByNameCount", query = "SELECT COUNT(hp) FROM HProject hp GROUP BY hp.name"),
+	@NamedQuery(name = "HProject.groupByPrjIdCount", query = "SELECT COUNT(hp) FROM HProject hp GROUP BY hp.projectId")
+	})
 
 @Table(name = "havy_projects", schema = "spc_csl_schema", 
 	indexes = {
@@ -25,6 +31,9 @@ import ru.gzpn.spc.csl.model.interfaces.IHProject;
 	}
 )
 public class HProject extends ACLBasedEntity implements IHProject {
+	public static final String FILED_NAME = "name";
+	public static final String FILED_PROJECT_ID = "projectId";
+	
 	private String projectId;
 	private String name;
 	@OneToMany(targetEntity = CProject.class, cascade = CascadeType.ALL)
@@ -57,4 +66,8 @@ public class HProject extends ACLBasedEntity implements IHProject {
 		this.capitalProjects = capitalProjects;
 	}
 
+	@Override
+	public String toString() {
+		return "name: " + name + ", projectId: " + projectId;
+	}
 }
