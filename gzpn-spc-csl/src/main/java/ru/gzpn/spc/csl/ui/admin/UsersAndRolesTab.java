@@ -14,17 +14,21 @@ import org.springframework.context.MessageSource;
 import com.vaadin.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.components.grid.SingleSelectionModel;
+import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.ui.common.ConfirmDialog;
 
@@ -43,22 +47,42 @@ public class UsersAndRolesTab extends VerticalLayout {
 	private DataProvider<GroupTemplate, String> groupDataProvider;
 	private ConfigurableFilterDataProvider<UserTemplate, Void, String> userFilter;
 	private ConfigurableFilterDataProvider<GroupTemplate, Void, String> groupFilter;
+	private MarginInfo marginForHeader;
+	private UserInfoTabSheet infoUser;
+	
+	private HorizontalSplitPanel panel;
 
 	public UsersAndRolesTab(IdentityService identityService, MessageSource messageSource) {
 		this.identityService = identityService;
 		this.messageSource = messageSource;
+		panel = new HorizontalSplitPanel();
+		
+		ClickListener updateClick = event -> {
+			userDataProvider.refreshAll();
+		};
+		
+		infoUser = new UserInfoTabSheet(identityService, messageSource, updateClick);
 		headerHorizont = new HorizontalLayout();
 		resultPage = new VerticalLayout();
 		gridUser = createGridUser();
 		gridGroup = createGridGroup();
 		searchUserGroup = createSearchUserGroup();
 		selectUserGroup = createSelectUserGroup();
-
+		marginForHeader = new MarginInfo(true, false, false, false);
+		
 		headerHorizont.addComponents(searchUserGroup, selectUserGroup, buttonCreate());
+		headerHorizont.setMargin(marginForHeader);
+		
 		resultPage.addComponents(headerHorizont, gridUser, gridGroup);
-		resultPage.setSizeFull();
-		addComponent(resultPage);
-		this.setSizeFull();
+		resultPage.setMargin(false);
+		
+		resultPage.setWidth(100, Unit.PERCENTAGE);
+		infoUser.setWidth(100, Unit.PERCENTAGE);
+		panel.setFirstComponent(resultPage);
+		panel.setSecondComponent(infoUser);
+		
+		setMargin(false);
+		addComponent(panel);
 	}
 
 	public MessageSource getMessageSource() {
@@ -159,8 +183,18 @@ public class UsersAndRolesTab extends VerticalLayout {
 		grid.addComponentColumn(UserTemplate::getDelete).setCaption(deleteCaption).setWidth(105.0);
 		grid.setDataProvider(userFilter);
 		grid.setColumnReorderingAllowed(true);
-		grid.setWidth(70, Unit.PERCENTAGE);
 
+		grid.setSizeFull();
+		
+		infoUser.setVisible(false);	
+		
+		SingleSelectionModel<UserTemplate> singleSelect = (SingleSelectionModel<UserTemplate>) grid.getSelectionModel();
+		singleSelect.addSingleSelectionListener(event -> {
+			infoUser.getUserInfoTab().setData(singleSelect.getSelectedItem().get());
+			
+			infoUser.setVisible(true);
+		});
+		
 		return grid;
 	}
 
@@ -208,8 +242,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		grid.addComponentColumn(GroupTemplate::getEdit).setCaption(editCaption).setWidth(105.0);
 		grid.addComponentColumn(GroupTemplate::getDelete).setCaption(deleteCaption).setWidth(105.0);
 		grid.setDataProvider(groupFilter);
-		grid.setWidth(70, Unit.PERCENTAGE);
-
+		grid.setSizeFull();
 		return grid;
 	}
 
@@ -313,6 +346,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		if (currentUser != null) {
 			loginField = new TextField(loginCaption, currentUser.getId());
 			loginField.setReadOnly(true);
+			loginField.setStyleName(ValoTheme.TEXTFIELD_BORDERLESS);
 			firstNameField = new TextField(firstNameCaption,
 					currentUser.getFirstName() == null ? "" : currentUser.getFirstName());
 			lastNameField = new TextField(lastNameCaption,
@@ -439,7 +473,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 
 		return window;
 	}
-
+	
 	private String getI18nText(String key) {
 		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
 	}
