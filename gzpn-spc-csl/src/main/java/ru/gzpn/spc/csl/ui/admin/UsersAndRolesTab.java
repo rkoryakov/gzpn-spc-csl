@@ -347,10 +347,8 @@ public class UsersAndRolesTab extends VerticalLayout {
 			loginField = new TextField(loginCaption, currentUser.getId());
 			loginField.setReadOnly(true);
 			loginField.setStyleName(ValoTheme.TEXTFIELD_BORDERLESS);
-			firstNameField = new TextField(firstNameCaption,
-					currentUser.getFirstName() == null ? "" : currentUser.getFirstName());
-			lastNameField = new TextField(lastNameCaption,
-					currentUser.getLastName() == null ? "" : currentUser.getLastName());
+			firstNameField = new TextField(firstNameCaption, currentUser.getFirstName() == null ? "" : currentUser.getFirstName());
+			lastNameField = new TextField(lastNameCaption, currentUser.getLastName() == null ? "" : currentUser.getLastName());
 			emailField = new TextField(emailCaption, currentUser.getEmail() == null ? "" : currentUser.getEmail());
 			newPasswordField = new TextField(newPasswordCaption, "");
 		}

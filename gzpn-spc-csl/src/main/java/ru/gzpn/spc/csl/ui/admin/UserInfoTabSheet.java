@@ -99,7 +99,7 @@ class UserInfoTab extends FormLayout{
 		emailField = new TextField(emailCaption, "");
 		emailField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 		emailField.setReadOnly(true);
-		newPasswordField = new TextField(passwordCaption, "");
+		newPasswordField = new TextField(newPasswordCaption, "");
 		newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 		newPasswordField.setReadOnly(true);
 		
@@ -174,9 +174,9 @@ class UserInfoTab extends FormLayout{
 	
 	public void setData(UserTemplate template) {
 		loginField.setValue(template.getId());
-		firstNameField.setValue(template.getFirstName());
-		lastNameField.setValue(template.getLastName());
-		emailField.setValue(template.getEmail());
+		firstNameField.setValue(template.getFirstName() == null ? "" : template.getFirstName());
+		lastNameField.setValue(template.getLastName() == null ? "" : template.getLastName());
+		emailField.setValue(template.getEmail() == null ? "" : template.getEmail());
 	}
 
 	public Button getSaveButton() {
