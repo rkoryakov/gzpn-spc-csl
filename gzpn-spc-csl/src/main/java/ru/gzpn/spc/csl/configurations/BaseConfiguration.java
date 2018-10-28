@@ -14,14 +14,15 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import ru.gzpn.spc.csl.model.HProject;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
-import ru.gzpn.spc.csl.model.interfaces.IHProject;
+import ru.gzpn.spc.csl.model.repositories.CustomJpaRepositoryFactoryBean;
 import ru.gzpn.spc.csl.services.bl.LoginController;
 import ru.gzpn.spc.csl.ui.MainUI;
 import ru.gzpn.spc.csl.ui.views.AdminView;
 
 @Configuration
-@EnableJpaRepositories(basePackageClasses = {IHProject.class }, 
-					   entityManagerFactoryRef = "projectEntityManagerFactory")
+@EnableJpaRepositories(basePackages= {"ru.gzpn.spc.csl.model.repositories"},/*basePackageClasses = {IHProject.class },*/ 
+					   entityManagerFactoryRef = "projectEntityManagerFactory", 
+					   repositoryFactoryBeanClass = CustomJpaRepositoryFactoryBean.class)
 @ComponentScan(basePackageClasses = { String.class, 
 									  ICProject.class, 
 									  MainUI.class, 

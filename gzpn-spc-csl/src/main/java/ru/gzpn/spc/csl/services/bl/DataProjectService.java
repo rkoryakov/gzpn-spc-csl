@@ -15,9 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.gzpn.spc.csl.model.CProject;
 import ru.gzpn.spc.csl.model.HProject;
 import ru.gzpn.spc.csl.model.Phase;
-import ru.gzpn.spc.csl.model.interfaces.ICProjectRepository;
-import ru.gzpn.spc.csl.model.interfaces.IHProjectRepository;
-import ru.gzpn.spc.csl.model.interfaces.IPhaseRepository;
+import ru.gzpn.spc.csl.model.repositories.ICProjectRepository;
+import ru.gzpn.spc.csl.model.repositories.IHProjectRepository;
+import ru.gzpn.spc.csl.model.repositories.IPhaseRepository;
 
 @Service
 @Transactional

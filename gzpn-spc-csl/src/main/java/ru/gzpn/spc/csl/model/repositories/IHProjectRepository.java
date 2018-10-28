@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.model.interfaces;
+package ru.gzpn.spc.csl.model.repositories;
 
 import java.util.List;
 
