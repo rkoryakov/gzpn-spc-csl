@@ -7,6 +7,5 @@ import ru.gzpn.spc.csl.model.BaseEntity;
 
 @NoRepositoryBean
 public interface BaseRepository<T extends BaseEntity> extends JpaRepository<T, Long> {
-	public long getCount();
 	public long getCountByGroupField(String field);
 }

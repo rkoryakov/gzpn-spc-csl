@@ -12,7 +12,9 @@ import org.springframework.data.repository.core.RepositoryInformation;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 
-public class CustomJpaRepositoryFactoryBean<R extends JpaRepository<T, ID>, T, ID extends Serializable> extends JpaRepositoryFactoryBean<R, T, ID> {
+import ru.gzpn.spc.csl.model.BaseEntity;
+
+public class CustomJpaRepositoryFactoryBean<R extends JpaRepository<T, ID>, T extends BaseEntity, ID extends Serializable> extends JpaRepositoryFactoryBean<R, T, ID> {
 
 	public CustomJpaRepositoryFactoryBean(Class<? extends R> repositoryInterface) {
 		super(repositoryInterface);
@@ -24,18 +26,26 @@ public class CustomJpaRepositoryFactoryBean<R extends JpaRepository<T, ID>, T, I
 	    return new CustomJpaRepositoryFactory(entityManager);
 	}
 	
-	private static class CustomJpaRepositoryFactory<T, ID extends Serializable> extends JpaRepositoryFactory {
-
+	private static class CustomJpaRepositoryFactory<T extends BaseEntity, ID extends Serializable> extends JpaRepositoryFactory {
+		private EntityManager entityManager;
+		
 		public CustomJpaRepositoryFactory(EntityManager entityManager) {
 			super(entityManager);
+			this.entityManager = entityManager;
 		}
 
-		@SuppressWarnings({ "unchecked", "rawtypes", "hiding" })
+		@SuppressWarnings({ "unchecked", "rawtypes", "hiding"})
 		@Override
-		protected <T, ID extends Serializable> SimpleJpaRepository<?, ?> getTargetRepository(RepositoryInformation information, EntityManager entityManager) {
+		protected <R, ID extends Serializable> SimpleJpaRepository<?, ?> getTargetRepository(RepositoryInformation information, EntityManager entityManager) {
 			// the logic to return concrete Repository implementation
 			return new BaseRepositoryImpl(information.getDomainType(), entityManager);
 		}
+
+//		@SuppressWarnings({ "unchecked", "rawtypes" })
+//		@Override
+//		protected Object getTargetRepository(RepositoryInformation information) {
+//			return new BaseRepositoryImpl(information.getDomainType(), entityManager);
+//		}
 
 		@Override
 		protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {

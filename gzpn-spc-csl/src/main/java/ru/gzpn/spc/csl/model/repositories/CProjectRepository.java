@@ -1,12 +1,10 @@
 package ru.gzpn.spc.csl.model.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import ru.gzpn.spc.csl.model.CProject;
 
 @Repository
-public interface ICProjectRepository extends JpaRepository<CProject, Long> {
-
+public interface CProjectRepository extends BaseRepository<CProject> {
 	
 }

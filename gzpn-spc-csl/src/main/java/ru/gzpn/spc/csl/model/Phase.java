@@ -1,28 +1,52 @@
 
 package ru.gzpn.spc.csl.model;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
-
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
-import ru.gzpn.spc.csl.model.jsontypes.PhaseJson;
 
 @Entity
 @Table(schema = "spc_csl_schema", name = "phases")
 public class Phase extends BaseEntity implements IPhase {
-	@Column
-	@Type(type = "PhaseJsonType")
-	private PhaseJson phase;
+	@Column(length=64)
+	private String name;
 
-	public PhaseJson getPhase() {
-		return phase;
+	@OneToMany
+	@OrderColumn
+	@JoinColumn(name="parent_id", referencedColumnName="id")
+	private List<Phase> children = new LinkedList<>();
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="parent_id", referencedColumnName="id", insertable=false, updatable=false)
+	private Phase parent;
+	
+	public String getName() {
+		return name;
 	}
 
-	public void setPhase(PhaseJson phase) {
-		this.phase = phase;
+	public void setName(String name) {
+		this.name = name;
 	}
 
+	public List<Phase> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<Phase> children) {
+		this.children = children;
+	}
+
+	public Phase getParent() {
+		return parent;
+	}
 }

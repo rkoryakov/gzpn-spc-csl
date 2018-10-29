@@ -9,8 +9,6 @@ import ru.gzpn.spc.csl.model.jsontypes.ACLJson;
 
 /**
  * Access control list of particular entity object
- * 
- * @author koryakov.rv
  */
 @MappedSuperclass
 public abstract class ACLBasedEntity extends BaseEntity {

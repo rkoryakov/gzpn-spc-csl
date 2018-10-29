@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.UserSettings;
-import ru.gzpn.spc.csl.model.repositories.IUserSettingsRepository;
+import ru.gzpn.spc.csl.model.repositories.UserSettingsRepository;
 import ru.gzpn.spc.csl.ui.createdoc.GroupWrapper;
 
 @Service
@@ -22,7 +22,7 @@ import ru.gzpn.spc.csl.ui.createdoc.GroupWrapper;
 public class DataUserSettigsService {
 	public static final Logger logger = LoggerFactory.getLogger(DataUserSettigsService.class);
 	@Autowired
-	private IUserSettingsRepository repository;
+	private UserSettingsRepository repository;
 	@Autowired
 	private JpaContext jpaContext;
 	
