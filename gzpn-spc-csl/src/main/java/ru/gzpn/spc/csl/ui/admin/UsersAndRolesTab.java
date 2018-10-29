@@ -190,9 +190,10 @@ public class UsersAndRolesTab extends VerticalLayout {
 		
 		SingleSelectionModel<UserTemplate> singleSelect = (SingleSelectionModel<UserTemplate>) grid.getSelectionModel();
 		singleSelect.addSingleSelectionListener(event -> {
-			infoUser.getUserInfoTab().setData(singleSelect.getSelectedItem().get());
-			
-			infoUser.setVisible(true);
+			singleSelect.getSelectedItem().ifPresent(item -> {
+				infoUser.getUserInfoTab().setData(item);
+				infoUser.setVisible(true);
+			});
 		});
 		
 		return grid;
@@ -252,7 +253,9 @@ public class UsersAndRolesTab extends VerticalLayout {
 		Button createButton = new Button(nameCreateButton);
 		createButton.addClickListener(event -> {
 			if (selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.USERS)) {
-				getUI().addWindow(formUser(null));
+				infoUser.getUserInfoTab().setData(null);
+				infoUser.setVisible(true);
+//				getUI().addWindow(formUser(null));
 
 			} else if (selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.GROUPS)) {
 				getUI().addWindow(formGroup(null));

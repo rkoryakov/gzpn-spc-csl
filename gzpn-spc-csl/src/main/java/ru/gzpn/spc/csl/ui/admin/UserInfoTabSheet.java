@@ -3,7 +3,11 @@ package ru.gzpn.spc.csl.ui.admin;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.User;
 import org.springframework.context.MessageSource;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 
+import com.vaadin.data.Binder;
+import com.vaadin.data.validator.EmailValidator;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
@@ -11,6 +15,7 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -52,7 +57,7 @@ class UserInfoTab extends FormLayout{
 	private final TextField firstNameField;
 	private final TextField lastNameField;
 	private final TextField emailField;
-	private final TextField newPasswordField;
+	private final PasswordField newPasswordField;
 	private Button saveButton;
 	private Button editButton;
 	private Button deleteButton;
@@ -99,7 +104,7 @@ class UserInfoTab extends FormLayout{
 		emailField = new TextField(emailCaption, "");
 		emailField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 		emailField.setReadOnly(true);
-		newPasswordField = new TextField(newPasswordCaption, "");
+		newPasswordField = new PasswordField(newPasswordCaption, "");
 		newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 		newPasswordField.setReadOnly(true);
 		
@@ -118,6 +123,24 @@ class UserInfoTab extends FormLayout{
 		buttonLayout.setMargin(false);
 		this.addComponents(buttonLayout);
 		
+		editButton.addClickListener(event -> {
+			if(loginField.isEmpty()) {
+				loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
+				loginField.setReadOnly(false);
+			}
+			firstNameField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
+			firstNameField.setReadOnly(false);
+			lastNameField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
+			lastNameField.setReadOnly(false);
+			emailField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
+			emailField.setReadOnly(false);
+			newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
+			newPasswordField.setReadOnly(false);
+			saveButton.setEnabled(true);
+			editButton.setEnabled(false);
+		});
+		editButton.addClickListener(updateClick);
+		
 		saveButton.addClickListener(event -> {
 			
 			loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
@@ -131,13 +154,29 @@ class UserInfoTab extends FormLayout{
 			newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 			newPasswordField.setReadOnly(true);
 			
+			Binder<User> binder = new Binder<>();
+			
 			User user = identityService.createUserQuery().userId(loginField.getValue()).singleResult();
 			if (user == null) {
+				
 				user = identityService.newUser(loginField.getValue());
-				user.setFirstName(firstNameField.getValue());
-				user.setLastName(lastNameField.getValue());
-				user.setEmail(emailField.getValue());
-				user.setPassword(newPasswordField.getValue());
+				
+				binder.forField(firstNameField).asRequired("Name may not be empty").bind(User::getFirstName, User::setFirstName);
+				binder.forField(lastNameField).asRequired("Name may not be empty").bind(User::getLastName, User::setLastName);
+				
+				binder.forField(emailField).asRequired("Email may not be empty")
+					.withValidator(new EmailValidator("Not a valid email address"))
+					.bind(User::getEmail, User::setEmail);
+				binder.forField(newPasswordField)
+	                .asRequired("Password may not be empty")
+	                .withValidator(new StringLengthValidator(
+	                        "Password must be at least 7 characters long", 7, null))
+	                .bind(User::getPassword, User::setPassword);
+				
+//				user.setFirstName(firstNameField.getValue());
+//				user.setLastName(lastNameField.getValue());
+//				user.setEmail(emailField.getValue());
+//				user.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(newPasswordField.getValue()));
 				identityService.saveUser(user);
 				Notification.show(userWindowCaption.concat(" ").concat(user.getId()).concat(notificationCreated), Type.TRAY_NOTIFICATION);
 				
@@ -145,7 +184,7 @@ class UserInfoTab extends FormLayout{
 				user.setFirstName(firstNameField.getValue());
 				user.setLastName(lastNameField.getValue());
 				user.setEmail(emailField.getValue());
-				user.setPassword(newPasswordField.getValue());
+				user.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(newPasswordField.getValue()));
 				identityService.saveUser(user);
 				Notification.show(userWindowCaption.concat(" ").concat(user.getId()).concat(notificationChanged), Type.TRAY_NOTIFICATION);
 			}
@@ -154,29 +193,23 @@ class UserInfoTab extends FormLayout{
 			editButton.setEnabled(true);
 		});
 		saveButton.addClickListener(updateClick);
-		
-		editButton.addClickListener(event -> {
-			loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
-			loginField.setReadOnly(false);
-			firstNameField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
-			firstNameField.setReadOnly(false);
-			lastNameField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
-			lastNameField.setReadOnly(false);
-			emailField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
-			emailField.setReadOnly(false);
-			newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
-			newPasswordField.setReadOnly(false);
-			saveButton.setEnabled(true);
-			editButton.setEnabled(false);
-		});
-		editButton.addClickListener(updateClick);
 	}
 	
 	public void setData(UserTemplate template) {
-		loginField.setValue(template.getId());
-		firstNameField.setValue(template.getFirstName() == null ? "" : template.getFirstName());
-		lastNameField.setValue(template.getLastName() == null ? "" : template.getLastName());
-		emailField.setValue(template.getEmail() == null ? "" : template.getEmail());
+		if(template == null) {
+			loginField.setValue("");
+			firstNameField.setValue("");
+			lastNameField.setValue("");
+			emailField.setValue("");
+			newPasswordField.setValue("");
+		}
+		else {
+			loginField.setValue(template.getId() == null ? "" : template.getId());
+			firstNameField.setValue(template.getFirstName() == null ? "" : template.getFirstName());
+			lastNameField.setValue(template.getLastName() == null ? "" : template.getLastName());
+			emailField.setValue(template.getEmail() == null ? "" : template.getEmail());
+			newPasswordField.setValue(template.getPassword() == null ? "" : template.getPassword());
+		}
 	}
 
 	public Button getSaveButton() {
