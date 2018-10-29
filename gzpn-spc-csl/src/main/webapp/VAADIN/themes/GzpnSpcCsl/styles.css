@@ -14781,8 +14781,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .GzpnSpcCsl .gzpn-head {
-	border-radius: 3px;
-	background-color: #d2e2f1;
-	background-image: -webkit-linear-gradient (top, #d2e2f1 2%, #fafafa 98%);
-	background-image: linear-gradient(to bottom, #d2e2f1 2%, #fafafa 98%);
+	border-radius: 5px;
+	background-color: rgba(215,215,215,.2);/*#d2e2f1;*/
+	/*background-image: -webkit-linear-gradient (top, #d2e2f1 2%, #fafafa 98%);*/
+	/* background-image: linear-gradient(to bottom, #d2e2f1 2%, #fafafa 98%); */
 }

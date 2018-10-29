@@ -12,17 +12,27 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
-import ru.gzpn.spc.csl.model.BaseEntity;
 import ru.gzpn.spc.csl.model.HProject;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.repositories.CustomJpaRepositoryFactoryBean;
 import ru.gzpn.spc.csl.services.bl.LoginController;
 import ru.gzpn.spc.csl.ui.MainUI;
+import ru.gzpn.spc.csl.ui.views.AdminView;
 
 @Configuration
-@EnableJpaRepositories(basePackageClasses = { BaseEntity.class })
-@ComponentScan(basePackageClasses = { BaseEntity.class, ICProject.class, MainUI.class, LoginController.class })
+@EnableJpaRepositories(basePackages= {"ru.gzpn.spc.csl.model.repositories"},/*basePackageClasses = {IHProject.class },*/ 
+					   entityManagerFactoryRef = "projectEntityManagerFactory", 
+					   repositoryFactoryBeanClass = CustomJpaRepositoryFactoryBean.class)
+@ComponentScan(basePackageClasses = { String.class, 
+									  ICProject.class, 
+									  MainUI.class, 
+									  LoginController.class,
+									  AdminView.class })
 public class BaseConfiguration {
 
+	/**
+	 * UI local texts
+	 */
 	@Bean
 	public MessageSource messageSource() {
 		final ResourceBundleMessageSource bundleMessageSource = new ResourceBundleMessageSource();
@@ -40,4 +50,10 @@ public class BaseConfiguration {
 	public LocalContainerEntityManagerFactoryBean projectEntityManagerFactory(EntityManagerFactoryBuilder builder) {
 		return builder.dataSource(dataSource()).packages(HProject.class).persistenceUnit("projects").build();
 	}
+
+//	@Bean
+//	public LocaleResolver localeResolver() {
+//		SessionLocaleResolver slr = new SessionLocaleResolver();
+//		return slr;
+//	}
 }

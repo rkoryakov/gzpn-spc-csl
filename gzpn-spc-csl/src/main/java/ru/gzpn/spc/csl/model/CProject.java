@@ -2,6 +2,7 @@ package ru.gzpn.spc.csl.model;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
@@ -12,10 +13,17 @@ import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IStage;
 
 @Entity
-@Table(schema = "spc_csl_schema", name = "capital_project")
+@Table(schema = "spc_csl_schema", name = "capital_project", 
+			indexes = {
+				@Index(name = "spc_csl_idx_prjid", columnList = "projectId", unique = true),
+			}
+)
 public class CProject extends ACLBasedEntity implements ICProject {
+	public static final String FILED_NAME = "name";
+	public static final String FILED_PROJECT_ID = "projectId";
+	
+	private String projectId;
 	private String name;
-	private String code;
 
 	@ManyToOne(targetEntity = Stage.class, fetch = FetchType.LAZY)
 	@JoinTable(schema = "spc_csl_schema", name = "stage_2_cproject", joinColumns = {
@@ -37,12 +45,12 @@ public class CProject extends ACLBasedEntity implements ICProject {
 		this.name = name;
 	}
 
-	public String getCode() {
-		return code;
+	public String getProjectId() {
+		return projectId;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setProjectId(String projId) {
+		this.projectId = projId;
 	}
 
 	public IStage getStage() {

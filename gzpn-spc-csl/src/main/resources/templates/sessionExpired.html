@@ -73,7 +73,7 @@
     }
 	html, body {
 			height: 100%;
-			font: 100 16px/1.55 "Open Sans", sans-serif;
+			font: 100 20px/1.55 "Calibri", sans-serif;
 			margin: 0;
 	}
 	#info {
@@ -114,7 +114,7 @@
 	      border-radius: 5px 0 0 5px;
 	    }
 	    #form {
-	      width: 360px;
+	      width: 400x;
 	      padding: 28px;
 	      border-radius: 0 5px 5px 0;
 	    }
@@ -132,7 +132,7 @@
 			margin-bottom: 14px;
 		}	
 		form {
-			max-width: 320px;
+			max-width: 400px;
 		}
 		label {
 			font-size: 14px;
@@ -200,19 +200,10 @@
 	</style>
 </head>
 <body onload="init()">
-<!-- 	<div id="info"> -->
-<!-- 		<div id="logo"></div> -->
-<!-- 		<h1>SPC CSL Demo</h1> -->
-<!-- 		<p>admin + admin <br> user + user</p> -->
-<!-- 	</div> -->
 	<div id="form">
 		<form th:action="${contextPath}" method="post">
-			<h2>Your session has expired</h2>
-			<!-- <label id="login-label" for="login">Login</label>
-			<input type="text" id="login" name="username" aria-labelledby="login-label" autofocus>
-			<label id="password-label" for="password">Password</label>
-			<input type="password" id="password" name="password" aria-labelledby="password-label"> -->
-			<button id="button-submit" type="submit">Reenter</button>
+			<h2 th:text="#{sessionExpired.label.title}">d</h2>
+			<button id="button-submit" type="submit" th:text=#{sessionExpired.button.reenter}>Reenter</button>
 		</form>
 	</div>
 </body>
