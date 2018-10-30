@@ -6,6 +6,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 
 import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
+import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.server.VaadinSession;
@@ -21,6 +23,8 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import ru.gzpn.spc.csl.ui.common.ConfirmDialog;
+
 public class UserInfoTabSheet extends TabSheet {
 	
 	private UserInfoTab userInfoTab;
@@ -28,10 +32,10 @@ public class UserInfoTabSheet extends TabSheet {
 	private MessageSource messageSource;
 	private IdentityService identityService;
 
-	public UserInfoTabSheet(IdentityService identityService, MessageSource messageSource, ClickListener updateClick) {
+	public UserInfoTabSheet(IdentityService identityService, MessageSource messageSource, DataProvider<UserTemplate, String> userDataProvider) {
 		this.messageSource = messageSource;
 		this.identityService = identityService;
-		userInfoTab = new UserInfoTab(identityService, messageSource, updateClick);
+		userInfoTab = new UserInfoTab(identityService, messageSource, userDataProvider);
 		userGroupTab = createuserGroupTab();
 		this.addTab(userInfoTab, "info user");
 		this.addTab(userGroupTab, "user group");
@@ -65,7 +69,7 @@ class UserInfoTab extends FormLayout{
 	private IdentityService identityService;
 	private ClickListener listener;
 	
-	public UserInfoTab(IdentityService identityService, MessageSource messageSource, ClickListener updateClick) {
+	public UserInfoTab(IdentityService identityService, MessageSource messageSource, DataProvider<UserTemplate, String> userDataProvider) {
 		this.messageSource = messageSource;
 		this.identityService = identityService;
 		
@@ -123,8 +127,23 @@ class UserInfoTab extends FormLayout{
 		buttonLayout.setMargin(false);
 		this.addComponents(buttonLayout);
 		
+		Binder<User> binder = new Binder<>();
+		
+		binder.forField(loginField).asRequired("Name may not be empty").bind(User::getId, User::setId);
+		binder.forField(firstNameField).asRequired("Name may not be empty").bind(User::getFirstName, User::setFirstName);
+		binder.forField(lastNameField).asRequired("Name may not be empty").bind(User::getLastName, User::setLastName);
+		binder.forField(emailField).asRequired("Email may not be empty")
+			.withValidator(new EmailValidator("Not a valid email address"))
+			.bind(User::getEmail, User::setEmail);
+		binder.forField(newPasswordField).asRequired("Password may not be empty")
+            .withValidator(new StringLengthValidator("Password must be at least 7 characters long", 6, null))
+            .bind((usrLocal) -> "", (usrLocal, pwd) -> {
+            	usrLocal.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(pwd));
+            			});
+		
+		
 		editButton.addClickListener(event -> {
-			if(loginField.isEmpty()) {
+			if(loginField.getValue().isEmpty()) {
 				loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
 				loginField.setReadOnly(false);
 			}
@@ -138,8 +157,8 @@ class UserInfoTab extends FormLayout{
 			newPasswordField.setReadOnly(false);
 			saveButton.setEnabled(true);
 			editButton.setEnabled(false);
+			
 		});
-		editButton.addClickListener(updateClick);
 		
 		saveButton.addClickListener(event -> {
 			
@@ -154,45 +173,55 @@ class UserInfoTab extends FormLayout{
 			newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 			newPasswordField.setReadOnly(true);
 			
-			Binder<User> binder = new Binder<>();
-			
 			User user = identityService.createUserQuery().userId(loginField.getValue()).singleResult();
-			if (user == null) {
-				
-				user = identityService.newUser(loginField.getValue());
-				
-				binder.forField(firstNameField).asRequired("Name may not be empty").bind(User::getFirstName, User::setFirstName);
-				binder.forField(lastNameField).asRequired("Name may not be empty").bind(User::getLastName, User::setLastName);
-				
-				binder.forField(emailField).asRequired("Email may not be empty")
-					.withValidator(new EmailValidator("Not a valid email address"))
-					.bind(User::getEmail, User::setEmail);
-				binder.forField(newPasswordField)
-	                .asRequired("Password may not be empty")
-	                .withValidator(new StringLengthValidator(
-	                        "Password must be at least 7 characters long", 7, null))
-	                .bind(User::getPassword, User::setPassword);
-				
-//				user.setFirstName(firstNameField.getValue());
-//				user.setLastName(lastNameField.getValue());
-//				user.setEmail(emailField.getValue());
-//				user.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(newPasswordField.getValue()));
-				identityService.saveUser(user);
-				Notification.show(userWindowCaption.concat(" ").concat(user.getId()).concat(notificationCreated), Type.TRAY_NOTIFICATION);
-				
-			} else if (user.getId() != null) {
-				user.setFirstName(firstNameField.getValue());
-				user.setLastName(lastNameField.getValue());
-				user.setEmail(emailField.getValue());
-				user.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(newPasswordField.getValue()));
-				identityService.saveUser(user);
-				Notification.show(userWindowCaption.concat(" ").concat(user.getId()).concat(notificationChanged), Type.TRAY_NOTIFICATION);
-			}
+			try {
+			      if (user == null) {	
+						user = identityService.newUser(loginField.getValue());
+						Notification.show(userWindowCaption.concat(" ").concat(user.getId()).concat(notificationCreated), Type.TRAY_NOTIFICATION);
+						
+					} else if (user.getId() != null) {
+						Notification.show(userWindowCaption.concat(" ").concat(user.getId()).concat(notificationChanged), Type.TRAY_NOTIFICATION);
+					}
+			      binder.writeBean(user);
+			    } catch (ValidationException e) {
+			      Notification.show("Person could not be saved, " +
+			        "please check error messages for each field.");
+			    }
+
+			binder.setBean(user);
 			
+			//
+			identityService.saveUser(user);
+			userDataProvider.refreshAll();
 			saveButton.setEnabled(false);
 			editButton.setEnabled(true);
 		});
-		saveButton.addClickListener(updateClick);
+		
+		String notificationDeleted = getI18nText("adminView.notification.user.deleted");
+		String textInfo = getI18nText("adminView.ConfirmDialog.deleteUser.info");
+		String textOKButton = getI18nText("adminView.ConfirmDialog.deleteUser.ok");
+		String textCloseButton = getI18nText("adminView.ConfirmDialog.deleteUser.close");
+		
+		ClickListener okDeleteClick = event -> {
+			User user = identityService.createUserQuery().userId(loginField.getValue()).singleResult();
+			identityService.deleteUser(user.getId());
+			userDataProvider.refreshAll();
+			Notification.show(userWindowCaption.concat(" ").concat(user.getId()).concat(notificationDeleted), Type.WARNING_MESSAGE);
+		};
+		
+		deleteButton.addClickListener(event -> {
+			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
+			getUI().addWindow(box);
+		});
+		
+		/*deleteButton.addClickListener(event -> {
+			loginField.setValue("");
+			firstNameField.setValue("");
+			lastNameField.setValue("");
+			emailField.setValue("");
+			newPasswordField.setValue("");
+		});*/
+			
 	}
 	
 	public void setData(UserTemplate template) {

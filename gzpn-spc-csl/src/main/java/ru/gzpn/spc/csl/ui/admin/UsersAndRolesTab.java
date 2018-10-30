@@ -43,7 +43,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 	private Grid<UserTemplate> gridUser;
 	private Grid<GroupTemplate> gridGroup;
 	private ComboBox<EnumUserGroup> selectUserGroup;
-	private DataProvider<UserTemplate, String> userDataProvider;
+	private DataProvider<UserTemplate, String> userDataProvider = createUserDataProvider();
 	private DataProvider<GroupTemplate, String> groupDataProvider;
 	private ConfigurableFilterDataProvider<UserTemplate, Void, String> userFilter;
 	private ConfigurableFilterDataProvider<GroupTemplate, Void, String> groupFilter;
@@ -61,7 +61,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 			userDataProvider.refreshAll();
 		};
 		
-		infoUser = new UserInfoTabSheet(identityService, messageSource, updateClick);
+		infoUser = new UserInfoTabSheet(identityService, messageSource, userDataProvider);
 		headerHorizont = new HorizontalLayout();
 		resultPage = new VerticalLayout();
 		gridUser = createGridUser();
@@ -84,7 +84,36 @@ public class UsersAndRolesTab extends VerticalLayout {
 		setMargin(false);
 		addComponent(panel);
 	}
+	
+	public DataProvider<UserTemplate, String> createUserDataProvider(){
+		return DataProvider.fromFilteringCallbacks(query -> {
 
+			List<User> userList = identityService.createUserQuery().list()
+					.stream()
+						.filter(user -> {
+							return user.getId().startsWith(query.getFilter().orElse(""));
+						}).collect(Collectors.toList());
+			
+			return userList.stream().map(m -> {
+				UserTemplate user = new UserTemplate();
+				user.setId(m.getId());
+				user.setFirstName(m.getFirstName());
+				user.setLastName(m.getLastName());
+				user.setEmail(m.getEmail());
+				user.setPassword(m.getPassword());
+				user.setEdit(buttonEditUser(m));
+				user.setDelete(buttonDeleteUser(m));
+				return user;
+			});
+		}, query -> {
+			return identityService.createUserQuery().list()
+					.stream()
+						.filter(user -> {
+							return user.getId().startsWith(query.getFilter().orElse(""));
+						}).collect(Collectors.toList()).size();
+		});
+	}
+	
 	public MessageSource getMessageSource() {
 		return messageSource;
 	}
@@ -146,32 +175,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		String lastNameCaption = getI18nText("adminView.caption.lastName");
 		String emailCaption = getI18nText("adminView.caption.email");
 
-		userDataProvider = DataProvider.fromFilteringCallbacks(query -> {
-
-			List<User> userList = identityService.createUserQuery().list()
-					.stream()
-						.filter(user -> {
-							return user.getId().startsWith(query.getFilter().orElse(""));
-						}).collect(Collectors.toList());
-			
-			return userList.stream().map(m -> {
-				UserTemplate user = new UserTemplate();
-				user.setId(m.getId());
-				user.setFirstName(m.getFirstName());
-				user.setLastName(m.getLastName());
-				user.setEmail(m.getEmail());
-				user.setPassword(m.getPassword());
-				user.setEdit(buttonEditUser(m));
-				user.setDelete(buttonDeleteUser(m));
-				return user;
-			});
-		}, query -> {
-			return identityService.createUserQuery().list()
-					.stream()
-						.filter(user -> {
-							return user.getId().startsWith(query.getFilter().orElse(""));
-						}).collect(Collectors.toList()).size();
-		});
+		
 
 		userFilter = userDataProvider.withConfigurableFilter();
 		Grid<UserTemplate> grid = new Grid<>();
