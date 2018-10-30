@@ -31,10 +31,22 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 
 	@Override
 	public long getCountByGroupField(String field) {
-		StringBuilder jpql = new StringBuilder("SELECT COUNT(e) FROM ");
-		jpql.append(entityInformation.getEntityName())
-			.append(" e GROUP BY e.")
-			.append(field);
+		StringBuilder jpql = new StringBuilder("SELECT COUNT(DISTINCT e.");
+		jpql.append(field)
+			.append(") FROM ")
+			.append(entityInformation.getEntityName())
+			.append(" e");
+		
+		return entityManager.createQuery(jpql.toString(), Long.class).getSingleResult();
+	}
+	
+	@Override
+	public long getCountByGroupField(String entity, String field) {
+		StringBuilder jpql = new StringBuilder("SELECT COUNT(DISTINCT e.");
+		jpql.append(field)
+			.append(") FROM ")
+			.append(entity)
+			.append(" e");
 		
 		return entityManager.createQuery(jpql.toString(), Long.class).getSingleResult();
 	}

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.data.provider.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.data.provider.HierarchicalQuery;
 
-import ru.gzpn.spc.csl.model.Entities;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IStage;
@@ -39,23 +38,15 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 		} else if (parent instanceof IStage) {
 		} else if (parent instanceof IPhase) {
 		} else {
+			
 			//  there is no parent in the IHProject
 			
 			// TODO: get the first entity & grouping fields from the user's settings
 			// execute query and get the result
 			
-			 GroupWrapper nodeWrapper = userSettigsService.getDefaultNodesPath().poll();
-			 
-			 switch (Entities.valueOf(nodeWrapper.getEntityName().toUpperCase())) {
-			 case HPROJECT:
-				 break;
-			 case CPROJECT:
-				 break;
-			 case PHASE:
-				 break;
-			 case STAGE:
-				 break;
-			 }
+			GroupWrapper nodeWrapper = userSettigsService.getDefaultNodesPath().poll();
+			result = (int)projectService.getCount(nodeWrapper.getEntityName(), nodeWrapper.getGroupByFiled());
+			
 		}
 
 		return result;

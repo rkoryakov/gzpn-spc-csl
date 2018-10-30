@@ -1,6 +1,5 @@
 package ru.gzpn.spc.csl.services.bl;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -23,9 +22,7 @@ public class DataUserSettigsServiceTest {
 	
 	@Test
 	public void testAccessToEm() {
-		DataUserSettigsService.logger.debug("geEntityManager(UserSettings.class) = {}", settigsService.geEntityManager());
-		assertNotNull(settigsService.geEntityManager());
-		DataUserSettigsService.logger.debug("select s from Stage s - {}", settigsService.geEntityManager().createQuery("select s from Stage s").getResultList());
-		DataUserSettigsService.logger.debug("select s from Stage s - {}", settigsService.geEntityManager().createNamedQuery("Stage.groupByNameCount").getResultList());
+		DataUserSettigsService.logger.debug("[TEST SELECT COUNT(DISTINCT s.name) from Stage s] - {}", 
+				settigsService.geEntityManager().createQuery("SELECT COUNT(DISTINCT s.name) from Stage s", Long.class).getSingleResult());
 	}
 }

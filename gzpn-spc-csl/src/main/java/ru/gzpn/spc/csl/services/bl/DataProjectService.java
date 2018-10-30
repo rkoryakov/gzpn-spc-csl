@@ -23,9 +23,33 @@ public class DataProjectService {
 	@Autowired
 	private PhaseRepository phaseRepository;
 
+	public HProjectRepository getHPRepository() {
+		return hpRepository;
+	}
+	
+	public CProjectRepository getCPRepository() {
+		return cpRepository;
+	}
+	
+	public PhaseRepository getPhaseRepository() {
+		return phaseRepository;
+	}
+	
+	/**
+	 * Items count of the given entity grouped by given field
+	 * 
+	 * @param entity string name of the entity
+	 * @param groupByField string name of the GROUPBY field 
+	 * @return
+	 */
+	public long getCount(String entity, String groupByField) {
+		// To get the count of the given entity we need the base repository implementation
+		// thus we can use any implementation of the BaseRepository - we use HProjectRepository
+		return hpRepository.getCountByGroupField(entity, groupByField);
+	}
+	
 	public <T> T executeByField(Supplier<T> suplier, String field) {
-		T result = null;
-		
+		T result = suplier.get();
 		return result;
 	}
 }
