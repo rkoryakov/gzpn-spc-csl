@@ -1,5 +1,7 @@
 package ru.gzpn.spc.csl.model.repositories;
 
+import java.util.stream.Stream;
+
 import javax.persistence.EntityManager;
 
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
@@ -49,5 +51,15 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 			.append(" e");
 		
 		return entityManager.createQuery(jpql.toString(), Long.class).getSingleResult();
+	}
+
+	@Override
+	public Stream<BaseEntity> getItemsByGroupField(String entity, String field) {
+		StringBuilder jpql = new StringBuilder("SELECT DISTINCT e.");// FROM ");
+		jpql.append(field)
+			.append(", e.id FROM ")
+			.append(field);
+		
+		return entityManager.createQuery(jpql.toString(), BaseEntity.class).getResultList().stream();
 	}
 }

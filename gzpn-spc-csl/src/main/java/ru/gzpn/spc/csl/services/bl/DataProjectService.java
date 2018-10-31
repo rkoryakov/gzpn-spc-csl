@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.gzpn.spc.csl.model.repositories.BaseRepository;
 import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.PhaseRepository;
@@ -43,9 +44,14 @@ public class DataProjectService {
 	 * @return
 	 */
 	public long getCount(String entity, String groupByField) {
+		return getBaseRepository().getCountByGroupField(entity, groupByField);
+	}
+	
+	@SuppressWarnings({"rawtypes"})
+	public BaseRepository getBaseRepository() {
 		// To get the count of the given entity we need the base repository implementation
 		// thus we can use any implementation of the BaseRepository - we use HProjectRepository
-		return hpRepository.getCountByGroupField(entity, groupByField);
+		return getHPRepository();
 	}
 	
 	public <T> T executeByField(Supplier<T> suplier, String field) {

@@ -34,7 +34,7 @@ public abstract class BaseEntity extends NodeTracker {
 	@UpdateTimestamp
 	@Column(updatable = true, nullable = false)
 	private LocalDateTime changeTime;
-
+	
 	public Long getId() {
 		return id;
 	}

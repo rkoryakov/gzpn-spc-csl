@@ -1,9 +1,5 @@
 package ru.gzpn.spc.csl.services.bl;
 
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Deque;
-
 import javax.persistence.EntityManager;
 
 import org.slf4j.Logger;
@@ -26,12 +22,11 @@ public class DataUserSettigsService {
 	@Autowired
 	private JpaContext jpaContext;
 	
-	public Deque<GroupWrapper> getDefaultNodesPath() {
-		
-		return new ArrayDeque<>(Arrays.asList(new GroupWrapper("HProject", "projectId"), 
-				new GroupWrapper("HProject", "name"),
-				new GroupWrapper("CProject", "name"),
-				new GroupWrapper("Phase", null))); 
+	public GroupWrapper getDefaultNodesPath() {
+		return new GroupWrapper("HProject", "projectId")
+				.addChild(new GroupWrapper("HProject", "name"))
+				.addChild(new GroupWrapper("CProject", "name"))
+				.addChild(new GroupWrapper("Phase", null));
 	}
 	
 	public EntityManager geEntityManager() {

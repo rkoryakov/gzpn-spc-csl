@@ -23,9 +23,16 @@ public class DataProjectServiceTest {
 	
 	@Test
 	public void getCountTest() {
-		DataProjectService.logger.debug("[TEST getCount('Stage', 'name')] - {}", service.getCount("Stage", "name"));
+		DataProjectService.logger.debug("[TEST getCount('Stage', 'name')] - {}", 
+				service.getCount("Stage", "name"));
 	}
 
+	@Test
+	public void getItemsByGroupFieldTest() {
+		DataProjectService.logger.debug("[TEST getItemsByGroupField('Stage', 'name')] - {}", 
+				service.getBaseRepository().getItemsByGroupField("Stage", "name"));
+	}
+	
 	@Test
 	public void testLock() {
 		DataProjectService.logger.debug("Enter into testLock() method");
