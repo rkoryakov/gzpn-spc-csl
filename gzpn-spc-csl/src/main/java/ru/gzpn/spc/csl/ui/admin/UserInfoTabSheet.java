@@ -207,20 +207,17 @@ class UserInfoTab extends FormLayout{
 			identityService.deleteUser(user.getId());
 			userDataProvider.refreshAll();
 			Notification.show(userWindowCaption.concat(" ").concat(user.getId()).concat(notificationDeleted), Type.WARNING_MESSAGE);
-		};
-		
-		deleteButton.addClickListener(event -> {
-			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
-			getUI().addWindow(box);
-		});
-		
-		/*deleteButton.addClickListener(event -> {
 			loginField.setValue("");
 			firstNameField.setValue("");
 			lastNameField.setValue("");
 			emailField.setValue("");
 			newPasswordField.setValue("");
-		});*/
+		};
+		
+		deleteButton.addClickListener(event -> {
+			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
+			getUI().addWindow(box);
+		});	
 			
 	}
 	
@@ -237,7 +234,7 @@ class UserInfoTab extends FormLayout{
 			firstNameField.setValue(template.getFirstName() == null ? "" : template.getFirstName());
 			lastNameField.setValue(template.getLastName() == null ? "" : template.getLastName());
 			emailField.setValue(template.getEmail() == null ? "" : template.getEmail());
-			newPasswordField.setValue(template.getPassword() == null ? "" : template.getPassword());
+			newPasswordField.setValue("");
 		}
 	}
 
