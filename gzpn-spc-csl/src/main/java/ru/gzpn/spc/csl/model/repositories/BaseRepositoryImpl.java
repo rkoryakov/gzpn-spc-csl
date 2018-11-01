@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
+import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 @NoRepositoryBean
 public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepository<T, Long> implements BaseRepository<T> {
 
@@ -54,12 +55,18 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 	}
 
 	@Override
-	public Stream<BaseEntity> getItemsByGroupField(String entity, String field) {
-		StringBuilder jpql = new StringBuilder("SELECT DISTINCT e.");// FROM ");
-		jpql.append(field)
-			.append(", e.id FROM ")
-			.append(field);
+	public Stream<NodeWrapper> getItemsGroupedByField(String entity, String field) {
+		StringBuilder jpql = new StringBuilder();
+//		Formatter formatter = new Formatter(jpql, Locale.ROOT);
+//		formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1s', e.name)", entity,);
+//		jpql.append(entity)
+//			.append("', ")
+//			.append(field)
+//			.append(") FROM ")
+//			.append(entity)
+//			.append(" e GROUP BY e.")
+//			.append(field);
 		
-		return entityManager.createQuery(jpql.toString(), BaseEntity.class).getResultList().stream();
+		return entityManager.createQuery(jpql.toString(), NodeWrapper.class).getResultList().stream();
 	}
 }

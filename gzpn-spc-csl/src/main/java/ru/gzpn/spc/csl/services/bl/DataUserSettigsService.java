@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.UserSettings;
 import ru.gzpn.spc.csl.model.repositories.UserSettingsRepository;
-import ru.gzpn.spc.csl.ui.createdoc.GroupWrapper;
+import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 @Service
 @Transactional
@@ -22,11 +22,11 @@ public class DataUserSettigsService {
 	@Autowired
 	private JpaContext jpaContext;
 	
-	public GroupWrapper getDefaultNodesPath() {
-		return new GroupWrapper("HProject", "projectId")
-				.addChild(new GroupWrapper("HProject", "name"))
-				.addChild(new GroupWrapper("CProject", "name"))
-				.addChild(new GroupWrapper("Phase", null));
+	public NodeWrapper getDefaultNodesPath() {
+		return new NodeWrapper("HProject", "projectId")
+				.addChild(new NodeWrapper("HProject", "name"))
+				.addChild(new NodeWrapper("CProject", "name"))
+				.addChild(new NodeWrapper("Phase", null));
 	}
 	
 	public EntityManager geEntityManager() {

@@ -57,10 +57,6 @@ public class UsersAndRolesTab extends VerticalLayout {
 		this.messageSource = messageSource;
 		panel = new HorizontalSplitPanel();
 		
-		ClickListener updateClick = event -> {
-			userDataProvider.refreshAll();
-		};
-		
 		infoUser = new UserInfoTabSheet(identityService, messageSource, userDataProvider);
 		headerHorizont = new HorizontalLayout();
 		resultPage = new VerticalLayout();

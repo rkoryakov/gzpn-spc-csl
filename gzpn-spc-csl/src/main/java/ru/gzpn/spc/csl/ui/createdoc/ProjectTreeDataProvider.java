@@ -16,7 +16,7 @@ import ru.gzpn.spc.csl.model.interfaces.IStage;
 import ru.gzpn.spc.csl.services.bl.DataProjectService;
 import ru.gzpn.spc.csl.services.bl.DataUserSettigsService;
 
-public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProvider<GroupWrapper, NodeFilter> {
+public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProvider<NodeWrapper, NodeFilter> {
 
 	@Autowired
 	private DataProjectService projectService;
@@ -26,10 +26,10 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 	private Map<String, List<String>> nodesPath = null;
 	
 	@Override
-	public int getChildCount(HierarchicalQuery<GroupWrapper, NodeFilter> query) {
+	public int getChildCount(HierarchicalQuery<NodeWrapper, NodeFilter> query) {
 		int result = 0;
 
-		GroupWrapper parent = query.getParent();
+		NodeWrapper parent = query.getParent();
 
 		if (parent instanceof ICProject) {
 			// TODO: check the current node and grouping fields (NodeWalker)
@@ -53,20 +53,18 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 	}
 
 	@Override
-	public boolean hasChildren(GroupWrapper item) {
+	public boolean hasChildren(NodeWrapper item) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	protected Stream<GroupWrapper> fetchChildrenFromBackEnd(HierarchicalQuery<GroupWrapper, NodeFilter> query) {
-		Stream<GroupWrapper> result = null;
-		GroupWrapper parent = query.getParent();
+	protected Stream<NodeWrapper> fetchChildrenFromBackEnd(HierarchicalQuery<NodeWrapper, NodeFilter> query) {
+		Stream<NodeWrapper> result = null;
+		NodeWrapper parent = query.getParent();
 
-		if (parent.isRoot()) {
-			
-		} else {
-			switch (Entities.valueOf(parent.getEntityName())) {
+		if (parent != null) {
+			switch (Entities.valueOf(parent.getEntityName().toUpperCase())) {
 			case CPROJECT:
 
 				break;
@@ -79,7 +77,10 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 			default:
 				break;
 			}
-		} 
+		} else {
+			parent = userSettigsService.getDefaultNodesPath();
+//			parent.get
+		}
 		
 		if (parent instanceof ICProject) {
 			// TODO: check the current node and grouping fields (NodeWalker)

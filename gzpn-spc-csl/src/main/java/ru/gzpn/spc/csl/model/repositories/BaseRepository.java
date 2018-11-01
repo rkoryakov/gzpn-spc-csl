@@ -6,10 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
+import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 @NoRepositoryBean
 public interface BaseRepository<T extends BaseEntity> extends JpaRepository<T, Long> {
 	public long getCountByGroupField(String field);
 	public long getCountByGroupField(String entity, String field);
-	public Stream<BaseEntity> getItemsByGroupField(String entity, String field);
+	public Stream<NodeWrapper> getItemsGroupedByField(String entity, String field);
 }
