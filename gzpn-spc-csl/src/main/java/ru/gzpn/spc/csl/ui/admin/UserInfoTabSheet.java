@@ -190,7 +190,6 @@ class UserInfoTab extends FormLayout{
 
 			binder.setBean(user);
 			
-			//
 			identityService.saveUser(user);
 			userDataProvider.refreshAll();
 			saveButton.setEnabled(false);
@@ -237,51 +236,9 @@ class UserInfoTab extends FormLayout{
 			newPasswordField.setValue("");
 		}
 	}
-
-	public Button getSaveButton() {
-		return saveButton;
-	}
-
-	public void setSaveButton(Button saveButton) {
-		this.saveButton = saveButton;
-	}
-
-	public Button getEditButton() {
-		return editButton;
-	}
-
-	public void setEditButton(Button editButton) {
-		this.editButton = editButton;
-	}
-
-	public Button getDeleteButton() {
-		return deleteButton;
-	}
-
-	public void setDeleteButton(Button deleteButton) {
-		this.deleteButton = deleteButton;
-	}
-
-	public TextField getLoginField() {
-		return loginField;
-	}
-
-	public TextField getFirstNameField() {
-		return firstNameField;
-	}
-
-	public TextField getLastNameField() {
-		return lastNameField;
-	}
-
-	public TextField getEmailField() {
-		return emailField;
-	}
-
-	public TextField getNewPasswordField() {
-		return newPasswordField;
-	}
 	
+	
+
 	private String getI18nText(String key) {
 		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
 	}
