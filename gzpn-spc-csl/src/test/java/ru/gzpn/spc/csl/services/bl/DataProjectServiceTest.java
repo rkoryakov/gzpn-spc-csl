@@ -24,15 +24,17 @@ public class DataProjectServiceTest {
 	}
 	
 	@Test
-	public void getCountTest() {
-		DataProjectService.logger.debug("[TEST getCount('Stage', 'name')] - {}", 
-				service.getCount("Stage", "name"));
+	public void getCountByGroupFieldTest() {
+		getCountByGroupField("Stage", "name");
+		getCountByGroupField("Stage", "id");
+		getCountByGroupField("Stage", "changeTime");
 	}
 
 	@Test
 	public void getItemsGroupedByFieldTest() {
-		DataProjectService.logger.debug("[TEST getItemsByGroupField('Stage', 'name')] - {}", 
-				service.getBaseRepository().getItemsGroupedByField("Stage", "name"));
+		getItemsGroupedByField("Stage", "name");
+		getItemsGroupedByField("Stage", "id");
+		getItemsGroupedByField("Stage", "changeTime");
 	}
 	
 	@Test
@@ -55,6 +57,18 @@ public class DataProjectServiceTest {
 			DataProjectService.logger.debug(" class c = {}", c.getName());
 			DataProjectService.logger.debug("Leave synchronized section testLock2()");
 		}
+	}
+	
+	private void getItemsGroupedByField(String entity, String field) {
+		DataProjectService.logger.debug("[TEST getItemsByGroupField('{}', '{}')] - {}", entity, field,
+				service.getItemsGroupedByField(entity, field)
+				.map(n-> n.getEntityName() + ",  " + n.getGroupByFiled() + " = " + n.getGroupFiledValue())
+				.reduce(new StringBuilder(""), (p, s)-> p.append("\n").append(s),  (p, s)-> p.append(s)));
+	}
+	
+	private void getCountByGroupField(String entity, String field) {
+		DataProjectService.logger.debug("[TEST getCount('{}', '{}')] - {}", entity, field,
+				service.getCount(entity, field));
 	}
 	
 	public static void main(String[] args) {

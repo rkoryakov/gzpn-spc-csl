@@ -1,5 +1,7 @@
 package ru.gzpn.spc.csl.model.repositories;
 
+import java.util.Formatter;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
@@ -34,39 +36,41 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 
 	@Override
 	public long getCountByGroupField(String field) {
-		StringBuilder jpql = new StringBuilder("SELECT COUNT(DISTINCT e.");
-		jpql.append(field)
-			.append(") FROM ")
-			.append(entityInformation.getEntityName())
-			.append(" e");
+		StringBuilder jpql = new StringBuilder();
+		long result = 0;
 		
-		return entityManager.createQuery(jpql.toString(), Long.class).getSingleResult();
+		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
+			formatter.format("SELECT COUNT(DISTINCT e.%2$s) FROM %1$s e", entityInformation.getEntityName(), field);
+			result = entityManager.createQuery(jpql.toString(), Long.class).getSingleResult();
+		}
+		
+		return result;
 	}
 	
 	@Override
 	public long getCountByGroupField(String entity, String field) {
-		StringBuilder jpql = new StringBuilder("SELECT COUNT(DISTINCT e.");
-		jpql.append(field)
-			.append(") FROM ")
-			.append(entity)
-			.append(" e");
+		StringBuilder jpql = new StringBuilder();
+		long result = 0;
 		
-		return entityManager.createQuery(jpql.toString(), Long.class).getSingleResult();
+		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
+			formatter.format("SELECT COUNT(DISTINCT e.%2$s) FROM %1$s e", entity, field);
+			result = entityManager.createQuery(jpql.toString(), Long.class).getSingleResult();
+		}
+		
+		return result;
 	}
 
 	@Override
 	public Stream<NodeWrapper> getItemsGroupedByField(String entity, String field) {
 		StringBuilder jpql = new StringBuilder();
-//		Formatter formatter = new Formatter(jpql, Locale.ROOT);
-//		formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1s', e.name)", entity,);
-//		jpql.append(entity)
-//			.append("', ")
-//			.append(field)
-//			.append(") FROM ")
-//			.append(entity)
-//			.append(" e GROUP BY e.")
-//			.append(field);
+		Stream<NodeWrapper> result = null;
 		
-		return entityManager.createQuery(jpql.toString(), NodeWrapper.class).getResultList().stream();
+		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
+			formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%2$s', CAST(e.%2$s as string)) "
+							+ "FROM %1$s e GROUP BY e.%2$s", entity, field);
+			result = entityManager.createQuery(jpql.toString(), NodeWrapper.class).getResultList().stream();
+		}
+		
+		return result;
 	}
 }

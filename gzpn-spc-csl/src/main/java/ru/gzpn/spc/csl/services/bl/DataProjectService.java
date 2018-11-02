@@ -1,6 +1,7 @@
 package ru.gzpn.spc.csl.services.bl;
 
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ru.gzpn.spc.csl.model.repositories.BaseRepository;
 import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.PhaseRepository;
+import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 @Service
 @Transactional
@@ -47,8 +48,15 @@ public class DataProjectService {
 		return getBaseRepository().getCountByGroupField(entity, groupByField);
 	}
 	
-	@SuppressWarnings({"rawtypes"})
-	public BaseRepository getBaseRepository() {
+	public Stream<NodeWrapper> getItemsGroupedBy(NodeWrapper node) {
+		return getItemsGroupedByField(node.getEntityName(), node.getGroupByFiled());
+	}
+	
+	public Stream<NodeWrapper> getItemsGroupedByField(String entity, String groupByField) {
+		return getBaseRepository().getItemsGroupedByField(entity, groupByField);
+	}
+	
+	public HProjectRepository getBaseRepository() {
 		// To get the count of the given entity we need the base repository implementation
 		// thus we can use any implementation of the BaseRepository - we use HProjectRepository
 		return getHPRepository();

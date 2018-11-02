@@ -78,14 +78,14 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 				break;
 			}
 		} else {
-			parent = userSettigsService.getDefaultNodesPath();
-//			parent.get
+			result = projectService.getItemsGroupedBy(parent).peek(
+					e -> e.setParent(userSettigsService.getDefaultNodesPath()));
 		}
 		
 		if (parent instanceof ICProject) {
 			// TODO: check the current node and grouping fields (NodeWalker)
 			// GroupWrapper currentNode = parent.pollCurrent();
-		
+			
 			
 		} else if (parent instanceof IStage) {
 		} else if (parent instanceof IPhase) {
@@ -95,6 +95,5 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 		}
 		return result;
 	}
-	
 	
 }
