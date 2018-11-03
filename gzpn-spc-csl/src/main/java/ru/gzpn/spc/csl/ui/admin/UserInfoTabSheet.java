@@ -10,11 +10,13 @@ import com.vaadin.data.ValidationException;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.PasswordField;
@@ -31,16 +33,26 @@ public class UserInfoTabSheet extends TabSheet {
 	private VerticalLayout userGroupTab;
 	private MessageSource messageSource;
 	private IdentityService identityService;
+	private UsersAndRolesTab usersAndRolesTab;
+	private UIContainer container;
 
-	public UserInfoTabSheet(IdentityService identityService, MessageSource messageSource, DataProvider<UserTemplate, String> userDataProvider) {
+	public UserInfoTabSheet(IdentityService identityService, 
+			MessageSource messageSource, 
+			DataProvider<UserTemplate, String> userDataProvider, 
+			DataProvider<GroupTemplate, String> groupDataProvider, 
+			UIContainer container) {
+		
 		this.messageSource = messageSource;
 		this.identityService = identityService;
-		userInfoTab = new UserInfoTab(identityService, messageSource, userDataProvider);
-		userGroupTab = createuserGroupTab();
+		this.container = container;
+		userInfoTab = new UserInfoTab(identityService, messageSource, userDataProvider, container);
+		userGroupTab = new userAddGroupTab(identityService, messageSource, userDataProvider, groupDataProvider);
 		this.addTab(userInfoTab, "info user");
 		this.addTab(userGroupTab, "user group");
+		userInfoTab.setUserAndRolesTab(usersAndRolesTab);
 	}
-		
+	
+	
 	private VerticalLayout createuserGroupTab() {
 		VerticalLayout userGroup = new VerticalLayout();
 		return userGroup;
@@ -48,6 +60,10 @@ public class UserInfoTabSheet extends TabSheet {
 
 	public UserInfoTab getUserInfoTab() {
 		return userInfoTab;
+	}
+	
+	public void setUserAndRolesTab(UsersAndRolesTab tab) {
+		usersAndRolesTab = tab;
 	}
 	
 	private String getI18nText(String key) {
@@ -64,37 +80,36 @@ class UserInfoTab extends FormLayout{
 	private final PasswordField newPasswordField;
 	private Button saveButton;
 	private Button editButton;
+	private Button cancelButton;
 	private Button deleteButton;
 	private MessageSource messageSource;
 	private IdentityService identityService;
-	private ClickListener listener;
+	private Binder<User> formBinder;
+	private UsersAndRolesTab usersAndRolesTab;
+	private UIContainer container;
 	
-	public UserInfoTab(IdentityService identityService, MessageSource messageSource, DataProvider<UserTemplate, String> userDataProvider) {
+	public UserInfoTab(IdentityService identityService, 
+					MessageSource messageSource, 
+					DataProvider<UserTemplate, String> userDataProvider, 
+					UIContainer container) {
 		this.messageSource = messageSource;
 		this.identityService = identityService;
+		this.container = container;
 		
-		String userWindowCaption = getI18nText("adminView.caption.userKey");
 		String loginCaption = getI18nText("adminView.caption.login");
 		String firstNameCaption = getI18nText("adminView.caption.firstName");
 		String lastNameCaption = getI18nText("adminView.caption.lastName");
 		String emailCaption = getI18nText("adminView.caption.email");
 		String newPasswordCaption = getI18nText("adminView.caption.newPasswordCaption");
-		String passwordCaption = getI18nText("adminView.caption.passwordCaption");
-		String nameSaveButton = getI18nText("adminView.button.nameSaveButton");
-		String nameEditButton = getI18nText("adminView.caption.edit");
-		String nameDeleteButton = getI18nText("adminView.caption.delete");
-		String notificationChanged = getI18nText("adminView.notification.user.change");
-		String notificationCreated = getI18nText("adminView.notification.user.created");
-		
+
 		this.setMargin(true);
 		this.addStyleName("outlined");
 
 		final HorizontalLayout buttonLayout = new HorizontalLayout();
-		saveButton = new Button(nameSaveButton);
-		saveButton.setEnabled(false);
-		editButton = new Button(nameEditButton);
-		deleteButton = new Button(nameDeleteButton);
-		
+		saveButton = createSaveButton(userDataProvider);
+		editButton = createEditButton();
+		cancelButton = createCancelButton(userDataProvider);
+		deleteButton = createDeleteButton(userDataProvider);
 		
 		loginField = new TextField(loginCaption, "");
 		loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
@@ -123,10 +138,15 @@ class UserInfoTab extends FormLayout{
 		this.addComponent(lastNameField);
 		this.addComponent(emailField);
 		this.addComponent(newPasswordField);
-		buttonLayout.addComponents(saveButton, editButton, deleteButton);
+		buttonLayout.addComponents(saveButton, editButton, cancelButton, deleteButton);
 		buttonLayout.setMargin(false);
 		this.addComponents(buttonLayout);
 		
+		formBinder = createBinder();		
+			
+	}
+	
+	private Binder<User> createBinder() {
 		Binder<User> binder = new Binder<>();
 		
 		binder.forField(loginField).asRequired("Name may not be empty").bind(User::getId, User::setId);
@@ -140,9 +160,15 @@ class UserInfoTab extends FormLayout{
             .bind((usrLocal) -> "", (usrLocal, pwd) -> {
             	usrLocal.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(pwd));
             			});
-		
-		
+		return binder;
+	}
+
+	private Button createEditButton() {
+		String nameEditButton = getI18nText("adminView.caption.edit");
+		editButton = new Button(nameEditButton);
 		editButton.addClickListener(event -> {
+			editButton.setEnabled(false);
+			editButton.setVisible(false);
 			if(loginField.getValue().isEmpty()) {
 				loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
 				loginField.setReadOnly(false);
@@ -157,11 +183,25 @@ class UserInfoTab extends FormLayout{
 			newPasswordField.setReadOnly(false);
 			saveButton.setEnabled(true);
 			editButton.setEnabled(false);
-			
+			deleteButton.setEnabled(false);
+			cancelButton.setEnabled(true);
+			cancelButton.setVisible(true);
+			container.getCreateUserAndRolesButton().setEnabled(false);
 		});
+		return editButton;
+	}
+	
+	private Button createSaveButton(DataProvider<UserTemplate, String> userDataProvider) {
+		String nameSaveButton = getI18nText("adminView.button.nameSaveButton");
+		String userWindowCaption = getI18nText("adminView.caption.userKey");
+		String notificationChanged = getI18nText("adminView.notification.user.change");
+		String notificationCreated = getI18nText("adminView.notification.user.created");
+		
+		saveButton = new Button(nameSaveButton);
+		saveButton.setStyleName(ValoTheme.BUTTON_FRIENDLY);
+		saveButton.setEnabled(false);
 		
 		saveButton.addClickListener(event -> {
-			
 			loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 			loginField.setReadOnly(true);
 			firstNameField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
@@ -182,24 +222,87 @@ class UserInfoTab extends FormLayout{
 					} else if (user.getId() != null) {
 						Notification.show(userWindowCaption.concat(" ").concat(user.getId()).concat(notificationChanged), Type.TRAY_NOTIFICATION);
 					}
-			      binder.writeBean(user);
+			      formBinder.writeBean(user);
 			    } catch (ValidationException e) {
-			      Notification.show("Person could not be saved, " +
-			        "please check error messages for each field.");
+			      Notification.show("Person could not be saved, please check error");
 			    }
 
-			binder.setBean(user);
+			formBinder.setBean(user);
 			
 			identityService.saveUser(user);
 			userDataProvider.refreshAll();
 			saveButton.setEnabled(false);
+			editButton.setVisible(true);
 			editButton.setEnabled(true);
+			deleteButton.setEnabled(true);
+			cancelButton.setEnabled(false);
+			cancelButton.setVisible(false);
+			container.getCreateUserAndRolesButton().setEnabled(true);
 		});
 		
+		return saveButton;
+	}
+	
+	private Button createCancelButton(DataProvider<UserTemplate, String> userDataProvider) {
+		String textCloseButton = getI18nText("adminView.ConfirmDialog.deleteUser.close");
+		
+		cancelButton = new Button(textCloseButton);
+		cancelButton.setEnabled(false);
+		cancelButton.setVisible(false);
+		
+		cancelButton.addClickListener(event -> {
+			
+			User user = identityService.createUserQuery().userId(loginField.getValue()).singleResult();
+			if (user == null) {	
+			    loginField.setValue("");
+			    firstNameField.setValue("");
+			    lastNameField.setValue("");
+			    emailField.setValue("");
+			    newPasswordField.setValue("");
+						
+			} else if (user.getId() != null) {
+			    loginField.setValue(user.getId() == null ? "" : user.getId());
+			    firstNameField.setValue(user.getFirstName() == null ? "" : user.getFirstName());
+			    lastNameField.setValue(user.getLastName() == null ? "" : user.getLastName());
+			    emailField.setValue(user.getEmail() == null ? "" : user.getEmail());
+			    newPasswordField.setValue("");
+			}
+			
+			loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
+			loginField.setReadOnly(true);
+			firstNameField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
+			firstNameField.setReadOnly(true);
+			lastNameField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
+			lastNameField.setReadOnly(true);
+			emailField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
+			emailField.setReadOnly(true);
+			newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
+			newPasswordField.setReadOnly(true);
+			
+			userDataProvider.refreshAll();
+			editButton.setEnabled(true);
+			editButton.setVisible(true);
+			cancelButton.setEnabled(false);
+			cancelButton.setVisible(false);
+			saveButton.setEnabled(false);
+			deleteButton.setEnabled(true);
+			container.getCreateUserAndRolesButton().setEnabled(true);
+		});	
+		
+		return cancelButton;
+	}
+	
+	private Button createDeleteButton(DataProvider<UserTemplate, String> userDataProvider) {
 		String notificationDeleted = getI18nText("adminView.notification.user.deleted");
 		String textInfo = getI18nText("adminView.ConfirmDialog.deleteUser.info");
 		String textOKButton = getI18nText("adminView.ConfirmDialog.deleteUser.ok");
 		String textCloseButton = getI18nText("adminView.ConfirmDialog.deleteUser.close");
+		String userWindowCaption = getI18nText("adminView.caption.userKey");
+		String nameDeleteButton = getI18nText("adminView.caption.delete");
+		
+		deleteButton = new Button(nameDeleteButton);
+		deleteButton.setStyleName(ValoTheme.BUTTON_DANGER);
+		deleteButton.setIcon(VaadinIcons.TRASH);
 		
 		ClickListener okDeleteClick = event -> {
 			User user = identityService.createUserQuery().userId(loginField.getValue()).singleResult();
@@ -217,16 +320,26 @@ class UserInfoTab extends FormLayout{
 			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
 			getUI().addWindow(box);
 		});	
-			
+		
+		return deleteButton;
+	}
+	
+	public void setUserAndRolesTab(UsersAndRolesTab tab) {
+		usersAndRolesTab = tab;
 	}
 	
 	public void setData(UserTemplate template) {
+		String newPasswordCaption = getI18nText("adminView.caption.newPasswordCaption");
+		String passwordCaption = getI18nText("adminView.caption.passwordCaption");
+		
 		if(template == null) {
 			loginField.setValue("");
 			firstNameField.setValue("");
 			lastNameField.setValue("");
 			emailField.setValue("");
 			newPasswordField.setValue("");
+			newPasswordField.setCaption(passwordCaption);
+			deleteButton.setEnabled(false);
 		}
 		else {
 			loginField.setValue(template.getId() == null ? "" : template.getId());
@@ -234,13 +347,36 @@ class UserInfoTab extends FormLayout{
 			lastNameField.setValue(template.getLastName() == null ? "" : template.getLastName());
 			emailField.setValue(template.getEmail() == null ? "" : template.getEmail());
 			newPasswordField.setValue("");
+			newPasswordField.setCaption(newPasswordCaption);
 		}
-	}
-	
-	
+	}	
 
 	private String getI18nText(String key) {
 		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
 	}
+}
+
+class userAddGroupTab extends VerticalLayout{
 	
+	private ListSelect<String> infoGroupAddUser;
+	private MessageSource messageSource;
+	private IdentityService identityService;
+	
+	public userAddGroupTab(IdentityService identityService, 
+			MessageSource messageSource, 
+			DataProvider<UserTemplate, String> userDataProvider, 
+			DataProvider<GroupTemplate, String> groupDataProvider) {
+		this.messageSource = messageSource;
+		this.identityService = identityService;
+		infoGroupAddUser = createinfoGroupAddUser();
+		addComponent(infoGroupAddUser);
+	}
+
+	private ListSelect<String> createinfoGroupAddUser() {
+		
+		ListSelect<String> info = new ListSelect<>();
+		return info;
+	}
+
+
 }
