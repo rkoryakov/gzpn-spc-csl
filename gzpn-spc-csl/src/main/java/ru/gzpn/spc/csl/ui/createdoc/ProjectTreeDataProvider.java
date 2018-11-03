@@ -64,34 +64,49 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 		NodeWrapper parent = query.getParent();
 
 		if (parent != null) {
-			switch (Entities.valueOf(parent.getEntityName().toUpperCase())) {
-			case CPROJECT:
+			NodeWrapper settingsNode = parent.getParent();
 
-				break;
-			case HPROJECT:
-				break;
-			case PHASE:
-				break;
-			case STAGE:
-				break;
-			default:
-				break;
+			if (settingsNode.hasChild()) {
+				NodeWrapper nextSettingsNode = settingsNode.getChild();
+				String nextEntityName = nextSettingsNode.getEntityName();
+				String nextGroupFieldName = nextSettingsNode.getGroupFiled();
+				
+				Object parentGroupValue = parent.getGroupFiledValue();
+				String parentGroupFieldName = parent.getGroupFiled();
+				String parentEntityName = parent.getEntityName();
+				
+				String jqpl = "SELECT  FROM parentEntity PE, nextEntity NE WHERE ";
+				
+				switch (Entities.valueOf(nextEntityName.toUpperCase())) {
+				case HPROJECT:
+
+					
+					
+					break;
+				case CPROJECT:
+					break;
+				case PHASE:
+					break;
+				case STAGE:
+					break;
+				default:
+					break;
+				}
 			}
 		} else {
-			result = projectService.getItemsGroupedBy(parent).peek(
-					e -> e.setParent(userSettigsService.getDefaultNodesPath()));
+			final NodeWrapper rootSettingsNode = userSettigsService.getDefaultNodesHierarchy();
+			result = projectService.getItemsGroupedBy(rootSettingsNode);
 		}
-		
+
 		if (parent instanceof ICProject) {
 			// TODO: check the current node and grouping fields (NodeWalker)
 			// GroupWrapper currentNode = parent.pollCurrent();
-			
-			
+
 		} else if (parent instanceof IStage) {
 		} else if (parent instanceof IPhase) {
 		} else {
-			
-			//GroupWrapper nodeWrapper = userSettigsService.getDefaultNodesPath().poll();
+
+			// GroupWrapper nodeWrapper = userSettigsService.getDefaultNodesPath().poll();
 		}
 		return result;
 	}

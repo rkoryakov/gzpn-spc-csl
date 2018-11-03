@@ -35,12 +35,12 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 	}
 
 	@Override
-	public long getCountByGroupField(String field) {
+	public long getCountByGroupField(String groupField) {
 		StringBuilder jpql = new StringBuilder();
 		long result = 0;
 		
 		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
-			formatter.format("SELECT COUNT(DISTINCT e.%2$s) FROM %1$s e", entityInformation.getEntityName(), field);
+			formatter.format("SELECT COUNT(DISTINCT e.%2$s) FROM %1$s e", entityInformation.getEntityName(), groupField);
 			result = entityManager.createQuery(jpql.toString(), Long.class).getSingleResult();
 		}
 		
@@ -48,12 +48,12 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 	}
 	
 	@Override
-	public long getCountByGroupField(String entity, String field) {
+	public long getCountByGroupField(String entity, String groupField) {
 		StringBuilder jpql = new StringBuilder();
 		long result = 0;
 		
 		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
-			formatter.format("SELECT COUNT(DISTINCT e.%2$s) FROM %1$s e", entity, field);
+			formatter.format("SELECT COUNT(DISTINCT e.%2$s) FROM %1$s e", entity, groupField);
 			result = entityManager.createQuery(jpql.toString(), Long.class).getSingleResult();
 		}
 		
@@ -61,16 +61,18 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 	}
 
 	@Override
-	public Stream<NodeWrapper> getItemsGroupedByField(String entity, String field) {
+	public Stream<NodeWrapper> getItemsGroupedByField(String entity, String groupField) {
 		StringBuilder jpql = new StringBuilder();
 		Stream<NodeWrapper> result = null;
 		
 		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
-			formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%2$s', CAST(e.%2$s as string)) "
-							+ "FROM %1$s e GROUP BY e.%2$s", entity, field);
+			formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%2$s', e.%2$s) "
+							+ "FROM %1$s e GROUP BY e.%2$s", entity, groupField);
 			result = entityManager.createQuery(jpql.toString(), NodeWrapper.class).getResultList().stream();
 		}
 		
 		return result;
 	}
+	
+	
 }

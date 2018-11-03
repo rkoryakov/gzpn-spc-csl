@@ -22,10 +22,10 @@ public class DataUserSettigsService {
 	@Autowired
 	private JpaContext jpaContext;
 	
-	public NodeWrapper getDefaultNodesPath() {
-		return new NodeWrapper("HProject", "projectId")
-				.addChild(new NodeWrapper("HProject", "name"))
+	public NodeWrapper getDefaultNodesHierarchy() {
+		return new NodeWrapper("HProject", "name")
 				.addChild(new NodeWrapper("CProject", "name"))
+				.addChild(new NodeWrapper("Phase", "name"))
 				.addChild(new NodeWrapper("Phase", null));
 	}
 	

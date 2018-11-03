@@ -10,7 +10,7 @@ import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 @NoRepositoryBean
 public interface BaseRepository<T extends BaseEntity> extends JpaRepository<T, Long> {
-	public long getCountByGroupField(String field);
-	public long getCountByGroupField(String entity, String field);
-	public Stream<NodeWrapper> getItemsGroupedByField(String entity, String field);
+	public long getCountByGroupField(String groupField);
+	public long getCountByGroupField(String entity, String groupField);
+	public Stream<NodeWrapper> getItemsGroupedByField(String entity, String groupField);
 }

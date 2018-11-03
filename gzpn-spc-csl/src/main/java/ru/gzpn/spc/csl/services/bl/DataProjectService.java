@@ -49,7 +49,8 @@ public class DataProjectService {
 	}
 	
 	public Stream<NodeWrapper> getItemsGroupedBy(NodeWrapper node) {
-		return getItemsGroupedByField(node.getEntityName(), node.getGroupByFiled());
+		return getItemsGroupedByField(node.getEntityName(), node.getGroupFiled())
+				.peek(e -> e.setParent(node));
 	}
 	
 	public Stream<NodeWrapper> getItemsGroupedByField(String entity, String groupByField) {

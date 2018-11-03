@@ -10,7 +10,7 @@ import ru.gzpn.spc.csl.model.BaseEntity;
 public class NodeWrapper {
 	private String entityName;
 	private String groupFiled;
-	private String groupFiledValue;
+	private Object groupFiledValue;
 	private NodeWrapper parent;
 	private NodeWrapper child;
 	// if the current node isn't a group then fetch entities
@@ -21,11 +21,12 @@ public class NodeWrapper {
 		this.groupFiled = groupByFiled;
 	}
 	
-	public NodeWrapper(String entityName, String groupByFiledName, String groupFiledValue) {
+	public NodeWrapper(String entityName, String groupByFiledName, Object groupFiledValue) {
 		this.entityName = entityName;
 		this.groupFiled = groupByFiledName;
 		this.groupFiledValue = groupFiledValue;
 	}
+	
 	
 	public String getEntityName() {
 		return entityName;
@@ -35,19 +36,19 @@ public class NodeWrapper {
 		this.entityName = entityName;
 	}
 	
-	public String getGroupByFiled() {
+	public String getGroupFiled() {
 		return groupFiled;
 	}
 	
-	public void setGroupByFiled(String groupByFiled) {
+	public void setGroupFiled(String groupByFiled) {
 		this.groupFiled = groupByFiled;
 	}
 
-	public String getGroupFiledValue() {
+	public Object getGroupFiledValue() {
 		return groupFiledValue;
 	}
 
-	public void setGroupFiledValue(String value) {
+	public void setGroupFiledValue(Object value) {
 		this.groupFiledValue = value;
 	}
 
@@ -74,7 +75,7 @@ public class NodeWrapper {
 	}
 	
 	public boolean isGroup() {
-		return getGroupByFiled() != null;
+		return getGroupFiled() != null;
 	}
 	
 	public boolean isRoot() {
