@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
 
 @Entity
@@ -29,6 +30,10 @@ public class Phase extends BaseEntity implements IPhase {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="parent_id", referencedColumnName="id", insertable=false, updatable=false)
 	private Phase parent;
+	
+	@OneToMany(targetEntity = CProject.class, fetch=FetchType.LAZY)
+	@JoinColumn(name = "phase_id", referencedColumnName = "id")
+	private List<ICProject> cprogects;
 	
 	public String getName() {
 		return name;
@@ -48,5 +53,17 @@ public class Phase extends BaseEntity implements IPhase {
 
 	public Phase getParent() {
 		return parent;
+	}
+
+	public List<ICProject> getCprogects() {
+		return cprogects;
+	}
+
+	public void setCprogects(List<ICProject> cprogects) {
+		this.cprogects = cprogects;
+	}
+
+	public void setParent(Phase parent) {
+		this.parent = parent;
 	}
 }

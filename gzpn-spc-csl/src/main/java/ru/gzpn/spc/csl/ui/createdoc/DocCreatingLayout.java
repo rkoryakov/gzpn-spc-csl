@@ -17,7 +17,7 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	private VerticalLayout leftLayot;
 	private VerticalLayout rightLayout;
 
-	private TreeGrid<NodeTracker> projectTree;
+	private TreeGrid<NodeWrapper> projectTree;
 	
 	public DocCreatingLayout(DataProjectService projectService, MessageSource messageSource) {
 		this.projectService = projectService;

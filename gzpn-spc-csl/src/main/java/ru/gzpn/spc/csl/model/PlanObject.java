@@ -9,28 +9,26 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
+import ru.gzpn.spc.csl.model.interfaces.IWork;
 
 @Entity
 @NamedQueries({ 
-	@NamedQuery(name = "PlanObject.groupByNameCount", query = "SELECT COUNT(p) FROM PlanObject p GROUP BY p.name"),
-	@NamedQuery(name = "PlanObject.groupByObjIdCount", query = "SELECT COUNT(p) FROM PlanObject p GROUP BY p.objectId"),
-	
-	@NamedQuery(name = "PlanObject.groupByName", query = "SELECT p.name FROM PlanObject p GROUP BY p.name"),
-	@NamedQuery(name = "PlanObject.groupByObjId", query = "SELECT p.objectId FROM PlanObject p GROUP BY p.objectId")
 })
 @Table(schema = "spc_csl_schema", name = "plan_object")
 public class PlanObject extends BaseEntity implements IPlanObject {
 
 	@Column(length=64)
-	private String objectId;
+	private String code;
 	@Column(length=128)
 	private String name;
+	@Column(length=4)
+	private String mark;
 	
 	@OneToMany
 	@OrderColumn
@@ -41,14 +39,22 @@ public class PlanObject extends BaseEntity implements IPlanObject {
 	@JoinColumn(name="parent_id", referencedColumnName="id", insertable=false, updatable=false)
 	private PlanObject parent;
 	
-	public String getObjectId() {
-		return objectId;
-	}
+	@ManyToOne(targetEntity = CProject.class, fetch=FetchType.LAZY)
+	@JoinColumn(name="cp_id", referencedColumnName="id", insertable=false, updatable=false)
+	private ICProject cproject;
 	
-	public void setObjectId(String objectId) {
-		this.objectId = objectId;
-	}
+	@OneToMany(targetEntity = Work.class)
+	@JoinColumn(name="plan_obj_id", referencedColumnName="id")
+	private List<IWork> workList;
 	
+	public List<IWork> getWorkList() {
+		return workList;
+	}
+
+	public void setWorkList(List<IWork> workList) {
+		this.workList = workList;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -68,4 +74,34 @@ public class PlanObject extends BaseEntity implements IPlanObject {
 	public List<PlanObject> getChildren() {
 		return children;
 	}
+
+	public ICProject getCproject() {
+		return cproject;
+	}
+
+	public void setCproject(ICProject cproject) {
+		this.cproject = cproject;
+	}
+
+	public void setParent(PlanObject parent) {
+		this.parent = parent;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getMark() {
+		return mark;
+	}
+
+	public void setMark(String mark) {
+		this.mark = mark;
+	}
+	
+	
 }

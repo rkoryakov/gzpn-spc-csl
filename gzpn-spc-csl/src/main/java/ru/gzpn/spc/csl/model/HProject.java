@@ -6,7 +6,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -36,10 +35,12 @@ public class HProject extends ACLBasedEntity implements IHProject {
 	
 	private String projectId;
 	private String name;
+	
 	@OneToMany(targetEntity = CProject.class, cascade = CascadeType.ALL)
-	@JoinTable(schema = "spc_csl_schema", name = "hproject_2_cproject", joinColumns = {
-			@JoinColumn(name = "hp_id", referencedColumnName = "id") }, inverseJoinColumns = {
-					@JoinColumn(name = "cp_id", referencedColumnName = "id") })
+	@JoinColumn(name = "cp_id", referencedColumnName = "id")
+//	@JoinTable(schema = "spc_csl_schema", name = "hproject_2_cproject", joinColumns = {
+//			@JoinColumn(name = "hp_id", referencedColumnName = "id") }, inverseJoinColumns = {
+//					@JoinColumn(name = "cp_id", referencedColumnName = "id") })
 	private List<ICProject> capitalProjects;
 
 	public String getProjectId() {

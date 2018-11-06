@@ -13,10 +13,8 @@ import javax.persistence.Version;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import ru.gzpn.spc.csl.ui.createdoc.NodeTracker;
-
 @MappedSuperclass
-public abstract class BaseEntity extends NodeTracker {
+public abstract class BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spc_csl_gen")
@@ -34,7 +32,7 @@ public abstract class BaseEntity extends NodeTracker {
 	@UpdateTimestamp
 	@Column(updatable = true, nullable = false)
 	private LocalDateTime changeTime;
-
+	
 	public Long getId() {
 		return id;
 	}

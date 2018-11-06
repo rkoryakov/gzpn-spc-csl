@@ -41,11 +41,11 @@ public class CustomJpaRepositoryFactoryBean<R extends JpaRepository<T, ID>, T ex
 			return new BaseRepositoryImpl(information.getDomainType(), entityManager);
 		}
 
-//		@SuppressWarnings({ "unchecked", "rawtypes" })
-//		@Override
-//		protected Object getTargetRepository(RepositoryInformation information) {
-//			return new BaseRepositoryImpl(information.getDomainType(), entityManager);
-//		}
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@Override
+		protected Object getTargetRepository(RepositoryInformation information) {
+			return new BaseRepositoryImpl(information.getDomainType(), entityManager);
+		}
 
 		@Override
 		protected Class<?> getRepositoryBaseClass(RepositoryMetadata metadata) {
