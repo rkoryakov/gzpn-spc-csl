@@ -121,8 +121,6 @@ public class UsersAndRolesTab extends VerticalLayout {
 	private DataProvider<GroupTemplate, String> createGroupDataProvider() {
 		return DataProvider.fromFilteringCallbacks(query -> {
 
-//			logger.debug("query.getOffset() {}", query.getOffset());
-//			logger.debug("query.getLimit() {}", query.getLimit());
 			List<Group> groupList = identityService.createGroupQuery().list()
 					.stream()
 						.filter(group -> {
@@ -214,7 +212,6 @@ public class UsersAndRolesTab extends VerticalLayout {
 		grid.addColumn(UserTemplate::getEmail).setCaption(emailCaption);
 		grid.setDataProvider(userFilter);
 		grid.setColumnReorderingAllowed(true);
-		
 		grid.setSizeFull();
 		grid.setHeightMode(HeightMode.ROW);
 		grid.setHeightByRows(14);
@@ -224,6 +221,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		singleSelect.addSingleSelectionListener(event -> {
 			singleSelect.getSelectedItem().ifPresent(item -> {
 				infoUser.getUserInfoTab().setData(item);
+				infoUser.getUserAddGroupTab().setUser(item);
 				infoUser.setVisible(true);
 			});
 		});
@@ -243,7 +241,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 
 		groupFilter = groupDataProvider.withConfigurableFilter();
 		Grid<GroupTemplate> grid = new Grid<>();
-		//grid.setSizeFull();
+		grid.setSizeFull();
 		grid.addColumn(GroupTemplate::getId).setCaption(idCaption);
 		grid.addColumn(GroupTemplate::getName).setCaption(nameCaption);
 		grid.addColumn(GroupTemplate::getType).setCaption(typeCaption);

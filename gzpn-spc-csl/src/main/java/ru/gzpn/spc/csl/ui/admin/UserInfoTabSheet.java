@@ -1,6 +1,9 @@
 package ru.gzpn.spc.csl.ui.admin;
 
+import java.util.List;
+
 import org.activiti.engine.IdentityService;
+import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
 import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -30,7 +33,7 @@ import ru.gzpn.spc.csl.ui.common.ConfirmDialog;
 public class UserInfoTabSheet extends TabSheet {
 	
 	private UserInfoTab userInfoTab;
-	private VerticalLayout userGroupTab;
+	private UserAddGroupTab userAddGroupTab;
 	private MessageSource messageSource;
 	private IdentityService identityService;
 	private UsersAndRolesTab usersAndRolesTab;
@@ -46,9 +49,9 @@ public class UserInfoTabSheet extends TabSheet {
 		this.identityService = identityService;
 		this.container = container;
 		userInfoTab = new UserInfoTab(identityService, messageSource, userDataProvider, container);
-		userGroupTab = new userAddGroupTab(identityService, messageSource, userDataProvider, groupDataProvider);
+		userAddGroupTab = new UserAddGroupTab(identityService, messageSource, userDataProvider, groupDataProvider);
 		this.addTab(userInfoTab, "info user");
-		this.addTab(userGroupTab, "user group");
+		this.addTab(userAddGroupTab, "user group");
 		userInfoTab.setUserAndRolesTab(usersAndRolesTab);
 	}
 	
@@ -60,6 +63,10 @@ public class UserInfoTabSheet extends TabSheet {
 
 	public UserInfoTab getUserInfoTab() {
 		return userInfoTab;
+	}
+	
+	public UserAddGroupTab getUserAddGroupTab() {
+		return userAddGroupTab;
 	}
 	
 	public void setUserAndRolesTab(UsersAndRolesTab tab) {
@@ -328,6 +335,10 @@ class UserInfoTab extends FormLayout{
 		usersAndRolesTab = tab;
 	}
 	
+	public UsersAndRolesTab getUsersAndRolesTab() {
+		return usersAndRolesTab;
+	}
+
 	public void setData(UserTemplate template) {
 		String newPasswordCaption = getI18nText("adminView.caption.newPasswordCaption");
 		String passwordCaption = getI18nText("adminView.caption.passwordCaption");
@@ -356,27 +367,30 @@ class UserInfoTab extends FormLayout{
 	}
 }
 
-class userAddGroupTab extends VerticalLayout{
+class UserAddGroupTab extends VerticalLayout{
 	
-	private ListSelect<String> infoGroupAddUser;
+	private ListSelect<Group> infoGroupAddUser;
+	private List<Group> group;
 	private MessageSource messageSource;
 	private IdentityService identityService;
+	private User user;
 	
-	public userAddGroupTab(IdentityService identityService, 
+	public UserAddGroupTab(IdentityService identityService, 
 			MessageSource messageSource, 
 			DataProvider<UserTemplate, String> userDataProvider, 
 			DataProvider<GroupTemplate, String> groupDataProvider) {
 		this.messageSource = messageSource;
 		this.identityService = identityService;
-		infoGroupAddUser = createinfoGroupAddUser();
-		addComponent(infoGroupAddUser);
 	}
-
-	private ListSelect<String> createinfoGroupAddUser() {
+	
+	public void setUser(UserTemplate template) {
+		user = identityService.createUserQuery().userId(template.getId()).singleResult();
+		group = identityService.createGroupQuery().groupMember(user.getId()).list();
+		infoGroupAddUser = new ListSelect<>("Присвоенные роли", group);
 		
-		ListSelect<String> info = new ListSelect<>();
-		return info;
-	}
-
+		addComponent(infoGroupAddUser);
+	}	
+	
+	
 
 }
