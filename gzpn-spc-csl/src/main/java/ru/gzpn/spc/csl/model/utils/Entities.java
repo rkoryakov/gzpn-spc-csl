@@ -1,4 +1,11 @@
-package ru.gzpn.spc.csl.model;
+package ru.gzpn.spc.csl.model.utils;
+
+import ru.gzpn.spc.csl.model.BaseEntity;
+import ru.gzpn.spc.csl.model.CProject;
+import ru.gzpn.spc.csl.model.HProject;
+import ru.gzpn.spc.csl.model.Phase;
+import ru.gzpn.spc.csl.model.Stage;
+import ru.gzpn.spc.csl.model.UserSettings;
 
 public enum Entities {
 	HPROJECT("HProject"),

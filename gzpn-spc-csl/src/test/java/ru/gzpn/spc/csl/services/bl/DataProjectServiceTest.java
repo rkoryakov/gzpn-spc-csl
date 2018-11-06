@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
-import ru.gzpn.spc.csl.model.Entities;
+import ru.gzpn.spc.csl.model.utils.Entities;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

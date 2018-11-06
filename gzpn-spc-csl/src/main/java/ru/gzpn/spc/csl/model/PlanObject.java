@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
+import ru.gzpn.spc.csl.model.interfaces.IWork;
 
 @Entity
 @NamedQueries({ 
@@ -42,6 +43,18 @@ public class PlanObject extends BaseEntity implements IPlanObject {
 	@JoinColumn(name="cp_id", referencedColumnName="id", insertable=false, updatable=false)
 	private ICProject cproject;
 	
+	@OneToMany(targetEntity = Work.class)
+	@JoinColumn(name="plan_obj_id", referencedColumnName="id")
+	private List<IWork> workList;
+	
+	public List<IWork> getWorkList() {
+		return workList;
+	}
+
+	public void setWorkList(List<IWork> workList) {
+		this.workList = workList;
+	}
+
 	public String getName() {
 		return name;
 	}

@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vaadin.data.provider.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.data.provider.HierarchicalQuery;
 
-import ru.gzpn.spc.csl.model.Entities;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IStage;
+import ru.gzpn.spc.csl.model.utils.Entities;
 import ru.gzpn.spc.csl.services.bl.DataProjectService;
 import ru.gzpn.spc.csl.services.bl.DataUserSettigsService;
 
@@ -74,6 +74,7 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 				Object parentGroupValue = parent.getGroupFiledValue();
 				String parentGroupFieldName = parent.getGroupFiled();
 				String parentEntityName = parent.getEntityName();
+				
 				
 				String jqpl = "SELECT  FROM parentEntity PE, nextEntity NE WHERE ";
 				
