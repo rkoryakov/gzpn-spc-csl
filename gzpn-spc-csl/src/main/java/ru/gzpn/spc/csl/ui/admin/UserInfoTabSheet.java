@@ -1,6 +1,9 @@
 package ru.gzpn.spc.csl.ui.admin;
 
+import java.util.Formatter;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
@@ -374,6 +377,7 @@ class UserAddGroupTab extends VerticalLayout{
 	private MessageSource messageSource;
 	private IdentityService identityService;
 	private User user;
+	private DataProvider<Group, String> groupForUser = createDataProvider();
 	
 	public UserAddGroupTab(IdentityService identityService, 
 			MessageSource messageSource, 
@@ -381,16 +385,39 @@ class UserAddGroupTab extends VerticalLayout{
 			DataProvider<GroupTemplate, String> groupDataProvider) {
 		this.messageSource = messageSource;
 		this.identityService = identityService;
+		infoGroupAddUser = createListSelect();
+		addComponent(infoGroupAddUser);
 	}
 	
+
+
+	private DataProvider<Group, String> createDataProvider() {
+		return DataProvider.fromFilteringCallbacks(query -> {
+			List<Group> groupList = identityService.createGroupQuery().list()
+					.stream()
+						.filter(group -> {
+							return group.getId().startsWith(query.getFilter().orElse(""));
+						}).collect(Collectors.toList());
+			return groupList.stream();
+		}, query -> {
+			StringBuilder jpql = new StringBuilder();
+			try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
+				formatter.format("select * from act_id_membership as M where M.user_id_='%1$s'", query.getFilter());
+			}
+			return (int) identityService.createNativeGroupQuery().sql(jpql.toString()).count();
+		});
+	}
+	
+
 	public void setUser(UserTemplate template) {
 		user = identityService.createUserQuery().userId(template.getId()).singleResult();
-		group = identityService.createGroupQuery().groupMember(user.getId()).list();
-		infoGroupAddUser = new ListSelect<>("Присвоенные роли", group);
-		
-		addComponent(infoGroupAddUser);
+		groupForUser.refreshAll();
 	}	
 	
+	private ListSelect<Group> createListSelect() {
+		ListSelect<Group> list = new ListSelect<>("Присвоенные роли", groupForUser);
+		return list;
+	}
 	
 
 }
