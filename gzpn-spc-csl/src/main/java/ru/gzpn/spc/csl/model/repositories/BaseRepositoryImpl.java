@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.JpaEntityInformationSupport;
@@ -48,7 +49,7 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 	}
 	
 	@Override
-	public long getCountByGroupField(String entity, String groupField) {
+	public long countOfGroupedItems(String entity, String groupField) {
 		StringBuilder jpql = new StringBuilder();
 		long result = 0;
 		
@@ -74,5 +75,61 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		return result;
 	}
 	
+	@Override
+	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String entity, String fieldName, Object fieldValue, String groupFieldName) {
+		StringBuilder jpql = new StringBuilder();
+		Stream<NodeWrapper> result = null;
+		TypedQuery<NodeWrapper> query = null;
+		
+		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
+
+			if (groupFieldName != null) {
+				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%4$s', e.%4$s) "
+								+ "FROM %1$s e WHERE e.%2$s = :fieldValue GROUP BY e.%4$s",
+								entity, fieldName, fieldValue, groupFieldName);
+			} else {
+				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', e) "
+								+ "FROM %1$s e WHERE e.%2$s = :fieldValue",
+								entity, fieldName);
+			}
+			
+			query = entityManager.createQuery(jpql.toString(), NodeWrapper.class);
+			
+			if (fieldValue != null) {
+				query.setParameter("fieldValue", fieldValue);
+			}
+			
+			result = query.getResultList().stream();
+		}
+
+		return result;
+	}
 	
+	public Stream<NodeWrapper> getItemsGroupedByEntityValue(String sourceEntity, String targetEntity, String fieldName, Object fieldValue, String groupFieldName) {
+		StringBuilder jpql = new StringBuilder();
+		Stream<NodeWrapper> result = null;
+		
+		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
+
+//			if (groupFieldName != null) {
+//				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%4$s', e.%4$s) "
+//								+ "FROM %1$s e1 WHERE e1.%2$s = :fieldValue GROUP BY e.%4$s",
+//								entity, fieldName, fieldValue, groupFieldName);
+//			} else {
+//				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', e) "
+//								+ "FROM %1$s e WHERE e.%2$s = :fieldValue",
+//								entity, fieldName);
+//			}
+//			
+//			query = entityManager.createQuery(jpql.toString(), NodeWrapper.class);
+//			
+//			if (fieldValue != null) {
+//				query.setParameter("fieldValue", fieldValue);
+//			}
+//			
+//			result = query.getResultList().stream();
+		}
+		
+		return result;
+	}
 }

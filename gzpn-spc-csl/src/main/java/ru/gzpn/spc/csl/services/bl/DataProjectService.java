@@ -38,28 +38,43 @@ public class DataProjectService {
 	}
 	
 	/**
-	 * Items count of the given entity grouped by given field
+	 * Items count of the given entity grouped by the given field
 	 * 
 	 * @param entity string name of the entity
-	 * @param groupByField string name of the GROUPBY field 
+	 * @param groupByField string name of the GROUP BY field 
 	 * @return
 	 */
 	public long getCount(String entity, String groupByField) {
-		return getBaseRepository().getCountByGroupField(entity, groupByField);
+		return getBaseRepository().countOfGroupedItems(entity, groupByField);
 	}
 	
-	public Stream<NodeWrapper> getItemsGroupedBy(NodeWrapper node) {
+	public Stream<NodeWrapper> getItemsGroupedByField(NodeWrapper node) {
 		return getItemsGroupedByField(node.getEntityName(), node.getGroupFiled())
-				.peek(e -> e.setParent(node));
+				.peek(e -> {
+					e.setParent(node.getParent());
+					e.setChild(node.getChild());
+				});
+	}
+	
+	public Stream<NodeWrapper> getItemsGroupedByValue(NodeWrapper node) {
+		Stream<NodeWrapper> result = null;
+		if (node.isGrouping() && node.hasGroupFieldValue() && node.hasChild()) {
+			
+		}
+		
+		return result;
 	}
 	
 	public Stream<NodeWrapper> getItemsGroupedByField(String entity, String groupByField) {
 		return getBaseRepository().getItemsGroupedByField(entity, groupByField);
 	}
 	
+	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String entity, String fieldName, Object fieldValue, String groupFieldName) {
+		return getBaseRepository().getItemsGroupedByFieldValue(entity, fieldName, fieldValue, groupFieldName);
+	}
+	
 	public HProjectRepository getBaseRepository() {
-		// To get the count of the given entity we need the base repository implementation
-		// thus we can use any implementation of the BaseRepository - we use HProjectRepository
+		// we can use any implementation of the BaseRepository - we use HProjectRepository
 		return getHPRepository();
 	}
 	

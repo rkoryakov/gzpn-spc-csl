@@ -1,8 +1,6 @@
 package ru.gzpn.spc.csl.ui.admin;
 
-import java.util.Formatter;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.activiti.engine.IdentityService;
@@ -13,6 +11,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
+import com.vaadin.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.StringLengthValidator;
@@ -20,6 +19,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.ListSelect;
@@ -372,12 +372,13 @@ class UserInfoTab extends FormLayout{
 
 class UserAddGroupTab extends VerticalLayout{
 	
-	private ListSelect<Group> infoGroupAddUser;
-	private List<Group> group;
+	private ListSelect<String> infoGroupAddUser;
 	private MessageSource messageSource;
 	private IdentityService identityService;
-	private User user;
-	private DataProvider<Group, String> groupForUser = createDataProvider();
+	private HorizontalLayout headerHorizont;
+	private ComboBox<GroupTemplate> selectGroup;
+	private DataProvider<String, String> groupForUser = createDataProvider();
+	private ConfigurableFilterDataProvider<String, Void, String> groupUserIDFilter;
 	
 	public UserAddGroupTab(IdentityService identityService, 
 			MessageSource messageSource, 
@@ -386,36 +387,43 @@ class UserAddGroupTab extends VerticalLayout{
 		this.messageSource = messageSource;
 		this.identityService = identityService;
 		infoGroupAddUser = createListSelect();
-		addComponent(infoGroupAddUser);
+		setHeight(100, Unit.PERCENTAGE);
+		selectGroup = createSelectGroup(groupDataProvider);
+		headerHorizont = new HorizontalLayout();
+		headerHorizont.addComponent(selectGroup);
+		addComponents(headerHorizont, infoGroupAddUser);
 	}
-	
 
-
-	private DataProvider<Group, String> createDataProvider() {
+	private DataProvider<String, String> createDataProvider() {
 		return DataProvider.fromFilteringCallbacks(query -> {
-			List<Group> groupList = identityService.createGroupQuery().list()
-					.stream()
-						.filter(group -> {
-							return group.getId().startsWith(query.getFilter().orElse(""));
-						}).collect(Collectors.toList());
+			List<String> groupList = identityService.createGroupQuery().groupMember(query.getFilter().orElse("admin")).list().stream().
+					map(Group :: getName).collect(Collectors.toList());
 			return groupList.stream();
 		}, query -> {
-			StringBuilder jpql = new StringBuilder();
-			try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
-				formatter.format("select * from act_id_membership as M where M.user_id_='%1$s'", query.getFilter());
-			}
-			return (int) identityService.createNativeGroupQuery().sql(jpql.toString()).count();
+			return (int) identityService.createGroupQuery().groupMember(query.getFilter().orElse("admin")).count();
 		});
 	}
 	
 
 	public void setUser(UserTemplate template) {
-		user = identityService.createUserQuery().userId(template.getId()).singleResult();
+		User user = identityService.createUserQuery().userId(template.getId()).singleResult();
+		groupUserIDFilter.setFilter(user.getId());
 		groupForUser.refreshAll();
 	}	
 	
-	private ListSelect<Group> createListSelect() {
-		ListSelect<Group> list = new ListSelect<>("Присвоенные роли", groupForUser);
+	private ComboBox<GroupTemplate> createSelectGroup(DataProvider<GroupTemplate, String> groupDataProvider) {
+
+		ComboBox<GroupTemplate> groupSelect = new ComboBox<>("Select your group");
+		groupSelect.setDataProvider(groupDataProvider);
+		return groupSelect;
+	}
+	
+	private ListSelect<String> createListSelect() {
+		groupUserIDFilter = groupForUser.withConfigurableFilter();
+		ListSelect<String> list = new ListSelect<>("Присвоенные роли пользователю");
+		list.setWidth(100, Unit.PERCENTAGE);
+		list.setRows(5);
+		list.setDataProvider(groupUserIDFilter);
 		return list;
 	}
 	

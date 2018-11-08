@@ -26,7 +26,7 @@ public class DataUserSettigsService {
 		return new NodeWrapper("HProject", "name")
 				.addChild(new NodeWrapper("CProject", "name"))
 				.addChild(new NodeWrapper("Phase", "name"))
-				.addChild(new NodeWrapper("Phase", null));
+				.addChild(new NodeWrapper("Phase"));
 	}
 	
 	public EntityManager geEntityManager() {

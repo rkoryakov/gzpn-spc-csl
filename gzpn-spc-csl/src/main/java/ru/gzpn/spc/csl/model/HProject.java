@@ -17,7 +17,7 @@ import ru.gzpn.spc.csl.model.interfaces.IHProject;
 @Entity
 @NamedQueries({
 	@NamedQuery(name = "HProject.groupByName", query = "SELECT hp.name FROM HProject hp GROUP BY hp.name"),
-	@NamedQuery(name = "HProject.groupByPrjId", query = "SELECT hp.projectId FROM HProject hp GROUP BY hp.projectId"),
+	@NamedQuery(name = "HProject.findByProjectId", query = "SELECT hp FROM HProject hp WHERE hp.projectId = ?1"),
 	
 	@NamedQuery(name = "HProject.groupByNameCount", query = "SELECT COUNT(hp) FROM HProject hp GROUP BY hp.name"),
 	@NamedQuery(name = "HProject.groupByPrjIdCount", query = "SELECT COUNT(hp) FROM HProject hp GROUP BY hp.projectId")
@@ -37,7 +37,7 @@ public class HProject extends ACLBasedEntity implements IHProject {
 	private String name;
 	
 	@OneToMany(targetEntity = CProject.class, cascade = CascadeType.ALL)
-	@JoinColumn(name = "cp_id", referencedColumnName = "id")
+	@JoinColumn(name = "hp_id", referencedColumnName = "id")
 //	@JoinTable(schema = "spc_csl_schema", name = "hproject_2_cproject", joinColumns = {
 //			@JoinColumn(name = "hp_id", referencedColumnName = "id") }, inverseJoinColumns = {
 //					@JoinColumn(name = "cp_id", referencedColumnName = "id") })

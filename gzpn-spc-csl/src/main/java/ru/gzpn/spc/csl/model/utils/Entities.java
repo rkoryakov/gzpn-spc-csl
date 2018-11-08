@@ -12,18 +12,19 @@ public enum Entities {
 	CPROJECT("CProject"),
 	PHASE("Phase"),
 	STAGE("Stage"),
-	USER_SETTINGS("UserSettings"),
 	PLAN_OBJECT("PlanObject"),
-	WORK("Work");
+	WORK("Work"),
+	
+	USER_SETTINGS("UserSettings");
 	
 	private String name;
 	
 	Entities(String name) {
-		this.name= name;
+		this.name = name;
 	}
 	
 	public String getName() {
-		return this.name();
+		return this.name;
 	}
 	
 	@SuppressWarnings("unchecked")

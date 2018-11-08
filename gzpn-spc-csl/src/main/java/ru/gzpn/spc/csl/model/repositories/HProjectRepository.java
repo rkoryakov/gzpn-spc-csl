@@ -20,6 +20,8 @@ public interface HProjectRepository extends BaseRepository<HProject> {
 	@Query(value = "SELECT s FROM Stage s", nativeQuery = false)
 	public List<Stage> getStages();
 	
+	public List<HProject> findByProjectId(String projectId);
+	
 	public long groupByPrjIdCount();
 	public long groupByNameCount();
 }
