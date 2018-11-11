@@ -17,12 +17,14 @@ import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.PasswordField;
@@ -32,6 +34,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.ui.common.ConfirmDialog;
+import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 
 public class UserInfoTabSheet extends TabSheet {
 	
@@ -114,7 +117,8 @@ class UserInfoTab extends FormLayout{
 
 		this.setMargin(true);
 		this.addStyleName("outlined");
-
+		
+		final HorizontalLayout topButtonLayout = new HorizontalLayout();
 		final HorizontalLayout buttonLayout = new HorizontalLayout();
 		saveButton = createSaveButton(userDataProvider);
 		editButton = createEditButton();
@@ -143,17 +147,24 @@ class UserInfoTab extends FormLayout{
 		emailField.setWidth(90.0f, Unit.PERCENTAGE);
 		newPasswordField.setWidth(90.0f, Unit.PERCENTAGE);
 
+		topButtonLayout.setSizeFull();
+		topButtonLayout.addComponents(editButton, cancelButton);
+		topButtonLayout.setComponentAlignment(editButton, Alignment.MIDDLE_RIGHT);
+		topButtonLayout.setComponentAlignment(cancelButton, Alignment.MIDDLE_RIGHT);
+		topButtonLayout.setMargin(false);
+		this.addComponent(topButtonLayout);
+		
 		this.addComponent(loginField);
 		this.addComponent(firstNameField);
 		this.addComponent(lastNameField);
 		this.addComponent(emailField);
 		this.addComponent(newPasswordField);
-		buttonLayout.addComponents(saveButton, editButton, cancelButton, deleteButton);
+		buttonLayout.setSizeFull();
+		buttonLayout.addComponents(saveButton, deleteButton);
+		buttonLayout.setComponentAlignment(deleteButton, Alignment.MIDDLE_RIGHT);
 		buttonLayout.setMargin(false);
 		this.addComponents(buttonLayout);
-		
 		formBinder = createBinder();		
-			
 	}
 	
 	private Binder<User> createBinder() {
@@ -192,6 +203,7 @@ class UserInfoTab extends FormLayout{
 			newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
 			newPasswordField.setReadOnly(false);
 			saveButton.setEnabled(true);
+			saveButton.setVisible(true);
 			editButton.setEnabled(false);
 			deleteButton.setEnabled(false);
 			cancelButton.setEnabled(true);
@@ -208,8 +220,9 @@ class UserInfoTab extends FormLayout{
 		String notificationCreated = getI18nText("adminView.notification.user.created");
 		
 		saveButton = new Button(nameSaveButton);
-		saveButton.setStyleName(ValoTheme.BUTTON_FRIENDLY);
+		saveButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		saveButton.setEnabled(false);
+		saveButton.setVisible(false);
 		
 		saveButton.addClickListener(event -> {
 			loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
@@ -242,6 +255,7 @@ class UserInfoTab extends FormLayout{
 			identityService.saveUser(user);
 			userDataProvider.refreshAll();
 			saveButton.setEnabled(false);
+			saveButton.setVisible(false);
 			editButton.setVisible(true);
 			editButton.setEnabled(true);
 			deleteButton.setEnabled(true);
@@ -295,6 +309,7 @@ class UserInfoTab extends FormLayout{
 			cancelButton.setEnabled(false);
 			cancelButton.setVisible(false);
 			saveButton.setEnabled(false);
+			saveButton.setVisible(false);
 			deleteButton.setEnabled(true);
 			container.getCreateUserAndRolesButton().setEnabled(true);
 		});	
@@ -372,13 +387,20 @@ class UserInfoTab extends FormLayout{
 
 class UserAddGroupTab extends VerticalLayout{
 	
-	private ListSelect<String> infoGroupAddUser;
 	private MessageSource messageSource;
 	private IdentityService identityService;
 	private HorizontalLayout headerHorizont;
-	private ComboBox<GroupTemplate> selectGroup;
-	private DataProvider<String, String> groupForUser = createDataProvider();
-	private ConfigurableFilterDataProvider<String, Void, String> groupUserIDFilter;
+	private ComboBox<String> selectGroup;
+	private Button addGroupButton;
+	private DataProvider<String, String> selectGroupProvider = createSelectGroupProvider();
+	private ConfigurableFilterDataProvider<String, Void, String> selectGroupFilter;
+	private Button editButton;
+	private Button exitButton;
+	private DataProvider<GroupTemplate, String> groupForUser = createDataProvider();
+	private ConfigurableFilterDataProvider<GroupTemplate, Void, String> groupUserIDFilter;
+	private UserTemplate currentUser;
+	private Grid<GroupTemplate> gridGroupAddUser;
+	private JoinedLayout<AbstractComponent, AbstractComponent> joinedComponent;
 	
 	public UserAddGroupTab(IdentityService identityService, 
 			MessageSource messageSource, 
@@ -386,46 +408,171 @@ class UserAddGroupTab extends VerticalLayout{
 			DataProvider<GroupTemplate, String> groupDataProvider) {
 		this.messageSource = messageSource;
 		this.identityService = identityService;
-		infoGroupAddUser = createListSelect();
 		setHeight(100, Unit.PERCENTAGE);
-		selectGroup = createSelectGroup(groupDataProvider);
+		selectGroup = createSelectGroup(selectGroupProvider);
+		addGroupButton = createAddGroupButton();
+		editButton = createEditButton();
+		exitButton = createExitButton();
+		joinedComponent = new JoinedLayout<>(selectGroup, addGroupButton);
 		headerHorizont = new HorizontalLayout();
-		headerHorizont.addComponent(selectGroup);
-		addComponents(headerHorizont, infoGroupAddUser);
+		joinedComponent.setVisible(false);
+		joinedComponent.setEnabled(false);
+		exitButton.setVisible(false);
+		exitButton.setEnabled(false);
+		headerHorizont.setSizeFull();
+		
+
+		headerHorizont.addComponents(joinedComponent, editButton, exitButton);
+		headerHorizont.setComponentAlignment(editButton, Alignment.MIDDLE_RIGHT);
+		headerHorizont.setComponentAlignment(exitButton, Alignment.MIDDLE_RIGHT);
+		gridGroupAddUser = createGroupAddUser();
+		addComponents(headerHorizont, gridGroupAddUser);
 	}
 
-	private DataProvider<String, String> createDataProvider() {
+	private DataProvider<String, String> createSelectGroupProvider() {
 		return DataProvider.fromFilteringCallbacks(query -> {
-			List<String> groupList = identityService.createGroupQuery().groupMember(query.getFilter().orElse("admin")).list().stream().
-					map(Group :: getName).collect(Collectors.toList());
+			List<String> groupList = identityService.createGroupQuery().list().stream().
+					filter(group -> {
+							return group.getId().startsWith(query.getFilter().orElse("")) 
+									|| group.getName().startsWith(query.getFilter().orElse(""));
+						}).map(Group :: getId).collect(Collectors.toList());
 			return groupList.stream();
+		}, query -> {
+			int count = identityService.createGroupQuery().list().stream().
+					filter(group -> {
+						return group.getId().startsWith(query.getFilter().orElse(""))
+								|| group.getName().startsWith(query.getFilter().orElse(""));
+					}).collect(Collectors.toList()).size();
+			return count;
+		});
+	}
+
+	private DataProvider<GroupTemplate, String> createDataProvider() {
+		return DataProvider.fromFilteringCallbacks(query -> {
+			List<Group> groupList = identityService.createGroupQuery().groupMember(query.getFilter().orElse("admin")).list();
+			return groupList.stream().map(m -> {
+				GroupTemplate group = new GroupTemplate();
+				group.setId(m.getId());
+				group.setName(m.getName());
+				group.setType(m.getType());
+				group.setDelete(buttonDeleteGroupMemberUser(query.getFilter().orElse("admin"), m));
+				return group;
+			});
 		}, query -> {
 			return (int) identityService.createGroupQuery().groupMember(query.getFilter().orElse("admin")).count();
 		});
 	}
-	
+
+	private Button buttonDeleteGroupMemberUser(String userID, Group group) {
+		Button deleteButton = new Button();
+		String groupWindowCaption = getI18nText("adminView.caption.groupKey");
+		String notificationDeleted = getI18nText("adminView.notification.group.deleted");
+		String textInfo = getI18nText("adminView.ConfirmDialog.deleteGroup.info");
+		String textOKButton = getI18nText("adminView.ConfirmDialog.deleteUser.ok");
+		String textCloseButton = getI18nText("adminView.ConfirmDialog.deleteUser.close");
+		ClickListener okDeleteClick = event -> {
+			identityService.deleteMembership(userID, group.getId());
+			groupForUser.refreshAll();
+			Notification.show(groupWindowCaption.concat(" ").concat(group.getId()).concat(notificationDeleted), Type.WARNING_MESSAGE);
+		};
+		deleteButton.addClickListener(event -> {
+			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
+			getUI().addWindow(box);
+		});
+		return deleteButton;
+	}
+
 
 	public void setUser(UserTemplate template) {
-		User user = identityService.createUserQuery().userId(template.getId()).singleResult();
-		groupUserIDFilter.setFilter(user.getId());
+		currentUser = template;
+		User user = identityService.createUserQuery().userId(currentUser.getId()).singleResult();
 		groupForUser.refreshAll();
+		groupUserIDFilter.setFilter(user.getId());
 	}	
 	
-	private ComboBox<GroupTemplate> createSelectGroup(DataProvider<GroupTemplate, String> groupDataProvider) {
-
-		ComboBox<GroupTemplate> groupSelect = new ComboBox<>("Select your group");
-		groupSelect.setDataProvider(groupDataProvider);
+	private ComboBox<String> createSelectGroup(DataProvider<String, String> selectGroupProvider) {
+		ComboBox<String> groupSelect = new ComboBox<>();
+		groupSelect.setDataProvider(selectGroupProvider);
+		groupSelect.setPageLength(5);
+		groupSelect.addSelectionListener(event -> {
+			selectGroupProvider.refreshAll();
+			selectGroupFilter = selectGroupProvider.withConfigurableFilter();
+		});
+		groupSelect.addValueChangeListener(event -> {
+			selectGroupProvider.refreshAll();
+			selectGroupFilter.setFilter(groupSelect.getValue());
+			selectGroupFilter = selectGroupProvider.withConfigurableFilter();
+		});
 		return groupSelect;
 	}
 	
-	private ListSelect<String> createListSelect() {
-		groupUserIDFilter = groupForUser.withConfigurableFilter();
-		ListSelect<String> list = new ListSelect<>("Присвоенные роли пользователю");
-		list.setWidth(100, Unit.PERCENTAGE);
-		list.setRows(5);
-		list.setDataProvider(groupUserIDFilter);
-		return list;
+	private Button createAddGroupButton() {
+		Button createButton = new Button();
+		createButton.setIcon(VaadinIcons.PLUS);
+		
+		createButton.addClickListener(event -> {
+			try {
+				identityService.createMembership(currentUser.getId(), selectGroup.getValue());
+				groupForUser.refreshAll();
+				Notification.show(selectGroup.getValue().concat("добавлена"), Type.WARNING_MESSAGE);
+			}
+			catch(Exception e) {
+				Notification.show(selectGroup.getValue().concat("не добавлена"), Type.WARNING_MESSAGE);
+			}
+		});
+		return createButton;
 	}
 	
-
+	private Button createEditButton() {
+		Button edit = new Button("Edit");
+		edit.setStyleName(ValoTheme.BUTTON_PRIMARY);
+		edit.addClickListener(event ->{
+			joinedComponent.setVisible(true);
+			joinedComponent.setEnabled(true);
+			exitButton.setVisible(true);
+			exitButton.setEnabled(true);
+			edit.setVisible(false);
+			edit.setEnabled(false);
+			gridGroupAddUser.getColumn("del").setHidden(false);
+		});
+		return edit;
+	}
+	
+	private Button createExitButton() {
+		Button exit = new Button("Exit");
+		
+		exit.addClickListener(event ->{
+			joinedComponent.setVisible(false);
+			joinedComponent.setEnabled(false);
+			exit.setVisible(false);
+			exit.setEnabled(false);
+			editButton.setVisible(true);
+			editButton.setEnabled(true);
+			gridGroupAddUser.getColumn("del").setHidden(true);
+		});
+		return exit;
+	}
+	
+	private Grid<GroupTemplate> createGroupAddUser() {
+		String deleteCaption = getI18nText("adminView.caption.delete");
+		String idCaption = getI18nText("adminView.caption.id");
+		String nameCaption = getI18nText("adminView.caption.nameRoles");
+		String typeCaption = getI18nText("adminView.caption.typeRoles");
+		
+		Grid<GroupTemplate> grid = new Grid<>();
+		groupUserIDFilter = groupForUser.withConfigurableFilter();
+		grid.setSizeFull();
+		grid.addColumn(GroupTemplate::getId).setCaption(idCaption);
+		grid.addColumn(GroupTemplate::getName).setCaption(nameCaption);
+		grid.addColumn(GroupTemplate::getType).setCaption(typeCaption);
+		grid.addComponentColumn(GroupTemplate::getDelete).setHidden(true).setId("del").setCaption(deleteCaption).setWidth(95.0);
+		
+		grid.setWidth(100, Unit.PERCENTAGE);
+		grid.setDataProvider(groupUserIDFilter);
+		return grid;
+	}
+	
+	private String getI18nText(String key) {
+		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
+	}
 }
