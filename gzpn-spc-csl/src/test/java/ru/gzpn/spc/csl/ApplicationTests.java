@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ApplicationTests {
 	@Test
 	public void contextLoads() {
-
 		try {
 			final ObjectMapper mapper = new ObjectMapper();
 			TestJson json = new TestJson();
@@ -27,7 +26,6 @@ public class ApplicationTests {
 			throw new RuntimeException("Failed to convert String to Invoice: " + ex.getMessage(), ex);
 		}
 	}
-
 }
 
 enum TestEnum {

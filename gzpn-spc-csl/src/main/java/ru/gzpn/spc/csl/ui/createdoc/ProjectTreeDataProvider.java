@@ -13,6 +13,7 @@ import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IStage;
 import ru.gzpn.spc.csl.model.utils.Entities;
+import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph;
 import ru.gzpn.spc.csl.services.bl.DataProjectService;
 import ru.gzpn.spc.csl.services.bl.DataUserSettigsService;
 
@@ -75,14 +76,22 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 				String parentGroupFieldName = parent.getGroupFiled();
 				String parentEntityName = parent.getEntityName();
 				
+				List<Entities> path = ProjectEntityGraph.getPathBetweenNodes(parentEntityName, nextEntityName);
+				if (path.size() > 1) {
+					for (int i = 0; i < path.size(); i ++) {
+						// TODO:
+					}
+				} else {
+					if (parentGroupFieldName != nextGroupFieldName) {
+						
+					}
+				}
 				
 				String jqpl = "SELECT  FROM parentEntity PE, nextEntity NE WHERE ";
 				
 				switch (Entities.valueOf(nextEntityName.toUpperCase())) {
 				case HPROJECT:
 
-					
-					
 					break;
 				case CPROJECT:
 					break;
@@ -96,7 +105,7 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 			}
 		} else {
 			final NodeWrapper rootSettingsNode = userSettigsService.getDefaultNodesHierarchy();
-			result = projectService.getItemsGroupedBy(rootSettingsNode);
+			result = projectService.getItemsGroupedByField(rootSettingsNode);
 		}
 
 		if (parent instanceof ICProject) {

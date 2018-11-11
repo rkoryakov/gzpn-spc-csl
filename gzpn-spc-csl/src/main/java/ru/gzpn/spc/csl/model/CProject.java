@@ -29,7 +29,7 @@ public class CProject extends ACLBasedEntity implements ICProject {
 	private String name;
 
 	@ManyToOne(targetEntity = HProject.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "cp_id", referencedColumnName = "id")
+	@JoinColumn(name = "hp_id", referencedColumnName = "id")
 	private HProject hproject;
 	
 	@ManyToOne(targetEntity = Stage.class, fetch = FetchType.LAZY)

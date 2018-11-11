@@ -58,6 +58,4 @@ public class Work extends BaseEntity implements IWork {
 	public void setPlanObj(IPlanObject planObj) {
 		this.planObj = planObj;
 	}
-	
-	
 }

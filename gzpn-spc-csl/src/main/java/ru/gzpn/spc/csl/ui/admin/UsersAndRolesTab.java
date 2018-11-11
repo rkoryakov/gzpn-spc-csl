@@ -198,7 +198,6 @@ public class UsersAndRolesTab extends VerticalLayout {
 	}
 
 	private Grid<UserTemplate> createGridUser() {
-
 		String loginCaption = getI18nText("adminView.caption.login");
 		String firstNameCaption = getI18nText("adminView.caption.firstName");
 		String lastNameCaption = getI18nText("adminView.caption.lastName");
@@ -230,14 +229,11 @@ public class UsersAndRolesTab extends VerticalLayout {
 	}
 
 	private Grid<GroupTemplate> createGridGroup() {
-
 		String editCaption = getI18nText("adminView.caption.edit");
 		String deleteCaption = getI18nText("adminView.caption.delete");
 		String idCaption = getI18nText("adminView.caption.id");
 		String nameCaption = getI18nText("adminView.caption.nameRoles");
 		String typeCaption = getI18nText("adminView.caption.typeRoles");
-
-
 
 		groupFilter = groupDataProvider.withConfigurableFilter();
 		Grid<GroupTemplate> grid = new Grid<>();

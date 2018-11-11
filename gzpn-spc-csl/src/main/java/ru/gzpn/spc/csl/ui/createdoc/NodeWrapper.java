@@ -13,6 +13,7 @@ public class NodeWrapper {
 	private Object groupFiledValue;
 	private NodeWrapper parent;
 	private NodeWrapper child;
+	private BaseEntity item; 
 	// if the current node isn't a group then fetch entities
 	private BaseEntity fetchedData;
 	
@@ -21,12 +22,21 @@ public class NodeWrapper {
 		this.groupFiled = groupByFiled;
 	}
 	
+	public NodeWrapper(String entityName) {
+		this.entityName = entityName;
+		this.groupFiled = null;
+	}
+	
 	public NodeWrapper(String entityName, String groupByFiledName, Object groupFiledValue) {
 		this.entityName = entityName;
 		this.groupFiled = groupByFiledName;
 		this.groupFiledValue = groupFiledValue;
 	}
 	
+	public NodeWrapper(String entityName, BaseEntity item) {
+		this.entityName = entityName;
+		this.setItem(item);
+	}
 	
 	public String getEntityName() {
 		return entityName;
@@ -52,6 +62,10 @@ public class NodeWrapper {
 		this.groupFiledValue = value;
 	}
 
+	public boolean hasGroupFieldValue() {
+		return getGroupFiledValue() != null;
+	}
+	
 	public NodeWrapper getParent() {
 		return parent;
 	}
@@ -68,13 +82,21 @@ public class NodeWrapper {
 		this.child = child;
 	}
 			
+	public BaseEntity getItem() {
+		return item;
+	}
+
+	public void setItem(BaseEntity item) {
+		this.item = item;
+	}
+
 	public NodeWrapper addChild(NodeWrapper child) {
 		child.setParent(this);
 		this.child = child;
 		return child;
 	}
 	
-	public boolean isGroup() {
+	public boolean isGrouping() {
 		return getGroupFiled() != null;
 	}
 	
@@ -84,5 +106,13 @@ public class NodeWrapper {
 	
 	public boolean hasChild() {
 		return this.child != null;
+	}
+	
+	public boolean hasParent() {
+		return this.parent != null;
+	}
+	
+	public boolean hasEntityItem() {
+		return this.item != null;
 	}
 }
