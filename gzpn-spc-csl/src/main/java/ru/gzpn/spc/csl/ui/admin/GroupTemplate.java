@@ -4,6 +4,7 @@ import org.activiti.engine.identity.Group;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.themes.ValoTheme;
 
 public class GroupTemplate implements Group {
 	
@@ -52,7 +53,7 @@ public class GroupTemplate implements Group {
 	}
 
 	public Button getDelete() {
-		delete.setSizeFull();
+		delete.setStyleName(ValoTheme.BUTTON_BORDERLESS);
 		delete.setIcon(VaadinIcons.TRASH);
 		return delete;
 	}
