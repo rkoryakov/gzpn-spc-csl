@@ -20,7 +20,7 @@ public class Stage extends BaseEntity implements IStage {
 	private String name;
 
 	@OneToMany(targetEntity = CProject.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "staget_id", referencedColumnName = "id")
+	@JoinColumn(name = "stage_id", referencedColumnName = "id")
 	private List<ICProject> cprojects;
 	
 	public String getName() {

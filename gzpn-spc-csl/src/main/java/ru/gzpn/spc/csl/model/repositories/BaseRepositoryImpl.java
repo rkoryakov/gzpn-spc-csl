@@ -1,7 +1,9 @@
 package ru.gzpn.spc.csl.model.repositories;
 
 import java.util.Formatter;
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
@@ -13,6 +15,9 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
+import ru.gzpn.spc.csl.model.utils.Entities;
+import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph;
+import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph.Rib.LinkedFields;
 import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 @NoRepositoryBean
 public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepository<T, Long> implements BaseRepository<T> {
@@ -111,6 +116,17 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		
 		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
 
+			List<Entities> list = ProjectEntityGraph.getPathBetweenNodes(sourceEntity, targetEntity);
+			Optional<LinkedFields> linkedFileds = ProjectEntityGraph.getLinkedFields(sourceEntity, targetEntity);
+			
+			if (linkedFileds.isPresent()) {
+				for (Entities e : list) {
+					
+				}
+			}
+			
+			
+			
 //			if (groupFieldName != null) {
 //				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%4$s', e.%4$s) "
 //								+ "FROM %1$s e1 WHERE e1.%2$s = :fieldValue GROUP BY e.%4$s",

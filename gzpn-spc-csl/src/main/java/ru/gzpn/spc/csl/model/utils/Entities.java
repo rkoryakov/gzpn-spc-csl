@@ -12,7 +12,7 @@ public enum Entities {
 	CPROJECT("CProject"),
 	PHASE("Phase"),
 	STAGE("Stage"),
-	PLAN_OBJECT("PlanObject"),
+	PLANOBJECT("PlanObject"),
 	WORK("Work"),
 	
 	USER_SETTINGS("UserSettings");

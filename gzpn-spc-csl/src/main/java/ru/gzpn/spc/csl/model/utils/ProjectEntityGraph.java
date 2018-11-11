@@ -1,10 +1,11 @@
 package ru.gzpn.spc.csl.model.utils;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph.Rib.LinkedFields;
 
@@ -23,7 +24,7 @@ public class ProjectEntityGraph {
 													{0,5,5,5,5,6,0}  // 6 Work
 								   					};
 
-	private static final Map<Entities, Integer> mapNodes = new LinkedHashMap<>();
+	private static final EnumMap<Entities, Integer> mapNodes = new EnumMap<>(Entities.class);
 	private static final Map<Rib, LinkedFields> mapRibs = new HashMap<>();
 	
 	static {
@@ -31,19 +32,19 @@ public class ProjectEntityGraph {
 		mapNodes.put(Entities.CPROJECT, 2);
 		mapNodes.put(Entities.PHASE, 3);
 		mapNodes.put(Entities.STAGE, 4);
-		mapNodes.put(Entities.PLAN_OBJECT, 5);
+		mapNodes.put(Entities.PLANOBJECT, 5);
 		mapNodes.put(Entities.WORK, 6);
 		
 		mapRibs.put(new Rib(Entities.HPROJECT, Entities.CPROJECT), new LinkedFields("id", "hp_id"));
 		mapRibs.put(new Rib(Entities.CPROJECT, Entities.HPROJECT), new LinkedFields("hp_id", "id"));
 		mapRibs.put(new Rib(Entities.CPROJECT, Entities.PHASE), new LinkedFields("phase_id", "id"));
 		mapRibs.put(new Rib(Entities.PHASE, Entities.CPROJECT), new LinkedFields("id", "phase_id"));
-		mapRibs.put(new Rib(Entities.CPROJECT, Entities.STAGE), new LinkedFields("staget_id", "id"));
-		mapRibs.put(new Rib(Entities.STAGE, Entities.CPROJECT), new LinkedFields("id", "staget_id"));
-		mapRibs.put(new Rib(Entities.CPROJECT, Entities.PLAN_OBJECT), new LinkedFields("id", "cp_id"));
-		mapRibs.put(new Rib(Entities.PLAN_OBJECT, Entities.CPROJECT), new LinkedFields("cp_id", "id"));
-		mapRibs.put(new Rib(Entities.PLAN_OBJECT, Entities.WORK), new LinkedFields("id", "plan_obj_id"));
-		mapRibs.put(new Rib(Entities.WORK, Entities.PLAN_OBJECT), new LinkedFields("plan_obj_id", "id"));
+		mapRibs.put(new Rib(Entities.CPROJECT, Entities.STAGE), new LinkedFields("stage_id", "id"));
+		mapRibs.put(new Rib(Entities.STAGE, Entities.CPROJECT), new LinkedFields("id", "stage_id"));
+		mapRibs.put(new Rib(Entities.CPROJECT, Entities.PLANOBJECT), new LinkedFields("id", "cp_id"));
+		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.CPROJECT), new LinkedFields("cp_id", "id"));
+		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.WORK), new LinkedFields("id", "plan_obj_id"));
+		mapRibs.put(new Rib(Entities.WORK, Entities.PLANOBJECT), new LinkedFields("plan_obj_id", "id"));
 	}
 	
 	private ProjectEntityGraph() {
@@ -78,6 +79,19 @@ public class ProjectEntityGraph {
 		}
 		
 		return result;
+	}
+	
+	public static Optional<LinkedFields> getLinkedFields(String nodeFrom, String nodeTo) {
+		Entities left = Entities.valueOf(nodeFrom.toUpperCase());
+		Entities right = Entities.valueOf(nodeTo.toUpperCase());
+		return Optional.ofNullable(
+				mapRibs.computeIfAbsent(new Rib(left, right), e -> {
+					LinkedFields result = null;
+					if (left == right) {
+						result = new LinkedFields("id", "id");
+					}
+					return result;
+				}));
 	}
 	
 	public static final class Rib {
@@ -186,6 +200,12 @@ public class ProjectEntityGraph {
 			}
 			public void setRightEntityField(String rightEntityField) {
 				this.rightEntityField = rightEntityField;
+			}
+
+			@Override
+			public String toString() {
+				return "LinkedFields [leftEntityField=" + leftEntityField + ", rightEntityField=" + rightEntityField
+						+ "]";
 			}
 		}
 	}
