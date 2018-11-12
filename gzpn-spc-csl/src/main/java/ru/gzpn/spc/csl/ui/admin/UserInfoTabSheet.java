@@ -55,17 +55,17 @@ public class UserInfoTabSheet extends TabSheet {
 		this.identityService = identityService;
 		this.container = container;
 		userInfoTab = new UserInfoTab(identityService, messageSource, userDataProvider, container);
-		userAddGroupTab = new UserAddGroupTab(identityService, messageSource, userDataProvider, groupDataProvider);
+		userAddGroupTab = new UserAddGroupTab(identityService, messageSource);
 		this.addTab(userInfoTab, "info user");
 		this.addTab(userAddGroupTab, "user group");
 		userInfoTab.setUserAndRolesTab(usersAndRolesTab);
 	}
 	
-	
-	private VerticalLayout createuserGroupTab() {
-		VerticalLayout userGroup = new VerticalLayout();
-		return userGroup;
-	}
+//	
+//	private VerticalLayout createuserGroupTab() {
+//		VerticalLayout userGroup = new VerticalLayout();
+//		return userGroup;
+//	}
 
 	public UserInfoTab getUserInfoTab() {
 		return userInfoTab;
@@ -403,9 +403,7 @@ class UserAddGroupTab extends VerticalLayout{
 	private JoinedLayout<AbstractComponent, AbstractComponent> joinedComponent;
 	
 	public UserAddGroupTab(IdentityService identityService, 
-			MessageSource messageSource, 
-			DataProvider<UserTemplate, String> userDataProvider, 
-			DataProvider<GroupTemplate, String> groupDataProvider) {
+			MessageSource messageSource) {
 		this.messageSource = messageSource;
 		this.identityService = identityService;
 		setHeight(100, Unit.PERCENTAGE);
