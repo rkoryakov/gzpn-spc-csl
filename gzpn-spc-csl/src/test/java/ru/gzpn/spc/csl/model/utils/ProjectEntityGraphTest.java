@@ -113,4 +113,16 @@ public class ProjectEntityGraphTest {
 		Optional<LinkedFields> fields = ProjectEntityGraph.getLinkedFields(Entities.WORK.getName(), Entities.WORK.getName());
 		assertThat(fields.get()).isEqualTo(new LinkedFields("id", "id"));
 	}
+	
+	@Test
+	public void getLinkedFieldsTest9() {
+		Optional<LinkedFields> fields = ProjectEntityGraph.getLinkedFields(Entities.PLANOBJECT.getName(), Entities.PLANOBJECT.getName());
+		assertThat(fields.get()).isEqualTo(new LinkedFields("parent_id", "id"));
+	}
+	
+	@Test
+	public void getLinkedFieldsTest10() {
+		Optional<LinkedFields> fields = ProjectEntityGraph.getLinkedFields(Entities.PHASE.getName(), Entities.PHASE.getName());
+		assertThat(fields.get()).isEqualTo(new LinkedFields("parent_id", "id"));
+	}
 }

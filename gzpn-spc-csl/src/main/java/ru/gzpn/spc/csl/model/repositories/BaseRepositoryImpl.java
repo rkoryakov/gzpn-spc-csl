@@ -110,7 +110,10 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		return result;
 	}
 	
-	public Stream<NodeWrapper> getItemsGroupedByEntityValue(String sourceEntity, String targetEntity, String fieldName, Object fieldValue, String groupFieldName) {
+	public Stream<NodeWrapper> getItemsGroupedByEntityValue(String sourceEntity, String targetEntity, 
+															String sourceFieldName, 
+															Object sourceFieldValue, 
+															String targetGroupFieldName) {
 		StringBuilder jpql = new StringBuilder();
 		Stream<NodeWrapper> result = null;
 		
@@ -119,12 +122,33 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 			List<Entities> list = ProjectEntityGraph.getPathBetweenNodes(sourceEntity, targetEntity);
 			Optional<LinkedFields> linkedFileds = ProjectEntityGraph.getLinkedFields(sourceEntity, targetEntity);
 			
+			if (list.size() > 1) {
+				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%2$s', T.%2$s)"
+						+ " FROM %1$s T", targetEntity, targetGroupFieldName);
+				
+				for (int i = 1; i < list.size(); i ++) {
+					formatter.format(", %1$s E_%2$d ", list.get(i).getName(), i);
+				}
+				
+				for (int i = 0; i < list.size() - 1; i ++) {
+					Entities left = list.get(i);
+					Entities right = list.get(i + 1);
+					
+					Optional<LinkedFields> linked = ProjectEntityGraph.getLinkedFields(left.getName(), right.getName());
+					if (linked.isPresent()) {
+						
+					}
+				}
+			}
 			if (linkedFileds.isPresent()) {
+				
+				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper() "
+						+ " FROM %1$s a WHERE a.%2$s = :fieldValue", targetEntity);
+				linkedFileds.get().getLeftEntityField();
 				for (Entities e : list) {
 					
 				}
 			}
-			
 			
 			
 //			if (groupFieldName != null) {

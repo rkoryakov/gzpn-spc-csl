@@ -45,6 +45,9 @@ public class ProjectEntityGraph {
 		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.CPROJECT), new LinkedFields("cp_id", "id"));
 		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.WORK), new LinkedFields("id", "plan_obj_id"));
 		mapRibs.put(new Rib(Entities.WORK, Entities.PLANOBJECT), new LinkedFields("plan_obj_id", "id"));
+		// hierarchical entities
+		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.PLANOBJECT), new LinkedFields("parent_id", "id"));
+		mapRibs.put(new Rib(Entities.PHASE, Entities.PHASE), new LinkedFields("parent_id", "id"));
 	}
 	
 	private ProjectEntityGraph() {
@@ -88,7 +91,9 @@ public class ProjectEntityGraph {
 				mapRibs.computeIfAbsent(new Rib(left, right), e -> {
 					LinkedFields result = null;
 					if (left == right) {
-						result = new LinkedFields("id", "id");
+						if (left != Entities.PLANOBJECT && left != Entities.PHASE) {
+							result = new LinkedFields("id", "id");
+						}
 					}
 					return result;
 				}));
@@ -149,7 +154,7 @@ public class ProjectEntityGraph {
 		public static final class LinkedFields {
 			private String leftEntityField;
 			private String rightEntityField;
-			
+
 			public LinkedFields(String leftEntityField, String rightEntityField) {
 				this.leftEntityField = leftEntityField;
 				this.rightEntityField = rightEntityField;

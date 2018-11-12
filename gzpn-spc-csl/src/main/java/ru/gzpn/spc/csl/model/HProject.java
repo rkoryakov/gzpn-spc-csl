@@ -35,7 +35,7 @@ public class HProject extends ACLBasedEntity implements IHProject {
 	
 	private String projectId;
 	private String name;
-	
+
 	@OneToMany(targetEntity = CProject.class, cascade = CascadeType.ALL)
 	@JoinColumn(name = "hp_id", referencedColumnName = "id")
 //	@JoinTable(schema = "spc_csl_schema", name = "hproject_2_cproject", joinColumns = {
