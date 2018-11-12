@@ -507,15 +507,15 @@ class UserAddGroupTab extends VerticalLayout{
 	private Button createAddGroupButton() {
 		Button createButton = new Button();
 		createButton.setIcon(VaadinIcons.PLUS);
-		
+		// TODO: use MessageSource
 		createButton.addClickListener(event -> {
 			try {
 				identityService.createMembership(currentUser.getId(), selectGroup.getValue());
 				groupForUser.refreshAll();
-				Notification.show(selectGroup.getValue().concat("добавлена"), Type.WARNING_MESSAGE);
+				Notification.show(selectGroup.getValue().concat("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"), Type.WARNING_MESSAGE);
 			}
 			catch(Exception e) {
-				Notification.show(selectGroup.getValue().concat("не добавлена"), Type.WARNING_MESSAGE);
+				Notification.show(selectGroup.getValue().concat("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"), Type.WARNING_MESSAGE);
 			}
 		});
 		return createButton;
