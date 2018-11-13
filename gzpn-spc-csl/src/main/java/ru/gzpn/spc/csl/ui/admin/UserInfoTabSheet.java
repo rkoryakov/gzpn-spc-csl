@@ -61,12 +61,6 @@ public class UserInfoTabSheet extends TabSheet {
 		userInfoTab.setUserAndRolesTab(usersAndRolesTab);
 	}
 	
-//	
-//	private VerticalLayout createuserGroupTab() {
-//		VerticalLayout userGroup = new VerticalLayout();
-//		return userGroup;
-//	}
-
 	public UserInfoTab getUserInfoTab() {
 		return userInfoTab;
 	}
