@@ -1,11 +1,13 @@
 package ru.gzpn.spc.csl.model;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -20,9 +22,15 @@ import ru.gzpn.spc.csl.model.interfaces.IWork;
 @Entity
 @NamedQueries({ 
 })
-@Table(schema = "spc_csl_schema", name = "plan_object")
-public class PlanObject extends BaseEntity implements IPlanObject {
-
+@Table(schema = "spc_csl_schema", name = "plan_objects",
+indexes = {
+		@Index(name = "spc_csl_idx_plnid", columnList = "code", unique = true),
+		@Index(name = "spc_csl_idx_plnname", columnList = "name") 
+	}
+)
+public class PlanObject extends BaseEntity implements IPlanObject, Serializable {
+	private static final long serialVersionUID = -1569405101073898860L;
+	
 	@Column(length=64)
 	private String code;
 	@Column(length=128)
@@ -46,6 +54,15 @@ public class PlanObject extends BaseEntity implements IPlanObject {
 	@OneToMany(targetEntity = Work.class)
 	@JoinColumn(name="plan_obj_id", referencedColumnName="id")
 	private List<IWork> workList;
+	
+	public PlanObject() {
+	}
+	
+	public PlanObject(String code, String name, String mark) {
+		this.code = code;
+		this.name = name;
+		this.mark = mark;
+	}
 	
 	public List<IWork> getWorkList() {
 		return workList;
@@ -102,6 +119,4 @@ public class PlanObject extends BaseEntity implements IPlanObject {
 	public void setMark(String mark) {
 		this.mark = mark;
 	}
-	
-	
 }

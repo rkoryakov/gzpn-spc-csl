@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -16,12 +17,14 @@ import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IStage;
 
 @Entity
-@Table(schema = "spc_csl_schema", name = "capital_project", 
+@Table(schema = "spc_csl_schema", name = "capital_projects", 
 			indexes = {
 				@Index(name = "spc_csl_idx_prjid", columnList = "projectId", unique = true),
 			}
 )
-public class CProject extends ACLBasedEntity implements ICProject {
+public class CProject extends ACLBasedEntity implements ICProject, Serializable {
+	private static final long serialVersionUID = 4547825496450260103L;
+	
 	public static final String FILED_NAME = "name";
 	public static final String FILED_PROJECT_ID = "projectId";
 	
@@ -33,22 +36,19 @@ public class CProject extends ACLBasedEntity implements ICProject {
 	private HProject hproject;
 	
 	@ManyToOne(targetEntity = Stage.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "staget_id", referencedColumnName = "id")
-//	@JoinTable(schema = "spc_csl_schema", name = "stage_2_cproject", joinColumns = {
-//			@JoinColumn(name = "cproject_id", referencedColumnName = "id") }, inverseJoinColumns = {
-//					@JoinColumn(name = "stage_id", referencedColumnName = "id") })
+	@JoinColumn(name = "stage_id", referencedColumnName = "id")
 	private IStage stage;
 
 	@ManyToOne(targetEntity = Phase.class, fetch = FetchType.LAZY)
 	@JoinColumn(name = "phase_id", referencedColumnName = "id")
-//	@JoinTable(schema = "spc_csl_schema", name = "phase_2_cproject", joinColumns = {
-//			@JoinColumn(name = "cproject_id", referencedColumnName = "id") }, inverseJoinColumns = {
-//					@JoinColumn(name = "phase_id", referencedColumnName = "id") })
 	private IPhase phase;
 
 	@OneToMany(targetEntity = PlanObject.class, fetch = FetchType.LAZY)
 	@JoinColumn(name="cp_id", referencedColumnName="id")
 	private List<IPlanObject> planObjects;
+	
+	public CProject() {
+	}
 	
 	public String getName() {
 		return name;

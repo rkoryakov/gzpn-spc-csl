@@ -123,51 +123,32 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 			Optional<LinkedFields> linkedFileds = ProjectEntityGraph.getLinkedFields(sourceEntity, targetEntity);
 			
 			if (list.size() > 1) {
-				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%2$s', T.%2$s)"
-						+ " FROM %1$s T", targetEntity, targetGroupFieldName);
+				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%3$s', T.%3$s)"
+						+ " FROM %1$s T, %2$s S", targetEntity, sourceEntity, targetGroupFieldName);
 				
 				for (int i = 1; i < list.size(); i ++) {
 					formatter.format(", %1$s E_%2$d ", list.get(i).getName(), i);
 				}
+				
+				formatter.format(" WHERE S.%1$s = :sourceFieldValue", sourceFieldName);
 				
 				for (int i = 0; i < list.size() - 1; i ++) {
 					Entities left = list.get(i);
 					Entities right = list.get(i + 1);
 					
 					Optional<LinkedFields> linked = ProjectEntityGraph.getLinkedFields(left.getName(), right.getName());
-					if (linked.isPresent()) {
-						
-					}
+					LinkedFields linkedFields = linked.get();
+					formatter.format(" AND %1$s.%2$s = %3$s.%4$s ", left.getName(), linkedFields.getLeftEntityField(), 
+																right.getName(), linkedFields.getRightEntityField());
 				}
-			}
-			if (linkedFileds.isPresent()) {
 				
-				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper() "
-						+ " FROM %1$s a WHERE a.%2$s = :fieldValue", targetEntity);
-				linkedFileds.get().getLeftEntityField();
-				for (Entities e : list) {
-					
-				}
+				formatter.format("GROUP BY T.%1$s", targetGroupFieldName);
+				
 			}
-			
-			
-//			if (groupFieldName != null) {
-//				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%4$s', e.%4$s) "
-//								+ "FROM %1$s e1 WHERE e1.%2$s = :fieldValue GROUP BY e.%4$s",
-//								entity, fieldName, fieldValue, groupFieldName);
-//			} else {
-//				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', e) "
-//								+ "FROM %1$s e WHERE e.%2$s = :fieldValue",
-//								entity, fieldName);
-//			}
-//			
-//			query = entityManager.createQuery(jpql.toString(), NodeWrapper.class);
-//			
-//			if (fieldValue != null) {
-//				query.setParameter("fieldValue", fieldValue);
-//			}
-//			
-//			result = query.getResultList().stream();
+
+			TypedQuery<NodeWrapper> query = entityManager.createQuery(jpql.toString(), NodeWrapper.class);
+			result = query.setParameter("sourceFieldValue", sourceFieldValue)
+					.getResultList().stream();
 		}
 		
 		return result;

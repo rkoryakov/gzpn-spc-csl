@@ -31,5 +31,6 @@ public class VaadinServletConfiguration extends SpringVaadinServlet {
 
 			return systemMessages;
 		});
+		
 	}
 }

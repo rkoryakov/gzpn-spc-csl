@@ -5,15 +5,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class ApplicationTests {
+	public static final Logger logger = LoggerFactory.getLogger(ApplicationTests.class);
 	@Test
 	public void contextLoads() {
 		try {
@@ -21,12 +19,30 @@ public class ApplicationTests {
 			TestJson json = new TestJson();
 			json.setUnums(Arrays.asList(new TestEnum[] { TestEnum.ONE, TestEnum.TWO }));
 			json.setName("TestEnum");
-			System.out.println(mapper.writeValueAsString(json));
+			logger.debug(mapper.writeValueAsString(json));
 		} catch (final Exception ex) {
 			throw new RuntimeException("Failed to convert String to Invoice: " + ex.getMessage(), ex);
 		}
 	}
+	
+	@Test
+	public void randomNumberTest() {
+		double n = Math.random();
+		logger.debug("random value {};  5 * {} = {}, rounded {}", n, n, 5*n, (int)(5*n));
+		n = Math.random();
+		logger.debug("random value {};  5 * {} = {}, rounded {}", n, n, 5*n, (int)(5*n));
+		n = Math.random();
+		logger.debug("random value {};  5 * {} = {}, rounded {}", n, n, 5*n, (int)(5*n));
+		n = Math.random();
+		logger.debug("random value {};  5 * {} = {}, rounded {}", n, n, 5*n, (int)(5*n));
+		n = Math.random();
+		logger.debug("random value {};  5 * {} = {}, rounded {}", n, n, 5*n, (int)(5*n));
+		n = Math.random();
+		logger.debug("random value {};  5 * {} = {}, rounded {}", n, n, 5*n, (int)(5*n));
+		n = Math.random();
+	}
 }
+
 
 enum TestEnum {
 	ONE, TWO, THREE;
