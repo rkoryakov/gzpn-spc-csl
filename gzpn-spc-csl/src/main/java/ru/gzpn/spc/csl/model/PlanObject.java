@@ -22,7 +22,7 @@ import ru.gzpn.spc.csl.model.interfaces.IWork;
 @Entity
 @NamedQueries({ 
 })
-@Table(schema = "spc_csl_schema", name = "plan_objects",
+@Table(schema = "spc_csl_schema", name = "plan_objects_tree",
 indexes = {
 		@Index(name = "spc_csl_idx_plnid", columnList = "code", unique = true),
 		@Index(name = "spc_csl_idx_plnname", columnList = "name") 
@@ -40,11 +40,11 @@ public class PlanObject extends BaseEntity implements IPlanObject, Serializable 
 	
 	@OneToMany
 	@OrderColumn
-	@JoinColumn(name="parent_id", referencedColumnName="id")
+	@JoinColumn(name="parent_id")
 	private List<PlanObject> children = new LinkedList<>();
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="parent_id", referencedColumnName="id", insertable=false, updatable=false)
+	@JoinColumn(name="parent_id", insertable=false, updatable=false)
 	private PlanObject parent;
 	
 	@ManyToOne(targetEntity = CProject.class, fetch=FetchType.LAZY)

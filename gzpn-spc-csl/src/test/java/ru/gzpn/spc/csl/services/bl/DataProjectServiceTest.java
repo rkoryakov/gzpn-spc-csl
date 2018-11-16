@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -44,7 +43,6 @@ public class DataProjectServiceTest {
 	DataProjectService service;
 		
 	@Test
-	@Transactional
 	public void fillData() {
 		PhaseRepository phaseRepository = service.getPhaseRepository();
 		StageRepository stageRepository = service.getStageRepository();
@@ -56,7 +54,8 @@ public class DataProjectServiceTest {
 				HProject hProject = new HProject();
 				hProject.setName("Havy Project " + i);
 				hProject.setProjectId("000000" + i);
-				List<CProject> cprojects = new ArrayList<>();
+				hProject = service.getHPRepository().save(hProject);
+				List<ICProject> cprojects = new ArrayList<>();
 				
 				// CProjects
 				for (int j = 0; j < 5; j ++) {
@@ -67,13 +66,12 @@ public class DataProjectServiceTest {
 					cProject.setPhase(phase);
 					Stage stage = stageRepository.findAll().get((int)(3*Math.random()));
 					cProject.setStage(stage);
-
+					cProject = service.getCPRepository().save(cProject);
+					
 					// PlanObjects
 					List<IPlanObject> planObjects = new ArrayList<>();
 					for (int k = 0; k < 5; k ++) {
 						PlanObject p = new PlanObject("00000" + i + "" + j + "" + k, "Object " + (i * j + k + 1), "AC");
-						p.setWorkList(new ArrayList<>());
-						p = service.getPlanObjectRepository().save(p);
 						planObjects.add(p);
 						
 						// Works
@@ -91,13 +89,16 @@ public class DataProjectServiceTest {
 							work.setLocalEstimate(estimate);
 						}
 						p.setWorkList(workList);
+						p = service.getPlanObjectRepository().save(p);
 					}
 					cProject.setPlanObjects(planObjects);
+					
+					cProject = service.getCPRepository().save(cProject);
 					cprojects.add(cProject);
 				}
-				service.getCPRepository().saveAll(cprojects);
 				
-				hProject.setCapitalProjects(cprojects.stream().map(mapper -> (ICProject)mapper).collect(Collectors.toList()));
+				
+				hProject.setCapitalProjects(cprojects);
 				service.getHPRepository().save(hProject);
 			}
 		}
@@ -110,8 +111,9 @@ public class DataProjectServiceTest {
 		phase1 = service.getPhaseRepository().save(phase1);
 		
 		Phase phase1_1 = new Phase("Phase 1.1", phase1);
-		phase1.setChildren(Arrays.asList(phase1_1));
 		phase1_1 = service.getPhaseRepository().save(phase1_1);
+		phase1.setChildren(Arrays.asList(phase1_1));
+		phase1 = service.getPhaseRepository().save(phase1);
 		
 		Phase phase2 = new Phase("Phase 2");
 		phase2 = service.getPhaseRepository().save(phase2);
@@ -122,11 +124,12 @@ public class DataProjectServiceTest {
 		Phase phase2_2 = new Phase("Phase 2.2", null);
 		phase2.setChildren(Arrays.asList(phase2_1, phase2_2));
 		phase2_2 = service.getPhaseRepository().save(phase2_2);
+		phase2 = service.getPhaseRepository().save(phase2);
 		
 		Phase phase2_2_1 = new Phase("Phase 2.2.1", phase2_2);
 		phase2_2_1 = service.getPhaseRepository().save(phase2_2_1);
-		
 		phase2_2.setChildren(Arrays.asList(phase2_2_1));
+		phase2_2 = service.getPhaseRepository().save(phase2_2);
 	}
 	
 	@Transactional
@@ -234,7 +237,7 @@ public class DataProjectServiceTest {
 		//DataProjectService.logger.debug("[getItemsGroupedByValueTest] createDate = {}", createDate);
 		
 		Stream<NodeWrapper> result = service.getItemsGroupedByFieldValue(Entities.CPROJECT.getName(), "version", 0, "name");
-		assertThat(result).size().isEqualTo(50);
+		assertThat(result).size().isEqualTo(0);
 		result = service.getItemsGroupedByFieldValue(Entities.CPROJECT.getName(), "version", 0, null);
 		assertThat(result).allMatch(e -> 
 			e.hasEntityItem()

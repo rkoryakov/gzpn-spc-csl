@@ -23,7 +23,7 @@ import ru.gzpn.spc.csl.model.interfaces.IPhase;
 @NamedQueries({
 	@NamedQuery(name = "Phase.findByName", query = "SELECT p FROM Phase p WHERE p.name = ?1"),	
 })
-@Table(schema = "spc_csl_schema", name = "phases")
+@Table(schema = "spc_csl_schema", name = "phases_tree")
 public class Phase extends BaseEntity implements IPhase, Serializable {
 	private static final long serialVersionUID = -3709362358146582320L;
 
@@ -32,11 +32,11 @@ public class Phase extends BaseEntity implements IPhase, Serializable {
 
 	@OneToMany
 	@OrderColumn
-	@JoinColumn(name="parent_id", referencedColumnName="id")
+	@JoinColumn(name="parent_id")
 	private List<Phase> children = new LinkedList<>();
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="parent_id", referencedColumnName="id", insertable=false, updatable=false)
+	@JoinColumn(name="parent_id", insertable=false, updatable=false)
 	private Phase parent;
 	
 	@OneToMany(targetEntity = CProject.class, fetch=FetchType.LAZY)
