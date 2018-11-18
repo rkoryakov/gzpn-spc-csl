@@ -15,13 +15,14 @@ import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph.Rib.LinkedFields;
  */
 public class ProjectEntityGraph {
 	// the graph
-	private static final int [][] G = new int [][] {{0,0,0,0,0,0,0}, // the first column and row aren't being used
-													{0,0,1,2,2,2,2}, // 1 HProject
-													{0,2,0,2,2,2,5}, // 2 CProject
-													{0,2,3,0,2,2,2}, // 3 Phase
-													{0,2,4,2,0,2,2}, // 4 Stage
-													{0,2,5,2,2,0,5}, // 5 PlanObject
-													{0,5,5,5,5,6,0}  // 6 Work
+	private static final int [][] G = new int [][] {{0,0,0,0,0,0,0,0}, // the first column and row aren't being used
+													{0,0,1,2,2,2,2,2}, // 1 HProject
+													{0,2,0,2,2,2,5,5}, // 2 CProject
+													{0,2,3,0,2,2,2,2}, // 3 Phase
+													{0,2,4,2,0,2,2,2}, // 4 Stage
+													{0,2,5,2,2,0,5,6}, // 5 PlanObject
+													{0,5,5,5,5,6,0,6}, // 6 Work
+													{0,6,6,6,6,6,7,0}  // 7 Local estimate 
 								   					};
 
 	private static final EnumMap<Entities, Integer> mapNodes = new EnumMap<>(Entities.class);
@@ -34,9 +35,10 @@ public class ProjectEntityGraph {
 		mapNodes.put(Entities.STAGE, 4);
 		mapNodes.put(Entities.PLANOBJECT, 5);
 		mapNodes.put(Entities.WORK, 6);
+		mapNodes.put(Entities.LOCALESTIMATE, 7);
 		
-		mapRibs.put(new Rib(Entities.HPROJECT, Entities.CPROJECT), new LinkedFields("id", "hp_id"));
-		mapRibs.put(new Rib(Entities.CPROJECT, Entities.HPROJECT), new LinkedFields("hp_id", "id"));
+		mapRibs.put(new Rib(Entities.HPROJECT, Entities.CPROJECT), new LinkedFields("id", "hp_id", "capitalProjects"));
+		mapRibs.put(new Rib(Entities.CPROJECT, Entities.HPROJECT), new LinkedFields("hp_id", "id", "hproject"));
 		mapRibs.put(new Rib(Entities.CPROJECT, Entities.PHASE), new LinkedFields("phase_id", "id"));
 		mapRibs.put(new Rib(Entities.PHASE, Entities.CPROJECT), new LinkedFields("id", "phase_id"));
 		mapRibs.put(new Rib(Entities.CPROJECT, Entities.STAGE), new LinkedFields("stage_id", "id"));
@@ -45,6 +47,8 @@ public class ProjectEntityGraph {
 		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.CPROJECT), new LinkedFields("cp_id", "id"));
 		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.WORK), new LinkedFields("id", "plan_obj_id"));
 		mapRibs.put(new Rib(Entities.WORK, Entities.PLANOBJECT), new LinkedFields("plan_obj_id", "id"));
+		mapRibs.put(new Rib(Entities.WORK, Entities.LOCALESTIMATE), new LinkedFields("plan_obj_id", "id"));
+		mapRibs.put(new Rib(Entities.LOCALESTIMATE, Entities.WORK), new LinkedFields("id", "plan_obj_id"));
 		// hierarchical entities
 		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.PLANOBJECT), new LinkedFields("parent_id", "id"));
 		mapRibs.put(new Rib(Entities.PHASE, Entities.PHASE), new LinkedFields("parent_id", "id"));
@@ -56,7 +60,7 @@ public class ProjectEntityGraph {
 	/**
 	 * Build entity path between two nodes(entities). It needs when 
 	 * there is no straight relationships between two entities. And 
-	 * we build path based on intermediate entities.   
+	 * we build path based on intermediate entities.
 	 *  
 	 * @param nodeFrom
 	 * @param nodeTo
@@ -154,18 +158,27 @@ public class ProjectEntityGraph {
 		public static final class LinkedFields {
 			private String leftEntityField;
 			private String rightEntityField;
-
+			private String linkField;
+			
+			
 			public LinkedFields(String leftEntityField, String rightEntityField) {
 				this.leftEntityField = leftEntityField;
 				this.rightEntityField = rightEntityField;
 			}
 			
+			public LinkedFields(String leftEntityField, String rightEntityField, String linkField) {
+				this.setLeftEntityField(leftEntityField);
+				this.setRightEntityField(rightEntityField);
+				this.setLinkField(linkField);
+			}
+			
 			@Override
 			public int hashCode() {
-				final int prime = 10;
-				int result = ((leftEntityField == null) ? 0 : leftEntityField.hashCode());
+				final int prime = 31;
+				int result = 1;
+				result = prime * result + ((leftEntityField == null) ? 0 : leftEntityField.hashCode());
+				result = prime * result + ((linkField == null) ? 0 : linkField.hashCode());
 				result = prime * result + ((rightEntityField == null) ? 0 : rightEntityField.hashCode());
-				
 				return result;
 			}
 
@@ -183,6 +196,12 @@ public class ProjectEntityGraph {
 						return false;
 				} else if (!leftEntityField.equals(other.leftEntityField)) {
 					return false;
+				} 
+				if (linkField == null) {
+					if (other.linkField != null)
+						return false;
+				} else if (!linkField.equals(other.linkField)) {
+					return false;
 				}
 				if (rightEntityField == null) {
 					if (other.rightEntityField != null)
@@ -190,23 +209,33 @@ public class ProjectEntityGraph {
 				} else if (!rightEntityField.equals(other.rightEntityField)) {
 					return false;
 				}
-				
 				return true;
 			}
 
 			public String getLeftEntityField() {
 				return leftEntityField;
 			}
+			
 			public void setLeftEntityField(String leftEntityField) {
 				this.leftEntityField = leftEntityField;
 			}
+			
 			public String getRightEntityField() {
 				return rightEntityField;
 			}
+			
 			public void setRightEntityField(String rightEntityField) {
 				this.rightEntityField = rightEntityField;
 			}
+			
+			public String getLinkField() {
+				return linkField;
+			}
 
+			public void setLinkField(String linkField) {
+				this.linkField = linkField;
+			}
+			
 			@Override
 			public String toString() {
 				return "LinkedFields [leftEntityField=" + leftEntityField + ", rightEntityField=" + rightEntityField

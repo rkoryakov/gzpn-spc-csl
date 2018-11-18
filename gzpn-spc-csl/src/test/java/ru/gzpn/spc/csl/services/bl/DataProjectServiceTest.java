@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -15,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,11 +43,14 @@ public class DataProjectServiceTest {
 	DataProjectService service;
 		
 	@Test
+	@Transactional
+	@Commit
 	public void fillData() {
 		PhaseRepository phaseRepository = service.getPhaseRepository();
 		StageRepository stageRepository = service.getStageRepository();
 		fillPhases();
 		fillStages();
+		
 		// HProjects
 		for (int i = 0; i < 10; i ++) {
 			if (service.getHPRepository().findByProjectId("000000" + i).size() == 0) {
@@ -112,23 +115,30 @@ public class DataProjectServiceTest {
 		
 		Phase phase1_1 = new Phase("Phase 1.1", phase1);
 		phase1_1 = service.getPhaseRepository().save(phase1_1);
-		phase1.setChildren(Arrays.asList(phase1_1));
+		List<Phase> children = new ArrayList<>();
+		children.add(phase1_1);
+		phase1.setChildren(children);
 		phase1 = service.getPhaseRepository().save(phase1);
 		
 		Phase phase2 = new Phase("Phase 2");
 		phase2 = service.getPhaseRepository().save(phase2);
 		
-		Phase phase2_1 = new Phase("Phase 2.1", null);
+		Phase phase2_1 = new Phase("Phase 2.1", phase2);
 		phase2_1 = service.getPhaseRepository().save(phase2_1);
 		
-		Phase phase2_2 = new Phase("Phase 2.2", null);
-		phase2.setChildren(Arrays.asList(phase2_1, phase2_2));
+		Phase phase2_2 = new Phase("Phase 2.2", phase2);
+		children = new ArrayList<>();
+		children.add(phase2_1);
 		phase2_2 = service.getPhaseRepository().save(phase2_2);
+		children.add(phase2_2);
+		phase2.setChildren(children);	
 		phase2 = service.getPhaseRepository().save(phase2);
 		
 		Phase phase2_2_1 = new Phase("Phase 2.2.1", phase2_2);
+		children = new ArrayList<>();
 		phase2_2_1 = service.getPhaseRepository().save(phase2_2_1);
-		phase2_2.setChildren(Arrays.asList(phase2_2_1));
+		children.add(phase2_2_1);
+		phase2_2.setChildren(children);
 		phase2_2 = service.getPhaseRepository().save(phase2_2);
 	}
 	

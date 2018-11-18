@@ -9,6 +9,8 @@ import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.JpaEntityInformationSupport;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
@@ -21,7 +23,8 @@ import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph.Rib.LinkedFields;
 import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 @NoRepositoryBean
 public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepository<T, Long> implements BaseRepository<T> {
-
+	public static final Logger logger = LoggerFactory.getLogger(BaseRepositoryImpl.class);
+	
 	private final EntityManager entityManager;
 	private final JpaEntityInformation<T, ?> entityInformation;
 	private final Class<T> domainClass;
@@ -124,7 +127,7 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 			
 			if (list.size() > 1) {
 				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%3$s', T.%3$s)"
-						+ " FROM %1$s T, %2$s S", targetEntity, sourceEntity, targetGroupFieldName);
+						+ " FROM %2$s S", targetEntity, sourceEntity, targetGroupFieldName);
 				
 				for (int i = 1; i < list.size(); i ++) {
 					formatter.format(", %1$s E_%2$d ", list.get(i).getName(), i);
@@ -138,19 +141,24 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 					
 					Optional<LinkedFields> linked = ProjectEntityGraph.getLinkedFields(left.getName(), right.getName());
 					LinkedFields linkedFields = linked.get();
-					formatter.format(" AND %1$s.%2$s = %3$s.%4$s ", left.getName(), linkedFields.getLeftEntityField(), 
+					formatter.format(" JOIN %1$s.%2$s = %3$s.%4$s ", left.getName(), linkedFields.getLeftEntityField(), 
 																right.getName(), linkedFields.getRightEntityField());
 				}
 				
 				formatter.format("GROUP BY T.%1$s", targetGroupFieldName);
 				
 			}
-
+			
+			logger.debug("JPQL string '{}'", jpql.toString());
 			TypedQuery<NodeWrapper> query = entityManager.createQuery(jpql.toString(), NodeWrapper.class);
 			result = query.setParameter("sourceFieldValue", sourceFieldValue)
 					.getResultList().stream();
 		}
 		
 		return result;
+	}
+	
+	public EntityManager getEntityManager() {
+		return this.entityManager;
 	}
 }

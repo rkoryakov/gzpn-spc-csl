@@ -25,7 +25,7 @@ import ru.gzpn.spc.csl.model.interfaces.IHProject;
 	}
 )
 public class HProject extends ACLBasedEntity implements IHProject {
-	public static final String FILED_NAME = "name";
+	public static final String FIELD_NAME = "name";
 	public static final String FILED_PROJECT_ID = "projectId";
 	
 	private String projectId;

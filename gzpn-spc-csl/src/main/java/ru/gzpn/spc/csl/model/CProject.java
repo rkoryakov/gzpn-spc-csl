@@ -30,7 +30,12 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 	
 	private String projectId;
 	private String name;
-
+//	// id fields used for JPQL queries
+//	private long hp_id;
+//	private long stage_id;
+//	private long phase_id;
+//	private long cp_id;
+	
 	@ManyToOne(targetEntity = HProject.class, fetch = FetchType.LAZY)
 	@JoinColumn(name = "hp_id", referencedColumnName = "id")
 	private HProject hproject;
