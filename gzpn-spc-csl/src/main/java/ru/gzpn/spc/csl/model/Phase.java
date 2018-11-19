@@ -41,7 +41,7 @@ public class Phase extends BaseEntity implements IPhase, Serializable {
 	
 	@OneToMany(targetEntity = CProject.class, fetch=FetchType.LAZY)
 	@JoinColumn(name = "phase_id", referencedColumnName = "id")
-	private List<ICProject> cprogects;
+	private List<ICProject> cprojects;
 	
 	public Phase() {
 	}
@@ -76,11 +76,11 @@ public class Phase extends BaseEntity implements IPhase, Serializable {
 	}
 
 	public List<ICProject> getCprogects() {
-		return cprogects;
+		return cprojects;
 	}
 
 	public void setCprogects(List<ICProject> cprogects) {
-		this.cprogects = cprogects;
+		this.cprojects = cprogects;
 	}
 
 	public void setParent(Phase parent) {

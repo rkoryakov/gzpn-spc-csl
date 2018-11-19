@@ -53,7 +53,7 @@ public class PlanObject extends BaseEntity implements IPlanObject, Serializable 
 	
 	@OneToMany(targetEntity = Work.class)
 	@JoinColumn(name="plan_obj_id", referencedColumnName="id")
-	private List<IWork> workList;
+	private List<IWork> works;
 	
 	public PlanObject() {
 	}
@@ -65,11 +65,11 @@ public class PlanObject extends BaseEntity implements IPlanObject, Serializable 
 	}
 	
 	public List<IWork> getWorkList() {
-		return workList;
+		return works;
 	}
 
 	public void setWorkList(List<IWork> workList) {
-		this.workList = workList;
+		this.works = workList;
 	}
 
 	public String getName() {

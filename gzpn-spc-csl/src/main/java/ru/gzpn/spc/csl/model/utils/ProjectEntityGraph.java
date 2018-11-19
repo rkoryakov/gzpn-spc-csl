@@ -37,21 +37,21 @@ public class ProjectEntityGraph {
 		mapNodes.put(Entities.WORK, 6);
 		mapNodes.put(Entities.LOCALESTIMATE, 7);
 		
-		mapRibs.put(new Rib(Entities.HPROJECT, Entities.CPROJECT), new LinkedFields("id", "hp_id", "capitalProjects"));
-		mapRibs.put(new Rib(Entities.CPROJECT, Entities.HPROJECT), new LinkedFields("hp_id", "id", "hproject"));
-		mapRibs.put(new Rib(Entities.CPROJECT, Entities.PHASE), new LinkedFields("phase_id", "id"));
-		mapRibs.put(new Rib(Entities.PHASE, Entities.CPROJECT), new LinkedFields("id", "phase_id"));
-		mapRibs.put(new Rib(Entities.CPROJECT, Entities.STAGE), new LinkedFields("stage_id", "id"));
-		mapRibs.put(new Rib(Entities.STAGE, Entities.CPROJECT), new LinkedFields("id", "stage_id"));
-		mapRibs.put(new Rib(Entities.CPROJECT, Entities.PLANOBJECT), new LinkedFields("id", "cp_id"));
-		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.CPROJECT), new LinkedFields("cp_id", "id"));
-		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.WORK), new LinkedFields("id", "plan_obj_id"));
-		mapRibs.put(new Rib(Entities.WORK, Entities.PLANOBJECT), new LinkedFields("plan_obj_id", "id"));
-		mapRibs.put(new Rib(Entities.WORK, Entities.LOCALESTIMATE), new LinkedFields("plan_obj_id", "id"));
-		mapRibs.put(new Rib(Entities.LOCALESTIMATE, Entities.WORK), new LinkedFields("id", "plan_obj_id"));
+		mapRibs.put(new Rib(Entities.HPROJECT, Entities.CPROJECT), new LinkedFields("id", "hproject"));//"hp_id", "capitalProjects"));
+		mapRibs.put(new Rib(Entities.CPROJECT, Entities.HPROJECT), new LinkedFields("hproject", "id"));//("hp_id", "id", "hproject"));
+		mapRibs.put(new Rib(Entities.CPROJECT, Entities.PHASE), new LinkedFields("phase", "id"));
+		mapRibs.put(new Rib(Entities.PHASE, Entities.CPROJECT), new LinkedFields("id", "phase"));//, "cprojects"));
+		mapRibs.put(new Rib(Entities.CPROJECT, Entities.STAGE), new LinkedFields("stage", "id"));//, "stage"));
+		mapRibs.put(new Rib(Entities.STAGE, Entities.CPROJECT), new LinkedFields("id", "stage"));//, "cprojects"));
+		mapRibs.put(new Rib(Entities.CPROJECT, Entities.PLANOBJECT), new LinkedFields("id", "cproject"));//, "planObjects"));
+		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.CPROJECT), new LinkedFields("cproject", "id"));//, "cproject"));
+		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.WORK), new LinkedFields("id", "planObj"));//, "works"));
+		mapRibs.put(new Rib(Entities.WORK, Entities.PLANOBJECT), new LinkedFields("planObj", "id"));//, "planObj"));
+		mapRibs.put(new Rib(Entities.WORK, Entities.LOCALESTIMATE), new LinkedFields("localEstimate", "id"));//, "localEstimate"));
+		mapRibs.put(new Rib(Entities.LOCALESTIMATE, Entities.WORK), new LinkedFields("id", "localEstimate"));//, "works"));
 		// hierarchical entities
-		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.PLANOBJECT), new LinkedFields("parent_id", "id"));
-		mapRibs.put(new Rib(Entities.PHASE, Entities.PHASE), new LinkedFields("parent_id", "id"));
+		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.PLANOBJECT), new LinkedFields("parent", "id"));
+		mapRibs.put(new Rib(Entities.PHASE, Entities.PHASE), new LinkedFields("parent", "id"));
 	}
 	
 	private ProjectEntityGraph() {

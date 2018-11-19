@@ -87,9 +87,7 @@ public class DataProjectServiceTest {
 							
 							// LocalEstimates
 							LocalEstimate estimate = new LocalEstimate("00000" + i + "" + j + "" + k + "" + l, "Estimate " + num, workList);
-							service.getLocalEstimateRepository().save(estimate);
-							
-							work.setLocalEstimate(estimate);
+							estimate = service.getLocalEstimateRepository().save(estimate);
 						}
 						p.setWorkList(workList);
 						p = service.getPlanObjectRepository().save(p);

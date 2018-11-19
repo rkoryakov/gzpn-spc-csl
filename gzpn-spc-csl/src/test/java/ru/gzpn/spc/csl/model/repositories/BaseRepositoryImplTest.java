@@ -13,7 +13,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.gzpn.spc.csl.Application;
 import ru.gzpn.spc.csl.model.CProject;
 import ru.gzpn.spc.csl.model.HProject;
-import ru.gzpn.spc.csl.model.LocalEstimate;
 import ru.gzpn.spc.csl.model.utils.Entities;
 import ru.gzpn.spc.csl.services.bl.DataProjectService;
 
@@ -35,14 +34,15 @@ public class BaseRepositoryImplTest {
 	@Test
 	public void getItemsGroupedByEntityValueTest() {
 		assertThat(service.getBaseRepository().getItemsGroupedByEntityValue(Entities.HPROJECT.getName(), Entities.LOCALESTIMATE.getName(),
-				HProject.FIELD_NAME, "Havy Project 0", LocalEstimate.FIELD_NAME))
-		.size().isGreaterThan(1);
-/**  SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('LocalEstimate', 'name', T.name) FROM 
-		 LocalEstimate T, HProject S, CProject E_1 , PlanObject E_2 , Work E_3 , LocalEstimate E_4  
-		 WHERE 
-		 	S.name = :sourceFieldValue AND HProject.id = CProject.hp_id  AND 
-		 	CProject.id = PlanObject.cp_id  AND PlanObject.id = Work.plan_obj_id  AND 
-		 	Work.plan_obj_id = LocalEstimate.id GROUP BY T.name
-	*/
+				HProject.FIELD_NAME, "Havy Project 0", null))
+		.size().isEqualTo(125);
+		/**
+		 * SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('HProject', 'null', T.null) 
+		 * FROM HProject S, LocalEstimate T, CProject E_1 , PlanObject E_2 , Work E_3  
+		 * WHERE 
+		 * 		S.name = :sourceFieldValue AND S.id = E_1.hproject 
+		 * 		AND E_1.id = E_2.cproject  AND E_2.id = E_3.planObj  
+		 * 		AND E_3.localEstimate = T.id 
+		 */
 	}
 }
