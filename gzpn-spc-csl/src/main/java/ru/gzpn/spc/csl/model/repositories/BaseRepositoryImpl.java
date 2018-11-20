@@ -113,59 +113,61 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		return result;
 	}
 	
-	public Stream<NodeWrapper> getItemsGroupedByEntityValue(String sourceEntity, String targetEntity, 
-															String sourceFieldName, 
-															Object sourceFieldValue, 
-															String targetGroupFieldName) {
+	@Override
+	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String sourceEntity, String targetEntity, 
+										String sourceFieldName, Object sourceFieldValue, String targetGroupFieldName) {
 		StringBuilder jpql = new StringBuilder();
 		Stream<NodeWrapper> result = null;
 		
 		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
-			buildJpqlGroupedByEntityValue(formatter, sourceEntity, targetEntity, sourceFieldName, sourceFieldValue, targetGroupFieldName);
-			logger.debug("JPQL string '{}'", jpql.toString());
+			createJpqlQueryGroupedByFieldValue(formatter, sourceEntity, targetEntity, sourceFieldName, targetGroupFieldName);
+			logger.debug("JPQL string '{}'", jpql);
 			TypedQuery<NodeWrapper> query = entityManager.createQuery(jpql.toString(), NodeWrapper.class);
 			result = query.setParameter("sourceFieldValue", sourceFieldValue).getResultList().stream();
 		}
 		return result;
 	}
 	
-	private void buildJpqlGroupedByEntityValue(Formatter jpqlFormatter, String sourceEntity, String targetEntity,
-									String sourceFieldName, Object sourceFieldValue, String targetGroupFieldName) {
+	private void createJpqlQueryGroupedByFieldValue(Formatter jpqlFormatter, String sourceEntity, String targetEntity,
+										String sourceFieldName, String targetGroupFieldName) {
 		
 		List<Entities> path = ProjectEntityGraph.getPathBetweenNodes(sourceEntity, targetEntity);
-		boolean isMoreOne = path.size() > 1;
+		boolean isPathMoreOne = path.size() > 1;
+		boolean isGroup = targetGroupFieldName != null && !targetGroupFieldName.isEmpty();
 		
-		if (targetGroupFieldName != null && !targetGroupFieldName.isEmpty()) {
+		if (isGroup) {
 			jpqlFormatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%3$s', T.%3$s)"
 					+ " FROM %1$s S, %2$s T", sourceEntity, targetEntity, targetGroupFieldName);
-
-			for (int i = 1; i < path.size() - 1; i++) {
-				jpqlFormatter.format(", %1$s E_%2$d ", path.get(i).getName(), i);
-			}
-
-			Optional<LinkedFields> sourceNext = ProjectEntityGraph.getLinkedFields(sourceEntity,
-					isMoreOne ? path.get(1).getName() : path.get(0).getName());
-			String leftSourceField = sourceNext.get().getLeftEntityField();
-			String rightSourceField = sourceNext.get().getRightEntityField();
-			jpqlFormatter.format(" WHERE S.%1$s = :sourceFieldValue AND S.%2$s = %3$s.%4$s", sourceFieldName,
-					leftSourceField, isMoreOne ? "E_1" : "T", rightSourceField);
-
-			for (int i = 1; i < path.size() - 1; i++) {
-				Entities left = path.get(i);
-				Entities right = path.get(i + 1);
-				String leftShortcut = "E_" + i;
-				String rightShortcut = (i == path.size() - 2) ? "T" : "E_" + (i + 1);
-
-				Optional<LinkedFields> linked = ProjectEntityGraph.getLinkedFields(left.getName(), right.getName());
-				jpqlFormatter.format(" AND %1$s.%2$s = %3$s.%4$s ", leftShortcut, linked.get().getLeftEntityField(),
-						rightShortcut, linked.get().getRightEntityField());
-			}
-
-			jpqlFormatter.format("GROUP BY T.%1$s", targetGroupFieldName);
 		} else {
-			
+			jpqlFormatter.format("SELECT DISTINCT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%2$s', T)"
+					+ " FROM %1$s S, %2$s T", sourceEntity, targetEntity);
+		}
+		
+		for (int i = 1; i < path.size() - 1; i++) {
+			jpqlFormatter.format(", %1$s E_%2$d ", path.get(i).getName(), i);
 		}
 
+		Optional<LinkedFields> sourceNext = ProjectEntityGraph.getLinkedFields(sourceEntity,
+					isPathMoreOne ? path.get(1).getName() : path.get(0).getName());
+		String leftSourceField = sourceNext.get().getLeftEntityField();
+		String rightSourceField = sourceNext.get().getRightEntityField();
+		jpqlFormatter.format(" WHERE S.%1$s = :sourceFieldValue AND S.%2$s = %3$s.%4$s", sourceFieldName,
+					leftSourceField, isPathMoreOne ? "E_1" : "T", rightSourceField);
+
+		for (int i = 1; i < path.size() - 1; i++) {
+			Entities left = path.get(i);
+			Entities right = path.get(i + 1);
+			String leftShortcut = "E_" + i;
+			String rightShortcut = (i == path.size() - 2) ? "T" : "E_" + (i + 1);
+
+			Optional<LinkedFields> linked = ProjectEntityGraph.getLinkedFields(left.getName(), right.getName());
+			jpqlFormatter.format(" AND %1$s.%2$s = %3$s.%4$s ", leftShortcut, linked.get().getLeftEntityField(),
+					rightShortcut, linked.get().getRightEntityField());
+		}
+
+		if (isGroup) {
+			jpqlFormatter.format(" GROUP BY T.%1$s", targetGroupFieldName);
+		}
 	}
 	
 	public EntityManager getEntityManager() {

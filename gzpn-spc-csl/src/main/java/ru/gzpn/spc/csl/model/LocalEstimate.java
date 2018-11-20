@@ -25,8 +25,8 @@ indexes = {
 	})
 public class LocalEstimate extends BaseEntity implements ILocalEstimate, Serializable {
 	private static final long serialVersionUID = -8027924404278676835L;
-
 	public static final String FIELD_NAME = "name";
+	public static final String FIELD_CODE = "code";
 	
 	@Column(length=64)
 	private String code;
@@ -38,6 +38,11 @@ public class LocalEstimate extends BaseEntity implements ILocalEstimate, Seriali
 	private List<IWork> works;
 
 	public LocalEstimate() {
+	}
+	
+	public LocalEstimate(String code, String name) {
+		this.code = code;
+		this.name = name;
 	}
 	
 	public LocalEstimate(String code, String name, List<IWork> works) {

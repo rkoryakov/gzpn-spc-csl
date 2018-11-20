@@ -27,6 +27,8 @@ import ru.gzpn.spc.csl.model.interfaces.IPhase;
 public class Phase extends BaseEntity implements IPhase, Serializable {
 	private static final long serialVersionUID = -3709362358146582320L;
 
+	public static final String FIELD_NAME = "name";
+
 	@Column(unique=true, length=64)
 	private String name;
 

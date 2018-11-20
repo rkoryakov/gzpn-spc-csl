@@ -18,7 +18,7 @@ import ru.gzpn.spc.csl.model.interfaces.IHProject;
 @NamedQueries({
 	@NamedQuery(name = "HProject.findByProjectId", query = "SELECT hp FROM HProject hp WHERE hp.projectId = ?1"),	
 })
-@Table(name = "havy_projects", schema = "spc_csl_schema", 
+@Table(name = "heavy_projects", schema = "spc_csl_schema", 
 	indexes = {
 		@Index(name = "spc_csl_idx_prjid", columnList = "projectId", unique = true),
 		@Index(name = "spc_csl_idx_prjname", columnList = "name") 

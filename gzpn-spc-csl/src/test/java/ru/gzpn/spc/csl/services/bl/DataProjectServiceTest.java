@@ -82,12 +82,13 @@ public class DataProjectServiceTest {
 						for (int l = 0; l < 5; l ++) {
 							int num = l + i * 5 * j * k * 5 + 1;
 							Work work = new Work("00000" + i + "" + j + "" + k + "" + l, "Work " + num, "");
+							
+							// LocalEstimate
+							LocalEstimate estimate = new LocalEstimate("00000" + i + "" + j + "" + k + "" + l, "Estimate " + num);
+							estimate = service.getLocalEstimateRepository().save(estimate);
+							work.setLocalEstimate(estimate);
 							work = service.getWorkRepository().save(work);
 							workList.add(work);
-							
-							// LocalEstimates
-							LocalEstimate estimate = new LocalEstimate("00000" + i + "" + j + "" + k + "" + l, "Estimate " + num, workList);
-							estimate = service.getLocalEstimateRepository().save(estimate);
 						}
 						p.setWorkList(workList);
 						p = service.getPlanObjectRepository().save(p);

@@ -50,8 +50,8 @@ public class ProjectEntityGraph {
 		mapRibs.put(new Rib(Entities.WORK, Entities.LOCALESTIMATE), new LinkedFields("localEstimate", "id"));//, "localEstimate"));
 		mapRibs.put(new Rib(Entities.LOCALESTIMATE, Entities.WORK), new LinkedFields("id", "localEstimate"));//, "works"));
 		// hierarchical entities
-		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.PLANOBJECT), new LinkedFields("parent", "id"));
-		mapRibs.put(new Rib(Entities.PHASE, Entities.PHASE), new LinkedFields("parent", "id"));
+		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.PLANOBJECT), new LinkedFields("id", "parent"));
+		mapRibs.put(new Rib(Entities.PHASE, Entities.PHASE), new LinkedFields("id", "parent"));
 	}
 	
 	private ProjectEntityGraph() {

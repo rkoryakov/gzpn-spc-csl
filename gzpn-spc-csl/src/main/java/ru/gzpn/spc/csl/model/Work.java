@@ -26,6 +26,9 @@ indexes = {
 	})
 public class Work extends BaseEntity implements IWork, Serializable {
 	private static final long serialVersionUID = -7299274432662352949L;
+	public static final String FIELD_NAME = "name";
+	public static final String FIELD_CODE = "code";
+	public static final String FIELD_TYPE = "type";
 	
 	@Column(length=64)
 	private String code;

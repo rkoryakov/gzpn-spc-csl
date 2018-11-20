@@ -25,8 +25,9 @@ import ru.gzpn.spc.csl.model.interfaces.IStage;
 public class CProject extends ACLBasedEntity implements ICProject, Serializable {
 	private static final long serialVersionUID = 4547825496450260103L;
 	
-	public static final String FILED_NAME = "name";
+	public static final String FIELD_NAME = "name";
 	public static final String FILED_PROJECT_ID = "projectId";
+	
 	
 	private String projectId;
 	private String name;

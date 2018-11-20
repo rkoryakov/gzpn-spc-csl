@@ -26,6 +26,8 @@ import ru.gzpn.spc.csl.model.interfaces.IStage;
 public class Stage extends BaseEntity implements IStage, Serializable {
 	private static final long serialVersionUID = 5559748809655988720L;
 
+	public static final String FIELD_NAME = "name";
+
 	@Column(unique = true, length = 64)
 	private String name;
 
