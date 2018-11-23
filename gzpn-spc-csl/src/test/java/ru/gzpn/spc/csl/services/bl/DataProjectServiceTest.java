@@ -26,6 +26,7 @@ import ru.gzpn.spc.csl.model.PlanObject;
 import ru.gzpn.spc.csl.model.Stage;
 import ru.gzpn.spc.csl.model.Work;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWork;
 import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
@@ -65,7 +66,7 @@ public class DataProjectServiceTest {
 					CProject cProject = new CProject();
 					cProject.setName("Capital Project " + i + "_" + j);
 					cProject.setProjectId("00020302-" + i + "_" + j);
-					Phase phase = phaseRepository.findAll().get((int)(6*Math.random()));
+					IPhase phase = phaseRepository.findAll().get((int)(6*Math.random()));
 					cProject.setPhase(phase);
 					Stage stage = stageRepository.findAll().get((int)(3*Math.random()));
 					cProject.setStage(stage);
@@ -114,7 +115,7 @@ public class DataProjectServiceTest {
 		
 		Phase phase1_1 = new Phase("Phase 1.1", phase1);
 		phase1_1 = service.getPhaseRepository().save(phase1_1);
-		List<Phase> children = new ArrayList<>();
+		List<IPhase> children = new ArrayList<>();
 		children.add(phase1_1);
 		phase1.setChildren(children);
 		phase1 = service.getPhaseRepository().save(phase1);
@@ -142,10 +143,10 @@ public class DataProjectServiceTest {
 	}
 	
 	@Transactional
-	private Phase getOrCreatePhase(Phase phase) {
+	private IPhase getOrCreatePhase(Phase phase) {
 		PhaseRepository repository = service.getPhaseRepository();
 		Optional<Phase> result = repository.findOne(Example.of(phase));
-		Phase ph = result.get();
+		IPhase ph = result.get();
 		
 		if (!result.isPresent()) {
 			ph = repository.save(phase);

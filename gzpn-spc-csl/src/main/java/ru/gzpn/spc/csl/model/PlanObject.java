@@ -1,7 +1,6 @@
 package ru.gzpn.spc.csl.model;
 
 import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -38,14 +37,14 @@ public class PlanObject extends BaseEntity implements IPlanObject, Serializable 
 	@Column(length=4)
 	private String mark;
 	
-	@OneToMany
+	@OneToMany(targetEntity=PlanObject.class)
 	@OrderColumn
 	@JoinColumn(name="parent_id")
-	private List<PlanObject> children = new LinkedList<>();
+	private List<IPlanObject> children;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY, targetEntity=PlanObject.class)
 	@JoinColumn(name="parent_id", insertable=false, updatable=false)
-	private PlanObject parent;
+	private IPlanObject parent;
 	
 	@ManyToOne(targetEntity = CProject.class, fetch=FetchType.LAZY)
 	@JoinColumn(name="cp_id", referencedColumnName="id", insertable=false, updatable=false)
@@ -80,15 +79,15 @@ public class PlanObject extends BaseEntity implements IPlanObject, Serializable 
 		this.name = name;
 	}
 
-	public void setChildren(List<PlanObject> children) {
+	public void setChildren(List<IPlanObject> children) {
 		this.children = children;
 	}
 
-	public PlanObject getParent() {
+	public IPlanObject getParent() {
 		return parent;
 	}
 
-	public List<PlanObject> getChildren() {
+	public List<IPlanObject> getChildren() {
 		return children;
 	}
 

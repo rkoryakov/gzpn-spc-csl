@@ -32,14 +32,14 @@ public class Phase extends BaseEntity implements IPhase, Serializable {
 	@Column(unique=true, length=64)
 	private String name;
 
-	@OneToMany
+	@OneToMany(targetEntity=Phase.class)
 	@OrderColumn
 	@JoinColumn(name="parent_id")
-	private List<Phase> children = new LinkedList<>();
+	private List<IPhase> children = new LinkedList<>();
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY, targetEntity=Phase.class)
 	@JoinColumn(name="parent_id", insertable=false, updatable=false)
-	private Phase parent;
+	private IPhase parent;
 	
 	@OneToMany(targetEntity = CProject.class, fetch=FetchType.LAZY)
 	@JoinColumn(name = "phase_id", referencedColumnName = "id")
@@ -48,7 +48,7 @@ public class Phase extends BaseEntity implements IPhase, Serializable {
 	public Phase() {
 	}
 	
-	public Phase(String name, Phase parent) {
+	public Phase(String name, IPhase parent) {
 		this.setName(name);
 		this.setParent(parent);
 	}
@@ -65,15 +65,15 @@ public class Phase extends BaseEntity implements IPhase, Serializable {
 		this.name = name;
 	}
 
-	public List<Phase> getChildren() {
+	public List<IPhase> getChildren() {
 		return children;
 	}
 
-	public void setChildren(List<Phase> children) {
+	public void setChildren(List<IPhase> children) {
 		this.children = children;
 	}
 
-	public Phase getParent() {
+	public IPhase getParent() {
 		return parent;
 	}
 
@@ -85,7 +85,7 @@ public class Phase extends BaseEntity implements IPhase, Serializable {
 		this.cprojects = cprogects;
 	}
 
-	public void setParent(Phase parent) {
+	public void setParent(IPhase parent) {
 		this.parent = parent;
 	}
 }

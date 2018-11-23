@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.Table;
 
+import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWork;
@@ -44,6 +45,10 @@ public class Work extends BaseEntity implements IWork, Serializable {
 	@ManyToOne(targetEntity = LocalEstimate.class, fetch = FetchType.LAZY)
 	@JoinColumn(name = "est_id", referencedColumnName = "id")
 	private ILocalEstimate localEstimate;
+	
+	@ManyToOne(targetEntity = Document.class)
+	@JoinColumn(name = "doc_id", referencedColumnName = "id")
+	private IDocument document;
 	
 	public Work() {
 	}
@@ -92,5 +97,13 @@ public class Work extends BaseEntity implements IWork, Serializable {
 
 	public void setPlanObj(IPlanObject planObj) {
 		this.planObj = planObj;
+	}
+
+	public IDocument getDocument() {
+		return document;
+	}
+
+	public void setDocument(IDocument document) {
+		this.document = document;
 	}
 }

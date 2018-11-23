@@ -97,9 +97,11 @@ public class BaseRepositoryImplTest {
 				Phase.FIELD_NAME, "Phase 1", Stage.FIELD_NAME))
 		.size().isEqualTo(3);
 	}
-	
 
 	@Test
+	/**
+	 * Hierarchical test (Phase -> Phase)
+	 */
 	public void getItemsGroupedByFieldValueTest10() {
 		assertThat(service.getBaseRepository().getItemsGroupedByFieldValue(Entities.PHASE.getName(), Entities.PHASE.getName(),
 				Phase.FIELD_NAME, "Phase 2", Phase.FIELD_NAME))

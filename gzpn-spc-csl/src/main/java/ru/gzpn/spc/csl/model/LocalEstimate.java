@@ -10,8 +10,10 @@ import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IWork;
 
@@ -30,13 +32,17 @@ public class LocalEstimate extends BaseEntity implements ILocalEstimate, Seriali
 	
 	@Column(length=64)
 	private String code;
-	@Column(length=128)
+	@Column(length=256)
 	private String name;
 
 	@OneToMany(targetEntity = Work.class, fetch = FetchType.LAZY)
 	@JoinColumn(name = "est_id", referencedColumnName = "id")
 	private List<IWork> works;
 
+	@OneToOne(targetEntity = Document.class)
+	@JoinColumn(name = "id", referencedColumnName = "doc_id")
+	private IDocument document;
+	
 	public LocalEstimate() {
 	}
 	
@@ -73,5 +79,13 @@ public class LocalEstimate extends BaseEntity implements ILocalEstimate, Seriali
 
 	public void setWorks(List<IWork> works) {
 		this.works = works;
+	}
+
+	public IDocument getDocument() {
+		return document;
+	}
+
+	public void setDocument(IDocument document) {
+		this.document = document;
 	}
 }

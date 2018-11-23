@@ -40,7 +40,7 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 	@JoinColumn(name = "stage_id", referencedColumnName = "id")
 	private IStage stage;
 
-	@ManyToOne(targetEntity = Phase.class, fetch = FetchType.LAZY)
+	@ManyToOne(targetEntity = IPhase.class, fetch = FetchType.LAZY)
 	@JoinColumn(name = "phase_id", referencedColumnName = "id")
 	private IPhase phase;
 
