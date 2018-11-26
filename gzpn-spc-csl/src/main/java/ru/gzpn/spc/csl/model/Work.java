@@ -23,7 +23,10 @@ import ru.gzpn.spc.csl.model.interfaces.IWork;
 indexes = {
 		@Index(name = "spc_csl_idx_wkid", columnList = "code", unique = true),
 		@Index(name = "spc_csl_idx_wkname", columnList = "name"),
-		@Index(name = "spc_csl_idx_wktype", columnList = "type") 
+		@Index(name = "spc_csl_idx_wktype", columnList = "type"),
+		@Index(name = "spc_csl_idx_wkplnobj", columnList = "planObj"),
+		@Index(name = "spc_csl_idx_wkest", columnList = "localEstimate"),
+		@Index(name = "spc_csl_idx_wkdoc", columnList = "document")
 	})
 public class Work extends BaseEntity implements IWork, Serializable {
 	private static final long serialVersionUID = -7299274432662352949L;

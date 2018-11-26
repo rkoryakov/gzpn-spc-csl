@@ -24,6 +24,8 @@ import ru.gzpn.spc.csl.model.interfaces.IWork;
 indexes = {
 		@Index(name = "spc_csl_idx_estid", columnList = "code", unique = true),
 		@Index(name = "spc_csl_idx_estname", columnList = "name"),
+		@Index(name = "spc_csl_idx_estwk", columnList = "works"),
+		@Index(name = "spc_csl_idx_estdoc", columnList = "document")
 	})
 public class LocalEstimate extends BaseEntity implements ILocalEstimate, Serializable {
 	private static final long serialVersionUID = -8027924404278676835L;
@@ -32,7 +34,6 @@ public class LocalEstimate extends BaseEntity implements ILocalEstimate, Seriali
 	
 	@Column(length=64)
 	private String code;
-	@Column(length=256)
 	private String name;
 
 	@OneToMany(targetEntity = Work.class, fetch = FetchType.LAZY)

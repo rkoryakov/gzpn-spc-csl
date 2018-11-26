@@ -3,7 +3,6 @@ package ru.gzpn.spc.csl.model;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
@@ -20,16 +19,16 @@ import ru.gzpn.spc.csl.model.interfaces.IWork;
 indexes = {
 	@Index(name = "spc_csl_idx_doccode", columnList = "code", unique = true),
 	@Index(name = "spc_csl_idx_docname", columnList = "name"), 
-	@Index(name = "spc_csl_idx_doctype", columnList = "type")
+	@Index(name = "spc_csl_idx_doctype", columnList = "type"),
+	@Index(name = "spc_csl_idx_doctoest", columnList = "localEstimate"),
+	@Index(name = "spc_csl_idx_doctowk", columnList = "workList")
 })
 public class Document extends BaseEntity implements IDocument, Serializable {
-	@Column(length=256)
+	private static final long serialVersionUID = -5925781857213642590L;
+	
 	private String code;
-	
-	private DocTypeEnum type;
-	
-	@Column(length=256)
 	private String name;
+	private DocTypeEnum type;
 	
 	@OneToOne(targetEntity=LocalEstimate.class)
 	@JoinColumn(name = "doc_id", referencedColumnName = "id")

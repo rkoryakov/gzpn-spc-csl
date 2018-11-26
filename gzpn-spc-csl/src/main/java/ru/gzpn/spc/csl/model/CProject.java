@@ -9,9 +9,11 @@ import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.IMilestone;
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IStage;
@@ -19,7 +21,13 @@ import ru.gzpn.spc.csl.model.interfaces.IStage;
 @Entity
 @Table(schema = "spc_csl_schema", name = "capital_projects", 
 			indexes = {
-				@Index(name = "spc_csl_idx_prjid", columnList = "projectId", unique = true),
+				@Index(name = "spc_csl_idx_prjname", columnList = "name"),
+				@Index(name = "spc_csl_idx_prjid", columnList = "code", unique = true),
+				@Index(name = "spc_csl_idx_prjhp", columnList = "hproject"),
+				@Index(name = "spc_csl_idx_prjstg", columnList = "stage"),
+				@Index(name = "spc_csl_idx_prjphs", columnList = "phase"),
+				@Index(name = "spc_csl_idx_prjplnobj", columnList = "planObjects"),
+				@Index(name = "spc_csl_idx_prjmilstn", columnList = "milestone")
 			}
 )
 public class CProject extends ACLBasedEntity implements ICProject, Serializable {
@@ -28,9 +36,9 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 	public static final String FIELD_NAME = "name";
 	public static final String FILED_PROJECT_ID = "projectId";
 	
-	
-	private String projectId;
 	private String name;
+	private String code;
+	
 	
 	@ManyToOne(targetEntity = HProject.class, fetch = FetchType.LAZY)
 	@JoinColumn(name = "hp_id", referencedColumnName = "id")
@@ -47,6 +55,10 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 	@OneToMany(targetEntity = PlanObject.class, fetch = FetchType.LAZY)
 	@JoinColumn(name="cp_id", referencedColumnName="id")
 	private List<IPlanObject> planObjects;
+
+	@OneToOne(targetEntity = Milestone.class)
+	@JoinColumn(name="id", referencedColumnName="cp_id")
+	private IMilestone milestone;
 	
 	public CProject() {
 	}
@@ -59,12 +71,12 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 		this.name = name;
 	}
 
-	public String getProjectId() {
-		return projectId;
+	public String getCode() {
+		return code;
 	}
 
-	public void setProjectId(String projId) {
-		this.projectId = projId;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public IStage getStage() {
@@ -99,4 +111,11 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 		this.planObjects = planObjects;
 	}
 
+	public IMilestone getMilestone() {
+		return milestone;
+	}
+
+	public void setMilestone(IMilestone milestone) {
+		this.milestone = milestone;
+	}
 }

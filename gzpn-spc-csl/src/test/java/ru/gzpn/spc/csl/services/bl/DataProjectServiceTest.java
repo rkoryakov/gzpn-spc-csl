@@ -65,7 +65,7 @@ public class DataProjectServiceTest {
 				for (int j = 0; j < 5; j ++) {
 					CProject cProject = new CProject();
 					cProject.setName("Capital Project " + i + "_" + j);
-					cProject.setProjectId("00020302-" + i + "_" + j);
+					cProject.setCode("00020302-" + i + "_" + j);
 					IPhase phase = phaseRepository.findAll().get((int)(6*Math.random()));
 					cProject.setPhase(phase);
 					Stage stage = stageRepository.findAll().get((int)(3*Math.random()));

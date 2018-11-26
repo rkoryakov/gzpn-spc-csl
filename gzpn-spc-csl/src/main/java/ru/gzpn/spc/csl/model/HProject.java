@@ -20,17 +20,18 @@ import ru.gzpn.spc.csl.model.interfaces.IHProject;
 })
 @Table(name = "heavy_projects", schema = "spc_csl_schema", 
 	indexes = {
-		@Index(name = "spc_csl_idx_prjid", columnList = "projectId", unique = true),
-		@Index(name = "spc_csl_idx_prjname", columnList = "name") 
+		@Index(name = "spc_csl_idx_hprjname", columnList = "name"),
+		@Index(name = "spc_csl_idx_hprjcode", columnList = "code", unique = true),
+		@Index(name = "spc_csl_idx_hprjcapprj", columnList = "capitalProjects")
 	}
 )
 public class HProject extends ACLBasedEntity implements IHProject {
 	public static final String FIELD_NAME = "name";
 	public static final String FILED_PROJECT_ID = "projectId";
 	
-	private String projectId;
 	private String name;
-
+	private String code;
+	
 	@OneToMany(targetEntity = CProject.class, cascade = CascadeType.ALL)
 	@JoinColumn(name = "hp_id", referencedColumnName = "id")
 	private List<ICProject> capitalProjects;
@@ -39,11 +40,11 @@ public class HProject extends ACLBasedEntity implements IHProject {
 	}
 	
 	public String getProjectId() {
-		return projectId;
+		return code;
 	}
 
 	public void setProjectId(String projectId) {
-		this.projectId = projectId;
+		this.code = projectId;
 	}
 
 	public String getName() {
@@ -64,6 +65,6 @@ public class HProject extends ACLBasedEntity implements IHProject {
 
 	@Override
 	public String toString() {
-		return "name: " + name + ", projectId: " + projectId;
+		return "name: " + name + ", projectId: " + code;
 	}
 }
