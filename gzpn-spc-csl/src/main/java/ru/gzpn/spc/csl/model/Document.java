@@ -1,15 +1,15 @@
 package ru.gzpn.spc.csl.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import ru.gzpn.spc.csl.model.enums.DocType;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IWork;
@@ -28,15 +28,15 @@ public class Document extends BaseEntity implements IDocument, Serializable {
 	
 	private String code;
 	private String name;
-	private DocTypeEnum type;
+	private DocType type;
 	
-	@OneToOne(targetEntity=LocalEstimate.class)
+	@OneToOne(targetEntity = LocalEstimate.class)
 	@JoinColumn(name = "doc_id", referencedColumnName = "id")
 	ILocalEstimate localEstimate;
 	
-	@OneToMany(targetEntity=Work.class)
-	@JoinColumn(name = "doc_id", referencedColumnName = "id")
-	List<IWork> workList;
+	@ManyToOne(targetEntity = Work.class)
+	@JoinColumn(name = "id", referencedColumnName = "doc_id")
+	IWork work;
 
 	public String getCode() {
 		return code;
@@ -46,11 +46,11 @@ public class Document extends BaseEntity implements IDocument, Serializable {
 		this.code = code;
 	}
 
-	public DocTypeEnum getType() {
+	public DocType getType() {
 		return type;
 	}
 
-	public void setType(DocTypeEnum type) {
+	public void setType(DocType type) {
 		this.type = type;
 	}
 
@@ -70,11 +70,11 @@ public class Document extends BaseEntity implements IDocument, Serializable {
 		this.localEstimate = localEstimate;
 	}
 
-	public List<IWork> getWorkList() {
-		return workList;
+	public IWork getWork() {
+		return work;
 	}
 
-	public void setWorkList(List<IWork> workList) {
-		this.workList = workList;
+	public void setWork(IWork work) {
+		this.work = work;
 	}
 }

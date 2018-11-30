@@ -42,7 +42,7 @@ public class LocalEstimate extends BaseEntity implements ILocalEstimate, Seriali
 
 	@OneToOne(targetEntity = Document.class)
 	@JoinColumn(name = "id", referencedColumnName = "doc_id")
-	private IDocument document;
+	private IDocument document; // designation
 	
 	public LocalEstimate() {
 	}

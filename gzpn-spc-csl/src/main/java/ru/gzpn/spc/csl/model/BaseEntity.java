@@ -1,6 +1,6 @@
 package ru.gzpn.spc.csl.model;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -27,11 +27,11 @@ public abstract class BaseEntity {
 
 	@CreationTimestamp
 	@Column(updatable = false, nullable = false)
-	private LocalDateTime createDate;
+	private ZonedDateTime createDate;
 
 	@UpdateTimestamp
 	@Column(updatable = true, nullable = false)
-	private LocalDateTime changeTime;
+	private ZonedDateTime changeDate;
 	
 	public Long getId() {
 		return id;

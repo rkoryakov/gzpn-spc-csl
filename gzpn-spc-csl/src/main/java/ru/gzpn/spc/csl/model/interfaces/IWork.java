@@ -1,5 +1,7 @@
 package ru.gzpn.spc.csl.model.interfaces;
 
+import ru.gzpn.spc.csl.model.enums.WorkType;
+
 public interface IWork {
 	public ILocalEstimate getLocalEstimate();
 
@@ -13,9 +15,9 @@ public interface IWork {
 
 	public void setName(String name);
 
-	public String getType();
+	public WorkType getType();
 
-	public void setType(String type);
+	public void setType(WorkType type);
 
 	public IPlanObject getPlanObj();
 
