@@ -9,5 +9,5 @@ import ru.gzpn.spc.csl.model.interfaces.IHProject;
 
 @Repository
 public interface HProjectRepository extends BaseRepository<HProject> {
-	public List<IHProject> findByProjectId(String projectId);
+	public List<IHProject> findByCode(String code);
 }

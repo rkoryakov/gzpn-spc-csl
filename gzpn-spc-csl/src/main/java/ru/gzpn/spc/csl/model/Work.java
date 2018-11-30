@@ -29,10 +29,9 @@ indexes = {
 		@Index(name = "spc_csl_idx_wkid", columnList = "code", unique = true),
 		@Index(name = "spc_csl_idx_wkname", columnList = "name"),
 		@Index(name = "spc_csl_idx_wktype", columnList = "type"),
-		@Index(name = "spc_csl_idx_wkplnobj", columnList = "planObj"),
-		@Index(name = "spc_csl_idx_wkest", columnList = "localEstimate"),
-		@Index(name = "spc_csl_idx_wkdoc", columnList = "document"),
-		@Index(name = "spc_csl_idx_wkmil", columnList = "milestone")
+		@Index(name = "spc_csl_idx_wkplnobj", columnList = "plan_obj_id"),
+		@Index(name = "spc_csl_idx_wkest", columnList = "est_id"),
+		@Index(name = "spc_csl_idx_wkmil", columnList = "milst_id")
 })
 /**
  * Design and survey works
@@ -59,7 +58,7 @@ public class Work extends BaseEntity implements IWork, Serializable {
 	private ILocalEstimate localEstimate;
 	
 	@OneToMany(targetEntity = Document.class)
-	@JoinColumn(name = "id", referencedColumnName = "doc_id")
+	@JoinColumn(name = "wk_id", referencedColumnName = "id")
 	private List<IDocument> documents;
 	
 	@ManyToOne(targetEntity = Milestone.class)
@@ -69,9 +68,10 @@ public class Work extends BaseEntity implements IWork, Serializable {
 	public Work() {
 	}
 	
-	public Work(String code, String name) {
+	public Work(String code, String name, WorkType workType) {
 		this.code = code;
 		this.name = name;
+		this.type = workType;
 	}
 
 	public ILocalEstimate getLocalEstimate() {

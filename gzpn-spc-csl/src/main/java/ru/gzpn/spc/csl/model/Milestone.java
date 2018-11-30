@@ -26,9 +26,8 @@ import ru.gzpn.spc.csl.model.interfaces.IWork;
 indexes = {
 		@Index(name = "spc_csl_idx_milname", columnList = "name"),
 		@Index(name = "spc_csl_idx_milcode", columnList = "code", unique = true),
-		@Index(name = "spc_csl_idx_miltocp", columnList = "project"),
-		@Index(name = "spc_csl_idx_miltowk", columnList = "works"),
-		@Index(name = "spc_csl_idx_miltocon", columnList = "contract")
+		@Index(name = "spc_csl_idx_miltocp", columnList = "cp_id"),
+		@Index(name = "spc_csl_idx_miltocon", columnList = "cont_id")
 })
 public class Milestone extends BaseEntity implements IMilestone, Serializable {
 	private static final long serialVersionUID = 6247571288283340789L;

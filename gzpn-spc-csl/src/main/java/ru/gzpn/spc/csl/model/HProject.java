@@ -16,18 +16,17 @@ import ru.gzpn.spc.csl.model.interfaces.IHProject;
 
 @Entity
 @NamedQueries({
-	@NamedQuery(name = "HProject.findByProjectId", query = "SELECT hp FROM HProject hp WHERE hp.projectId = ?1"),	
+	@NamedQuery(name = "HProject.findByCode", query = "SELECT hp FROM HProject hp WHERE hp.code = ?1"),	
 })
 @Table(name = "heavy_projects", schema = "spc_csl_schema", 
 	indexes = {
 		@Index(name = "spc_csl_idx_hprjname", columnList = "name"),
-		@Index(name = "spc_csl_idx_hprjcode", columnList = "code", unique = true),
-		@Index(name = "spc_csl_idx_hprjcapprj", columnList = "capitalProjects")
+		@Index(name = "spc_csl_idx_hprjcode", columnList = "code", unique = true)
 	}
 )
 public class HProject extends ACLBasedEntity implements IHProject {
 	public static final String FIELD_NAME = "name";
-	public static final String FILED_PROJECT_ID = "projectId";
+	public static final String FILED_CODE = "code";
 	
 	private String name;
 	private String code;
@@ -39,12 +38,12 @@ public class HProject extends ACLBasedEntity implements IHProject {
 	public HProject() {
 	}
 	
-	public String getProjectId() {
+	public String getCode() {
 		return code;
 	}
 
-	public void setProjectId(String projectId) {
-		this.code = projectId;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public String getName() {

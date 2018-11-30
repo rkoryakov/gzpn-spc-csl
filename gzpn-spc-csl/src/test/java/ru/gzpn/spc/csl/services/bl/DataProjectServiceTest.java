@@ -25,6 +25,7 @@ import ru.gzpn.spc.csl.model.Phase;
 import ru.gzpn.spc.csl.model.PlanObject;
 import ru.gzpn.spc.csl.model.Stage;
 import ru.gzpn.spc.csl.model.Work;
+import ru.gzpn.spc.csl.model.enums.WorkType;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
@@ -54,10 +55,10 @@ public class DataProjectServiceTest {
 		
 		// HProjects
 		for (int i = 0; i < 10; i ++) {
-			if (service.getHPRepository().findByProjectId("000000" + i).size() == 0) {
+			if (service.getHPRepository().findByCode("000000" + i).size() == 0) {
 				HProject hProject = new HProject();
 				hProject.setName("Havy Project " + i);
-				hProject.setProjectId("000000" + i);
+				hProject.setCode("000000" + i);
 				hProject = service.getHPRepository().save(hProject);
 				List<ICProject> cprojects = new ArrayList<>();
 				
@@ -82,7 +83,7 @@ public class DataProjectServiceTest {
 						List<IWork> workList = new ArrayList<>();
 						for (int l = 0; l < 5; l ++) {
 							int num = l + i * 5 * j * k * 5 + 1;
-							Work work = new Work("00000" + i + "" + j + "" + k + "" + l, "Work " + num, "");
+							Work work = new Work("00000" + i + "" + j + "" + k + "" + l, "Work " + num, WorkType.SMR);
 							
 							// LocalEstimate
 							LocalEstimate estimate = new LocalEstimate("00000" + i + "" + j + "" + k + "" + l, "Estimate " + num);

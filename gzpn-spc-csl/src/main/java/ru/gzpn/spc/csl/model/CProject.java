@@ -13,6 +13,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.interfaces.IMilestone;
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
@@ -23,11 +24,9 @@ import ru.gzpn.spc.csl.model.interfaces.IStage;
 			indexes = {
 				@Index(name = "spc_csl_idx_prjname", columnList = "name"),
 				@Index(name = "spc_csl_idx_prjid", columnList = "code", unique = true),
-				@Index(name = "spc_csl_idx_prjhp", columnList = "hproject"),
-				@Index(name = "spc_csl_idx_prjstg", columnList = "stage"),
-				@Index(name = "spc_csl_idx_prjphs", columnList = "phase"),
-				@Index(name = "spc_csl_idx_prjplnobj", columnList = "planObjects"),
-				@Index(name = "spc_csl_idx_prjmilstn", columnList = "milestone")
+				@Index(name = "spc_csl_idx_prjstg", columnList = "stage_id"),
+				@Index(name = "spc_csl_idx_prjphs", columnList = "phase_id"),
+				@Index(name = "spc_csl_idx_prjmilstn", columnList = "cp_id")
 			}
 )
 public class CProject extends ACLBasedEntity implements ICProject, Serializable {
@@ -42,7 +41,7 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 	
 	@ManyToOne(targetEntity = HProject.class, fetch = FetchType.LAZY)
 	@JoinColumn(name = "hp_id", referencedColumnName = "id")
-	private HProject hproject;
+	private IHProject hproject;
 	
 	@ManyToOne(targetEntity = Stage.class, fetch = FetchType.LAZY)
 	@JoinColumn(name = "stage_id", referencedColumnName = "id")
@@ -57,7 +56,7 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 	private List<IPlanObject> planObjects;
 
 	@OneToOne(targetEntity = Milestone.class)
-	@JoinColumn(name="id", referencedColumnName="cp_id")
+	@JoinColumn(name="cp_id", referencedColumnName="id")
 	private IMilestone milestone;
 	
 	public CProject() {
@@ -87,11 +86,11 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 		this.stage = stage;
 	}
 
-	public HProject getHproject() {
+	public IHProject getHproject() {
 		return hproject;
 	}
 
-	public void setHproject(HProject hproject) {
+	public void setHproject(IHProject hproject) {
 		this.hproject = hproject;
 	}
 

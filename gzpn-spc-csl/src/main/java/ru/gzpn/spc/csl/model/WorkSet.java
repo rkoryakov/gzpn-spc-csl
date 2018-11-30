@@ -16,9 +16,7 @@ import ru.gzpn.spc.csl.model.interfaces.IWork;
 @Table(schema = "spc_csl_schema", name = "workset", 
 indexes = {
 		@Index(name = "spc_csl_idx_wkscode", columnList = "code"),
-		@Index(name = "spc_csl_idx_wkscode", columnList = "name"),
-		@Index(name = "spc_csl_idx_wkspir", columnList = "pir"),
-		@Index(name = "spc_csl_idx_wkssmr", columnList = "smr")
+		@Index(name = "spc_csl_idx_wkscode", columnList = "name")
 })
 public class WorkSet extends BaseEntity implements Serializable {
 	private static final long serialVersionUID = -1489774086979019274L;
@@ -27,10 +25,10 @@ public class WorkSet extends BaseEntity implements Serializable {
 	@Column(length = 256)
 	private String name;
 	@OneToMany(targetEntity = Work.class)
-	@JoinColumn(name = "id",  referencedColumnName = "wkset_id")
+	@JoinColumn(name = "wkset_id",  referencedColumnName = "id")
 	private List<IWork> pir;
 	@OneToMany(targetEntity = Work.class)
-	@JoinColumn(name = "id",  referencedColumnName = "wkset_id")
+	@JoinColumn(name = "wkset_id",  referencedColumnName = "id")
 	private List<IWork> smr;
 	
 	public String getCode() {

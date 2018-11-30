@@ -18,8 +18,7 @@ import ru.gzpn.spc.csl.model.interfaces.IMilestone;
 @Table(schema="spc_csl_schema", name="contract",
 indexes = {
 		@Index(name = "spc_csl_idx_cntname", columnList = "name", unique = true),
-		@Index(name = "spc_csl_idx_cntcode", columnList = "code"),
-		@Index(name = "spc_csl_idx_cntmil", columnList = "milestones")
+		@Index(name = "spc_csl_idx_cntcode", columnList = "code")
 })
 public class Contract extends BaseEntity implements IContract, Serializable {
 	private static final long serialVersionUID = 3446433626324831206L;
