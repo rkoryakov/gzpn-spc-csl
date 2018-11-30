@@ -26,7 +26,7 @@ import ru.gzpn.spc.csl.model.interfaces.IWork;
 })
 @Table(schema="spc_csl_schema", name="works",
 indexes = {
-		@Index(name = "spc_csl_idx_wkid", columnList = "code", unique = true),
+		@Index(name = "spc_csl_idx_wkcode", columnList = "code", unique = true),
 		@Index(name = "spc_csl_idx_wkname", columnList = "name"),
 		@Index(name = "spc_csl_idx_wktype", columnList = "type"),
 		@Index(name = "spc_csl_idx_wkplnobj", columnList = "plan_obj_id"),
