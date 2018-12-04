@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -13,6 +12,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.interfaces.IMilestone;
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
@@ -21,14 +21,12 @@ import ru.gzpn.spc.csl.model.interfaces.IStage;
 
 @Entity
 @Table(schema = "spc_csl_schema", name = "capital_projects", 
-			indexes = {
-				@Index(name = "spc_csl_idx_prjname", columnList = "name"),
-				@Index(name = "spc_csl_idx_prjid", columnList = "code", unique = true),
-				@Index(name = "spc_csl_idx_prjstg", columnList = "stage_id"),
-				@Index(name = "spc_csl_idx_prjphs", columnList = "phase_id"),
-				@Index(name = "spc_csl_idx_prjmilstn", columnList = "cp_id")
-			}
-)
+indexes = {
+			@Index(name = "spc_csl_idx_prjname", columnList = "name"),
+			@Index(name = "spc_csl_idx_prjid", columnList = "code", unique = true),
+			@Index(name = "spc_csl_idx_prjstg", columnList = "stage_id"),
+			@Index(name = "spc_csl_idx_prjphs", columnList = "phase_id")
+})
 public class CProject extends ACLBasedEntity implements ICProject, Serializable {
 	private static final long serialVersionUID = 4547825496450260103L;
 	
@@ -38,26 +36,29 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 	private String name;
 	private String code;
 	
-	
-	@ManyToOne(targetEntity = HProject.class, fetch = FetchType.LAZY)
+	@ManyToOne(targetEntity = HProject.class)
 	@JoinColumn(name = "hp_id", referencedColumnName = "id")
 	private IHProject hproject;
 	
-	@ManyToOne(targetEntity = Stage.class, fetch = FetchType.LAZY)
+	@ManyToOne(targetEntity = Stage.class)
 	@JoinColumn(name = "stage_id", referencedColumnName = "id")
 	private IStage stage;
 
-	@ManyToOne(targetEntity = Phase.class, fetch = FetchType.LAZY)
+	@ManyToOne(targetEntity = Phase.class)
 	@JoinColumn(name = "phase_id", referencedColumnName = "id")
 	private IPhase phase;
 
-	@OneToMany(targetEntity = PlanObject.class, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = PlanObject.class)
 	@JoinColumn(name="cp_id", referencedColumnName="id")
 	private List<IPlanObject> planObjects;
 
 	@OneToOne(targetEntity = Milestone.class)
-	@JoinColumn(name="cp_id", referencedColumnName="id")
+	@JoinColumn(name="id", referencedColumnName="cp_id")
 	private IMilestone milestone;
+	
+	@OneToMany(targetEntity = EstimateCalculation.class)
+	@JoinColumn(name = "cp_id", referencedColumnName = "id")
+	private List<IEstimateCalculation> estimateCalculations;
 	
 	public CProject() {
 	}
@@ -116,5 +117,13 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 
 	public void setMilestone(IMilestone milestone) {
 		this.milestone = milestone;
+	}
+
+	public List<IEstimateCalculation> getEstimateCalculations() {
+		return estimateCalculations;
+	}
+
+	public void setEstimateCalculations(List<IEstimateCalculation> estimateCalculations) {
+		this.estimateCalculations = estimateCalculations;
 	}
 }

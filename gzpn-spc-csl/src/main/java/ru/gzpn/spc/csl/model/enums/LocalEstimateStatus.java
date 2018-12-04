@@ -11,4 +11,8 @@ public enum LocalEstimateStatus {
 	private LocalEstimateStatus(String i18key) {
 		this.i18nKey = i18key;
 	}
+
+	public String getI18nKey() {
+		return i18nKey;
+	}
 }

@@ -3,10 +3,10 @@ package ru.gzpn.spc.csl.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Currency;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -14,7 +14,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import ru.gzpn.spc.csl.model.enums.PaymentSchema;
 import ru.gzpn.spc.csl.model.enums.TaxType;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IContract;
@@ -34,21 +33,19 @@ public class Milestone extends BaseEntity implements IMilestone, Serializable {
 
 	private String name;
 	private String code;
-	
+	private int ppNum;
+	private int MilNum;
 	private LocalDate startDate;
 	private LocalDate endDate;
-	private LocalDate deliveryDate;
 	
-	private BigDecimal sum;
+	private BigDecimal sum; // without tax
 	private TaxType taxType; // must be a directory
-	private PaymentSchema paymentSchema; // must be a directory
-	private Currency currency; // must be a directory
 	
-	@OneToOne(targetEntity=CProject.class)
+	@OneToOne(targetEntity = CProject.class)
 	@JoinColumn(name="cp_id", referencedColumnName="id")
 	private ICProject project;
 	
-	@OneToMany(targetEntity = Work.class)
+	@OneToMany(targetEntity = Work.class, fetch = FetchType.EAGER)
 	@JoinColumn(name = "milst_id", referencedColumnName = "id")
 	private List<IWork> works;
 
@@ -96,14 +93,6 @@ public class Milestone extends BaseEntity implements IMilestone, Serializable {
 		this.project = project;
 	}
 
-	public LocalDate getDeliveryDate() {
-		return deliveryDate;
-	}
-
-	public void setDeliveryDate(LocalDate deliveryDate) {
-		this.deliveryDate = deliveryDate;
-	}
-
 	public BigDecimal getSum() {
 		return sum;
 	}
@@ -120,22 +109,6 @@ public class Milestone extends BaseEntity implements IMilestone, Serializable {
 		this.taxType = taxType;
 	}
 
-	public PaymentSchema getPaymentSchema() {
-		return paymentSchema;
-	}
-
-	public void setPaymentSchema(PaymentSchema paymentSchema) {
-		this.paymentSchema = paymentSchema;
-	}
-
-	public Currency getCurrency() {
-		return currency;
-	}
-
-	public void setCurrency(Currency currency) {
-		this.currency = currency;
-	}
-
 	public List<IWork> getWorks() {
 		return works;
 	}
@@ -150,5 +123,21 @@ public class Milestone extends BaseEntity implements IMilestone, Serializable {
 
 	public void setContract(IContract contract) {
 		this.contract = contract;
+	}
+
+	public int getPpNum() {
+		return ppNum;
+	}
+
+	public void setPpNum(int ppNum) {
+		this.ppNum = ppNum;
+	}
+
+	public int getMilNum() {
+		return MilNum;
+	}
+
+	public void setMilNum(int milNum) {
+		MilNum = milNum;
 	}
 }

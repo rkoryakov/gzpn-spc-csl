@@ -14,15 +14,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
+import ru.gzpn.spc.csl.model.interfaces.IObjectEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IStage;
 
 @Entity
 @NamedQueries({
-	@NamedQuery(name = "Stage.findByName", query = "SELECT s FROM Stage s WHERE s.name = ?1"),	
+	@NamedQuery(name = "Stage.findByName", query = "SELECT s FROM Stage s WHERE s.name = ?1")
 })
 @Table(schema = "spc_csl_schema", name = "stages", indexes = {
 		@Index(name = "spc_csl_idx_stagename", columnList = "name")
-	})
+})
 public class Stage extends BaseEntity implements IStage, Serializable {
 	private static final long serialVersionUID = 5559748809655988720L;
 
@@ -34,6 +36,14 @@ public class Stage extends BaseEntity implements IStage, Serializable {
 	@OneToMany(targetEntity = CProject.class, fetch = FetchType.LAZY)
 	@JoinColumn(name = "stage_id", referencedColumnName = "id")
 	private List<ICProject> cprojects;
+	
+	@OneToMany(targetEntity = LocalEstimate.class)
+	@JoinColumn(name = "stage_id", referencedColumnName = "id")
+	private List<ILocalEstimate> localEstimates;
+	
+	@OneToMany(targetEntity = ObjectEstimate.class)
+	@JoinColumn(name = "stage_id", referencedColumnName = "id")
+	private List<IObjectEstimate> objectEstimates;
 	
 	public Stage() {
 	}
@@ -61,5 +71,21 @@ public class Stage extends BaseEntity implements IStage, Serializable {
 
 	public void setCprojects(List<ICProject> cprojects) {
 		this.cprojects = cprojects;
+	}
+
+	public List<ILocalEstimate> getLocalEstimates() {
+		return localEstimates;
+	}
+
+	public void setLocalEstimates(List<ILocalEstimate> localEstimates) {
+		this.localEstimates = localEstimates;
+	}
+
+	public List<IObjectEstimate> getObjectEstimates() {
+		return objectEstimates;
+	}
+
+	public void setObjectEstimates(List<IObjectEstimate> objectEstimates) {
+		this.objectEstimates = objectEstimates;
 	}
 }

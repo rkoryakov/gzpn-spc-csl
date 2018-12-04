@@ -40,5 +40,84 @@ public class Contract extends BaseEntity implements IContract, Serializable {
 	@OneToMany(targetEntity = Milestone.class)
 	@JoinColumn(name = "cont_id", referencedColumnName = "id")
 	private List<IMilestone> milestones;
-	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public LocalDate getSigningDate() {
+		return signingDate;
+	}
+
+	public void setSigningDate(LocalDate signingDate) {
+		this.signingDate = signingDate;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public String getCustomerINN() {
+		return customerINN;
+	}
+
+	public void setCustomerINN(String customerINN) {
+		this.customerINN = customerINN;
+	}
+
+	public String getCustormerBank() {
+		return custormerBank;
+	}
+
+	public void setCustormerBank(String custormerBank) {
+		this.custormerBank = custormerBank;
+	}
+
+	public String getExecutorName() {
+		return executorName;
+	}
+
+	public void setExecutorName(String executorName) {
+		this.executorName = executorName;
+	}
+
+	public String getExecutorINN() {
+		return executorINN;
+	}
+
+	public void setExecutorINN(String executorINN) {
+		this.executorINN = executorINN;
+	}
+
+	public String getExecutorBank() {
+		return executorBank;
+	}
+
+	public void setExecutorBank(String executorBank) {
+		this.executorBank = executorBank;
+	}
+
+	public List<IMilestone> getMilestones() {
+		return milestones;
+	}
+
+	public void setMilestones(List<IMilestone> milestones) {
+		this.milestones = milestones;
+	}
 }
