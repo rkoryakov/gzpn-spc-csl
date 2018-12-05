@@ -13,6 +13,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IObjectEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IStage;
@@ -43,6 +44,10 @@ public class ObjectEstimate extends BaseEntity implements IObjectEstimate, Seria
 	@JoinColumn(name = "stage_id", referencedColumnName = "id")
 	private IStage stage;
 
+	@ManyToOne(targetEntity = EstimateCalculation.class)
+	@JoinColumn(name = "id", referencedColumnName = "oest_id")
+	private IEstimateCalculation estimateCalculation;
+	
 	public String getCode() {
 		return code;
 	}

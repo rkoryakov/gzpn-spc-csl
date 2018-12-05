@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
+import ru.gzpn.spc.csl.model.interfaces.IObjectEstimate;
 
 @Entity
 @Table(schema = "spc_csl_schema", name = "estimate_calculations", 
@@ -23,7 +24,8 @@ indexes = {
 			@Index(name = "spc_csl_idx_esccode", columnList = "code"),
 			@Index(name = "spc_csl_idx_eschandler", columnList = "handler"),
 			@Index(name = "spc_csl_idx_escproj", columnList = "cp_id"),
-			@Index(name = "spc_csl_idx_esclest", columnList = "est_id")
+			@Index(name = "spc_csl_idx_esclest", columnList = "est_id"),
+			@Index(name = "spc_csl_idx_escoest", columnList = "oest_id")
 })
 public class EstimateCalculation extends BaseEntity implements IEstimateCalculation, Serializable {
 	private static final long serialVersionUID = -8670063022967614874L;
@@ -39,6 +41,10 @@ public class EstimateCalculation extends BaseEntity implements IEstimateCalculat
 	@OneToMany(targetEntity = LocalEstimate.class)
 	@JoinColumn(name = "id", referencedColumnName = "est_id")
 	private List<ILocalEstimate> estimates;
+	
+	@OneToMany(targetEntity = ObjectEstimate.class)
+	@JoinColumn(name = "id", referencedColumnName = "oest_id")
+	private List<IObjectEstimate> objectEstimates;
 	
 	public String getCode() {
 		return code;
@@ -78,5 +84,13 @@ public class EstimateCalculation extends BaseEntity implements IEstimateCalculat
 
 	public void setEstimates(List<ILocalEstimate> estimates) {
 		this.estimates = estimates;
+	}
+
+	public List<IObjectEstimate> getObjectEstimates() {
+		return objectEstimates;
+	}
+
+	public void setObjectEstimates(List<IObjectEstimate> objectEstimates) {
+		this.objectEstimates = objectEstimates;
 	}
 }

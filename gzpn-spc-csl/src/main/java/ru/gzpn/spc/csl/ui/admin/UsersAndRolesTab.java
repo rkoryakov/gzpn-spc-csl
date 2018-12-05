@@ -32,6 +32,7 @@ import com.vaadin.ui.components.grid.SingleSelectionModel;
 
 import ru.gzpn.spc.csl.ui.common.ConfirmDialog;
 
+//TODO: use another name. This "UsersAndRolesTab" name is incorrect as VerticalLayout type is not a Tab 
 public class UsersAndRolesTab extends VerticalLayout {
 
 	public static final Logger logger = LoggerFactory.getLogger(UsersAndRolesTab.class);
@@ -52,7 +53,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 	private UserInfoTabSheet infoUser;
 	
 	private HorizontalSplitPanel panel;
-
+	//TODO: use another name. The same reason 
 	public UsersAndRolesTab(IdentityService identityService, MessageSource messageSource) {
 		this.identityService = identityService;
 		this.messageSource = messageSource;
@@ -137,7 +138,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 				return group;
 			});
 		}, query -> {
-			
+			// TODO: correct the expression considering the Sonar Lint advice
 			int count = identityService.createGroupQuery().list().stream().filter(group -> {
 						return group.getId().startsWith(query.getFilter().orElse(""));
 					}).collect(Collectors.toList()).size();
