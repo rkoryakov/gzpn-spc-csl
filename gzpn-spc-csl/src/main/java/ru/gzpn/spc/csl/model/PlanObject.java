@@ -35,14 +35,13 @@ public class PlanObject extends BaseEntity implements IPlanObject, Serializable 
 	
 	@Column(length = 64)
 	private String code;
-	@Column(length = 128)
 	private String name;
 	@Column(length = 4)
 	private String mark;
 	
 	@OneToMany(targetEntity = PlanObject.class)
 	@OrderColumn
-	@JoinColumn(name="parent_id")
+	@JoinColumn(name="parent_id", referencedColumnName = "id")
 	private List<IPlanObject> children;
 	
 	@ManyToOne(fetch = FetchType.LAZY, targetEntity = PlanObject.class)

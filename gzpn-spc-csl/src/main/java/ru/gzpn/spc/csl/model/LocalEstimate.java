@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import ru.gzpn.spc.csl.model.enums.LocalEstimateStatus;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
+import ru.gzpn.spc.csl.model.interfaces.IEstimateHead;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimateHistory;
 import ru.gzpn.spc.csl.model.interfaces.IObjectEstimate;
@@ -33,7 +34,8 @@ indexes = {
 		@Index(name = "spc_csl_idx_estname", columnList = "name"),
 		@Index(name = "spc_csl_idx_estdoc", columnList = "doc_id"),
 		@Index(name = "spc_csl_idx_eststg", columnList = "stage_id"),
-		@Index(name = "spc_csl_idx_estoest", columnList = "oest_id")
+		@Index(name = "spc_csl_idx_estoest", columnList = "oest_id"),
+		@Index(name = "spc_csl_idx_esthead", columnList = "est_head_id")
 })
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class LocalEstimate extends BaseEntity implements ILocalEstimate, Serializable {
@@ -72,6 +74,10 @@ public class LocalEstimate extends BaseEntity implements ILocalEstimate, Seriali
 	@ManyToOne(targetEntity = ObjectEstimate.class)
 	@JoinColumn(name = "oest_id", referencedColumnName = "id")
 	private IObjectEstimate objectEstimate;
+	
+	@ManyToOne(targetEntity = EstimateHead.class)
+	@JoinColumn(name = "est_head_id", referencedColumnName = "id")
+	private IEstimateHead estimateHead;
 	
 	public LocalEstimate() {
 	}
@@ -173,5 +179,21 @@ public class LocalEstimate extends BaseEntity implements ILocalEstimate, Seriali
 
 	public void setObjectEstimate(IObjectEstimate objectEstimate) {
 		this.objectEstimate = objectEstimate;
+	}
+
+	public List<ILocalEstimateHistory> getHistory() {
+		return history;
+	}
+
+	public void setHistory(List<ILocalEstimateHistory> history) {
+		this.history = history;
+	}
+
+	public IEstimateHead getEstimateHead() {
+		return estimateHead;
+	}
+
+	public void setEstimateHead(IEstimateHead estimateHead) {
+		this.estimateHead = estimateHead;
 	}
 }

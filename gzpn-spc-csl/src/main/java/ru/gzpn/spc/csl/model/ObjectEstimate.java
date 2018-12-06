@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
+import ru.gzpn.spc.csl.model.interfaces.IEstimateHead;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IObjectEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IStage;
@@ -22,7 +23,8 @@ import ru.gzpn.spc.csl.model.interfaces.IStage;
 indexes = {
 		@Index(name = "spc_csl_idx_oestcode", columnList = "code", unique = true),
 		@Index(name = "spc_csl_idx_oestname", columnList = "name"),
-		@Index(name = "spc_csl_idx_oeststg", columnList = "stage_id")
+		@Index(name = "spc_csl_idx_oeststg", columnList = "stage_id"),
+		@Index(name = "spc_csl_idx_oesthead", columnList = "est_head_id")
 })
 @NamedQueries({})
 public class ObjectEstimate extends BaseEntity implements IObjectEstimate, Serializable {
@@ -47,6 +49,10 @@ public class ObjectEstimate extends BaseEntity implements IObjectEstimate, Seria
 	@ManyToOne(targetEntity = EstimateCalculation.class)
 	@JoinColumn(name = "id", referencedColumnName = "oest_id")
 	private IEstimateCalculation estimateCalculation;
+	
+	@ManyToOne(targetEntity = EstimateHead.class)
+	@JoinColumn(name = "est_head_id", referencedColumnName = "id")
+	private IEstimateHead estimateHead;
 	
 	public String getCode() {
 		return code;
@@ -110,5 +116,21 @@ public class ObjectEstimate extends BaseEntity implements IObjectEstimate, Seria
 
 	public void setStage(IStage stage) {
 		this.stage = stage;
+	}
+
+	public IEstimateCalculation getEstimateCalculation() {
+		return estimateCalculation;
+	}
+
+	public void setEstimateCalculation(IEstimateCalculation estimateCalculation) {
+		this.estimateCalculation = estimateCalculation;
+	}
+
+	public IEstimateHead getEstimateHead() {
+		return estimateHead;
+	}
+
+	public void setEstimateHead(IEstimateHead estimateHead) {
+		this.estimateHead = estimateHead;
 	}
 }
