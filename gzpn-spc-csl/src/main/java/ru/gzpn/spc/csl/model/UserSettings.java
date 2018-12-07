@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.model;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import javax.persistence.Column;
@@ -16,13 +17,17 @@ import ru.gzpn.spc.csl.model.jsontypes.ProjectTreeSettingsJson;
 @Table(schema = "spc_csl_schema", name = "user_settings", indexes = {
 		@Index(name = "spc_csl_idx_ussid", columnList = "userId", unique = true)
 })
-public class UserSettings extends BaseEntity implements IUserSettings {
+public class UserSettings extends BaseEntity implements IUserSettings, Serializable {
+	private static final long serialVersionUID = 3134589263886817266L;
 
 	private String userId;
 
 	@Column
 	@Type(type="ProjectTreeSettingsJsonType")
 	private ProjectTreeSettingsJson treeSettings;
+	
+	public UserSettings() {
+	}
 	
 	@Override
 	public Map<String, String> getSettings() {

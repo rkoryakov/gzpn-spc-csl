@@ -113,4 +113,56 @@ public class ProjectEntityGraphTest {
 		Optional<LinkedFields> fields = ProjectEntityGraph.getLinkedFields(Entities.WORK.getName(), Entities.WORK.getName());
 		assertThat(fields.get()).isEqualTo(new LinkedFields("id", "id"));
 	}
+	
+	@Test
+	public void getLinkedFieldsTest9() {
+		Optional<LinkedFields> fields = ProjectEntityGraph.getLinkedFields(Entities.PLANOBJECT.getName(), Entities.PLANOBJECT.getName());
+		assertThat(fields.get()).isEqualTo(new LinkedFields("parent_id", "id"));
+	}
+	
+	@Test
+	public void getLinkedFieldsTest10() {
+		Optional<LinkedFields> fields = ProjectEntityGraph.getLinkedFields(Entities.PHASE.getName(), Entities.PHASE.getName());
+		assertThat(fields.get()).isEqualTo(new LinkedFields("parent_id", "id"));
+	}
+	
+	@Test
+	public void getPathBetweenNodesTest11() {
+		List<Entities> result = ProjectEntityGraph.getPathBetweenNodes(Entities.HPROJECT.getName(), Entities.LOCALESTIMATE.getName());
+		assertThat(result).contains(Entities.HPROJECT, atIndex(0));
+		assertThat(result).contains(Entities.CPROJECT, atIndex(1));
+		assertThat(result).contains(Entities.PLANOBJECT, atIndex(2));
+		assertThat(result).contains(Entities.WORK, atIndex(3));
+		assertThat(result).contains(Entities.LOCALESTIMATE, atIndex(4));
+	}
+	
+	@Test
+	public void getPathBetweenNodesTest12() {
+		List<Entities> result = ProjectEntityGraph.getPathBetweenNodes(Entities.LOCALESTIMATE.getName(), Entities.HPROJECT.getName());
+		assertThat(result).contains(Entities.HPROJECT, atIndex(4));
+		assertThat(result).contains(Entities.CPROJECT, atIndex(3));
+		assertThat(result).contains(Entities.PLANOBJECT, atIndex(2));
+		assertThat(result).contains(Entities.WORK, atIndex(1));
+		assertThat(result).contains(Entities.LOCALESTIMATE, atIndex(0));
+	}
+	
+	@Test
+	public void getPathBetweenNodesTest13() {
+		List<Entities> result = ProjectEntityGraph.getPathBetweenNodes(Entities.STAGE.getName(), Entities.LOCALESTIMATE.getName());
+		assertThat(result).contains(Entities.STAGE, atIndex(0));
+		assertThat(result).contains(Entities.CPROJECT, atIndex(1));
+		assertThat(result).contains(Entities.PLANOBJECT, atIndex(2));
+		assertThat(result).contains(Entities.WORK, atIndex(3));
+		assertThat(result).contains(Entities.LOCALESTIMATE, atIndex(4));
+	}
+	
+	@Test
+	public void getPathBetweenNodesTest14() {
+		List<Entities> result = ProjectEntityGraph.getPathBetweenNodes(Entities.LOCALESTIMATE.getName(), Entities.PHASE.getName());
+		assertThat(result).contains(Entities.LOCALESTIMATE, atIndex(0));
+		assertThat(result).contains(Entities.WORK, atIndex(1));
+		assertThat(result).contains(Entities.PLANOBJECT, atIndex(2));
+		assertThat(result).contains(Entities.CPROJECT, atIndex(3));
+		assertThat(result).contains(Entities.PHASE, atIndex(4));
+	}
 }

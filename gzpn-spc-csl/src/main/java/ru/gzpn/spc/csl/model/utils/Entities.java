@@ -14,6 +14,7 @@ public enum Entities {
 	STAGE("Stage"),
 	PLANOBJECT("PlanObject"),
 	WORK("Work"),
+	LOCALESTIMATE("LocalEstimate"),
 	
 	USER_SETTINGS("UserSettings");
 	

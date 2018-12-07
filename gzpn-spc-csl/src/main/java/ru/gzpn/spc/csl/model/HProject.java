@@ -16,39 +16,34 @@ import ru.gzpn.spc.csl.model.interfaces.IHProject;
 
 @Entity
 @NamedQueries({
-	@NamedQuery(name = "HProject.groupByName", query = "SELECT hp.name FROM HProject hp GROUP BY hp.name"),
-	@NamedQuery(name = "HProject.findByProjectId", query = "SELECT hp FROM HProject hp WHERE hp.projectId = ?1"),
-	
-	@NamedQuery(name = "HProject.groupByNameCount", query = "SELECT COUNT(hp) FROM HProject hp GROUP BY hp.name"),
-	@NamedQuery(name = "HProject.groupByPrjIdCount", query = "SELECT COUNT(hp) FROM HProject hp GROUP BY hp.projectId")
-	})
-
-@Table(name = "havy_projects", schema = "spc_csl_schema", 
+	@NamedQuery(name = "HProject.findByCode", query = "SELECT hp FROM HProject hp WHERE hp.code = ?1"),	
+})
+@Table(name = "heavy_projects", schema = "spc_csl_schema", 
 	indexes = {
-		@Index(name = "spc_csl_idx_prjid", columnList = "projectId", unique = true),
-		@Index(name = "spc_csl_idx_prjname", columnList = "name") 
+		@Index(name = "spc_csl_idx_hprjname", columnList = "name"),
+		@Index(name = "spc_csl_idx_hprjcode", columnList = "code", unique = true)
 	}
 )
 public class HProject extends ACLBasedEntity implements IHProject {
-	public static final String FILED_NAME = "name";
-	public static final String FILED_PROJECT_ID = "projectId";
+	public static final String FIELD_NAME = "name";
+	public static final String FILED_CODE = "code";
 	
-	private String projectId;
 	private String name;
+	private String code;
 	
 	@OneToMany(targetEntity = CProject.class, cascade = CascadeType.ALL)
 	@JoinColumn(name = "hp_id", referencedColumnName = "id")
-//	@JoinTable(schema = "spc_csl_schema", name = "hproject_2_cproject", joinColumns = {
-//			@JoinColumn(name = "hp_id", referencedColumnName = "id") }, inverseJoinColumns = {
-//					@JoinColumn(name = "cp_id", referencedColumnName = "id") })
 	private List<ICProject> capitalProjects;
 
-	public String getProjectId() {
-		return projectId;
+	public HProject() {
+	}
+	
+	public String getCode() {
+		return code;
 	}
 
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public String getName() {
@@ -69,6 +64,6 @@ public class HProject extends ACLBasedEntity implements IHProject {
 
 	@Override
 	public String toString() {
-		return "name: " + name + ", projectId: " + projectId;
+		return "name: " + name + ", projectId: " + code;
 	}
 }

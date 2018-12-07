@@ -3,9 +3,9 @@ package ru.gzpn.spc.csl.model.interfaces;
 import java.util.List;
 
 public interface IHProject {
-	public String getProjectId();
+	public String getCode();
 
-	public void setProjectId(String projectId);
+	public void setCode(String code);
 
 	public String getName();
 

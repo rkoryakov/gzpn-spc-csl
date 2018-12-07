@@ -1,54 +1,67 @@
 package ru.gzpn.spc.csl.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
+import ru.gzpn.spc.csl.model.interfaces.IHProject;
+import ru.gzpn.spc.csl.model.interfaces.IMilestone;
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IStage;
 
 @Entity
-@Table(schema = "spc_csl_schema", name = "capital_project", 
-			indexes = {
-				@Index(name = "spc_csl_idx_prjid", columnList = "projectId", unique = true),
-			}
-)
-public class CProject extends ACLBasedEntity implements ICProject {
-	public static final String FILED_NAME = "name";
+@Table(schema = "spc_csl_schema", name = "capital_projects", 
+indexes = {
+			@Index(name = "spc_csl_idx_prjname", columnList = "name"),
+			@Index(name = "spc_csl_idx_prjid", columnList = "code", unique = true),
+			@Index(name = "spc_csl_idx_prjstg", columnList = "stage_id"),
+			@Index(name = "spc_csl_idx_prjphs", columnList = "phase_id")
+})
+public class CProject extends ACLBasedEntity implements ICProject, Serializable {
+	private static final long serialVersionUID = 4547825496450260103L;
+	
+	public static final String FIELD_NAME = "name";
 	public static final String FILED_PROJECT_ID = "projectId";
 	
-	private String projectId;
 	private String name;
-
-	@ManyToOne(targetEntity = HProject.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "hp_id", referencedColumnName = "id")
-	private HProject hproject;
+	private String code;
 	
-	@ManyToOne(targetEntity = Stage.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "staget_id", referencedColumnName = "id")
-//	@JoinTable(schema = "spc_csl_schema", name = "stage_2_cproject", joinColumns = {
-//			@JoinColumn(name = "cproject_id", referencedColumnName = "id") }, inverseJoinColumns = {
-//					@JoinColumn(name = "stage_id", referencedColumnName = "id") })
+	@ManyToOne(targetEntity = HProject.class)
+	@JoinColumn(name = "hp_id", referencedColumnName = "id")
+	private IHProject hproject;
+	
+	@ManyToOne(targetEntity = Stage.class)
+	@JoinColumn(name = "stage_id", referencedColumnName = "id")
 	private IStage stage;
 
-	@ManyToOne(targetEntity = Phase.class, fetch = FetchType.LAZY)
+	@ManyToOne(targetEntity = Phase.class)
 	@JoinColumn(name = "phase_id", referencedColumnName = "id")
-//	@JoinTable(schema = "spc_csl_schema", name = "phase_2_cproject", joinColumns = {
-//			@JoinColumn(name = "cproject_id", referencedColumnName = "id") }, inverseJoinColumns = {
-//					@JoinColumn(name = "phase_id", referencedColumnName = "id") })
 	private IPhase phase;
 
-	@OneToMany(targetEntity = PlanObject.class, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = PlanObject.class)
 	@JoinColumn(name="cp_id", referencedColumnName="id")
 	private List<IPlanObject> planObjects;
+
+	@OneToOne(targetEntity = Milestone.class)
+	@JoinColumn(name="id", referencedColumnName="cp_id")
+	private IMilestone milestone;
+	
+	@OneToMany(targetEntity = EstimateCalculation.class)
+	@JoinColumn(name = "cp_id", referencedColumnName = "id")
+	private List<IEstimateCalculation> estimateCalculations;
+	
+	public CProject() {
+	}
 	
 	public String getName() {
 		return name;
@@ -58,12 +71,12 @@ public class CProject extends ACLBasedEntity implements ICProject {
 		this.name = name;
 	}
 
-	public String getProjectId() {
-		return projectId;
+	public String getCode() {
+		return code;
 	}
 
-	public void setProjectId(String projId) {
-		this.projectId = projId;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public IStage getStage() {
@@ -74,11 +87,11 @@ public class CProject extends ACLBasedEntity implements ICProject {
 		this.stage = stage;
 	}
 
-	public HProject getHproject() {
+	public IHProject getHproject() {
 		return hproject;
 	}
 
-	public void setHproject(HProject hproject) {
+	public void setHproject(IHProject hproject) {
 		this.hproject = hproject;
 	}
 
@@ -98,4 +111,19 @@ public class CProject extends ACLBasedEntity implements ICProject {
 		this.planObjects = planObjects;
 	}
 
+	public IMilestone getMilestone() {
+		return milestone;
+	}
+
+	public void setMilestone(IMilestone milestone) {
+		this.milestone = milestone;
+	}
+
+	public List<IEstimateCalculation> getEstimateCalculations() {
+		return estimateCalculations;
+	}
+
+	public void setEstimateCalculations(List<IEstimateCalculation> estimateCalculations) {
+		this.estimateCalculations = estimateCalculations;
+	}
 }

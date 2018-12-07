@@ -55,18 +55,12 @@ public class UserInfoTabSheet extends TabSheet {
 		this.identityService = identityService;
 		this.container = container;
 		userInfoTab = new UserInfoTab(identityService, messageSource, userDataProvider, container);
-		userAddGroupTab = new UserAddGroupTab(identityService, messageSource, userDataProvider, groupDataProvider);
+		userAddGroupTab = new UserAddGroupTab(identityService, messageSource);
 		this.addTab(userInfoTab, "info user");
 		this.addTab(userAddGroupTab, "user group");
 		userInfoTab.setUserAndRolesTab(usersAndRolesTab);
 	}
 	
-	
-	private VerticalLayout createuserGroupTab() {
-		VerticalLayout userGroup = new VerticalLayout();
-		return userGroup;
-	}
-
 	public UserInfoTab getUserInfoTab() {
 		return userInfoTab;
 	}
@@ -83,7 +77,7 @@ public class UserInfoTabSheet extends TabSheet {
 		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
 	}
 }
-
+// TODO: use another name. This "UserInfoTab" name is incorrect as FormLayout type is not a Tab 
 class UserInfoTab extends FormLayout{
 	
 	private final TextField loginField;
@@ -101,6 +95,7 @@ class UserInfoTab extends FormLayout{
 	private UsersAndRolesTab usersAndRolesTab;
 	private UIContainer container;
 	
+	//TODO: use another name. The same reason 
 	public UserInfoTab(IdentityService identityService, 
 					MessageSource messageSource, 
 					DataProvider<UserTemplate, String> userDataProvider, 
@@ -348,11 +343,11 @@ class UserInfoTab extends FormLayout{
 		
 		return deleteButton;
 	}
-	
+	//TODO: use another name. The same reason 
 	public void setUserAndRolesTab(UsersAndRolesTab tab) {
 		usersAndRolesTab = tab;
 	}
-	
+	//TODO: use another name. The same reason 
 	public UsersAndRolesTab getUsersAndRolesTab() {
 		return usersAndRolesTab;
 	}
@@ -385,7 +380,8 @@ class UserInfoTab extends FormLayout{
 	}
 }
 
-class UserAddGroupTab extends VerticalLayout{
+//TODO: use another name. This "UserAddGroupTab" name is incorrect as VerticalLayout type is not a Tab 
+class UserAddGroupTab extends VerticalLayout {
 	
 	private MessageSource messageSource;
 	private IdentityService identityService;
@@ -403,9 +399,7 @@ class UserAddGroupTab extends VerticalLayout{
 	private JoinedLayout<AbstractComponent, AbstractComponent> joinedComponent;
 	
 	public UserAddGroupTab(IdentityService identityService, 
-			MessageSource messageSource, 
-			DataProvider<UserTemplate, String> userDataProvider, 
-			DataProvider<GroupTemplate, String> groupDataProvider) {
+			MessageSource messageSource) {
 		this.messageSource = messageSource;
 		this.identityService = identityService;
 		setHeight(100, Unit.PERCENTAGE);
@@ -421,7 +415,6 @@ class UserAddGroupTab extends VerticalLayout{
 		exitButton.setEnabled(false);
 		headerHorizont.setSizeFull();
 		
-
 		headerHorizont.addComponents(joinedComponent, editButton, exitButton);
 		headerHorizont.setComponentAlignment(editButton, Alignment.MIDDLE_RIGHT);
 		headerHorizont.setComponentAlignment(exitButton, Alignment.MIDDLE_RIGHT);
@@ -438,6 +431,7 @@ class UserAddGroupTab extends VerticalLayout{
 						}).map(Group :: getId).collect(Collectors.toList());
 			return groupList.stream();
 		}, query -> {
+			// TODO: correct the expression considering the Sonar Lint advice
 			int count = identityService.createGroupQuery().list().stream().
 					filter(group -> {
 						return group.getId().startsWith(query.getFilter().orElse(""))
@@ -509,15 +503,16 @@ class UserAddGroupTab extends VerticalLayout{
 	private Button createAddGroupButton() {
 		Button createButton = new Button();
 		createButton.setIcon(VaadinIcons.PLUS);
-		
+		// TODO: use MessageSource
+		// TODO: use UTF8 encoding
 		createButton.addClickListener(event -> {
 			try {
 				identityService.createMembership(currentUser.getId(), selectGroup.getValue());
 				groupForUser.refreshAll();
-				Notification.show(selectGroup.getValue().concat("добавлена"), Type.WARNING_MESSAGE);
+				Notification.show(selectGroup.getValue().concat("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"), Type.WARNING_MESSAGE);
 			}
 			catch(Exception e) {
-				Notification.show(selectGroup.getValue().concat("не добавлена"), Type.WARNING_MESSAGE);
+				Notification.show(selectGroup.getValue().concat("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"), Type.WARNING_MESSAGE);
 			}
 		});
 		return createButton;
