@@ -23,9 +23,7 @@ indexes = {
 			@Index(name = "spc_csl_idx_escname", columnList = "name"),
 			@Index(name = "spc_csl_idx_esccode", columnList = "code"),
 			@Index(name = "spc_csl_idx_eschandler", columnList = "handler"),
-			@Index(name = "spc_csl_idx_escproj", columnList = "cp_id"),
-			@Index(name = "spc_csl_idx_esclest", columnList = "est_id"),
-			@Index(name = "spc_csl_idx_escoest", columnList = "oest_id")
+			@Index(name = "spc_csl_idx_escproj", columnList = "cp_id")
 })
 public class EstimateCalculation extends BaseEntity implements IEstimateCalculation, Serializable {
 	private static final long serialVersionUID = -8670063022967614874L;
@@ -39,11 +37,11 @@ public class EstimateCalculation extends BaseEntity implements IEstimateCalculat
 	private ICProject project;
 
 	@OneToMany(targetEntity = LocalEstimate.class)
-	@JoinColumn(name = "id", referencedColumnName = "est_id")
-	private List<ILocalEstimate> estimates;
+	@JoinColumn(name = "est_calc_id", referencedColumnName = "id")
+	private List<ILocalEstimate> localEstimates;
 	
 	@OneToMany(targetEntity = ObjectEstimate.class)
-	@JoinColumn(name = "id", referencedColumnName = "oest_id")
+	@JoinColumn(name = "est_calc_id", referencedColumnName = "id")
 	private List<IObjectEstimate> objectEstimates;
 	
 	public String getCode() {
@@ -79,11 +77,11 @@ public class EstimateCalculation extends BaseEntity implements IEstimateCalculat
 	}
 
 	public List<ILocalEstimate> getEstimates() {
-		return estimates;
+		return localEstimates;
 	}
 
 	public void setEstimates(List<ILocalEstimate> estimates) {
-		this.estimates = estimates;
+		this.localEstimates = estimates;
 	}
 
 	public List<IObjectEstimate> getObjectEstimates() {

@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import ru.gzpn.spc.csl.model.enums.LocalEstimateStatus;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
+import ru.gzpn.spc.csl.model.interfaces.IEstimateCost;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateHead;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimateHistory;
@@ -35,7 +36,8 @@ indexes = {
 		@Index(name = "spc_csl_idx_estdoc", columnList = "doc_id"),
 		@Index(name = "spc_csl_idx_eststg", columnList = "stage_id"),
 		@Index(name = "spc_csl_idx_estoest", columnList = "oest_id"),
-		@Index(name = "spc_csl_idx_esthead", columnList = "est_head_id")
+		@Index(name = "spc_csl_idx_esthead", columnList = "est_head_id"),
+		@Index(name = "spc_csl_idx_estcalc", columnList = "est_calc_id")
 })
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class LocalEstimate extends BaseEntity implements ILocalEstimate, Serializable {
@@ -63,12 +65,12 @@ public class LocalEstimate extends BaseEntity implements ILocalEstimate, Seriali
 	@JoinColumn(name = "stage_id", referencedColumnName = "id")
 	private IStage stage;
 	
-	@OneToMany(targetEntity = LocalEstimate.class)
+	@OneToMany(targetEntity = LocalEstimateHistory.class)
 	@JoinColumn(name = "esthist_id", referencedColumnName = "id")
 	private List<ILocalEstimateHistory> history;
 	
 	@ManyToOne(targetEntity = EstimateCalculation.class)
-	@JoinColumn(name = "id", referencedColumnName = "est_id")
+	@JoinColumn(name = "est_calc_id", referencedColumnName = "id")
 	private IEstimateCalculation estimateCalculation;
 	
 	@ManyToOne(targetEntity = ObjectEstimate.class)
@@ -78,6 +80,10 @@ public class LocalEstimate extends BaseEntity implements ILocalEstimate, Seriali
 	@ManyToOne(targetEntity = EstimateHead.class)
 	@JoinColumn(name = "est_head_id", referencedColumnName = "id")
 	private IEstimateHead estimateHead;
+	
+	@OneToMany(targetEntity = EstimateCost.class)
+	@JoinColumn(name = "lest_id", referencedColumnName = "id")
+	private List<IEstimateCost> estimateCosts;
 	
 	public LocalEstimate() {
 	}
@@ -195,5 +201,13 @@ public class LocalEstimate extends BaseEntity implements ILocalEstimate, Seriali
 
 	public void setEstimateHead(IEstimateHead estimateHead) {
 		this.estimateHead = estimateHead;
+	}
+
+	public List<IEstimateCost> getEstimateCosts() {
+		return estimateCosts;
+	}
+
+	public void setEstimateCosts(List<IEstimateCost> estimateCosts) {
+		this.estimateCosts = estimateCosts;
 	}
 }

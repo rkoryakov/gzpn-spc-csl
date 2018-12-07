@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
+import ru.gzpn.spc.csl.model.interfaces.IEstimateCost;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateHead;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IObjectEstimate;
@@ -24,7 +25,8 @@ indexes = {
 		@Index(name = "spc_csl_idx_oestcode", columnList = "code", unique = true),
 		@Index(name = "spc_csl_idx_oestname", columnList = "name"),
 		@Index(name = "spc_csl_idx_oeststg", columnList = "stage_id"),
-		@Index(name = "spc_csl_idx_oesthead", columnList = "est_head_id")
+		@Index(name = "spc_csl_idx_oesthead", columnList = "est_head_id"),
+		@Index(name = "spc_csl_idx_oestcalc", columnList = "est_calc_id")
 })
 @NamedQueries({})
 public class ObjectEstimate extends BaseEntity implements IObjectEstimate, Serializable {
@@ -47,12 +49,16 @@ public class ObjectEstimate extends BaseEntity implements IObjectEstimate, Seria
 	private IStage stage;
 
 	@ManyToOne(targetEntity = EstimateCalculation.class)
-	@JoinColumn(name = "id", referencedColumnName = "oest_id")
+	@JoinColumn(name = "est_calc_id", referencedColumnName = "id")
 	private IEstimateCalculation estimateCalculation;
 	
 	@ManyToOne(targetEntity = EstimateHead.class)
 	@JoinColumn(name = "est_head_id", referencedColumnName = "id")
 	private IEstimateHead estimateHead;
+	
+	@OneToMany(targetEntity = EstimateCost.class)
+	@JoinColumn(name = "oest_id", referencedColumnName = "id")
+	private List<IEstimateCost> estimateCosts;
 	
 	public String getCode() {
 		return code;
@@ -132,5 +138,13 @@ public class ObjectEstimate extends BaseEntity implements IObjectEstimate, Seria
 
 	public void setEstimateHead(IEstimateHead estimateHead) {
 		this.estimateHead = estimateHead;
+	}
+
+	public List<IEstimateCost> getEstimateCosts() {
+		return estimateCosts;
+	}
+
+	public void setEstimateCosts(List<IEstimateCost> estimateCosts) {
+		this.estimateCosts = estimateCosts;
 	}
 }
