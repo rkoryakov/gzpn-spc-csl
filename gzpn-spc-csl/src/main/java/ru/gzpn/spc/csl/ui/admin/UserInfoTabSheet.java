@@ -38,11 +38,11 @@ import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 
 public class UserInfoTabSheet extends TabSheet {
 	
-	private UserInfoTab userInfoTab;
-	private UserAddGroupTab userAddGroupTab;
+	private UserInfoFormLayout userInfoFormLayout;
+	private UserAddGroupVerticalLayout userAddGroupTab;
 	private MessageSource messageSource;
 	private IdentityService identityService;
-	private UsersAndRolesTab usersAndRolesTab;
+	private UsersAndRolesVerticalLayout usersAndRolesTab;
 	private UIContainer container;
 
 	public UserInfoTabSheet(IdentityService identityService, 
@@ -54,22 +54,22 @@ public class UserInfoTabSheet extends TabSheet {
 		this.messageSource = messageSource;
 		this.identityService = identityService;
 		this.container = container;
-		userInfoTab = new UserInfoTab(identityService, messageSource, userDataProvider, container);
-		userAddGroupTab = new UserAddGroupTab(identityService, messageSource);
-		this.addTab(userInfoTab, "info user");
+		userInfoFormLayout = new UserInfoFormLayout(identityService, messageSource, userDataProvider, container);
+		userAddGroupTab = new UserAddGroupVerticalLayout(identityService, messageSource);
+		this.addTab(userInfoFormLayout, "info user");
 		this.addTab(userAddGroupTab, "user group");
-		userInfoTab.setUserAndRolesTab(usersAndRolesTab);
+		userInfoFormLayout.setUserAndRolesVerticalLayout(usersAndRolesTab);
 	}
 	
-	public UserInfoTab getUserInfoTab() {
-		return userInfoTab;
+	public UserInfoFormLayout getUserInfoFormLayout() {
+		return userInfoFormLayout;
 	}
 	
-	public UserAddGroupTab getUserAddGroupTab() {
+	public UserAddGroupVerticalLayout getUserAddGroupTab() {
 		return userAddGroupTab;
 	}
 	
-	public void setUserAndRolesTab(UsersAndRolesTab tab) {
+	public void setUserAndRolesTab(UsersAndRolesVerticalLayout tab) {
 		usersAndRolesTab = tab;
 	}
 	
@@ -77,8 +77,8 @@ public class UserInfoTabSheet extends TabSheet {
 		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
 	}
 }
-// TODO: use another name. This "UserInfoTab" name is incorrect as FormLayout type is not a Tab 
-class UserInfoTab extends FormLayout{
+
+class UserInfoFormLayout extends FormLayout{
 	
 	private final TextField loginField;
 	private final TextField firstNameField;
@@ -92,11 +92,10 @@ class UserInfoTab extends FormLayout{
 	private MessageSource messageSource;
 	private IdentityService identityService;
 	private Binder<User> formBinder;
-	private UsersAndRolesTab usersAndRolesTab;
+	private UsersAndRolesVerticalLayout usersAndRolesVerticalLayout;
 	private UIContainer container;
 	
-	//TODO: use another name. The same reason 
-	public UserInfoTab(IdentityService identityService, 
+	public UserInfoFormLayout(IdentityService identityService, 
 					MessageSource messageSource, 
 					DataProvider<UserTemplate, String> userDataProvider, 
 					UIContainer container) {
@@ -343,13 +342,13 @@ class UserInfoTab extends FormLayout{
 		
 		return deleteButton;
 	}
-	//TODO: use another name. The same reason 
-	public void setUserAndRolesTab(UsersAndRolesTab tab) {
-		usersAndRolesTab = tab;
+
+	public void setUserAndRolesVerticalLayout(UsersAndRolesVerticalLayout VerticalLayout) {
+		usersAndRolesVerticalLayout = VerticalLayout;
 	}
-	//TODO: use another name. The same reason 
-	public UsersAndRolesTab getUsersAndRolesTab() {
-		return usersAndRolesTab;
+
+	public UsersAndRolesVerticalLayout getUsersAndRolesVerticalLayout() {
+		return usersAndRolesVerticalLayout;
 	}
 
 	public void setData(UserTemplate template) {
@@ -380,8 +379,8 @@ class UserInfoTab extends FormLayout{
 	}
 }
 
-//TODO: use another name. This "UserAddGroupTab" name is incorrect as VerticalLayout type is not a Tab 
-class UserAddGroupTab extends VerticalLayout {
+
+class UserAddGroupVerticalLayout extends VerticalLayout {
 	
 	private MessageSource messageSource;
 	private IdentityService identityService;
@@ -398,7 +397,7 @@ class UserAddGroupTab extends VerticalLayout {
 	private Grid<GroupTemplate> gridGroupAddUser;
 	private JoinedLayout<AbstractComponent, AbstractComponent> joinedComponent;
 	
-	public UserAddGroupTab(IdentityService identityService, 
+	public UserAddGroupVerticalLayout(IdentityService identityService, 
 			MessageSource messageSource) {
 		this.messageSource = messageSource;
 		this.identityService = identityService;

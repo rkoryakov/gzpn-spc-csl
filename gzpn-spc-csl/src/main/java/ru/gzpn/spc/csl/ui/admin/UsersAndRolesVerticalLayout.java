@@ -32,10 +32,9 @@ import com.vaadin.ui.components.grid.SingleSelectionModel;
 
 import ru.gzpn.spc.csl.ui.common.ConfirmDialog;
 
-//TODO: use another name. This "UsersAndRolesTab" name is incorrect as VerticalLayout type is not a Tab 
-public class UsersAndRolesTab extends VerticalLayout {
+public class UsersAndRolesVerticalLayout extends VerticalLayout {
 
-	public static final Logger logger = LoggerFactory.getLogger(UsersAndRolesTab.class);
+	public static final Logger logger = LoggerFactory.getLogger(UsersAndRolesVerticalLayout.class);
 	private IdentityService identityService;
 	private MessageSource messageSource;
 	private TextField searchUserGroup;
@@ -53,8 +52,8 @@ public class UsersAndRolesTab extends VerticalLayout {
 	private UserInfoTabSheet infoUser;
 	
 	private HorizontalSplitPanel panel;
-	//TODO: use another name. The same reason 
-	public UsersAndRolesTab(IdentityService identityService, MessageSource messageSource) {
+
+	public UsersAndRolesVerticalLayout(IdentityService identityService, MessageSource messageSource) {
 		this.identityService = identityService;
 		this.messageSource = messageSource;
 		panel = new HorizontalSplitPanel();
@@ -220,7 +219,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		SingleSelectionModel<UserTemplate> singleSelect = (SingleSelectionModel<UserTemplate>) grid.getSelectionModel();
 		singleSelect.addSingleSelectionListener(event -> {
 			singleSelect.getSelectedItem().ifPresent(item -> {
-				infoUser.getUserInfoTab().setData(item);
+				infoUser.getUserInfoFormLayout().setData(item);
 				infoUser.getUserAddGroupTab().setUser(item);
 				infoUser.setVisible(true);
 			});
@@ -254,7 +253,7 @@ public class UsersAndRolesTab extends VerticalLayout {
 		Button createButton = new Button(nameCreateButton);
 		createButton.addClickListener(event -> {
 			if (selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.USERS)) {
-				infoUser.getUserInfoTab().setData(null);
+				infoUser.getUserInfoFormLayout().setData(null);
 				infoUser.setVisible(true);
 
 			} else if (selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.GROUPS)) {
