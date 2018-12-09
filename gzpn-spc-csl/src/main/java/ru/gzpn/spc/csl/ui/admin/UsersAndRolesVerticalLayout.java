@@ -95,9 +95,7 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 
 			List<User> userList = identityService.createUserQuery().list()
 					.stream()
-						.filter(user -> {
-							return user.getId().startsWith(query.getFilter().orElse(""));
-						}).collect(Collectors.toList());
+						.filter(user -> user.getId().startsWith(query.getFilter().orElse(""))).collect(Collectors.toList());
 			
 			return userList.stream().map(m -> {
 				UserTemplate user = new UserTemplate();
@@ -108,13 +106,10 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 				user.setPassword(m.getPassword());
 				return user;
 			});
-		}, query -> {
-			return identityService.createUserQuery().list()
+		}, query -> identityService.createUserQuery().list()
 					.stream()
-						.filter(user -> {
-							return user.getId().startsWith(query.getFilter().orElse(""));
-						}).collect(Collectors.toList()).size();
-		});
+						.filter(user -> user.getId().startsWith(query.getFilter().orElse("")))
+							.collect(Collectors.toList()).size());
 	}
 	
 	
@@ -123,9 +118,7 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 
 			List<Group> groupList = identityService.createGroupQuery().list()
 					.stream()
-						.filter(group -> {
-							return group.getId().startsWith(query.getFilter().orElse(""));
-						}).collect(Collectors.toList());
+						.filter(group -> group.getId().startsWith(query.getFilter().orElse(""))).collect(Collectors.toList());
 			
 			return groupList.stream().map(m -> {
 				GroupTemplate group = new GroupTemplate();
@@ -136,13 +129,10 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 				group.setDelete(buttonDeleteGroup(m));
 				return group;
 			});
-		}, query -> {
-			// TODO: correct the expression considering the Sonar Lint advice
-			int count = identityService.createGroupQuery().list().stream().filter(group -> {
-						return group.getId().startsWith(query.getFilter().orElse(""));
-					}).collect(Collectors.toList()).size();
-			return count;
-		});
+		}, query -> identityService.createGroupQuery().list()
+					.stream()
+						.filter(group -> group.getId().startsWith(query.getFilter().orElse("")))
+							.collect(Collectors.toList()).size());
 	}
 	
 	public MessageSource getMessageSource() {
@@ -217,13 +207,13 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 		infoUser.setVisible(false);	
 		
 		SingleSelectionModel<UserTemplate> singleSelect = (SingleSelectionModel<UserTemplate>) grid.getSelectionModel();
-		singleSelect.addSingleSelectionListener(event -> {
+		singleSelect.addSingleSelectionListener(event -> 
 			singleSelect.getSelectedItem().ifPresent(item -> {
 				infoUser.getUserInfoFormLayout().setData(item);
 				infoUser.getUserAddGroupTab().setUser(item);
 				infoUser.setVisible(true);
-			});
-		});
+			})
+		);
 		
 		return grid;
 	}
@@ -250,8 +240,8 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 	private Button createButtonCreate() {
 		String nameCreateButton = getI18nText("adminView.button.nameCreateButton");
 
-		Button createButton = new Button(nameCreateButton);
-		createButton.addClickListener(event -> {
+		Button create = new Button(nameCreateButton);
+		create.addClickListener(event -> {
 			if (selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.USERS)) {
 				infoUser.getUserInfoFormLayout().setData(null);
 				infoUser.setVisible(true);
@@ -261,7 +251,7 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 			}
 		});
 		
-		return createButton;
+		return create;
 	}
 
 	public Button getCreateButton() {

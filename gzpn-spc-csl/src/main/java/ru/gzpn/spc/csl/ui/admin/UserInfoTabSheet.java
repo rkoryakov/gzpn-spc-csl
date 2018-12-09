@@ -172,9 +172,8 @@ class UserInfoFormLayout extends FormLayout{
 			.bind(User::getEmail, User::setEmail);
 		binder.forField(newPasswordField).asRequired("Password may not be empty")
             .withValidator(new StringLengthValidator("Password must be at least 7 characters long", 6, null))
-            .bind((usrLocal) -> "", (usrLocal, pwd) -> {
-            	usrLocal.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(pwd));
-            			});
+            .bind((usrLocal) -> "", (usrLocal, pwd) -> 
+            	usrLocal.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(pwd)));
 		return binder;
 	}
 
@@ -209,9 +208,6 @@ class UserInfoFormLayout extends FormLayout{
 	
 	private Button createSaveButton(DataProvider<UserTemplate, String> userDataProvider) {
 		String nameSaveButton = getI18nText("adminView.button.nameSaveButton");
-		String userWindowCaption = getI18nText("adminView.caption.userKey");
-		String notificationChanged = getI18nText("adminView.notification.user.change");
-		String notificationCreated = getI18nText("adminView.notification.user.created");
 		
 		saveButton = new Button(nameSaveButton);
 		saveButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -232,12 +228,17 @@ class UserInfoFormLayout extends FormLayout{
 			
 			User user = identityService.createUserQuery().userId(loginField.getValue()).singleResult();
 			try {
+				String[] paramsForDelete;
 			      if (user == null) {	
 						user = identityService.newUser(loginField.getValue());
-						Notification.show(userWindowCaption.concat(" ").concat(user.getId()).concat(notificationCreated), Type.TRAY_NOTIFICATION);
+						paramsForDelete = new String[] {user.getId()};
+						String notificationCreated = getI18nText("adminView.notification.user.created", paramsForDelete);
+						Notification.show(notificationCreated, Type.TRAY_NOTIFICATION);
 						
 					} else if (user.getId() != null) {
-						Notification.show(userWindowCaption.concat(" ").concat(user.getId()).concat(notificationChanged), Type.TRAY_NOTIFICATION);
+						paramsForDelete = new String[] {user.getId()};
+						String notificationChanged = getI18nText("adminView.notification.user.change", paramsForDelete);
+						Notification.show(notificationChanged, Type.TRAY_NOTIFICATION);
 					}
 			      formBinder.writeBean(user);
 			    } catch (ValidationException e) {
@@ -312,11 +313,9 @@ class UserInfoFormLayout extends FormLayout{
 	}
 	
 	private Button createDeleteButton(DataProvider<UserTemplate, String> userDataProvider) {
-		String notificationDeleted = getI18nText("adminView.notification.user.deleted");
 		String textInfo = getI18nText("adminView.ConfirmDialog.deleteUser.info");
 		String textOKButton = getI18nText("adminView.ConfirmDialog.deleteUser.ok");
 		String textCloseButton = getI18nText("adminView.ConfirmDialog.deleteUser.close");
-		String userWindowCaption = getI18nText("adminView.caption.userKey");
 		String nameDeleteButton = getI18nText("adminView.caption.delete");
 		
 		deleteButton = new Button(nameDeleteButton);
@@ -327,7 +326,9 @@ class UserInfoFormLayout extends FormLayout{
 			User user = identityService.createUserQuery().userId(loginField.getValue()).singleResult();
 			identityService.deleteUser(user.getId());
 			userDataProvider.refreshAll();
-			Notification.show(userWindowCaption.concat(" ").concat(user.getId()).concat(notificationDeleted), Type.WARNING_MESSAGE);
+			String[] paramsForDelete = new String[] {user.getId()};
+			String notificationDeleted = getI18nText("adminView.notification.user.deleted", paramsForDelete);
+			Notification.show(notificationDeleted, Type.WARNING_MESSAGE);
 			loginField.setValue("");
 			firstNameField.setValue("");
 			lastNameField.setValue("");
@@ -343,8 +344,8 @@ class UserInfoFormLayout extends FormLayout{
 		return deleteButton;
 	}
 
-	public void setUserAndRolesVerticalLayout(UsersAndRolesVerticalLayout VerticalLayout) {
-		usersAndRolesVerticalLayout = VerticalLayout;
+	public void setUserAndRolesVerticalLayout(UsersAndRolesVerticalLayout verticalLayout) {
+		usersAndRolesVerticalLayout = verticalLayout;
 	}
 
 	public UsersAndRolesVerticalLayout getUsersAndRolesVerticalLayout() {
@@ -376,6 +377,10 @@ class UserInfoFormLayout extends FormLayout{
 
 	private String getI18nText(String key) {
 		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
+	}
+	
+	private String getI18nText(String key, String[] params) {
+		return messageSource.getMessage(key, params, VaadinSession.getCurrent().getLocale());
 	}
 }
 
@@ -424,20 +429,15 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 	private DataProvider<String, String> createSelectGroupProvider() {
 		return DataProvider.fromFilteringCallbacks(query -> {
 			List<String> groupList = identityService.createGroupQuery().list().stream().
-					filter(group -> {
-							return group.getId().startsWith(query.getFilter().orElse("")) 
-									|| group.getName().startsWith(query.getFilter().orElse(""));
-						}).map(Group :: getId).collect(Collectors.toList());
+					filter(group -> group.getId().startsWith(query.getFilter().orElse("")) 
+									|| group.getName().startsWith(query.getFilter().orElse(""))
+						).map(Group :: getId).collect(Collectors.toList());
 			return groupList.stream();
-		}, query -> {
-			// TODO: correct the expression considering the Sonar Lint advice
-			int count = identityService.createGroupQuery().list().stream().
-					filter(group -> {
-						return group.getId().startsWith(query.getFilter().orElse(""))
-								|| group.getName().startsWith(query.getFilter().orElse(""));
-					}).collect(Collectors.toList()).size();
-			return count;
-		});
+			
+		}, query -> identityService.createGroupQuery().list().stream().
+					filter(group -> group.getId().startsWith(query.getFilter().orElse(""))
+								|| group.getName().startsWith(query.getFilter().orElse(""))
+					).collect(Collectors.toList()).size());
 	}
 
 	private DataProvider<GroupTemplate, String> createDataProvider() {
@@ -451,22 +451,20 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 				group.setDelete(buttonDeleteGroupMemberUser(query.getFilter().orElse("admin"), m));
 				return group;
 			});
-		}, query -> {
-			return (int) identityService.createGroupQuery().groupMember(query.getFilter().orElse("admin")).count();
-		});
+		}, query -> (int) identityService.createGroupQuery().groupMember(query.getFilter().orElse("admin")).count());
 	}
 
 	private Button buttonDeleteGroupMemberUser(String userID, Group group) {
 		Button deleteButton = new Button();
-		String groupWindowCaption = getI18nText("adminView.caption.groupKey");
-		String notificationDeleted = getI18nText("adminView.notification.group.deleted");
 		String textInfo = getI18nText("adminView.ConfirmDialog.deleteGroup.info");
 		String textOKButton = getI18nText("adminView.ConfirmDialog.deleteUser.ok");
 		String textCloseButton = getI18nText("adminView.ConfirmDialog.deleteUser.close");
 		ClickListener okDeleteClick = event -> {
 			identityService.deleteMembership(userID, group.getId());
 			groupForUser.refreshAll();
-			Notification.show(groupWindowCaption.concat(" ").concat(group.getId()).concat(notificationDeleted), Type.WARNING_MESSAGE);
+			String[] paramsForDelete = new String[] {group.getId(), userID};
+			String notificationDeleted = getI18nText("adminView.notification.group.deleted", paramsForDelete);
+			Notification.show(notificationDeleted, Type.WARNING_MESSAGE);
 		};
 		deleteButton.addClickListener(event -> {
 			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
@@ -502,23 +500,25 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 	private Button createAddGroupButton() {
 		Button createButton = new Button();
 		createButton.setIcon(VaadinIcons.PLUS);
-		// TODO: use MessageSource
-		// TODO: use UTF8 encoding
 		createButton.addClickListener(event -> {
+			String[] paramsForAdd = new String[] {selectGroup.getValue(), currentUser.getId()};
 			try {
 				identityService.createMembership(currentUser.getId(), selectGroup.getValue());
 				groupForUser.refreshAll();
-				Notification.show(selectGroup.getValue().concat("���������"), Type.WARNING_MESSAGE);
+				String notificationTextAdd = getI18nText("adminView.notification.user.addGroup", paramsForAdd);
+				Notification.show(notificationTextAdd, Type.WARNING_MESSAGE);
 			}
 			catch(Exception e) {
-				Notification.show(selectGroup.getValue().concat("�� ���������"), Type.WARNING_MESSAGE);
+				String notificationTextErr = getI18nText("adminView.notification.user.addGroupErr", paramsForAdd);
+				Notification.show(notificationTextErr, Type.WARNING_MESSAGE);
 			}
 		});
 		return createButton;
 	}
 	
 	private Button createEditButton() {
-		Button edit = new Button("Edit");
+		String nameEditButton = getI18nText("adminView.caption.edit");
+		Button edit = new Button(nameEditButton);
 		edit.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		edit.addClickListener(event ->{
 			joinedComponent.setVisible(true);
@@ -568,5 +568,9 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 	
 	private String getI18nText(String key) {
 		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
+	}
+	
+	private String getI18nText(String key, String[] params) {
+		return messageSource.getMessage(key, params, VaadinSession.getCurrent().getLocale());
 	}
 }
