@@ -38,7 +38,7 @@ import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 
 public class UserInfoTabSheet extends TabSheet {
 	
-	private UserInfoFormLayout userInfoFormLayout;
+	private UserInfoVerticalLayout userInfoVerticalLayout;
 	private UserAddGroupVerticalLayout userAddGroupTab;
 	private MessageSource messageSource;
 	private IdentityService identityService;
@@ -50,19 +50,21 @@ public class UserInfoTabSheet extends TabSheet {
 			DataProvider<UserTemplate, String> userDataProvider, 
 			DataProvider<GroupTemplate, String> groupDataProvider, 
 			UIContainer container) {
-		
 		this.messageSource = messageSource;
 		this.identityService = identityService;
 		this.container = container;
-		userInfoFormLayout = new UserInfoFormLayout(identityService, messageSource, userDataProvider, container);
+		userInfoVerticalLayout = new UserInfoVerticalLayout(identityService, messageSource, userDataProvider, container);
 		userAddGroupTab = new UserAddGroupVerticalLayout(identityService, messageSource);
-		this.addTab(userInfoFormLayout, "info user");
-		this.addTab(userAddGroupTab, "user group");
-		userInfoFormLayout.setUserAndRolesVerticalLayout(usersAndRolesTab);
+		String editInfoUser = getI18nText("adminView.caption.editInfoUser");
+		String editGroupUser = getI18nText("adminView.caption.editGroupUser");
+		this.addTab(userInfoVerticalLayout, editInfoUser);
+		this.addTab(userAddGroupTab, editGroupUser);
+		userInfoVerticalLayout.setUserAndRolesVerticalLayout(usersAndRolesTab);
+		
 	}
 	
-	public UserInfoFormLayout getUserInfoFormLayout() {
-		return userInfoFormLayout;
+	public UserInfoVerticalLayout getUserInfoVerticalLayout() {
+		return userInfoVerticalLayout;
 	}
 	
 	public UserAddGroupVerticalLayout getUserAddGroupTab() {
@@ -78,7 +80,7 @@ public class UserInfoTabSheet extends TabSheet {
 	}
 }
 
-class UserInfoFormLayout extends FormLayout{
+class UserInfoVerticalLayout extends VerticalLayout {
 	
 	private final TextField loginField;
 	private final TextField firstNameField;
@@ -95,29 +97,23 @@ class UserInfoFormLayout extends FormLayout{
 	private UsersAndRolesVerticalLayout usersAndRolesVerticalLayout;
 	private UIContainer container;
 	
-	public UserInfoFormLayout(IdentityService identityService, 
+	public UserInfoVerticalLayout(IdentityService identityService, 
 					MessageSource messageSource, 
 					DataProvider<UserTemplate, String> userDataProvider, 
 					UIContainer container) {
 		this.messageSource = messageSource;
 		this.identityService = identityService;
 		this.container = container;
-		
 		String loginCaption = getI18nText("adminView.caption.login");
 		String firstNameCaption = getI18nText("adminView.caption.firstName");
 		String lastNameCaption = getI18nText("adminView.caption.lastName");
 		String emailCaption = getI18nText("adminView.caption.email");
 		String newPasswordCaption = getI18nText("adminView.caption.newPasswordCaption");
-
 		this.setMargin(true);
 		this.addStyleName("outlined");
-		
 		final HorizontalLayout topButtonLayout = new HorizontalLayout();
+		final FormLayout infoLayout = new FormLayout();
 		final HorizontalLayout buttonLayout = new HorizontalLayout();
-		saveButton = createSaveButton(userDataProvider);
-		editButton = createEditButton();
-		cancelButton = createCancelButton(userDataProvider);
-		deleteButton = createDeleteButton(userDataProvider);
 		
 		loginField = new TextField(loginCaption, "");
 		loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
@@ -134,52 +130,62 @@ class UserInfoFormLayout extends FormLayout{
 		newPasswordField = new PasswordField(newPasswordCaption, "");
 		newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 		newPasswordField.setReadOnly(true);
-		
 		loginField.setWidth(90.0f, Unit.PERCENTAGE);
 		firstNameField.setWidth(90.0f, Unit.PERCENTAGE);
 		lastNameField.setWidth(90.0f, Unit.PERCENTAGE);
 		emailField.setWidth(90.0f, Unit.PERCENTAGE);
 		newPasswordField.setWidth(90.0f, Unit.PERCENTAGE);
-
+		formBinder = createBinder();	
+		saveButton = createSaveButton(userDataProvider);
+		editButton = createEditButton();
+		cancelButton = createCancelButton(userDataProvider);
+		deleteButton = createDeleteButton(userDataProvider);
 		topButtonLayout.setSizeFull();
 		topButtonLayout.addComponents(editButton, cancelButton);
 		topButtonLayout.setComponentAlignment(editButton, Alignment.MIDDLE_RIGHT);
 		topButtonLayout.setComponentAlignment(cancelButton, Alignment.MIDDLE_RIGHT);
 		topButtonLayout.setMargin(false);
 		this.addComponent(topButtonLayout);
-		
-		this.addComponent(loginField);
-		this.addComponent(firstNameField);
-		this.addComponent(lastNameField);
-		this.addComponent(emailField);
-		this.addComponent(newPasswordField);
+		infoLayout.setSizeFull();
+		infoLayout.addComponent(loginField);
+		infoLayout.addComponent(firstNameField);
+		infoLayout.addComponent(lastNameField);
+		infoLayout.addComponent(emailField);
+		infoLayout.addComponent(newPasswordField);
+		infoLayout.setMargin(false);
+		this.addComponent(infoLayout);
 		buttonLayout.setSizeFull();
 		buttonLayout.addComponents(saveButton, deleteButton);
+		buttonLayout.setComponentAlignment(saveButton, Alignment.MIDDLE_RIGHT);
 		buttonLayout.setComponentAlignment(deleteButton, Alignment.MIDDLE_RIGHT);
 		buttonLayout.setMargin(false);
-		this.addComponents(buttonLayout);
-		formBinder = createBinder();		
+		this.addComponents(buttonLayout);	
 	}
 	
 	private Binder<User> createBinder() {
 		Binder<User> binder = new Binder<>();
-		
-		binder.forField(loginField).asRequired("Name may not be empty").bind(User::getId, User::setId);
-		binder.forField(firstNameField).asRequired("Name may not be empty").bind(User::getFirstName, User::setFirstName);
-		binder.forField(lastNameField).asRequired("Name may not be empty").bind(User::getLastName, User::setLastName);
-		binder.forField(emailField).asRequired("Email may not be empty")
-			.withValidator(new EmailValidator("Not a valid email address"))
-			.bind(User::getEmail, User::setEmail);
-		binder.forField(newPasswordField).asRequired("Password may not be empty")
-            .withValidator(new StringLengthValidator("Password must be at least 7 characters long", 6, null))
-            .bind((usrLocal) -> "", (usrLocal, pwd) -> 
-            	usrLocal.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(pwd)));
+		String necessarylogin = getI18nText("adminView.necessary.user.login");
+		String necessaryFirstName = getI18nText("adminView.necessary.user.firstName");
+		String necessaryLastName = getI18nText("adminView.necessary.user.lastName");
+		String necessaryEmail = getI18nText("adminView.necessary.user.email");
+		String necessaryPassword = getI18nText("adminView.necessary.user.password");
+		String emailValid = getI18nText("adminView.necessary.user.emailValid");
+		String passwordValid = getI18nText("adminView.necessary.user.passwordValid");
+		binder.forField(loginField).asRequired(necessarylogin).bind(User::getId, User::setId);
+		binder.forField(firstNameField).asRequired(necessaryFirstName).bind(User::getFirstName, User::setFirstName);
+		binder.forField(lastNameField).asRequired(necessaryLastName).bind(User::getLastName, User::setLastName);
+		binder.forField(emailField).asRequired(necessaryEmail)
+			.withValidator(new EmailValidator(emailValid)).bind(User::getEmail, User::setEmail);
+		binder.forField(newPasswordField).asRequired(necessaryPassword)
+            .withValidator(new StringLengthValidator(passwordValid, 6, null))
+            .bind((usrLocal) -> "", (usrLocal, pwd) -> usrLocal.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(pwd)));
 		return binder;
 	}
 
 	private Button createEditButton() {
 		String nameEditButton = getI18nText("adminView.caption.edit");
 		editButton = new Button(nameEditButton);
+		editButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		editButton.addClickListener(event -> {
 			editButton.setEnabled(false);
 			editButton.setVisible(false);
@@ -195,7 +201,7 @@ class UserInfoFormLayout extends FormLayout{
 			emailField.setReadOnly(false);
 			newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
 			newPasswordField.setReadOnly(false);
-			saveButton.setEnabled(true);
+
 			saveButton.setVisible(true);
 			editButton.setEnabled(false);
 			deleteButton.setEnabled(false);
@@ -203,17 +209,16 @@ class UserInfoFormLayout extends FormLayout{
 			cancelButton.setVisible(true);
 			container.getCreateUserAndRolesButton().setEnabled(false);
 		});
+		formBinder.addValueChangeListener(event -> saveButton.setEnabled(formBinder.validate().isOk()));
 		return editButton;
 	}
 	
 	private Button createSaveButton(DataProvider<UserTemplate, String> userDataProvider) {
 		String nameSaveButton = getI18nText("adminView.button.nameSaveButton");
-		
 		saveButton = new Button(nameSaveButton);
 		saveButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		saveButton.setEnabled(false);
 		saveButton.setVisible(false);
-		
 		saveButton.addClickListener(event -> {
 			loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 			loginField.setReadOnly(true);
@@ -225,28 +230,27 @@ class UserInfoFormLayout extends FormLayout{
 			emailField.setReadOnly(true);
 			newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 			newPasswordField.setReadOnly(true);
-			
 			User user = identityService.createUserQuery().userId(loginField.getValue()).singleResult();
+			String[] paramsForSave;
 			try {
-				String[] paramsForDelete;
 			      if (user == null) {	
 						user = identityService.newUser(loginField.getValue());
-						paramsForDelete = new String[] {user.getId()};
-						String notificationCreated = getI18nText("adminView.notification.user.created", paramsForDelete);
+						paramsForSave = new String[] {user.getId()};
+						String notificationCreated = getI18nText("adminView.notification.user.created", paramsForSave);
 						Notification.show(notificationCreated, Type.TRAY_NOTIFICATION);
 						
 					} else if (user.getId() != null) {
-						paramsForDelete = new String[] {user.getId()};
-						String notificationChanged = getI18nText("adminView.notification.user.change", paramsForDelete);
+						paramsForSave = new String[] {user.getId()};
+						String notificationChanged = getI18nText("adminView.notification.user.change", paramsForSave);
 						Notification.show(notificationChanged, Type.TRAY_NOTIFICATION);
 					}
 			      formBinder.writeBean(user);
 			    } catch (ValidationException e) {
-			      Notification.show("Person could not be saved, please check error");
+			      paramsForSave = new String[] {user.getId()};
+				  String notificationSaveErr = getI18nText("adminView.notification.user.change", paramsForSave);
+			      Notification.show(notificationSaveErr);
 			    }
-
 			formBinder.setBean(user);
-			
 			identityService.saveUser(user);
 			userDataProvider.refreshAll();
 			saveButton.setEnabled(false);
@@ -258,19 +262,15 @@ class UserInfoFormLayout extends FormLayout{
 			cancelButton.setVisible(false);
 			container.getCreateUserAndRolesButton().setEnabled(true);
 		});
-		
 		return saveButton;
 	}
 	
 	private Button createCancelButton(DataProvider<UserTemplate, String> userDataProvider) {
 		String textCloseButton = getI18nText("adminView.ConfirmDialog.deleteUser.close");
-		
 		cancelButton = new Button(textCloseButton);
 		cancelButton.setEnabled(false);
 		cancelButton.setVisible(false);
-		
 		cancelButton.addClickListener(event -> {
-			
 			User user = identityService.createUserQuery().userId(loginField.getValue()).singleResult();
 			if (user == null) {	
 			    loginField.setValue("");
@@ -278,7 +278,6 @@ class UserInfoFormLayout extends FormLayout{
 			    lastNameField.setValue("");
 			    emailField.setValue("");
 			    newPasswordField.setValue("");
-						
 			} else if (user.getId() != null) {
 			    loginField.setValue(user.getId() == null ? "" : user.getId());
 			    firstNameField.setValue(user.getFirstName() == null ? "" : user.getFirstName());
@@ -297,7 +296,7 @@ class UserInfoFormLayout extends FormLayout{
 			emailField.setReadOnly(true);
 			newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 			newPasswordField.setReadOnly(true);
-			
+	
 			userDataProvider.refreshAll();
 			editButton.setEnabled(true);
 			editButton.setVisible(true);
@@ -317,11 +316,10 @@ class UserInfoFormLayout extends FormLayout{
 		String textOKButton = getI18nText("adminView.ConfirmDialog.deleteUser.ok");
 		String textCloseButton = getI18nText("adminView.ConfirmDialog.deleteUser.close");
 		String nameDeleteButton = getI18nText("adminView.caption.delete");
-		
 		deleteButton = new Button(nameDeleteButton);
 		deleteButton.setStyleName(ValoTheme.BUTTON_DANGER);
 		deleteButton.setIcon(VaadinIcons.TRASH);
-		
+	
 		ClickListener okDeleteClick = event -> {
 			User user = identityService.createUserQuery().userId(loginField.getValue()).singleResult();
 			identityService.deleteUser(user.getId());
@@ -340,7 +338,6 @@ class UserInfoFormLayout extends FormLayout{
 			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
 			getUI().addWindow(box);
 		});	
-		
 		return deleteButton;
 	}
 
@@ -364,6 +361,29 @@ class UserInfoFormLayout extends FormLayout{
 			newPasswordField.setValue("");
 			newPasswordField.setCaption(passwordCaption);
 			deleteButton.setEnabled(false);
+
+			editButton.setEnabled(false);
+			editButton.setVisible(false);
+			if(loginField.getValue().isEmpty()) {
+				loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
+				loginField.setReadOnly(false);
+			}
+			firstNameField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
+			firstNameField.setReadOnly(false);
+			lastNameField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
+			lastNameField.setReadOnly(false);
+			emailField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
+			emailField.setReadOnly(false);
+			newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
+			newPasswordField.setReadOnly(false);
+
+			saveButton.setVisible(true);
+			editButton.setEnabled(false);
+			deleteButton.setEnabled(false);
+			cancelButton.setEnabled(true);
+			cancelButton.setVisible(true);
+			container.getCreateUserAndRolesButton().setEnabled(false);
+			formBinder.addValueChangeListener(event -> saveButton.setEnabled(formBinder.validate().isOk()));
 		}
 		else {
 			loginField.setValue(template.getId() == null ? "" : template.getId());
@@ -373,6 +393,7 @@ class UserInfoFormLayout extends FormLayout{
 			newPasswordField.setValue("");
 			newPasswordField.setCaption(newPasswordCaption);
 		}
+		
 	}	
 
 	private String getI18nText(String key) {
@@ -395,7 +416,7 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 	private DataProvider<String, String> selectGroupProvider = createSelectGroupProvider();
 	private ConfigurableFilterDataProvider<String, Void, String> selectGroupFilter;
 	private Button editButton;
-	private Button exitButton;
+	private Button viewButton;
 	private DataProvider<GroupTemplate, String> groupForUser = createDataProvider();
 	private ConfigurableFilterDataProvider<GroupTemplate, Void, String> groupUserIDFilter;
 	private UserTemplate currentUser;
@@ -410,18 +431,18 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 		selectGroup = createSelectGroup(selectGroupProvider);
 		addGroupButton = createAddGroupButton();
 		editButton = createEditButton();
-		exitButton = createExitButton();
+		viewButton = createViewButton();
 		joinedComponent = new JoinedLayout<>(selectGroup, addGroupButton);
 		headerHorizont = new HorizontalLayout();
 		joinedComponent.setVisible(false);
 		joinedComponent.setEnabled(false);
-		exitButton.setVisible(false);
-		exitButton.setEnabled(false);
+		viewButton.setVisible(false);
+		viewButton.setEnabled(false);
 		headerHorizont.setSizeFull();
 		
-		headerHorizont.addComponents(joinedComponent, editButton, exitButton);
+		headerHorizont.addComponents(joinedComponent, editButton, viewButton);
 		headerHorizont.setComponentAlignment(editButton, Alignment.MIDDLE_RIGHT);
-		headerHorizont.setComponentAlignment(exitButton, Alignment.MIDDLE_RIGHT);
+		headerHorizont.setComponentAlignment(viewButton, Alignment.MIDDLE_RIGHT);
 		gridGroupAddUser = createGroupAddUser();
 		addComponents(headerHorizont, gridGroupAddUser);
 	}
@@ -463,7 +484,7 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 			identityService.deleteMembership(userID, group.getId());
 			groupForUser.refreshAll();
 			String[] paramsForDelete = new String[] {group.getId(), userID};
-			String notificationDeleted = getI18nText("adminView.notification.group.deleted", paramsForDelete);
+			String notificationDeleted = getI18nText("adminView.notification.group.deletedFromUser", paramsForDelete);
 			Notification.show(notificationDeleted, Type.WARNING_MESSAGE);
 		};
 		deleteButton.addClickListener(event -> {
@@ -523,8 +544,8 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 		edit.addClickListener(event ->{
 			joinedComponent.setVisible(true);
 			joinedComponent.setEnabled(true);
-			exitButton.setVisible(true);
-			exitButton.setEnabled(true);
+			viewButton.setVisible(true);
+			viewButton.setEnabled(true);
 			edit.setVisible(false);
 			edit.setEnabled(false);
 			gridGroupAddUser.getColumn("del").setHidden(false);
@@ -532,19 +553,19 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 		return edit;
 	}
 	
-	private Button createExitButton() {
-		Button exit = new Button("Exit");
-		
-		exit.addClickListener(event ->{
+	private Button createViewButton() {
+		String nameViewButton = getI18nText("adminView.caption.view");
+		Button view = new Button(nameViewButton);
+		view.addClickListener(event ->{
 			joinedComponent.setVisible(false);
 			joinedComponent.setEnabled(false);
-			exit.setVisible(false);
-			exit.setEnabled(false);
+			view.setVisible(false);
+			view.setEnabled(false);
 			editButton.setVisible(true);
 			editButton.setEnabled(true);
 			gridGroupAddUser.getColumn("del").setHidden(true);
 		});
-		return exit;
+		return view;
 	}
 	
 	private Grid<GroupTemplate> createGroupAddUser() {
@@ -552,7 +573,6 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 		String idCaption = getI18nText("adminView.caption.id");
 		String nameCaption = getI18nText("adminView.caption.nameRoles");
 		String typeCaption = getI18nText("adminView.caption.typeRoles");
-		
 		Grid<GroupTemplate> grid = new Grid<>();
 		groupUserIDFilter = groupForUser.withConfigurableFilter();
 		grid.setSizeFull();
@@ -560,7 +580,6 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 		grid.addColumn(GroupTemplate::getName).setCaption(nameCaption);
 		grid.addColumn(GroupTemplate::getType).setCaption(typeCaption);
 		grid.addComponentColumn(GroupTemplate::getDelete).setHidden(true).setId("del").setCaption(deleteCaption).setWidth(95.0);
-		
 		grid.setWidth(100, Unit.PERCENTAGE);
 		grid.setDataProvider(groupUserIDFilter);
 		return grid;
