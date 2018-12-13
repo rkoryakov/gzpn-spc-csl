@@ -37,18 +37,18 @@ public class ProjectEntityGraph {
 		mapNodes.put(Entities.WORK, 6);
 		mapNodes.put(Entities.LOCALESTIMATE, 7);
 		
-		mapRibs.put(new Rib(Entities.HPROJECT, Entities.CPROJECT), new LinkedFields("id", "hproject"));//"hp_id", "capitalProjects"));
-		mapRibs.put(new Rib(Entities.CPROJECT, Entities.HPROJECT), new LinkedFields("hproject", "id"));//("hp_id", "id", "hproject"));
+		mapRibs.put(new Rib(Entities.HPROJECT, Entities.CPROJECT), new LinkedFields("id", "hproject"));
+		mapRibs.put(new Rib(Entities.CPROJECT, Entities.HPROJECT), new LinkedFields("hproject", "id"));
 		mapRibs.put(new Rib(Entities.CPROJECT, Entities.PHASE), new LinkedFields("phase", "id"));
-		mapRibs.put(new Rib(Entities.PHASE, Entities.CPROJECT), new LinkedFields("id", "phase"));//, "cprojects"));
-		mapRibs.put(new Rib(Entities.CPROJECT, Entities.STAGE), new LinkedFields("stage", "id"));//, "stage"));
-		mapRibs.put(new Rib(Entities.STAGE, Entities.CPROJECT), new LinkedFields("id", "stage"));//, "cprojects"));
-		mapRibs.put(new Rib(Entities.CPROJECT, Entities.PLANOBJECT), new LinkedFields("id", "cproject"));//, "planObjects"));
-		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.CPROJECT), new LinkedFields("cproject", "id"));//, "cproject"));
-		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.WORK), new LinkedFields("id", "planObj"));//, "works"));
-		mapRibs.put(new Rib(Entities.WORK, Entities.PLANOBJECT), new LinkedFields("planObj", "id"));//, "planObj"));
-		mapRibs.put(new Rib(Entities.WORK, Entities.LOCALESTIMATE), new LinkedFields("localEstimate", "id"));//, "localEstimate"));
-		mapRibs.put(new Rib(Entities.LOCALESTIMATE, Entities.WORK), new LinkedFields("id", "localEstimate"));//, "works"));
+		mapRibs.put(new Rib(Entities.PHASE, Entities.CPROJECT), new LinkedFields("id", "phase"));
+		mapRibs.put(new Rib(Entities.CPROJECT, Entities.STAGE), new LinkedFields("stage", "id"));
+		mapRibs.put(new Rib(Entities.STAGE, Entities.CPROJECT), new LinkedFields("id", "stage"));
+		mapRibs.put(new Rib(Entities.CPROJECT, Entities.PLANOBJECT), new LinkedFields("id", "cproject"));
+		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.CPROJECT), new LinkedFields("cproject", "id"));
+		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.WORK), new LinkedFields("id", "planObj"));
+		mapRibs.put(new Rib(Entities.WORK, Entities.PLANOBJECT), new LinkedFields("planObj", "id"));
+		mapRibs.put(new Rib(Entities.WORK, Entities.LOCALESTIMATE), new LinkedFields("localEstimate", "id"));
+		mapRibs.put(new Rib(Entities.LOCALESTIMATE, Entities.WORK), new LinkedFields("id", "localEstimate"));
 		// hierarchical entities
 		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.PLANOBJECT), new LinkedFields("id", "parent"));
 		mapRibs.put(new Rib(Entities.PHASE, Entities.PHASE), new LinkedFields("id", "parent"));
@@ -88,6 +88,14 @@ public class ProjectEntityGraph {
 		return result;
 	}
 	
+	/**
+	 * Get relations (the foreign key fields) between two nodes (entities) 
+	 * If left_node = right_node (i.e. relation between the same node) we
+	 * say that left_node can relates to the right_node by the ID field.
+	 * @param nodeFrom
+	 * @param nodeTo
+	 * @return
+	 */
 	public static Optional<LinkedFields> getLinkedFields(String nodeFrom, String nodeTo) {
 		Entities left = Entities.valueOf(nodeFrom.toUpperCase());
 		Entities right = Entities.valueOf(nodeTo.toUpperCase());
@@ -95,9 +103,7 @@ public class ProjectEntityGraph {
 				mapRibs.computeIfAbsent(new Rib(left, right), e -> {
 					LinkedFields result = null;
 					if (left == right) {
-						if (left != Entities.PLANOBJECT && left != Entities.PHASE) {
-							result = new LinkedFields("id", "id");
-						}
+						result = new LinkedFields("id", "id");
 					}
 					return result;
 				}));

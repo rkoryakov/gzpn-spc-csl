@@ -1,15 +1,15 @@
 package ru.gzpn.spc.csl.services.bl;
 
-import javax.persistence.EntityManager;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.UserSettings;
+import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.repositories.UserSettingsRepository;
 import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
@@ -19,17 +19,22 @@ public class DataUserSettigsService {
 	public static final Logger logger = LoggerFactory.getLogger(DataUserSettigsService.class);
 	@Autowired
 	private UserSettingsRepository repository;
-	@Autowired
-	private JpaContext jpaContext;
 	
-	public NodeWrapper getDefaultNodesHierarchy() {
-		return new NodeWrapper("HProject", "name")
-				.addChild(new NodeWrapper("CProject", "name"))
+	public NodeWrapper getDefaultNodesHierarchyCreateDoc() {
+		NodeWrapper root =  new NodeWrapper("HProject", "name");
+		root.addChild(new NodeWrapper("CProject", "name"))
 				.addChild(new NodeWrapper("Phase", "name"))
-				.addChild(new NodeWrapper("Phase"));
+					.addChild(new NodeWrapper("Phase"));
+		return root;
 	}
 	
-	public EntityManager geEntityManager() {
-		return jpaContext.getEntityManagerByManagedType(UserSettings.class);
+	public CreateDocSettingsJson getCreateDocSettings(String userId) {
+		List<UserSettings> list = repository.findByUserId(userId);
+		CreateDocSettingsJson result = null;
+		
+		if (!list.isEmpty()) {
+			result = list.get(0).getDocSettingsJson();
+		}
+		return result;
 	}
 }

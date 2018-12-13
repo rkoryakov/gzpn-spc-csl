@@ -1,19 +1,23 @@
 package ru.gzpn.spc.csl.model;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
 import ru.gzpn.spc.csl.model.interfaces.IUserSettings;
-import ru.gzpn.spc.csl.model.jsontypes.ProjectTreeSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 
 @Entity
+@NamedQueries({
+	@NamedQuery(name = "UserSettings.findByUserId", query = "SELECT u FROM UserSettings u WHERE u.userId = ?1")
+})
 @Table(schema = "spc_csl_schema", name = "user_settings", indexes = {
 		@Index(name = "spc_csl_idx_ussid", columnList = "userId", unique = true)
 })
@@ -21,29 +25,27 @@ public class UserSettings extends BaseEntity implements IUserSettings, Serializa
 	private static final long serialVersionUID = 3134589263886817266L;
 
 	private String userId;
-
+	
 	@Column
-	@Type(type="ProjectTreeSettingsJsonType")
-	private ProjectTreeSettingsJson treeSettings;
+	@Type(type="CreateDocSettingsJsonType")
+	private CreateDocSettingsJson docSettingsJson;
 	
 	public UserSettings() {
-	}
-	
-	@Override
-	public Map<String, String> getSettings() {
-		return null;
-	}
-
-	@Override
-	public void setSettings(Map<String, String> settings) {
-		
 	}
 	
 	public String getUserId() {
 		return userId;
 	}
-
+	
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public CreateDocSettingsJson getDocSettingsJson() {
+		return docSettingsJson;
+	}
+
+	public void setDocSettingsJson(CreateDocSettingsJson docSettingsJson) {
+		this.docSettingsJson = docSettingsJson;
 	}
 }

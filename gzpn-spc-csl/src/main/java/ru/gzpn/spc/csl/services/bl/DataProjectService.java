@@ -77,6 +77,11 @@ public class DataProjectService {
 		return getBaseRepository().countOfGroupedItems(entity, groupByField);
 	}
 	
+	/**
+	 * Get grouped items by field in the target entity
+	 * @param node
+	 * @return Stream<NodeWrapper>
+	 */
 	public Stream<NodeWrapper> getItemsGroupedByField(NodeWrapper node) {
 		return getItemsGroupedByField(node.getEntityName(), node.getGroupFiled())
 				.peek(e -> {
@@ -85,19 +90,42 @@ public class DataProjectService {
 				});
 	}
 	
+	/**
+	 * Get grouped items by field value in the target entity
+	 * @param node
+	 * @return
+	 */
 	public Stream<NodeWrapper> getItemsGroupedByValue(NodeWrapper node) {
-		Stream<NodeWrapper> result = null;
+		Stream<NodeWrapper> result = Stream.empty();
 		if (node.isGrouping() && node.hasGroupFieldValue() && node.hasChild()) {
-			
+			result = getBaseRepository().getItemsGroupedByFieldValue(node.getEntityName(), node.getChild().getEntityName(), 
+					node.getGroupFiled(), node.getGroupFiledValue(), node.getChild().getGroupFiled()).peek(e -> {
+						e.setParent(node.getParent());
+						e.setChild(node.getChild());
+					});
 		}
 		
 		return result;
 	}
 	
+	/**
+	 * Get grouped items by filed in the same entity
+	 * @param entity
+	 * @param groupByField
+	 * @return Stream<NodeWrapper>
+	 */
 	public Stream<NodeWrapper> getItemsGroupedByField(String entity, String groupByField) {
 		return getBaseRepository().getItemsGroupedByField(entity, groupByField);
 	}
 	
+	/**
+	 * Get grouped items by field value in the same entity
+	 * @param entity
+	 * @param fieldName
+	 * @param fieldValue
+	 * @param groupFieldName
+	 * @return Stream<NodeWrapper>
+	 */
 	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String entity, String fieldName, Object fieldValue, String groupFieldName) {
 		return getBaseRepository().getItemsGroupedByFieldValue(entity, fieldName, fieldValue, groupFieldName);
 	}

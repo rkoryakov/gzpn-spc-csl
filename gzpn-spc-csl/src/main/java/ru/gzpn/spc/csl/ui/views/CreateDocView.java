@@ -16,6 +16,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.services.bl.DataProjectService;
+import ru.gzpn.spc.csl.services.bl.DataUserSettigsService;
 import ru.gzpn.spc.csl.ui.createdoc.DocCreatingLayout;
 
 @SpringView(name = CreateDocView.NAME)
@@ -26,6 +27,8 @@ public class CreateDocView extends VerticalLayout implements View {
 	
 	@Autowired
 	private DataProjectService projectService;
+	@Autowired
+	private DataUserSettigsService userSettingsService;
 	@Autowired 
 	private MessageSource messageSource;
 	
@@ -36,7 +39,7 @@ public class CreateDocView extends VerticalLayout implements View {
 
 	@PostConstruct
 	void init() {
-		DocCreatingLayout layout = new DocCreatingLayout(projectService, messageSource);
+		DocCreatingLayout layout = new DocCreatingLayout(projectService, userSettingsService, messageSource);
 		addComponent(layout);
 	}
 

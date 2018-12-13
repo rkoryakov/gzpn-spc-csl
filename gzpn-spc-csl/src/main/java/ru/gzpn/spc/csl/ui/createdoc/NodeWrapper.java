@@ -1,5 +1,7 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
+import java.io.Serializable;
+
 import ru.gzpn.spc.csl.model.BaseEntity;
 
 /**
@@ -7,15 +9,15 @@ import ru.gzpn.spc.csl.model.BaseEntity;
  * Used while creating tree structure entities where a node is an entity or 
  * is a group by some field of the current entity
  */
-public class NodeWrapper {
+public class NodeWrapper implements Serializable {
+	private static final long serialVersionUID = -6142105774113139782L;
+	
 	private String entityName;
 	private String groupFiled;
 	private Object groupFiledValue;
-	private NodeWrapper parent;
-	private NodeWrapper child;
-	private BaseEntity item; 
-	// if the current node isn't a group then fetch entities
-	private BaseEntity fetchedData;
+	private NodeWrapper parent; // parent level for query data
+	private NodeWrapper child; // child level for query data
+	private BaseEntity item; // fetched data if the current node isn't a group
 	
 	public NodeWrapper(String entityName, String groupByFiled) {
 		this.entityName = entityName;

@@ -87,6 +87,7 @@ public class DataProjectServiceTest {
 							
 							// LocalEstimate
 							LocalEstimate estimate = new LocalEstimate("00000" + i + "" + j + "" + k + "" + l, "Estimate " + num);
+							estimate.setStage(stage);
 							estimate = service.getLocalEstimateRepository().save(estimate);
 							work.setLocalEstimate(estimate);
 							work = service.getWorkRepository().save(work);
@@ -228,14 +229,14 @@ public class DataProjectServiceTest {
 	public void getCountByGroupFieldTest() {
 		getCountByGroupField("Stage", "name");
 		getCountByGroupField("Stage", "id");
-		getCountByGroupField("Stage", "changeTime");
+		getCountByGroupField("Stage", "changeDate");
 	}
 
 	@Test
 	public void getItemsGroupedByFieldTest() {
 		getItemsGroupedByField("Stage", "name");
 		getItemsGroupedByField("Stage", "id");
-		getItemsGroupedByField("Stage", "changeTime");
+		getItemsGroupedByField("Stage", "changeDate");
 	}
 	
 	@Test

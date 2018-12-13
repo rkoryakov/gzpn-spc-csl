@@ -93,7 +93,7 @@ public abstract class BaseJsonType implements UserType {
 				final ObjectMapper mapper = new ObjectMapper();
 				result = mapper.readValue(cellContent.getBytes("UTF-8"), returnedClass());
 			} catch (final Exception ex) {
-				throw new RuntimeException("Failed to convert String to Invoice: " + ex.getMessage(), ex);
+				throw new RuntimeException("Failed to convert JSON to the target object: " + ex.getMessage(), ex);
 			}
 		}
 		return result;
@@ -110,7 +110,7 @@ public abstract class BaseJsonType implements UserType {
 				w.flush();
 				ps.setObject(index, w.toString(), Types.OTHER);
 			} catch (final Exception ex) {
-				throw new RuntimeException("Failed to convert Invoice to String: " + ex.getMessage(), ex);
+				throw new RuntimeException("Failed to convert the object to JSON: " + ex.getMessage(), ex);
 			}
 		} else {
 			ps.setNull(index, Types.OTHER);
