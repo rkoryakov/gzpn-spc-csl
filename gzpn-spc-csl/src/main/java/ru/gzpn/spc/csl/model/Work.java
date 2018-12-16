@@ -68,7 +68,7 @@ public class Work extends BaseEntity implements IWork, Serializable {
 	
 	@ManyToOne(targetEntity = WorkSet.class)
 	@JoinColumn(name = "wkset_id", referencedColumnName = "id")
-	private IWorkSet work;
+	private IWorkSet workSet;
 	
 	public Work() {
 	}
@@ -133,6 +133,14 @@ public class Work extends BaseEntity implements IWork, Serializable {
 
 	public void setMilestone(IMilestone milestone) {
 		this.milestone = milestone;
+	}
+
+	public IWorkSet getWorkSet() {
+		return workSet;
+	}
+
+	public void setWorkSet(IWorkSet workSet) {
+		this.workSet = workSet;
 	}
 
 	public LocalDate getBeginDate() {

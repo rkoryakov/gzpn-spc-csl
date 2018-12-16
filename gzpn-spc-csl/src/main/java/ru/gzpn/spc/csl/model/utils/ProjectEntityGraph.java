@@ -15,15 +15,23 @@ import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph.Rib.LinkedFields;
  */
 public class ProjectEntityGraph {
 	// the graph
-	private static final int [][] G = new int [][] {{0,0,0,0,0,0,0,0}, // the first column and row aren't being used
-													{0,0,1,2,2,2,2,2}, // 1 HProject
-													{0,2,0,2,2,2,5,5}, // 2 CProject
-													{0,2,3,0,2,2,2,2}, // 3 Phase
-													{0,2,4,2,0,2,2,2}, // 4 Stage
-													{0,2,5,2,2,0,5,6}, // 5 PlanObject
-													{0,5,5,5,5,6,0,6}, // 6 Work
-													{0,6,6,6,6,6,7,0}  // 7 Local estimate 
-								   					};
+	private static final int [][] G = new int [][] {{0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 }, // the first column and row aren't being used
+													{0 ,0 ,1 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 }, // 1 HProject              //Крупный проект
+												  	{0 ,2 ,0 ,2 ,2 ,2 ,5 ,4 ,13,4 ,2 ,4 ,4 ,2 ,4 ,5 }, // 2 CProject              //Капитальный проект
+												  	{0 ,2 ,3 ,0 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 }, // 3 Phase                 //Фаза
+												  	{0 ,2 ,4 ,2 ,0 ,2 ,2 ,4 ,2 ,7 ,2 ,7 ,7 ,2 ,4 ,2 }, // 4 Stage                 //Стадия
+												  	{0 ,2 ,5 ,2 ,2 ,0 ,5 ,6 ,6 ,6 ,2 ,6 ,6 ,2 ,2 ,5 }, // 5 PlanObject            //Объекты генплана
+												  	{0 ,5 ,5 ,5 ,7 ,6 ,0 ,6 ,13,6 ,7 ,7 ,7 ,6 ,7 ,6 }, // 6 Work                  //Работа
+												  	{0 ,4 ,4 ,4 ,7 ,6 ,7 ,0 ,6 ,7 ,7 ,7 ,7 ,6 ,7 ,6 }, // 7 LocalEstimate         //Локальная смета 
+													{0 ,13,13,13,13,13,13,13,0 ,13,13,13,13,8 ,13,13}, // 8 Contract              //Договор
+												  	{0 ,7 ,7 ,7 ,7 ,6 ,9 ,9 ,6 ,0 ,7 ,7 ,7 ,6 ,7 ,6 }, // 9 Document              //Документ
+												  	{0 ,2 ,10,2 ,2 ,2 ,7 ,10,2 ,7 ,0 ,7 ,7 ,2 ,10,2 }, // 10 EstimateCalculation  //Сметный расчет
+													{0 ,7 ,7 ,7 ,7 ,7 ,7 ,11,7 ,7 ,7 ,0 ,7 ,7 ,11,7 }, // 11 EstimateCost         //Сметная стоимость
+												  	{0 ,7 ,7 ,7 ,7 ,7 ,7 ,12,7 ,7 ,7 ,7 ,0 ,7 ,12,7 }, // 12 EstimateHead         //Главы
+												  	{0 ,2 ,13,2 ,2 ,2 ,13,6 ,13,6 ,2 ,6 ,6 ,0 ,2 ,6 }, // 13 Milestone            //Этап
+												  	{0 ,4 ,4 ,4 ,14,4 ,7 ,14,4 ,7 ,14,14,14,4 ,0 ,7 }, // 14 ObjectEstimate       //Объектная смета
+												  	{0 ,5 ,5 ,5 ,5 ,15,15,6 ,6 ,6 ,5 ,6 ,6 ,6 ,6 ,0 }  // 15 WorkSet              //Комплекты
+													};
 
 	private static final EnumMap<Entities, Integer> mapNodes = new EnumMap<>(Entities.class);
 	private static final Map<Rib, LinkedFields> mapRibs = new HashMap<>();
@@ -36,19 +44,74 @@ public class ProjectEntityGraph {
 		mapNodes.put(Entities.PLANOBJECT, 5);
 		mapNodes.put(Entities.WORK, 6);
 		mapNodes.put(Entities.LOCALESTIMATE, 7);
+		mapNodes.put(Entities.CONTRACT, 8);
+		mapNodes.put(Entities.DOCUMENT, 9);
+		mapNodes.put(Entities.ESTIMATE_CALCULATION, 10);
+		mapNodes.put(Entities.ESTIMATE_COST, 11);
+		mapNodes.put(Entities.ESTIMATE_HEAD, 12);
+		mapNodes.put(Entities.MILESTONE, 13);
+		mapNodes.put(Entities.OBJECT_ESTIMATE, 14);
+		mapNodes.put(Entities.WORK_SET, 15);
 		
 		mapRibs.put(new Rib(Entities.HPROJECT, Entities.CPROJECT), new LinkedFields("id", "hproject"));
 		mapRibs.put(new Rib(Entities.CPROJECT, Entities.HPROJECT), new LinkedFields("hproject", "id"));
+		
 		mapRibs.put(new Rib(Entities.CPROJECT, Entities.PHASE), new LinkedFields("phase", "id"));
 		mapRibs.put(new Rib(Entities.PHASE, Entities.CPROJECT), new LinkedFields("id", "phase"));
 		mapRibs.put(new Rib(Entities.CPROJECT, Entities.STAGE), new LinkedFields("stage", "id"));
 		mapRibs.put(new Rib(Entities.STAGE, Entities.CPROJECT), new LinkedFields("id", "stage"));
 		mapRibs.put(new Rib(Entities.CPROJECT, Entities.PLANOBJECT), new LinkedFields("id", "cproject"));
 		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.CPROJECT), new LinkedFields("cproject", "id"));
+		//new Ribs 16.12.2018 by Fisenko KI
+		mapRibs.put(new Rib(Entities.CPROJECT, Entities.ESTIMATE_CALCULATION), new LinkedFields("estimateCalculations", "project"));
+		mapRibs.put(new Rib(Entities.ESTIMATE_CALCULATION, Entities.CPROJECT), new LinkedFields("project", "estimateCalculations"));
+		mapRibs.put(new Rib(Entities.CPROJECT, Entities.MILESTONE), new LinkedFields("milestone", "project"));
+		mapRibs.put(new Rib(Entities.MILESTONE, Entities.CPROJECT), new LinkedFields("project", "milestone"));
+		
+		mapRibs.put(new Rib(Entities.STAGE, Entities.LOCALESTIMATE), new LinkedFields("localEstimates", "stage"));
+		mapRibs.put(new Rib(Entities.LOCALESTIMATE, Entities.STAGE), new LinkedFields("stage", "localEstimates"));
+		mapRibs.put(new Rib(Entities.STAGE, Entities.OBJECT_ESTIMATE), new LinkedFields("objectEstimates", "stage"));
+		mapRibs.put(new Rib(Entities.OBJECT_ESTIMATE, Entities.STAGE), new LinkedFields("stage", "objectEstimates"));
+		
+		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.WORK_SET), new LinkedFields("workset", "planObject"));
+		mapRibs.put(new Rib(Entities.WORK_SET, Entities.PLANOBJECT), new LinkedFields("planObject", "workset"));
 		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.WORK), new LinkedFields("id", "planObj"));
 		mapRibs.put(new Rib(Entities.WORK, Entities.PLANOBJECT), new LinkedFields("planObj", "id"));
+		
+		mapRibs.put(new Rib(Entities.WORK, Entities.DOCUMENT), new LinkedFields("documents", "work"));
+		mapRibs.put(new Rib(Entities.DOCUMENT, Entities.WORK), new LinkedFields("work", "documents"));
 		mapRibs.put(new Rib(Entities.WORK, Entities.LOCALESTIMATE), new LinkedFields("localEstimate", "id"));
 		mapRibs.put(new Rib(Entities.LOCALESTIMATE, Entities.WORK), new LinkedFields("id", "localEstimate"));
+		mapRibs.put(new Rib(Entities.WORK, Entities.MILESTONE), new LinkedFields("milestone", "works"));
+		mapRibs.put(new Rib(Entities.MILESTONE, Entities.WORK), new LinkedFields("works", "milestone"));
+		
+		
+		mapRibs.put(new Rib(Entities.WORK, Entities.WORK_SET), new LinkedFields("workSet", "id"));
+		mapRibs.put(new Rib(Entities.WORK_SET, Entities.WORK), new LinkedFields("id", "workSet"));
+		
+		mapRibs.put(new Rib(Entities.LOCALESTIMATE, Entities.DOCUMENT), new LinkedFields("document", "localEstimates"));
+		mapRibs.put(new Rib(Entities.DOCUMENT, Entities.LOCALESTIMATE), new LinkedFields("localEstimates", "document"));
+		mapRibs.put(new Rib(Entities.LOCALESTIMATE, Entities.ESTIMATE_CALCULATION), new LinkedFields("estimateCalculation", "localEstimates"));
+		mapRibs.put(new Rib(Entities.ESTIMATE_CALCULATION, Entities.LOCALESTIMATE), new LinkedFields("localEstimates", "estimateCalculation"));
+		mapRibs.put(new Rib(Entities.LOCALESTIMATE, Entities.ESTIMATE_COST), new LinkedFields("estimateCosts", "localEstimate"));
+		mapRibs.put(new Rib(Entities.ESTIMATE_COST, Entities.LOCALESTIMATE), new LinkedFields("localEstimate", "estimateCosts"));
+		mapRibs.put(new Rib(Entities.LOCALESTIMATE, Entities.ESTIMATE_HEAD), new LinkedFields("estimateHead", "localEstimates"));
+		mapRibs.put(new Rib(Entities.ESTIMATE_HEAD, Entities.LOCALESTIMATE), new LinkedFields("localEstimates", "estimateHead"));
+		mapRibs.put(new Rib(Entities.LOCALESTIMATE, Entities.OBJECT_ESTIMATE), new LinkedFields("objectEstimate", "localEstimates"));
+		mapRibs.put(new Rib(Entities.OBJECT_ESTIMATE, Entities.LOCALESTIMATE), new LinkedFields("localEstimates", "objectEstimate"));
+		
+		mapRibs.put(new Rib(Entities.CONTRACT, Entities.MILESTONE), new LinkedFields("milestones", "contract"));
+		mapRibs.put(new Rib(Entities.MILESTONE, Entities.CONTRACT), new LinkedFields("contract", "milestones"));
+		
+		mapRibs.put(new Rib(Entities.ESTIMATE_CALCULATION, Entities.OBJECT_ESTIMATE), new LinkedFields("objectEstimates", "estimateCalculation"));
+		mapRibs.put(new Rib(Entities.OBJECT_ESTIMATE, Entities.ESTIMATE_CALCULATION), new LinkedFields("estimateCalculation", "objectEstimates"));
+		
+		mapRibs.put(new Rib(Entities.ESTIMATE_COST, Entities.OBJECT_ESTIMATE), new LinkedFields("objectEstimate", "estimateCosts"));
+		mapRibs.put(new Rib(Entities.OBJECT_ESTIMATE, Entities.ESTIMATE_COST), new LinkedFields("estimateCosts", "objectEstimate"));
+		
+		mapRibs.put(new Rib(Entities.ESTIMATE_HEAD, Entities.OBJECT_ESTIMATE), new LinkedFields("objectEstimates", "estimateHead"));
+		mapRibs.put(new Rib(Entities.OBJECT_ESTIMATE, Entities.ESTIMATE_HEAD), new LinkedFields("estimateHead", "objectEstimates"));
+		
 		// hierarchical entities
 		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.PLANOBJECT), new LinkedFields("id", "parent"));
 		mapRibs.put(new Rib(Entities.PHASE, Entities.PHASE), new LinkedFields("id", "parent"));
