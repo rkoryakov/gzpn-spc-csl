@@ -68,8 +68,8 @@ public class ProjectEntityGraph {
 		mapRibs.put(new Rib(Entities.CPROJECT, Entities.MILESTONE), new LinkedFields("milestone", "project"));
 		mapRibs.put(new Rib(Entities.MILESTONE, Entities.CPROJECT), new LinkedFields("project", "milestone"));
 		
-		mapRibs.put(new Rib(Entities.STAGE, Entities.LOCALESTIMATE), new LinkedFields("localEstimates", "stage"));
-		mapRibs.put(new Rib(Entities.LOCALESTIMATE, Entities.STAGE), new LinkedFields("stage", "localEstimates"));
+		mapRibs.put(new Rib(Entities.STAGE, Entities.LOCALESTIMATE), new LinkedFields("id", "stage"));
+		mapRibs.put(new Rib(Entities.LOCALESTIMATE, Entities.STAGE), new LinkedFields("stage", "id"));
 		mapRibs.put(new Rib(Entities.STAGE, Entities.OBJECT_ESTIMATE), new LinkedFields("objectEstimates", "stage"));
 		mapRibs.put(new Rib(Entities.OBJECT_ESTIMATE, Entities.STAGE), new LinkedFields("stage", "objectEstimates"));
 		

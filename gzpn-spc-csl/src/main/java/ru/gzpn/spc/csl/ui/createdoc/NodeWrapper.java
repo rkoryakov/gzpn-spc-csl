@@ -117,4 +117,11 @@ public class NodeWrapper implements Serializable {
 	public boolean hasEntityItem() {
 		return this.item != null;
 	}
+
+	@Override
+	public String toString() {
+		return "NodeWrapper [entityName=" + entityName + ", groupFiled=" + groupFiled + ", groupFiledValue="
+				+ groupFiledValue + ", item=" + item + "]";
+	}
+	
 }

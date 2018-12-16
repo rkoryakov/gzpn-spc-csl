@@ -122,6 +122,7 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
 			createJpqlQueryGroupedByFieldValue(formatter, sourceEntity, targetEntity, sourceFieldName, targetGroupFieldName);
 			logger.debug("JPQL string '{}'", jpql);
+			logger.debug("sourceFieldValue '{}'", sourceFieldValue);
 			TypedQuery<NodeWrapper> query = entityManager.createQuery(jpql.toString(), NodeWrapper.class);
 			result = query.setParameter("sourceFieldValue", sourceFieldValue).getResultList().stream();
 		}
@@ -136,7 +137,7 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		boolean isGroup = targetGroupFieldName != null && !targetGroupFieldName.isEmpty();
 		
 		if (isGroup) {
-			jpqlFormatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%3$s', T.%3$s)"
+			jpqlFormatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%2$s', '%3$s', T.%3$s)"
 					+ " FROM %1$s S, %2$s T", sourceEntity, targetEntity, targetGroupFieldName);
 		} else {
 			jpqlFormatter.format("SELECT DISTINCT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%2$s', T)"
@@ -151,10 +152,15 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 					isPathMoreOne ? path.get(1).getName() : path.get(0).getName());
 		String leftSourceField = sourceNext.get().getLeftEntityField();
 		String rightSourceField = sourceNext.get().getRightEntityField();
-		jpqlFormatter.format(" WHERE S.%1$s = :sourceFieldValue AND S.%2$s = %3$s.%4$s", sourceFieldName,
+		if (path.size() == 2) {
+			jpqlFormatter.format(" WHERE S.%1$s = :sourceFieldValue AND S.%2$s = %3$s.%4$s", sourceFieldName,
+					leftSourceField, "T", rightSourceField);
+		} else {
+			jpqlFormatter.format(" WHERE S.%1$s = :sourceFieldValue AND S.%2$s = %3$s.%4$s", sourceFieldName,
 					leftSourceField, isPathMoreOne ? "E_1" : "T", rightSourceField);
+		}
 
-		for (int i = 1; i < path.size() - 1; i++) {
+		for (int i = 1; i < path.size() - 1; i ++) {
 			Entities left = path.get(i);
 			Entities right = path.get(i + 1);
 			String leftShortcut = "E_" + i;

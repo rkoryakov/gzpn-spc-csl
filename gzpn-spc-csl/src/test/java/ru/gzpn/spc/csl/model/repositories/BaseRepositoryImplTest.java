@@ -36,17 +36,31 @@ public class BaseRepositoryImplTest {
 	}
 	
 	@Test
+	public void getItemsGroupedByFieldValueTest0() {
+		assertThat(service.getBaseRepository().getItemsGroupedByFieldValue(Entities.HPROJECT.getName(), Entities.CPROJECT.getName(),
+				HProject.FIELD_NAME, "Havy Project 0", CProject.FIELD_NAME))
+		.size().isEqualTo(5);
+	}
+	
+	@Test
 	public void getItemsGroupedByFieldValueTest1() {
 		assertThat(service.getBaseRepository().getItemsGroupedByFieldValue(Entities.HPROJECT.getName(), Entities.LOCALESTIMATE.getName(),
 				HProject.FIELD_NAME, "Havy Project 0", null))
-		.size().isEqualTo(125);
+		.size().isEqualTo(1250);
+	}
+	
+	@Test
+	public void getItemsGroupedByFieldValueTest1_repeat() {
+		assertThat(service.getBaseRepository().getItemsGroupedByFieldValue(Entities.HPROJECT.getName(), Entities.LOCALESTIMATE.getName(),
+				HProject.FIELD_NAME, "Havy Project 0", null))
+		.size().isEqualTo(1250);
 	}
 	
 	@Test
 	public void getItemsGroupedByFieldValueTest2() {
 		assertThat(service.getBaseRepository().getItemsGroupedByFieldValue(Entities.HPROJECT.getName(), Entities.LOCALESTIMATE.getName(),
 				HProject.FIELD_NAME, "Havy Project 0", LocalEstimate.FIELD_NAME))
-		.size().isEqualTo(5);
+		.size().isEqualTo(210);
 	}
 	
 	@Test
@@ -74,14 +88,14 @@ public class BaseRepositoryImplTest {
 	public void getItemsGroupedByFieldValueTest6() {
 		assertThat(service.getBaseRepository().getItemsGroupedByFieldValue(Entities.STAGE.getName(), Entities.PHASE.getName(),
 				Stage.FIELD_NAME, "Stage 1", null))
-		.size().isEqualTo(6);
+		.size().isEqualTo(5);
 	}
 	
 	@Test
 	public void getItemsGroupedByFieldValueTest7() {
 		assertThat(service.getBaseRepository().getItemsGroupedByFieldValue(Entities.STAGE.getName(), Entities.PHASE.getName(),
 				Stage.FIELD_NAME, "Stage 1", Phase.FIELD_NAME))
-		.size().isEqualTo(6);
+		.size().isEqualTo(5);
 	}
 	
 	@Test

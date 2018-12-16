@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.data.provider.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.data.provider.HierarchicalQuery;
 
@@ -11,7 +14,7 @@ import ru.gzpn.spc.csl.services.bl.DataProjectService;
 import ru.gzpn.spc.csl.services.bl.DataUserSettigsService;
 
 public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProvider<NodeWrapper, NodeFilter> {
-
+	public static final Logger logger = LoggerFactory.getLogger(ProjectTreeDataProvider.class);
 	private DataProjectService projectService;
 	private DataUserSettigsService userSettigsService;
 	
@@ -42,9 +45,11 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 		
 		if (parent != null) {
 				result = projectService.getItemsGroupedByValue(parent);
+				logger.debug("[fetchChildrenFromBackEnd] result list {}", result.toArray());
 		} else {
 			final NodeWrapper rootSettingsNode = userSettigsService.getCreateDocSettings().getLeftTreeGrid();
 			result = projectService.getItemsGroupedByField(rootSettingsNode);
+			logger.debug("[fetchChildrenFromBackEnd] rootSettingsNode {}", rootSettingsNode);
 		}
 
 		return result;

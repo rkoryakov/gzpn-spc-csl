@@ -99,9 +99,10 @@ public class DataProjectService {
 		Stream<NodeWrapper> result = Stream.empty();
 		if (node.isGrouping() && node.hasGroupFieldValue() && node.hasChild()) {
 			result = getBaseRepository().getItemsGroupedByFieldValue(node.getEntityName(), node.getChild().getEntityName(), 
-					node.getGroupFiled(), node.getGroupFiledValue(), node.getChild().getGroupFiled()).peek(e -> {
-						e.setParent(node.getParent());
-						e.setChild(node.getChild());
+					node.getGroupFiled(), node.getGroupFiledValue(), node.getChild().getGroupFiled()
+					).peek(e -> {
+						e.setParent(node);
+						e.setChild(node.getChild().getChild());
 					});
 		}
 		
