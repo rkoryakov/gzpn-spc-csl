@@ -37,18 +37,16 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 	@Override
 	protected Stream<NodeWrapper> fetchChildrenFromBackEnd(HierarchicalQuery<NodeWrapper, NodeFilter> query) {
 		Stream<NodeWrapper> result = null;
-		NodeWrapper current = query.getParent();
+		NodeWrapper parent = query.getParent();
 		//NodeFilter nodeFilter = query.getFilter().get();
 		
-		if (current != null) {
-			
-				result = projectService.getItemsGroupedByValue(current);
-				
+		if (parent != null) {
+				result = projectService.getItemsGroupedByValue(parent);
 		} else {
-			final NodeWrapper rootSettingsNode = userSettigsService.getDefaultNodesHierarchyCreateDoc();
+			final NodeWrapper rootSettingsNode = userSettigsService.getCreateDocSettings().getLeftTreeGrid();
 			result = projectService.getItemsGroupedByField(rootSettingsNode);
 		}
 
 		return result;
-	}	
+	}
 }

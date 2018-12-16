@@ -13,22 +13,34 @@ import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
 public class CreateDocSettingsJson implements Serializable {
 	private static final long serialVersionUID = -8491801489639919153L;
-	// sequence of grouping fields/entities to show in treeGreed component
+	
+	// sequence of grouping fields/entities to show in a treeGreed component
 	private NodeWrapper leftTreeGroup;
 	private NodeWrapper rightTreeGroup;
-	// the showing columns of the end entity in hierarchy 
+	// the displayed columns of the end entity in the hierarchy 
 	private List<String> leftResultColumns;
 	private List<String> rightresultColumns;
 	
 	public NodeWrapper getLeftTreeGrid() {
-		return leftTreeGroup;
+		NodeWrapper result = leftTreeGroup;
+		if (result == null) {
+			result = getDefaultNodesHierarchyLeft();
+		}
+		return result;
 	}
+	
 	public void setLeftTreeGrid(NodeWrapper leftTreeGrid) {
 		this.leftTreeGroup = leftTreeGrid;
 	}
+	
 	public NodeWrapper getRightTreeGrid() {
-		return rightTreeGroup;
+		NodeWrapper result = rightTreeGroup;
+		if (result == null) {
+			result = getDefaultHierarchyRight();
+		}
+		return result;
 	}
+	
 	public void setRightTreeGrid(NodeWrapper rightTreeGrid) {
 		this.rightTreeGroup = rightTreeGrid;
 	}
@@ -43,5 +55,17 @@ public class CreateDocSettingsJson implements Serializable {
 	}
 	public void setRightresultColumns(List<String> rightresultColumns) {
 		this.rightresultColumns = rightresultColumns;
+	}
+	
+	public NodeWrapper getDefaultNodesHierarchyLeft() {
+		NodeWrapper root =  new NodeWrapper("HProject", "name");
+		root.addChild(new NodeWrapper("CProject", "name"))
+				.addChild(new NodeWrapper("Phase", "name"))
+					.addChild(new NodeWrapper("Phase"));
+		return root;
+	}
+	
+	public NodeWrapper getDefaultHierarchyRight() {
+		return new NodeWrapper("Document");
 	}
 }

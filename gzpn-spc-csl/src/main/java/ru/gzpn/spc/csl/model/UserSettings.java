@@ -28,7 +28,7 @@ public class UserSettings extends BaseEntity implements IUserSettings, Serializa
 	
 	@Column
 	@Type(type="CreateDocSettingsJsonType")
-	private CreateDocSettingsJson docSettingsJson;
+	private CreateDocSettingsJson createDocSettingsJson;
 	
 	public UserSettings() {
 	}
@@ -42,10 +42,10 @@ public class UserSettings extends BaseEntity implements IUserSettings, Serializa
 	}
 
 	public CreateDocSettingsJson getDocSettingsJson() {
-		return docSettingsJson;
+		return createDocSettingsJson;
 	}
 
 	public void setDocSettingsJson(CreateDocSettingsJson docSettingsJson) {
-		this.docSettingsJson = docSettingsJson;
+		this.createDocSettingsJson = docSettingsJson;
 	}
 }

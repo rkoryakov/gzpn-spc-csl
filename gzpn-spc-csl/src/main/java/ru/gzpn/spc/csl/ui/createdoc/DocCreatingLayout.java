@@ -49,7 +49,7 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	private Component createProjectTree() {
 		projectTree = new TreeGrid<>();
 		projectTree.setDataProvider(dataProvider);
-		//projectTree.addColumn("Name").setCaption("Name").
+		projectTree.addColumn("Name").setCaption("Name");
 		return projectTree;
 	}
 

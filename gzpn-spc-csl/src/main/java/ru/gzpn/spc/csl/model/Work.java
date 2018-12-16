@@ -20,6 +20,7 @@ import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IMilestone;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWork;
+import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 
 @Entity
 @NamedQueries({ 
@@ -64,6 +65,10 @@ public class Work extends BaseEntity implements IWork, Serializable {
 	@ManyToOne(targetEntity = Milestone.class)
 	@JoinColumn(name = "milst_id", referencedColumnName = "id")
 	private IMilestone milestone;
+	
+	@ManyToOne(targetEntity = WorkSet.class)
+	@JoinColumn(name = "wkset_id", referencedColumnName = "id")
+	private IWorkSet work;
 	
 	public Work() {
 	}
