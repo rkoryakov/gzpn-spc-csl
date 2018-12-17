@@ -7,7 +7,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-public class ConfirmDialog extends Window {
+public class ConfirmDialogWindow extends Window {
 
 	private Button okButton;
 	private Button closeButton;
@@ -15,7 +15,7 @@ public class ConfirmDialog extends Window {
 	private String textInfoBox;
 	private ClickListener listener;
 	
-	public ConfirmDialog(String textInfoBox, String textOK, String textClose, ClickListener listener) {
+	public ConfirmDialogWindow(String textInfoBox, String textOK, String textClose, ClickListener listener) {
 		this.textInfoBox = textInfoBox;
 		this.listener = listener;
 		body = createVerticalLayout(textInfoBox, textOK, textClose, listener);
@@ -25,7 +25,7 @@ public class ConfirmDialog extends Window {
 		this.setContent(body);	
 	}
 	
-	public ConfirmDialog(String textInfoBox, ClickListener listener) {
+	public ConfirmDialogWindow(String textInfoBox, ClickListener listener) {
 		this.textInfoBox = textInfoBox;
 		this.listener = listener;
 		body = createVerticalLayout(textInfoBox, null, null, listener);
