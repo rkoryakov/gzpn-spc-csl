@@ -19,7 +19,7 @@ public class CreateDocSettingsJson implements Serializable {
 	private NodeWrapper rightTreeGroup;
 	// the displayed columns of the end entity in the hierarchy 
 	private List<String> leftResultColumns;
-	private List<String> rightresultColumns;
+	private List<String> rightResultColumns;
 	
 	public NodeWrapper getLeftTreeGrid() {
 		NodeWrapper result = leftTreeGroup;
@@ -51,10 +51,10 @@ public class CreateDocSettingsJson implements Serializable {
 		this.leftResultColumns = leftResultColumns;
 	}
 	public List<String> getRightresultColumns() {
-		return rightresultColumns;
+		return rightResultColumns;
 	}
 	public void setRightresultColumns(List<String> rightresultColumns) {
-		this.rightresultColumns = rightresultColumns;
+		this.rightResultColumns = rightresultColumns;
 	}
 	
 	public NodeWrapper getDefaultNodesHierarchyLeft() {
