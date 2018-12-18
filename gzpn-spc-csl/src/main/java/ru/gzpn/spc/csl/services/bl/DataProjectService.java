@@ -83,9 +83,9 @@ public class DataProjectService {
 	 * @return Stream<NodeWrapper>
 	 */
 	public Stream<NodeWrapper> getItemsGroupedByField(NodeWrapper node) {
-		return getItemsGroupedByField(node.getEntityName(), node.getGroupFiled())
+		return getItemsGroupedByField(node.getEntityName(), node.getGroupField())
 				.peek(e -> {
-					e.setParent(node.getParent());
+					e.setParent(node);
 					e.setChild(node.getChild());
 				});
 	}
@@ -97,15 +97,16 @@ public class DataProjectService {
 	 */
 	public Stream<NodeWrapper> getItemsGroupedByValue(NodeWrapper node) {
 		Stream<NodeWrapper> result = Stream.empty();
+		logger.debug("[getItemsGroupedByValue] {}", node);
 		if (node.isGrouping() && node.hasGroupFieldValue() && node.hasChild()) {
 			result = getBaseRepository().getItemsGroupedByFieldValue(node.getEntityName(), node.getChild().getEntityName(), 
-					node.getGroupFiled(), node.getGroupFiledValue(), node.getChild().getGroupFiled()
+					node.getGroupField(), node.getGroupFiledValue(), node.getChild().getGroupField()
 					).peek(e -> {
 						e.setParent(node);
 						e.setChild(node.getChild().getChild());
 					});
 		}
-		
+
 		return result;
 	}
 	

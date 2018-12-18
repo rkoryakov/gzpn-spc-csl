@@ -263,7 +263,7 @@ public class DataProjectServiceTest {
 	private void getItemsGroupedByField(String entity, String field) {
 		DataProjectService.logger.debug("[TEST getItemsByGroupField('{}', '{}')] - {}", entity, field,
 				service.getItemsGroupedByField(entity, field)
-				.map(n-> n.getEntityName() + ",  " + n.getGroupFiled() + " = " + n.getGroupFiledValue())
+				.map(n-> n.getEntityName() + ",  " + n.getGroupField() + " = " + n.getGroupFiledValue())
 				.reduce(new StringBuilder(""), (p, s)-> p.append("\n").append(s),  (p, s)-> p.append(s)));
 	}
 	

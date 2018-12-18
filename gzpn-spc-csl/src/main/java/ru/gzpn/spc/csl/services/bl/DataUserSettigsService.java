@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,12 @@ public class DataUserSettigsService {
 	ServerProperties serverProperties;
 	
 	public CreateDocSettingsJson getCreateDocSettings() {
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		Object principal = new Object();
+		if (auth != null) {
+			principal = auth.getPrincipal();
+		}
+		
 		String user = null;
 		
 		if (principal instanceof UserDetails) {
