@@ -1,7 +1,5 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -11,25 +9,31 @@ import com.vaadin.data.provider.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.data.provider.HierarchicalQuery;
 
 import ru.gzpn.spc.csl.services.bl.DataProjectService;
-import ru.gzpn.spc.csl.services.bl.DataUserSettigsService;
 
 public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProvider<NodeWrapper, NodeFilter> {
+	private static final long serialVersionUID = 7274680832695288557L;
+	
 	public static final Logger logger = LoggerFactory.getLogger(ProjectTreeDataProvider.class);
 	private DataProjectService projectService;
-	private DataUserSettigsService userSettigsService;
+	private NodeWrapper settings;
 	
-	private Map<String, List<String>> nodesPath = null;
-	
-	public ProjectTreeDataProvider(DataProjectService projectService, DataUserSettigsService userSettigsService) {
+	public ProjectTreeDataProvider(DataProjectService projectService, NodeWrapper settings) {
 		this.projectService = projectService;
-		this.userSettigsService = userSettigsService;
+		this.settings = settings;
 	}
 	
 	@Override
 	public int getChildCount(HierarchicalQuery<NodeWrapper, NodeFilter> query) {
-		int result = (int)fetchChildrenFromBackEnd(query).count();
-
-		return result;
+		NodeWrapper parent = query.getParent();
+		long result;
+		
+		if (parent != null) {
+			result = projectService.getCount(parent.getEntityName(), parent.getGroupField());
+		} else {
+			result = projectService.getCount(settings.getEntityName(), settings.getGroupField());
+		}
+		
+		return (int)result;
 	}
 
 	@Override
@@ -39,19 +43,20 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 
 	@Override
 	protected Stream<NodeWrapper> fetchChildrenFromBackEnd(HierarchicalQuery<NodeWrapper, NodeFilter> query) {
-		Stream<NodeWrapper> result = null;
+		Stream<NodeWrapper> result;
 		NodeWrapper parent = query.getParent();
-		//NodeFilter nodeFilter = query.getFilter().get();
+		NodeFilter nodeFilter = query.getFilter().orElse(new NodeFilter(""));
 		
 		if (parent != null) {
-				result = projectService.getItemsGroupedByValue(parent);
-				logger.debug("[fetchChildrenFromBackEnd] result list {}", result.toArray());
+			result = filter(projectService.getItemsGroupedByValue(parent), nodeFilter);
 		} else {
-			final NodeWrapper rootSettingsNode = userSettigsService.getCreateDocSettings().getLeftTreeGrid();
-			result = projectService.getItemsGroupedByField(rootSettingsNode);
-			logger.debug("[fetchChildrenFromBackEnd] rootSettingsNode {}", rootSettingsNode);
+			result = filter(projectService.getItemsGroupedByField(settings), nodeFilter);
 		}
 
 		return result;
+	}
+	
+	protected Stream<NodeWrapper> filter(Stream<NodeWrapper> items, NodeFilter nodeFilter) {
+		return items.filter(nodeFilter.filter());
 	}
 }

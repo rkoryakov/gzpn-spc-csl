@@ -48,7 +48,7 @@ public class NodeWrapper implements Serializable {
 		this.entityName = entityName;
 	}
 	
-	public String getGroupFiled() {
+	public String getGroupField() {
 		return groupFiled;
 	}
 	
@@ -99,7 +99,7 @@ public class NodeWrapper implements Serializable {
 	}
 	
 	public boolean isGrouping() {
-		return getGroupFiled() != null;
+		return getGroupField() != null;
 	}
 	
 	public boolean isRoot() {
@@ -119,9 +119,54 @@ public class NodeWrapper implements Serializable {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((entityName == null) ? 0 : entityName.hashCode());
+		result = prime * result + ((groupFiled == null) ? 0 : groupFiled.hashCode());
+		result = prime * result + ((groupFiledValue == null) ? 0 : groupFiledValue.hashCode());
+		result = prime * result + ((item == null) ? 0 : item.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+	
+		NodeWrapper other = (NodeWrapper) obj;
+		
+		if (entityName == null) {
+			if (other.entityName != null)
+				return false;
+		} else if (!entityName.equals(other.entityName))
+			return false;
+		if (groupFiled == null) {
+			if (other.groupFiled != null)
+				return false;
+		} else if (!groupFiled.equals(other.groupFiled))
+			return false;
+		if (groupFiledValue == null) {
+			if (other.groupFiledValue != null)
+				return false;
+		} else if (!groupFiledValue.equals(other.groupFiledValue))
+			return false;
+		if (item == null) {
+			if (other.item != null)
+				return false;
+		} else if (!item.equals(other.item))
+			return false;
+		
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		return "NodeWrapper [entityName=" + entityName + ", groupFiled=" + groupFiled + ", groupFiledValue="
-				+ groupFiledValue + ", item=" + item + "]";
+				+ groupFiledValue + ", item=" + item + ", hasParent()=" + hasParent() + ", hasChild()=" + hasChild() + "]";
 	}
+	
 	
 }

@@ -123,9 +123,14 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 			createJpqlQueryGroupedByFieldValue(formatter, sourceEntity, targetEntity, sourceFieldName, targetGroupFieldName);
 			logger.debug("JPQL string '{}'", jpql);
 			logger.debug("sourceFieldValue '{}'", sourceFieldValue);
+			
 			TypedQuery<NodeWrapper> query = entityManager.createQuery(jpql.toString(), NodeWrapper.class);
-			result = query.setParameter("sourceFieldValue", sourceFieldValue).getResultList().stream();
+			List<NodeWrapper> resultList = query.setParameter("sourceFieldValue", sourceFieldValue).getResultList();
+			logger.debug("resultList '{}'", resultList.size());
+			resultList.forEach(e -> {logger.debug("repository node {}", e);});
+			result = resultList.stream();
 		}
+		
 		return result;
 	}
 	
