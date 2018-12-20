@@ -78,6 +78,17 @@ public class DataProjectService {
 	}
 	
 	/**
+	 * Items count of the given entity grouped by the given field filtered by the 
+	 * 
+	 * @param entity string name of the entity
+	 * @param groupByField string name of the GROUP BY field 
+	 * @return
+	 */
+	public long getCount(String entity, String groupByField, String filterBy, String filterValue) {
+		return getBaseRepository().countOfGroupedItems(entity, groupByField, filterBy, filterValue);
+	}
+	
+	/**
 	 * Get grouped items by field in the target entity
 	 * @param node
 	 * @return Stream<NodeWrapper>

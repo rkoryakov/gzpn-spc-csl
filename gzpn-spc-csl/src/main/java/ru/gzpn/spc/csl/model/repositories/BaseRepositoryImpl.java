@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
@@ -70,6 +71,19 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 	}
 
 	@Override
+	public long countOfGroupedItems(String entity, String groupField, String filterBy, String filterValue) {
+		StringBuilder jpql = new StringBuilder();
+		long result = 0;
+		
+		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
+			formatter.format("SELECT COUNT(DISTINCT e.%2$s) FROM %1$s e WHERE CAST( e.%3s as string ) LIKE :filterValue", entity, groupField, filterBy);
+			result = entityManager.createQuery(jpql.toString(), Long.class).setParameter("filterValue", filterValue).getSingleResult();
+		}
+		
+		return result;
+	}
+	
+	@Override
 	public Stream<NodeWrapper> getItemsGroupedByField(String entity, String groupField) {
 		StringBuilder jpql = new StringBuilder();
 		Stream<NodeWrapper> result = null;
@@ -91,7 +105,7 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		
 		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
 
-			if (groupFieldName != null && !groupFieldName.isEmpty()) {
+			if (StringUtils.isNotEmpty(groupFieldName)) {
 				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%4$s', e.%4$s) "
 								+ "FROM %1$s e WHERE e.%2$s = :fieldValue GROUP BY e.%4$s",
 								entity, fieldName, fieldValue, groupFieldName);
@@ -139,7 +153,7 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		
 		List<Entities> path = ProjectEntityGraph.getPathBetweenNodes(sourceEntity, targetEntity);
 		boolean isPathMoreOne = path.size() > 1;
-		boolean isGroup = targetGroupFieldName != null && !targetGroupFieldName.isEmpty();
+		boolean isGroup = StringUtils.isNotEmpty(targetGroupFieldName);
 		
 		if (isGroup) {
 			jpqlFormatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%2$s', '%3$s', T.%3$s)"
@@ -149,7 +163,7 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 					+ " FROM %1$s S, %2$s T", sourceEntity, targetEntity);
 		}
 		
-		for (int i = 1; i < path.size() - 1; i++) {
+		for (int i = 1; i < path.size() - 1; i ++) {
 			jpqlFormatter.format(", %1$s E_%2$d ", path.get(i).getName(), i);
 		}
 
@@ -160,7 +174,7 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		if (path.size() == 2) {
 			jpqlFormatter.format(" WHERE S.%1$s = :sourceFieldValue AND S.%2$s = %3$s.%4$s", sourceFieldName,
 					leftSourceField, "T", rightSourceField);
-		} else {
+		} else  {
 			jpqlFormatter.format(" WHERE S.%1$s = :sourceFieldValue AND S.%2$s = %3$s.%4$s", sourceFieldName,
 					leftSourceField, isPathMoreOne ? "E_1" : "T", rightSourceField);
 		}

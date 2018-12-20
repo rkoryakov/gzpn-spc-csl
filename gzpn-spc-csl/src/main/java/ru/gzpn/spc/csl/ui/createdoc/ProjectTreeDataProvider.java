@@ -1,7 +1,9 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
+
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,28 +11,30 @@ import com.vaadin.data.provider.AbstractBackEndHierarchicalDataProvider;
 import com.vaadin.data.provider.HierarchicalQuery;
 
 import ru.gzpn.spc.csl.services.bl.DataProjectService;
+import ru.gzpn.spc.csl.ui.common.NodeFilter;
 
 public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProvider<NodeWrapper, NodeFilter> {
 	private static final long serialVersionUID = 7274680832695288557L;
 	
 	public static final Logger logger = LoggerFactory.getLogger(ProjectTreeDataProvider.class);
 	private DataProjectService projectService;
-	private NodeWrapper settings;
+	private NodeWrapper hierarchySettings;
+	private NodeFilter filter = new NodeFilter("");
 	
 	public ProjectTreeDataProvider(DataProjectService projectService, NodeWrapper settings) {
 		this.projectService = projectService;
-		this.settings = settings;
+		this.hierarchySettings = settings;
 	}
 	
 	@Override
 	public int getChildCount(HierarchicalQuery<NodeWrapper, NodeFilter> query) {
 		NodeWrapper parent = query.getParent();
-		long result;
-		
+		long result = 1;
+
 		if (parent != null) {
 			result = projectService.getCount(parent.getEntityName(), parent.getGroupField());
 		} else {
-			result = projectService.getCount(settings.getEntityName(), settings.getGroupField());
+			result = projectService.getCount(hierarchySettings.getEntityName(), hierarchySettings.getGroupField());
 		}
 		
 		return (int)result;
@@ -45,18 +49,34 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 	protected Stream<NodeWrapper> fetchChildrenFromBackEnd(HierarchicalQuery<NodeWrapper, NodeFilter> query) {
 		Stream<NodeWrapper> result;
 		NodeWrapper parent = query.getParent();
-		NodeFilter nodeFilter = query.getFilter().orElse(new NodeFilter(""));
 		
 		if (parent != null) {
-			result = filter(projectService.getItemsGroupedByValue(parent), nodeFilter);
+		//	if (!parent.hasChild()) {
+				result = filter(projectService.getItemsGroupedByValue(parent), filter);
+			//} else {
+			//	result = projectService.getItemsGroupedByValue(parent);
+			//}
 		} else {
-			result = filter(projectService.getItemsGroupedByField(settings), nodeFilter);
+			result = filter(projectService.getItemsGroupedByField(hierarchySettings), filter);
 		}
 
 		return result;
 	}
 	
 	protected Stream<NodeWrapper> filter(Stream<NodeWrapper> items, NodeFilter nodeFilter) {
-		return items.filter(nodeFilter.filter());
+		Stream<NodeWrapper> result = items;
+		if (!StringUtils.isEmpty(nodeFilter.getCommonFilter()) 
+					|| nodeFilter.hasQueryNodeFilters()) {
+				result = items.filter(nodeFilter.filter());
+		}
+		return result;
+	}
+
+	public void setCommonFilter(String value) {
+		if (filter != null) {
+			filter.setCommonFilter(value);
+		} else {
+			filter = new NodeFilter(value);
+		}
 	}
 }

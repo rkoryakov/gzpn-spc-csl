@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.createdoc;
+package ru.gzpn.spc.csl.ui.common;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -9,15 +9,17 @@ import java.util.stream.Stream;
 
 import javax.persistence.JoinColumn;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
+import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 public class NodeFilter {
 	public static final Logger logger = LogManager.getLogger(NodeFilter.class);
 	private String commonFilter;
-	
+	private boolean filterOnlyLeaves = true;
 	private Map<String, String> queryNodeFilters = new HashMap<>();
 	
 	public NodeFilter(String commonFilter) {
@@ -39,6 +41,18 @@ public class NodeFilter {
 		return this.commonFilter;
 	}
 	
+	public boolean hasQueryNodeFilters() {
+		return !queryNodeFilters.isEmpty();
+	}
+	
+	public boolean isFilterOnlyLeaves() {
+		return filterOnlyLeaves;
+	}
+	
+	public void setFilterOnlyLeaves(boolean filterOnlyLeaves) {
+		this.filterOnlyLeaves = filterOnlyLeaves;
+	}
+	
 	/**
 	 * Filtering by commonFilter in the all entity's fields
 	 * if any matches return true
@@ -47,32 +61,27 @@ public class NodeFilter {
 	 */
 	protected boolean applyCommonFilterOnEntity(NodeWrapper item) {
 		boolean isShown = false;
-		if (commonFilter != null && !commonFilter.isEmpty() && item.hasEntityItem()) {
-			BaseEntity entity = item.getItem();
-			for (Field e : entity.getClass().getDeclaredFields()) {
-				int mod = e.getModifiers();
-				boolean isNotJoinColumnAnnotation = Stream.of(e.getDeclaredAnnotations())
-						.noneMatch(a -> a.annotationType() == JoinColumn.class);
-				if (!Modifier.isStatic(mod) && !Modifier.isFinal(mod) && isNotJoinColumnAnnotation) {
-					e.setAccessible(true);
-					Object value = null;
-					try {
-						value = e.get(entity);
-					} catch (IllegalArgumentException | IllegalAccessException e1) {
-						logger.error(e1.getMessage());
-					}
-					if (value != null) {
-						isShown = value.toString().startsWith(commonFilter);
-						if (isShown) {
-							break;
-						}
+		BaseEntity entity = item.getItem();
+		for (Field e : entity.getClass().getDeclaredFields()) {
+			int mod = e.getModifiers();
+			boolean isNotJoinColumnAnnotation = Stream.of(e.getDeclaredAnnotations())
+					.noneMatch(a -> a.annotationType() == JoinColumn.class);
+			if (!Modifier.isStatic(mod) && !Modifier.isFinal(mod) && isNotJoinColumnAnnotation) {
+				e.setAccessible(true);
+				Object value = null;
+				try {
+					value = e.get(entity);
+				} catch (IllegalArgumentException | IllegalAccessException e1) {
+					logger.error(e1.getMessage());
+				}
+				if (value != null) {
+					isShown = value.toString().startsWith(commonFilter);
+					if (isShown) {
+						break;
 					}
 				}
 			}
-		} else {
-			isShown = true;
 		}
-		
 		return isShown;
 	}
 	
@@ -110,19 +119,17 @@ public class NodeFilter {
 	
 	public Predicate<NodeWrapper> filter() {
 		return item -> {
-			boolean isShown = false;
-			
-			if (queryNodeFilters.isEmpty()) {
-				isShown = applyCommonFilterOnEntity(item);
-			}
-			else if (item.hasEntityItem()) {
-				isShown = applyQueryNodeFiltersOnEntity(item);
-			} else {
-				if (commonFilter != null && commonFilter.isEmpty()) {
-					isShown = true;
-				} else {
-					isShown = item.getGroupFiledValue().toString().startsWith(commonFilter);
+			boolean isShown = true;
+			if (item.hasEntityItem()) {
+				if ( !queryNodeFilters.isEmpty() ) {
+					isShown = applyQueryNodeFiltersOnEntity(item);
+				} 
+				else if (StringUtils.isNotEmpty(commonFilter)) {
+					isShown = applyCommonFilterOnEntity(item);
 				}
+			} else if (StringUtils.isNotEmpty(commonFilter) 
+						&& !this.filterOnlyLeaves) {
+				isShown = item.getGroupFiledValue().toString().startsWith(commonFilter);
 			}
 			return isShown;
 		};

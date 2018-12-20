@@ -15,6 +15,7 @@ import com.vaadin.data.provider.HierarchicalQuery;
 
 import ru.gzpn.spc.csl.services.bl.DataProjectService;
 import ru.gzpn.spc.csl.services.bl.DataUserSettigsService;
+import ru.gzpn.spc.csl.ui.common.NodeFilter;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
