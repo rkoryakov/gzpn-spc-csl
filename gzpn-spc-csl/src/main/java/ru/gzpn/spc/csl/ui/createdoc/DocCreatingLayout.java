@@ -13,6 +13,7 @@ import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.TreeGrid;
@@ -30,6 +31,10 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	
 	private static final String I18N_SEARCHFIELD_PLACEHOLDER = "createdoc.DocCreatingLayout.searchField.placeholder";
 	private static final String I18N_SEARCHSETTINGS_DESC = "createdoc.DocCreatingLayout.searchField.searchSettings.desc";
+	private static final String I18N_USERLAYOUTSETTINGS_DESC = "createdoc.DocCreatingLayout.userLayoutSettings.desc";
+	private static final String I18N_ADDTREEITEMBUTTON_DESC = "createdoc.DocCreatingLayout.addTreeItemButton.desc";
+	private static final String I18N_DELTREEITEMBUTTON_DESC = "createdoc.DocCreatingLayout.delTreeItemButton.desc";
+	
 	
 	private DataProjectService projectService;
 	private DataUserSettigsService dataUserSettigsService;
@@ -38,11 +43,13 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	private VerticalLayout leftLayot;
 	private VerticalLayout rightLayout;
 	
-	private TextField searchField;
+	private TextField filterField;
 	private TreeGrid<NodeWrapper> projectTree;
 	private ProjectTreeDataProvider dataProvider;
-	private Button searchSettings;
-	private Button settings;
+	private Button filterSettings;
+	private Button userLayoutSettings;
+	private Button addTreeItemButton;
+	private Button delTreeItemButton;
 	
 	public DocCreatingLayout(DataProjectService projectService, DataUserSettigsService dataUserSettigsService, MessageSource messageSource) {
 		this.projectService = projectService;
@@ -54,6 +61,7 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 
 		setSizeFull();
 		setSplitPosition(50.0f, Unit.PERCENTAGE);
+		setMinSplitPosition(30, Unit.PERCENTAGE);
 		addStyleName(ValoTheme.SPLITPANEL_LARGE);
 		setFirstComponent(createLeftLayout());
 		setSecondComponent(createRightLayout());
@@ -64,41 +72,58 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 		leftLayot.setMargin(true);
 		leftLayot.setSpacing(true);
 		leftLayot.setSizeFull();
-		leftLayot.addComponent(createTreeFeautures());
+		leftLayot.addComponent(createTreeGridFeautures());
 		leftLayot.addComponent(createProjectTree());
 		return leftLayot;
 	}
 	
-	private Component createTreeFeautures() {
+	private Component createTreeGridFeautures() {
 		AbsoluteLayout layout = new AbsoluteLayout();
+		HorizontalLayout horizontalLayout = new HorizontalLayout();
 		layout.setStyleName("gzpn-head");
 		layout.setHeight(50.0f, Unit.PIXELS);
 		layout.setWidth(100.f, Unit.PERCENTAGE);
-		
-		layout.addComponent(createSearchFilter(), "top:5px; left:5px");
+		horizontalLayout.addComponent(createSearchFilter());
+		horizontalLayout.addComponent(createTreeItemButtons());
+		layout.addComponent(horizontalLayout, "top:5px; left:5px");
 		layout.addComponent(createSettingsButton(), "top:5px; right:5px");
 		return layout;
 	}
 
 	private Component createSearchFilter() {
-		searchField = new TextField();
-		searchSettings = new Button();
-		searchSettings.setIcon(VaadinIcons.FILTER);
-		searchSettings.setDescription(getI18nText(I18N_SEARCHSETTINGS_DESC));
-		JoinedLayout<TextField, Button> searchComp = new JoinedLayout<>(searchField, searchSettings);
-		searchField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER));
+		filterField = new TextField();
+		filterField.setWidth(200.0f, Unit.PIXELS);
+		filterSettings = new Button();
+		filterSettings.setIcon(VaadinIcons.FILTER);
+		filterSettings.setDescription(getI18nText(I18N_SEARCHSETTINGS_DESC));
+		JoinedLayout<TextField, Button> searchComp = new JoinedLayout<>(filterField, filterSettings);
+		filterField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER));
 		
-		searchField.addValueChangeListener(e -> {
+		filterField.addValueChangeListener(e -> {
 			dataProvider.getFilter().setCommonFilter(e.getValue());
 			dataProvider.refreshAll();
 		});
 		return searchComp;
 	}
 	
+	private Component createTreeItemButtons() {
+		JoinedLayout<Button, Button> bottons = new JoinedLayout<>();
+		addTreeItemButton = new Button(VaadinIcons.PLUS);
+		delTreeItemButton = new Button(VaadinIcons.MINUS);
+		addTreeItemButton.setDescription(getI18nText(I18N_ADDTREEITEMBUTTON_DESC));
+		delTreeItemButton.setDescription(getI18nText(I18N_DELTREEITEMBUTTON_DESC));
+		
+		bottons.addComponent(addTreeItemButton);
+		bottons.addComponent(delTreeItemButton);
+		
+		return bottons;
+	}
+	
 	private Component createSettingsButton() {
-		settings = new Button();
-		settings.setIcon(VaadinIcons.COG_O);
-		return settings;
+		userLayoutSettings = new Button();
+		userLayoutSettings.setIcon(VaadinIcons.COG_O);
+		userLayoutSettings.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC));
+		return userLayoutSettings;
 	}
 
 	private Component createProjectTree() {
