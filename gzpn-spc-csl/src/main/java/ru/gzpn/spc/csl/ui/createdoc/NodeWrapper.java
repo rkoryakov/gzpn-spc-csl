@@ -40,6 +40,18 @@ public class NodeWrapper implements Serializable {
 		this.setItem(item);
 	}
 	
+	/**
+	 * Caption for rendering in UI tree
+	 */
+	public String getNodeCaption() {
+		String result = "";
+		if (isGrouping()) {
+			result = getGroupFiledValue().toString();
+		}
+		
+		return result;
+	}
+	
 	public String getEntityName() {
 		return entityName;
 	}

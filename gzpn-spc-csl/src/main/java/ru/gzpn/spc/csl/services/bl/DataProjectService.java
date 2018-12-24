@@ -16,6 +16,7 @@ import ru.gzpn.spc.csl.model.repositories.PhaseRepository;
 import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
 import ru.gzpn.spc.csl.model.repositories.StageRepository;
 import ru.gzpn.spc.csl.model.repositories.WorkRepository;
+import ru.gzpn.spc.csl.model.repositories.WorkSetRepository;
 import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 @Service
@@ -36,7 +37,14 @@ public class DataProjectService {
 	private WorkRepository workRepository;
 	@Autowired
 	private LocalEstimateRepository localEstimateRepository;
+	@Autowired
+	private WorkSetRepository workSetRepository;
 	
+	
+	public WorkSetRepository getWorkSetRepository() {
+		return workSetRepository;
+	}
+
 	public HProjectRepository getHPRepository() {
 		return hpRepository;
 	}

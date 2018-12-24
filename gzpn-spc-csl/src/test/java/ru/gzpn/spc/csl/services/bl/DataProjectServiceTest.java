@@ -7,6 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -25,11 +26,13 @@ import ru.gzpn.spc.csl.model.Phase;
 import ru.gzpn.spc.csl.model.PlanObject;
 import ru.gzpn.spc.csl.model.Stage;
 import ru.gzpn.spc.csl.model.Work;
+import ru.gzpn.spc.csl.model.WorkSet;
 import ru.gzpn.spc.csl.model.enums.WorkType;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWork;
+import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
 import ru.gzpn.spc.csl.model.repositories.PhaseRepository;
 import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
@@ -57,7 +60,7 @@ public class DataProjectServiceTest {
 		for (int i = 0; i < 10; i ++) {
 			if (service.getHPRepository().findByCode("000000" + i).size() == 0) {
 				HProject hProject = new HProject();
-				hProject.setName("Havy Project " + i);
+				hProject.setName("Heavy Project " + i);
 				hProject.setCode("000000" + i);
 				hProject = service.getHPRepository().save(hProject);
 				List<ICProject> cprojects = new ArrayList<>();
@@ -76,25 +79,49 @@ public class DataProjectServiceTest {
 					// PlanObjects
 					List<IPlanObject> planObjects = new ArrayList<>();
 					for (int k = 0; k < 5; k ++) {
-						PlanObject p = new PlanObject("00000" + i + "" + j + "" + k, "Object " + (i * j + k + 1), "AC");
+						PlanObject p = new PlanObject("00000" + i + "" + j + "" + k, "Plan Object " + (i * j + k + 1), "AC");
 						planObjects.add(p);
-						
+						p = service.getPlanObjectRepository().save(p);
 						// Works
-						List<IWork> workList = new ArrayList<>();
+						List<Work> works = new ArrayList<>();
+						for (int m = 0; m < 3; m ++) {
+							Work work = new Work();
+							works.add(work);
+							work.setName("Work " + i + "" + j + "" + k + "" + m);
+							work.setCode("10000" + i + "" + j + "" + k + "" + m);
+							work.setType(WorkType.PIR);
+							work.setPlanObj(p);
+						}
+						for (int m = 3; m < 6; m ++) {
+							Work work = new Work();
+							works.add(work);
+							work.setName("Work " + i + "" + j + "" + k + "" + m);
+							work.setCode("10000" + i + "" + j + "" + k + "" + m);
+							work.setType(WorkType.SMR);
+							work.setPlanObj(p);
+						}
+						service.getWorkRepository().saveAll(works);
+						
+						// WorkSets
+						List<IWorkSet> worksetList = new ArrayList<>();
 						for (int l = 0; l < 5; l ++) {
 							int num = l + i * 5 * j * k * 5 + 1;
-							Work work = new Work("00000" + i + "" + j + "" + k + "" + l, "Work " + num, WorkType.SMR);
-							
+							WorkSet workset = new WorkSet();
+							workset.setName("Work Set " + i + "" + j + "" + k + "" + l);
+							workset.setCode("12000 " + i + "" + j + "" + k + "" + l);
+							workset.setPir(works.get(0));
+							workset.setSmr(works.get(3));
+							workset.setPlanObject(p);
 							// LocalEstimate
 							LocalEstimate estimate = new LocalEstimate("00000" + i + "" + j + "" + k + "" + l, "Estimate " + num);
 							estimate.setStage(stage);
 							estimate = service.getLocalEstimateRepository().save(estimate);
-							work.setLocalEstimate(estimate);
-							work = service.getWorkRepository().save(work);
-							workList.add(work);
+				
+							workset = service.getWorkSetRepository().save(workset);
+							worksetList.add((IWorkSet)workset);
 						}
-						p.setWorkList(workList);
-						p = service.getPlanObjectRepository().save(p);
+						p.setWorkList(works.stream().map(e->(IWork)e).collect(Collectors.toList()));
+						
 					}
 					cProject.setPlanObjects(planObjects);
 					

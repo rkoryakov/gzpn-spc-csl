@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWork;
+import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 
 @Entity
 @Table(schema = "spc_csl_schema", name = "workset", 
@@ -20,7 +21,7 @@ indexes = {
 		@Index(name = "spc_csl_idx_wkscode", columnList = "name"),
 		@Index(name = "spc_csl_idx_wkpln", columnList = "plan_obj_id")
 })
-public class WorkSet extends BaseEntity implements Serializable {
+public class WorkSet extends BaseEntity implements IWorkSet, Serializable {
 	private static final long serialVersionUID = -1489774086979019274L;
 	@Column(length = 64)
 	private String code;
