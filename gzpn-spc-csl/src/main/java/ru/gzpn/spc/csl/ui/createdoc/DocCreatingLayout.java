@@ -1,9 +1,16 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 
 import com.vaadin.data.provider.ConfigurableFilterDataProvider;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.AbsoluteLayout;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalSplitPanel;
@@ -14,12 +21,15 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.services.bl.DataProjectService;
 import ru.gzpn.spc.csl.services.bl.DataUserSettigsService;
+import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 import ru.gzpn.spc.csl.ui.common.NodeFilter;
 
 public class DocCreatingLayout extends HorizontalSplitPanel {
 	private static final long serialVersionUID = -883906550551450076L;
+	private static final Logger logger = LoggerFactory.getLogger(DocCreatingLayout.class);
 	
 	private static final String I18N_SEARCHFIELD_PLACEHOLDER = "createdoc.DocCreatingLayout.searchField.placeholder";
+	private static final String I18N_SEARCHSETTINGS_DESC = "createdoc.DocCreatingLayout.searchField.searchSettings.desc";
 	
 	private DataProjectService projectService;
 	private DataUserSettigsService dataUserSettigsService;
@@ -31,6 +41,8 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	private TextField searchField;
 	private TreeGrid<NodeWrapper> projectTree;
 	private ProjectTreeDataProvider dataProvider;
+	private Button searchSettings;
+	private Button settings;
 	
 	public DocCreatingLayout(DataProjectService projectService, DataUserSettigsService dataUserSettigsService, MessageSource messageSource) {
 		this.projectService = projectService;
@@ -52,16 +64,52 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 		leftLayot.setMargin(true);
 		leftLayot.setSpacing(true);
 		leftLayot.setSizeFull();
-		leftLayot.addComponent(createSearchField());
+		leftLayot.addComponent(createTreeFeautures());
 		leftLayot.addComponent(createProjectTree());
 		return leftLayot;
 	}
 	
+	private Component createTreeFeautures() {
+		AbsoluteLayout layout = new AbsoluteLayout();
+		layout.setStyleName("gzpn-head");
+		layout.setHeight(50.0f, Unit.PIXELS);
+		layout.setWidth(100.f, Unit.PERCENTAGE);
+		
+		layout.addComponent(createSearchFilter(), "top:5px; left:5px");
+		layout.addComponent(createSettingsButton(), "top:5px; right:5px");
+		return layout;
+	}
+
+	private Component createSearchFilter() {
+		searchField = new TextField();
+		searchSettings = new Button();
+		searchSettings.setIcon(VaadinIcons.FILTER);
+		searchSettings.setDescription(getI18nText(I18N_SEARCHSETTINGS_DESC));
+		JoinedLayout<TextField, Button> searchComp = new JoinedLayout<>(searchField, searchSettings);
+		searchField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER));
+		
+		searchField.addValueChangeListener(e -> {
+			dataProvider.getFilter().setCommonFilter(e.getValue());
+			dataProvider.refreshAll();
+		});
+		return searchComp;
+	}
+	
+	private Component createSettingsButton() {
+		settings = new Button();
+		settings.setIcon(VaadinIcons.COG_O);
+		return settings;
+	}
+
 	private Component createProjectTree() {
 		projectTree = new TreeGrid<>();
 		projectTree.setDataProvider(dataProvider);
+		projectTree.setColumnReorderingAllowed(true);
+		projectTree.setSizeFull();
 		
-		Column<NodeWrapper, String> name = projectTree.addColumn(node -> node.getGroupFiledValue().toString()).setCaption("Name");
+		Column<NodeWrapper, String> name = projectTree.addColumn(node -> 
+			Objects.isNull(node.getGroupFiledValue()) ? "" : node.getGroupFiledValue().toString()
+		).setCaption("Name");
 		name.setSortable(true);
 		projectTree.addColumn(NodeWrapper::getEntityName).setCaption("Entity");
 		projectTree.setHierarchyColumn(name);
@@ -69,17 +117,6 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 		return projectTree;
 	}
 	
-	private Component createSearchField() {
-		searchField = new TextField();
-		searchField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER));
-		searchField.addValueChangeListener(e -> {
-			this.dataProvider.setCommonFilter(e.getValue());
-			dataProvider.refreshAll();
-		});
-		return searchField;
-	}
-	
-
 	private Component createRightLayout() {
 		rightLayout = new WorkSetDocumentation(projectService, dataUserSettigsService, messageSource);
 		

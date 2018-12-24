@@ -1,14 +1,13 @@
 package ru.gzpn.spc.csl.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
@@ -27,12 +26,12 @@ public class WorkSet extends BaseEntity implements Serializable {
 	private String code;
 	@Column(length = 256)
 	private String name;
-	@OneToMany(targetEntity = Work.class)
-	@JoinColumn(name = "wkset_id", referencedColumnName = "id")
-	private List<IWork> pir;
-	@OneToMany(targetEntity = Work.class)
-	@JoinColumn(name = "wkset_id", referencedColumnName = "id")
-	private List<IWork> smr;
+	@OneToOne(targetEntity = Work.class)
+	@JoinColumn(name = "pir_id", referencedColumnName = "id")
+	private IWork pir;
+	@OneToOne(targetEntity = Work.class)
+	@JoinColumn(name = "smr_id", referencedColumnName = "id")
+	private IWork smr;
 	@ManyToOne(targetEntity = PlanObject.class)
 	@JoinColumn(name = "plan_obj_id", referencedColumnName = "id")
 	private IPlanObject planObject;
@@ -49,16 +48,16 @@ public class WorkSet extends BaseEntity implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public List<IWork> getPir() {
+	public IWork getPir() {
 		return pir;
 	}
-	public void setPir(List<IWork> pir) {
+	public void setPir(IWork pir) {
 		this.pir = pir;
 	}
-	public List<IWork> getSmr() {
+	public IWork getSmr() {
 		return smr;
 	}
-	public void setSmr(List<IWork> smr) {
+	public void setSmr(IWork smr) {
 		this.smr = smr;
 	}
 	public IPlanObject getPlanObject() {

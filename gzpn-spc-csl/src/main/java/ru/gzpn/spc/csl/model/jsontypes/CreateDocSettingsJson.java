@@ -60,8 +60,9 @@ public class CreateDocSettingsJson implements Serializable {
 	public NodeWrapper getDefaultNodesHierarchyLeft() {
 		NodeWrapper root =  new NodeWrapper("HProject", "name");
 		root.addChild(new NodeWrapper("CProject", "name"))
-				//.addChild(new NodeWrapper("Phase", "name"))
-					.addChild(new NodeWrapper("Phase"));
+				.addChild(new NodeWrapper("Stage", "name"))
+					.addChild(new NodeWrapper("PlanObject", "name"))
+						.addChild(new NodeWrapper("WorkSet"));
 		return root;
 	}
 	

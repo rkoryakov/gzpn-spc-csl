@@ -32,9 +32,9 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 		long result = 1;
 
 		if (parent != null) {
-			result = projectService.getCount(parent.getEntityName(), parent.getGroupField());
+			result = filter(projectService.getItemsGroupedByValue(parent), filter).count();//projectService.getCount(parent.getEntityName(), parent.getGroupField());
 		} else {
-			result = projectService.getCount(hierarchySettings.getEntityName(), hierarchySettings.getGroupField());
+			result = filter(projectService.getItemsGroupedByField(hierarchySettings), filter).count();//projectService.getCount(hierarchySettings.getEntityName(), hierarchySettings.getGroupField());
 		}
 		
 		return (int)result;
@@ -67,16 +67,14 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 		Stream<NodeWrapper> result = items;
 		if (!StringUtils.isEmpty(nodeFilter.getCommonFilter()) 
 					|| nodeFilter.hasQueryNodeFilters()) {
+			
 				result = items.filter(nodeFilter.filter());
 		}
 		return result;
 	}
 
-	public void setCommonFilter(String value) {
-		if (filter != null) {
-			filter.setCommonFilter(value);
-		} else {
-			filter = new NodeFilter(value);
-		}
+	public NodeFilter getFilter() {
+		return this.filter;
 	}
+	
 }

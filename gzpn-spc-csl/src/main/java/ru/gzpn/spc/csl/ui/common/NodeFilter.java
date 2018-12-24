@@ -19,7 +19,7 @@ import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 public class NodeFilter {
 	public static final Logger logger = LogManager.getLogger(NodeFilter.class);
 	private String commonFilter;
-	private boolean filterOnlyLeaves = true;
+	
 	private Map<String, String> queryNodeFilters = new HashMap<>();
 	
 	public NodeFilter(String commonFilter) {
@@ -45,13 +45,6 @@ public class NodeFilter {
 		return !queryNodeFilters.isEmpty();
 	}
 	
-	public boolean isFilterOnlyLeaves() {
-		return filterOnlyLeaves;
-	}
-	
-	public void setFilterOnlyLeaves(boolean filterOnlyLeaves) {
-		this.filterOnlyLeaves = filterOnlyLeaves;
-	}
 	
 	/**
 	 * Filtering by commonFilter in the all entity's fields
@@ -127,8 +120,7 @@ public class NodeFilter {
 				else if (StringUtils.isNotEmpty(commonFilter)) {
 					isShown = applyCommonFilterOnEntity(item);
 				}
-			} else if (StringUtils.isNotEmpty(commonFilter) 
-						&& !this.filterOnlyLeaves) {
+			} else if (StringUtils.isNotEmpty(commonFilter)) {
 				isShown = item.getGroupFiledValue().toString().startsWith(commonFilter);
 			}
 			return isShown;
