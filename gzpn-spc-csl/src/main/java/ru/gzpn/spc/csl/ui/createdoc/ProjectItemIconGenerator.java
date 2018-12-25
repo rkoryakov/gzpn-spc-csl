@@ -17,7 +17,7 @@ public class ProjectItemIconGenerator implements IconGenerator<NodeWrapper> {
 			switch (entity) {
 
 			case CPROJECT:
-				result = VaadinIcons.BUILDING;
+				result = VaadinIcons.BRIEFCASE;
 				break;
 			case DOCUMENT:
 				result = VaadinIcons.NEWSPAPER;

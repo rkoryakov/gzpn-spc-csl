@@ -76,7 +76,7 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		long result = 0;
 		
 		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
-			formatter.format("SELECT COUNT(DISTINCT e.%2$s) FROM %1$s e WHERE CAST( e.%3s as string ) LIKE :filterValue", entity, groupField, filterBy);
+			formatter.format("SELECT COUNT(DISTINCT e.%2$s) FROM %1$s e WHERE CAST( e.%3$s as string ) LIKE :filterValue", entity, groupField, filterBy);
 			result = entityManager.createQuery(jpql.toString(), Long.class).setParameter("filterValue", filterValue).getSingleResult();
 		}
 		
@@ -120,8 +120,9 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 			if (fieldValue != null) {
 				query.setParameter("fieldValue", fieldValue);
 			}
-			
-			result = query.getResultList().stream();
+			List<NodeWrapper> resultList = query.getResultList();
+			//resultList.forEach(e -> {e.generateHashCode();});
+			result = resultList.stream();
 		}
 
 		return result;
@@ -141,7 +142,7 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 			TypedQuery<NodeWrapper> query = entityManager.createQuery(jpql.toString(), NodeWrapper.class);
 			List<NodeWrapper> resultList = query.setParameter("sourceFieldValue", sourceFieldValue).getResultList();
 			logger.debug("resultList '{}'", resultList.size());
-			resultList.forEach(e -> {logger.debug("repository node {}", e);});
+			//resultList.forEach(e -> {e.generateHashCode(); logger.debug("repository node {}", e);});
 			result = resultList.stream();
 		}
 		
@@ -193,6 +194,7 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		if (isGroup) {
 			jpqlFormatter.format(" GROUP BY T.%1$s", targetGroupFieldName);
 		}
+		
 	}
 	
 	public EntityManager getEntityManager() {

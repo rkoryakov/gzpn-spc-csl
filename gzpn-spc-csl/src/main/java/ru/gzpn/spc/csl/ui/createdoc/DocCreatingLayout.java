@@ -36,6 +36,7 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	private static final String I18N_ADDTREEITEMBUTTON_DESC = "createdoc.DocCreatingLayout.addTreeItemButton.desc";
 	private static final String I18N_DELTREEITEMBUTTON_DESC = "createdoc.DocCreatingLayout.delTreeItemButton.desc";
 	
+	private double WORKSET_GRID_ROWS = 14;
 	
 	private DataProjectService projectService;
 	private DataUserSettigsService dataUserSettigsService;
@@ -106,11 +107,11 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	}
 	
 	private Component createWorksetGrid() {
-		worksetGrid = new Grid<WorkSet>();
+		worksetGrid = new Grid<>();
 		worksetGrid.addColumn(WorkSet::getName);
 		worksetGrid.addColumn(WorkSet::getCode);
 		worksetGrid.setSizeFull();
-		worksetGrid.setHeightByRows(14);
+		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS);
 		return worksetGrid;
 	}
 
@@ -120,14 +121,14 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 		layout.setStyleName("gzpn-head");
 		layout.setHeight(50.0f, Unit.PIXELS);
 		layout.setWidth(100.f, Unit.PERCENTAGE);
-		horizontalLayout.addComponent(createSearchFilter());
+		horizontalLayout.addComponent(createWorksetFilter());
 		horizontalLayout.addComponent(createTreeItemButtons());
-		layout.addComponent(horizontalLayout, "top:5px; left:5px");
-		layout.addComponent(createSettingsButton(), "top:5px; right:5px");
+		layout.addComponent(createSettingsButton(), "top:5px; left:5px");
+		layout.addComponent(horizontalLayout, "top:5px; right:5px");
 		return layout;
 	}
 
-	private Component createSearchFilter() {
+	private Component createWorksetFilter() {
 		worksetFilterField = new TextField();
 		worksetFilterField.setWidth(200.0f, Unit.PIXELS);
 		worksetFilterSettingsButton = new Button();
@@ -137,8 +138,7 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 		worksetFilterField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER));
 		
 		worksetFilterField.addValueChangeListener(e -> {
-			dataProvider.getFilter().setCommonFilter(e.getValue());
-			dataProvider.refreshAll();
+
 		});
 		return searchComp;
 	}

@@ -106,6 +106,8 @@ public class DataProjectService {
 				.peek(e -> {
 					e.setParent(node);
 					e.setChild(node.getChild());
+					/* set hashCode for UI Vaadin */
+					e.generateHashCode();
 				});
 	}
 	
@@ -116,13 +118,17 @@ public class DataProjectService {
 	 */
 	public Stream<NodeWrapper> getItemsGroupedByValue(NodeWrapper node) {
 		Stream<NodeWrapper> result = Stream.empty();
-		logger.debug("[getItemsGroupedByValue] {}", node);
+
 		if (node.isGrouping() && node.hasGroupFieldValue() && node.hasChild()) {
 			result = getBaseRepository().getItemsGroupedByFieldValue(node.getEntityName(), node.getChild().getEntityName(), 
-					node.getGroupField(), node.getGroupFiledValue(), node.getChild().getGroupField()
-					).peek(e -> {
+					node.getGroupField(), node.getGroupFiledValue(), node.getChild().getGroupField())
+					/* set parent and child */
+					.peek(e -> {
 						e.setParent(node);
-						e.setChild(node.getChild().getChild());
+						if (node.getChild() != null)
+							e.setChild(node.getChild().getChild());
+						/* set hashCode for UI Vaadin */
+						e.generateHashCode();
 					});
 		}
 
