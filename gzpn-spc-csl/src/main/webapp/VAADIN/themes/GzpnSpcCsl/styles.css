@@ -12411,7 +12411,7 @@ div.v-layout.v-horizontal.v-widget {
 .GzpnSpcCsl .v-panel-caption {
 	box-sizing: border-box;
 	padding: 0 12px;
-	line-height: 36px;
+	line-height: 37px;
 	border-bottom: 1px solid #d5d5d5;
 	background-color: #fafafa;
 	background-image: -webkit-linear-gradient(top, #fafafa 2%, #f6f6f6 98%);
@@ -12424,6 +12424,7 @@ div.v-layout.v-horizontal.v-widget {
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
 	border-radius: 3px 3px 0 0;
 }
+
 
 .GzpnSpcCsl .v-panel-content {
 	box-sizing: border-box;

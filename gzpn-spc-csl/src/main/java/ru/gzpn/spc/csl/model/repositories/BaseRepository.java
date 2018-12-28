@@ -16,9 +16,16 @@ public interface BaseRepository<T extends BaseEntity> extends JpaRepository<T, L
 	public long getCountByGroupField(String groupField);
 	public long countOfGroupedItems(String entity, String groupField);
 	public Stream<NodeWrapper> getItemsGroupedByField(String entity, String groupField);
+	
 	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String entity, String fieldName, 
 			Object fieldValue, String groupFieldName);
+	
 	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String sourceEntity, String targetEntity, 
 			String sourceFieldName,  Object sourceFieldValue, String targetGroupFieldName);
+	
+	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String sourceEntity, String targetEntity, 
+			String sourceFieldName,  Object sourceFieldValue, String targetGroupFieldName, Long parentId, String parentEntity);
+	
+	long countOfGroupedItems(String entity, String groupField, String filterBy, String filterValue);
 	
 }

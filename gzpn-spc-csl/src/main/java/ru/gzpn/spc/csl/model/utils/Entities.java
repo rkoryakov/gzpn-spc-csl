@@ -2,10 +2,22 @@ package ru.gzpn.spc.csl.model.utils;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
 import ru.gzpn.spc.csl.model.CProject;
+import ru.gzpn.spc.csl.model.Contract;
+import ru.gzpn.spc.csl.model.Document;
+import ru.gzpn.spc.csl.model.EstimateCalculation;
+import ru.gzpn.spc.csl.model.EstimateCost;
+import ru.gzpn.spc.csl.model.EstimateHead;
 import ru.gzpn.spc.csl.model.HProject;
+import ru.gzpn.spc.csl.model.LocalEstimate;
+import ru.gzpn.spc.csl.model.LocalEstimateHistory;
+import ru.gzpn.spc.csl.model.Milestone;
+import ru.gzpn.spc.csl.model.ObjectEstimate;
 import ru.gzpn.spc.csl.model.Phase;
+import ru.gzpn.spc.csl.model.PlanObject;
 import ru.gzpn.spc.csl.model.Stage;
 import ru.gzpn.spc.csl.model.UserSettings;
+import ru.gzpn.spc.csl.model.Work;
+import ru.gzpn.spc.csl.model.WorkSet;
 
 public enum Entities {
 	HPROJECT("HProject"),
@@ -15,9 +27,17 @@ public enum Entities {
 	PLANOBJECT("PlanObject"),
 	WORK("Work"),
 	LOCALESTIMATE("LocalEstimate"),
+	CONTRACT("Contract"),
+	DOCUMENT("Document"),
+	ESTIMATECALCULATION("EstimateCalculation"),
+	ESTIMATECOST("EstimateCost"),
+	ESTIMATEHEAD("EstimateHead"),
+	MILESTONE("Milestone"),
+	OBJECTESTIMATE("ObjectEstimate"),
+	WORKSET("WorkSet"),
 	
-	USER_SETTINGS("UserSettings");
-	
+	USERSETTINGS("UserSettings"),
+	LOCALESTIMATEHISTORY("LocalEstimateHistory");
 	private String name;
 	
 	Entities(String name) {
@@ -34,20 +54,56 @@ public enum Entities {
 		Class result = null;
 		
 		switch (Entities.valueOf(name.toUpperCase())) {
+		case CONTRACT:
+			result = Contract.class;
+			break;
 		case CPROJECT:
-			result = CProject.class; 
+			result = CProject.class;
+			break;
+		case DOCUMENT:
+			result = Document.class;
+			break;
+		case ESTIMATECALCULATION:
+			result = EstimateCalculation.class;
+			break;
+		case ESTIMATECOST:
+			result = EstimateCost.class;
+			break;
+		case ESTIMATEHEAD:
+			result = EstimateHead.class;
 			break;
 		case HPROJECT:
 			result = HProject.class;
 			break;
+		case LOCALESTIMATE:
+			result = LocalEstimate.class;
+			break;
+		case LOCALESTIMATEHISTORY:
+			result = LocalEstimateHistory.class;
+			break;
+		case MILESTONE:
+			result = Milestone.class;
+			break;
+		case OBJECTESTIMATE:
+			result = ObjectEstimate.class;
+			break;
 		case PHASE:
 			result = Phase.class;
+			break;
+		case PLANOBJECT:
+			result = PlanObject.class;
 			break;
 		case STAGE:
 			result = Stage.class;
 			break;
-		case USER_SETTINGS:
+		case USERSETTINGS:
 			result = UserSettings.class;
+			break;
+		case WORK:
+			result = Work.class;
+			break;
+		case WORKSET:
+			result = WorkSet.class;
 			break;
 		default:
 			break;
