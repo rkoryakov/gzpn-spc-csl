@@ -90,9 +90,8 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 	
 	protected Stream<NodeWrapper> filter(Stream<NodeWrapper> items, NodeFilter nodeFilter) {
 		Stream<NodeWrapper> result = items;
-		if (!StringUtils.isEmpty(nodeFilter.getCommonFilter()) 
+		if (StringUtils.isNotEmpty(nodeFilter.getCommonFilter()) 
 					|| nodeFilter.hasQueryNodeFilters()) {
-			
 				result = items.filter(nodeFilter.filter());
 		}
 		return result;

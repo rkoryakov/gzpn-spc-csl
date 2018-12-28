@@ -19,10 +19,19 @@ import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 indexes = {
 		@Index(name = "spc_csl_idx_wkscode", columnList = "code"),
 		@Index(name = "spc_csl_idx_wkscode", columnList = "name"),
-		@Index(name = "spc_csl_idx_wkpln", columnList = "plan_obj_id")
+		@Index(name = "spc_csl_idx_wkpln", columnList = "plan_obj_id"),
+		@Index(name = "spc_csl_idx_wkpln", columnList = "pir_id"),
+		@Index(name = "spc_csl_idx_wkpln", columnList = "smr_id")
 })
 public class WorkSet extends BaseEntity implements IWorkSet, Serializable {
 	private static final long serialVersionUID = -1489774086979019274L;
+	
+	public static final String FIELD_NAME = "name";
+	public static final String FIELD_CODE = "code";
+	public static final String FIELD_PIR = "pir";
+	public static final String FIELD_SMR = "smr";
+	public static final String FIELD_PLAN_OBJECT = "planObject";
+	
 	@Column(length = 64)
 	private String code;
 	@Column(length = 256)
@@ -67,4 +76,5 @@ public class WorkSet extends BaseEntity implements IWorkSet, Serializable {
 	public void setPlanObject(IPlanObject planObject) {
 		this.planObject = planObject;
 	}
+	
 }

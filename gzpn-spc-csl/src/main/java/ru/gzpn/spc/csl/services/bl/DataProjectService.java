@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.services.bl;
 
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -17,6 +18,8 @@ import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
 import ru.gzpn.spc.csl.model.repositories.StageRepository;
 import ru.gzpn.spc.csl.model.repositories.WorkRepository;
 import ru.gzpn.spc.csl.model.repositories.WorkSetRepository;
+import ru.gzpn.spc.csl.model.utils.Entities;
+import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph;
 import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 @Service
@@ -120,18 +123,45 @@ public class DataProjectService {
 		Stream<NodeWrapper> result = Stream.empty();
 
 		if (node.isGrouping() && node.hasGroupFieldValue() && node.hasChild()) {
-			result = getBaseRepository().getItemsGroupedByFieldValue(node.getEntityName(), node.getChild().getEntityName(), 
-					node.getGroupField(), node.getGroupFiledValue(), node.getChild().getGroupField())
-					/* set parent and child */
-					.peek(e -> {
-						e.setParent(node);
-						if (node.getChild() != null)
-							e.setChild(node.getChild().getChild());
-						/* set hashCode for UI Vaadin */
-						e.generateHashCode();
-					});
+			if (hasIntermadiateNode(node)) {
+				result = getBaseRepository().getItemsGroupedByFieldValue(node.getEntityName(), node.getChild().getEntityName(), 
+							node.getGroupField(), node.getGroupFiledValue(), node.getChild().getGroupField(), 
+								node.getParent().getId(), node.getParent().getEntityName());
+			} else {
+				result = getBaseRepository().getItemsGroupedByFieldValue(node.getEntityName(), node.getChild().getEntityName(), 
+							node.getGroupField(), node.getGroupFiledValue(), 
+								node.getChild().getGroupField());
+			}
+			/* set parent and child */
+			result = result.peek(e -> {
+				e.setParent(node);
+				if (node.getChild() != null) {
+					e.setChild(node.getChild().getChild());
+				}
+				/* set hashCode for UI Vaadin */
+				e.generateHashCode();
+			});
 		}
-
+		
+		return result;
+	}
+	
+	/**
+	 * Checks if the given node's path contains node.getParent node
+	 *  
+	 * @param node
+	 * @return 
+	 */
+	protected boolean hasIntermadiateNode(NodeWrapper node) {
+		boolean result = false;
+		
+		if (node.hasParent()) {
+			String parentEntityName = node.getParent().getEntityName();
+			Entities parentEntity = Entities.valueOf(parentEntityName.toUpperCase());
+			List<Entities> path = ProjectEntityGraph.getPathBetweenNodes(node.getEntityName(), node.getChild().getEntityName());
+			result = path.contains(parentEntity);
+		}
+		
 		return result;
 	}
 	

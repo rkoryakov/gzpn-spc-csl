@@ -1,9 +1,13 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
+import java.util.List;
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 
+import com.vaadin.data.ValueProvider;
 import com.vaadin.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinSession;
@@ -11,6 +15,7 @@ import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Panel;
@@ -21,6 +26,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.model.WorkSet;
+import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.services.bl.DataProjectService;
 import ru.gzpn.spc.csl.services.bl.DataUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
@@ -30,13 +36,27 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	private static final long serialVersionUID = -883906550551450076L;
 	private static final Logger logger = LoggerFactory.getLogger(DocCreatingLayout.class);
 	
-	private static final String I18N_SEARCHFIELD_PLACEHOLDER = "createdoc.DocCreatingLayout.searchField.placeholder";
-	private static final String I18N_SEARCHSETTINGS_DESC = "createdoc.DocCreatingLayout.searchField.searchSettings.desc";
+	private static final String I18N_SEARCHFIELD_PLACEHOLDER = "createdoc.DocCreatingLayout.worksetFilterField.placeholder";
+	private static final String I18N_SEARCHSETTINGS_DESC = "createdoc.DocCreatingLayout.worksetFilterSettingsButton.desc";
 	private static final String I18N_USERLAYOUTSETTINGS_DESC = "createdoc.DocCreatingLayout.userLayoutSettings.desc";
-	private static final String I18N_ADDTREEITEMBUTTON_DESC = "createdoc.DocCreatingLayout.addTreeItemButton.desc";
-	private static final String I18N_DELTREEITEMBUTTON_DESC = "createdoc.DocCreatingLayout.delTreeItemButton.desc";
+	private static final String I18N_ADDTREEITEMBUTTON_DESC = "createdoc.DocCreatingLayout.addWorksetButton.desc";
+	private static final String I18N_DELTREEITEMBUTTON_DESC = "createdoc.DocCreatingLayout.delWorksetButton.desc";
+	private static final String I18N_TREE_CAPTION = "createdoc.DocCreatingLayout.projectTreeCaption";
+	/* worksetGrid column captions*/
+	private static final String I18N_WORKSET_COLUMN_NAME = "createdoc.DocCreatingLayout.worksetGrid.columns.name";
+	private static final String I18N_WORKSET_COLUMN_CODE = "createdoc.DocCreatingLayout.worksetGrid.columns.code";
+	private static final String I18N_WORKSET_COLUMN_PIR = "createdoc.DocCreatingLayout.worksetGrid.columns.pir";
+	private static final String I18N_WORKSET_COLUMN_SMR = "createdoc.DocCreatingLayout.worksetGrid.columns.smr";
+	private static final String I18N_WORKSET_COLUMN_PLANOBJ = "createdoc.DocCreatingLayout.worksetGrid.columns.planobj";
+	private static final String I18N_WORKSET_COLUMN_ID = "createdoc.DocCreatingLayout.worksetGrid.columns.id";
+	private static final String I18N_WORKSET_COLUMN_VERSION = "createdoc.DocCreatingLayout.worksetGrid.columns.ver";
+	private static final String I18N_WORKSET_COLUMN_CREATEDATE = "createdoc.DocCreatingLayout.worksetGrid.columns.createdate";
+	private static final String I18N_WORKSET_COLUMN_CHANGEDATE = "createdoc.DocCreatingLayout.worksetGrid.columns.changedate";
 	
-	private double WORKSET_GRID_ROWS = 14;
+	private static final int WORKSET_GRID_ROWS = 14;
+	private static final int WORKSET_GRID_HEIGHT = 568;
+	private static final int TREEPANEL_HEIGHT_CORRECTION = 38;
+	private static final int LEFT_SPLIT_POSITION = 230;
 	
 	private DataProjectService projectService;
 	private DataUserSettigsService dataUserSettigsService;
@@ -50,20 +70,22 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	
 	private Tree<NodeWrapper> projectTree;
 	private Grid<WorkSet> worksetGrid;
-	private ProjectTreeDataProvider dataProvider;
+	private ProjectTreeDataProvider projectTreeDataProvider;
+	private WorksetDataProvider worksetDataProvider;
 	
 	private Button userLayoutSettings;
-	private Button addTreeItemButton;
-	private Button delTreeItemButton;
+	private Button addWorksetButton;
+	private Button delWorksetButton;
 	
 	
 	public DocCreatingLayout(DataProjectService projectService, DataUserSettigsService dataUserSettigsService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.dataUserSettigsService = dataUserSettigsService;
 		this.messageSource = messageSource;
-		NodeWrapper treeSettings = dataUserSettigsService.getCreateDocSettings().getLeftTreeGrid();
+		NodeWrapper treeSettings = dataUserSettigsService.getCreateDocSettings().getLeftHierarchySettings();
 		
-		dataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
+		projectTreeDataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
+		//worksetDataProvider = new WorksetDataProvider(projectService)
 
 		setSizeFull();
 		
@@ -80,27 +102,27 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 		leftLayot.setSpacing(true);
 		leftLayot.setSizeFull();
 		
-		HorizontalSplitPanel treeGrid = new HorizontalSplitPanel();
-		treeGrid.setSizeFull();
-		treeGrid.setSplitPosition(33, Unit.PERCENTAGE);
-		treeGrid.setMinSplitPosition(25, Unit.PERCENTAGE);
-		treeGrid.addComponent(createProjectTree());
-		treeGrid.addComponent(createWorksetGrid());
+		HorizontalSplitPanel splitPanel = new HorizontalSplitPanel();
+		splitPanel.setSizeFull();
+		splitPanel.setSplitPosition(LEFT_SPLIT_POSITION, Unit.PIXELS);
+		splitPanel.setMinSplitPosition(LEFT_SPLIT_POSITION, Unit.PIXELS);
+		splitPanel.addComponent(createProjectTree());
+		splitPanel.addComponent(createWorksetGrid());
 		
 		leftLayot.addComponent(createLeftHeadFeautures());
-		leftLayot.addComponent(treeGrid);
+		leftLayot.addComponent(splitPanel);
 		
 		return leftLayot;
 	}
 	
 	private Component createProjectTree() {
 		projectTree = new Tree<>();
-		Panel panel = new Panel();
-		projectTree.setDataProvider(dataProvider);
+		Panel panel = new Panel(getI18nText(I18N_TREE_CAPTION));
+		projectTree.setDataProvider(projectTreeDataProvider);
 		projectTree.setItemCaptionGenerator(NodeWrapper::getNodeCaption);
 		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
 		projectTree.setSizeFull();
-		projectTree.setHeight(568, Unit.PIXELS);
+		projectTree.setHeight(WORKSET_GRID_HEIGHT - TREEPANEL_HEIGHT_CORRECTION, Unit.PIXELS);
 		panel.setContent(projectTree);
 		panel.setSizeFull();
 		return panel;
@@ -108,13 +130,65 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	
 	private Component createWorksetGrid() {
 		worksetGrid = new Grid<>();
-		worksetGrid.addColumn(WorkSet::getName);
-		worksetGrid.addColumn(WorkSet::getCode);
+		List<ColumnSettings> columnSettings = dataUserSettigsService
+												.getCreateDocSettings()
+													.getLeftWorksetColumns();
+		columnSettings.sort((cs1, cs2) -> 
+			Integer.compare(cs1.getOrderIndex(), cs2.getOrderIndex())
+		);
+		columnSettings.forEach(this::addWorksetGridColumn);
 		worksetGrid.setSizeFull();
 		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS);
+		worksetGrid.setColumnReorderingAllowed(true);
 		return worksetGrid;
 	}
 
+	private void addWorksetGridColumn(ColumnSettings settings) {
+		
+		switch (settings.getEntityFieldName()) {
+		case WorkSet.FIELD_NAME:
+			addWorksetGridColumn(settings, WorkSet::getName, I18N_WORKSET_COLUMN_NAME);
+			break;
+		case WorkSet.FIELD_CODE:
+			addWorksetGridColumn(settings, WorkSet::getCode, I18N_WORKSET_COLUMN_CODE);
+			break;
+		case WorkSet.FIELD_PIR:
+			addWorksetGridColumn(settings, WorkSet::getPir, I18N_WORKSET_COLUMN_PIR);
+			break;
+		case WorkSet.FIELD_SMR:
+			addWorksetGridColumn(settings, WorkSet::getSmr, I18N_WORKSET_COLUMN_SMR);
+			break;
+		case WorkSet.FIELD_PLAN_OBJECT:
+			addWorksetGridColumn(settings, WorkSet::getPlanObject, I18N_WORKSET_COLUMN_PLANOBJ);
+			break;
+		case WorkSet.FIELD_ID:
+			addWorksetGridColumn(settings, WorkSet::getId, I18N_WORKSET_COLUMN_ID);
+			break;
+		case WorkSet.FIELD_VERSION:
+			addWorksetGridColumn(settings, WorkSet::getVersion, I18N_WORKSET_COLUMN_VERSION);
+			break;
+		case WorkSet.FIELD_CREATE_DATE:
+			addWorksetGridColumn(settings, WorkSet::getCreateDate, I18N_WORKSET_COLUMN_CREATEDATE);
+			break;
+		case WorkSet.FIELD_CHANGE_DATE:
+			addWorksetGridColumn(settings, WorkSet::getChangeDate, I18N_WORKSET_COLUMN_CHANGEDATE);
+			break;
+			default:
+		}
+	}
+	
+	private <T> void addWorksetGridColumn(ColumnSettings settings, ValueProvider<WorkSet, T> provider, String i18nCaption) {
+		Column<WorkSet, T> column = worksetGrid.addColumn(provider);
+		column.setCaption(getI18nText(i18nCaption));
+		Double width = settings.getWidth();
+		if (!Objects.isNull(width) && Double.isFinite(width) && width > 1) {
+			column.setWidth(width);
+		} else {
+			column.setWidthUndefined();
+		}
+		column.setHidden(!settings.isShown());
+	}
+	
 	private Component createLeftHeadFeautures() {
 		AbsoluteLayout layout = new AbsoluteLayout();
 		HorizontalLayout horizontalLayout = new HorizontalLayout();
@@ -122,7 +196,7 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 		layout.setHeight(50.0f, Unit.PIXELS);
 		layout.setWidth(100.f, Unit.PERCENTAGE);
 		horizontalLayout.addComponent(createWorksetFilter());
-		horizontalLayout.addComponent(createTreeItemButtons());
+		horizontalLayout.addComponent(createWorksetButtons());
 		layout.addComponent(createSettingsButton(), "top:5px; left:5px");
 		layout.addComponent(horizontalLayout, "top:5px; right:5px");
 		return layout;
@@ -143,15 +217,17 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 		return searchComp;
 	}
 
-	private Component createTreeItemButtons() {
+	private Component createWorksetButtons() {
 		JoinedLayout<Button, Button> bottons = new JoinedLayout<>();
-		addTreeItemButton = new Button(VaadinIcons.PLUS);
-		delTreeItemButton = new Button(VaadinIcons.MINUS);
-		addTreeItemButton.setDescription(getI18nText(I18N_ADDTREEITEMBUTTON_DESC));
-		delTreeItemButton.setDescription(getI18nText(I18N_DELTREEITEMBUTTON_DESC));
+		addWorksetButton = new Button(VaadinIcons.PLUS);
+		delWorksetButton = new Button(VaadinIcons.MINUS);
+		addWorksetButton.setDescription(getI18nText(I18N_ADDTREEITEMBUTTON_DESC));
+		delWorksetButton.setDescription(getI18nText(I18N_DELTREEITEMBUTTON_DESC));
+		addWorksetButton.setEnabled(false);
+		delWorksetButton.setEnabled(false);
 		
-		bottons.addComponent(addTreeItemButton);
-		bottons.addComponent(delTreeItemButton);
+		bottons.addComponent(addWorksetButton);
+		bottons.addComponent(delWorksetButton);
 		
 		return bottons;
 	}
@@ -189,7 +265,7 @@ class WorkSetDocumentation extends VerticalLayout {
 		this.projectService = projectService;
 		this.dataUserSettigsService = dataUserSettigsService;
 		this.messageSource = messageSource;
-		NodeWrapper treeSettings = dataUserSettigsService.getCreateDocSettings().getRightTreeGrid();
+		NodeWrapper treeSettings = dataUserSettigsService.getCreateDocSettings().getRightHierarchySettings();
 		
 		dataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
 		configurableFilterDataProvider = dataProvider.withConfigurableFilter(

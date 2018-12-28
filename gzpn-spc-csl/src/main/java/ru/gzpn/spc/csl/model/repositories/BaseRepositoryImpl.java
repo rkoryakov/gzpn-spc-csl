@@ -3,6 +3,7 @@ package ru.gzpn.spc.csl.model.repositories;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -89,8 +90,8 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		Stream<NodeWrapper> result = null;
 		
 		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
-			formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%2$s', e.%2$s) "
-							+ "FROM %1$s e GROUP BY e.%2$s", entity, groupField);
+			formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%2$s', e.%2$s, e.id) "
+							+ "FROM %1$s e GROUP BY e.%2$s, e.id", entity, groupField);
 			result = entityManager.createQuery(jpql.toString(), NodeWrapper.class).getResultList().stream();
 		}
 		
@@ -106,11 +107,11 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
 
 			if (StringUtils.isNotEmpty(groupFieldName)) {
-				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%4$s', e.%4$s) "
-								+ "FROM %1$s e WHERE e.%2$s = :fieldValue GROUP BY e.%4$s",
+				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%4$s', e.%4$s, e.id) "
+								+ "FROM %1$s e WHERE e.%2$s = :fieldValue GROUP BY e.%4$s, e.id",
 								entity, fieldName, fieldValue, groupFieldName);
 			} else {
-				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', e) "
+				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', e, e.id) "
 								+ "FROM %1$s e WHERE e.%2$s = :fieldValue",
 								entity, fieldName);
 			}
@@ -151,16 +152,15 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 	
 	private void createJpqlQueryGroupedByFieldValue(Formatter jpqlFormatter, String sourceEntity, String targetEntity,
 										String sourceFieldName, String targetGroupFieldName) {
-		
 		List<Entities> path = ProjectEntityGraph.getPathBetweenNodes(sourceEntity, targetEntity);
 		boolean isPathMoreOne = path.size() > 1;
 		boolean isGroup = StringUtils.isNotEmpty(targetGroupFieldName);
 		
 		if (isGroup) {
-			jpqlFormatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%2$s', '%3$s', T.%3$s)"
+			jpqlFormatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%2$s', '%3$s', T.%3$s, T.id)"
 					+ " FROM %1$s S, %2$s T", sourceEntity, targetEntity, targetGroupFieldName);
 		} else {
-			jpqlFormatter.format("SELECT DISTINCT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%2$s', T)"
+			jpqlFormatter.format("SELECT DISTINCT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%2$s', T, T.id)"
 					+ " FROM %1$s S, %2$s T", sourceEntity, targetEntity);
 		}
 		
@@ -172,14 +172,15 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 					isPathMoreOne ? path.get(1).getName() : path.get(0).getName());
 		String leftSourceField = sourceNext.get().getLeftEntityField();
 		String rightSourceField = sourceNext.get().getRightEntityField();
-		if (path.size() == 2) {
-			jpqlFormatter.format(" WHERE S.%1$s = :sourceFieldValue AND S.%2$s = %3$s.%4$s", sourceFieldName,
-					leftSourceField, "T", rightSourceField);
-		} else  {
-			jpqlFormatter.format(" WHERE S.%1$s = :sourceFieldValue AND S.%2$s = %3$s.%4$s", sourceFieldName,
-					leftSourceField, isPathMoreOne ? "E_1" : "T", rightSourceField);
+		
+		if (path.size() == 1 || path.size() == 2) {
+			jpqlFormatter.format(" WHERE S.%1$s = :sourceFieldValue AND S.%2$s = T.%3$s", sourceFieldName,
+					leftSourceField, rightSourceField);
+		} else if (path.size() > 2) {
+			jpqlFormatter.format(" WHERE S.%1$s = :sourceFieldValue AND S.%2$s = E_1.%3$s", sourceFieldName,
+					leftSourceField, rightSourceField);
 		}
-
+		
 		for (int i = 1; i < path.size() - 1; i ++) {
 			Entities left = path.get(i);
 			Entities right = path.get(i + 1);
@@ -192,9 +193,105 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		}
 
 		if (isGroup) {
-			jpqlFormatter.format(" GROUP BY T.%1$s", targetGroupFieldName);
+			jpqlFormatter.format(" GROUP BY T.%1$s, T.id", targetGroupFieldName);
+		}
+	}
+	
+
+	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String sourceEntity, String targetEntity, 
+										String sourceFieldName, Object sourceFieldValue, String targetGroupFieldName, Long parentId, String parentEntity) {
+		StringBuilder jpql = new StringBuilder();
+		Stream<NodeWrapper> result = null;
+		
+		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
+			createJpqlQueryGroupedByFieldValue(formatter, sourceEntity, targetEntity, sourceFieldName, targetGroupFieldName, parentId, parentEntity);
+			logger.debug("JPQL string '{}'", jpql);
+			logger.debug("sourceFieldValue '{}'", sourceFieldValue);
+			
+			TypedQuery<NodeWrapper> query = entityManager.createQuery(jpql.toString(), NodeWrapper.class);
+			List<NodeWrapper> resultList = query.setParameter("sourceFieldValue", sourceFieldValue).getResultList();
+			logger.debug("resultList '{}'", resultList.size());
+			//resultList.forEach(e -> {e.generateHashCode(); logger.debug("repository node {}", e);});
+			result = resultList.stream();
 		}
 		
+		return result;
+	}
+	
+	private void createJpqlQueryGroupedByFieldValue(Formatter jpqlFormatter, String sourceEntity, String targetEntity,
+									String sourceFieldName, String targetGroupFieldName, Long parentId, String parentEntity) {
+		List<Entities> path = ProjectEntityGraph.getPathBetweenNodes(sourceEntity, targetEntity);
+		boolean isPathMoreOne = path.size() > 1;
+		boolean isGroup = StringUtils.isNotEmpty(targetGroupFieldName);
+
+		if (isGroup) {
+			jpqlFormatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%2$s', '%3$s', T.%3$s, T.id)"
+					+ " FROM %1$s S, %2$s T", sourceEntity, targetEntity, targetGroupFieldName);
+		} else {
+			jpqlFormatter.format("SELECT DISTINCT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%2$s', T, T.id)"
+					+ " FROM %1$s S, %2$s T", sourceEntity, targetEntity);
+		}
+
+		for (int i = 1; i < path.size() - 1; i++) {
+			jpqlFormatter.format(", %1$s E_%2$d ", path.get(i).getName(), i);
+		}
+
+		Optional<LinkedFields> sourceNext = ProjectEntityGraph.getLinkedFields(sourceEntity,
+				isPathMoreOne ? path.get(1).getName() : path.get(0).getName());
+		String leftSourceField = sourceNext.get().getLeftEntityField();
+		String rightSourceField = sourceNext.get().getRightEntityField();
+
+		if (path.size() == 1 || path.size() == 2) {
+			jpqlFormatter.format(" WHERE S.%1$s = :sourceFieldValue AND S.%2$s = T.%3$s", sourceFieldName,
+					leftSourceField, rightSourceField);
+		} else if (path.size() > 2) {
+			jpqlFormatter.format(" WHERE S.%1$s = :sourceFieldValue AND S.%2$s = E_1.%3$s", sourceFieldName,
+					leftSourceField, rightSourceField);
+		}
+		
+		addParentIdSqlExpression(jpqlFormatter, path, parentEntity, parentId);
+		
+		for (int i = 1; i < path.size() - 1; i++) {
+			Entities left = path.get(i);
+			Entities right = path.get(i + 1);
+			String leftShortcut = "E_" + i;
+			String rightShortcut = (i == path.size() - 2) ? "T" : "E_" + (i + 1);
+
+			Optional<LinkedFields> linked = ProjectEntityGraph.getLinkedFields(left.getName(), right.getName());
+			jpqlFormatter.format(" AND %1$s.%2$s = %3$s.%4$s ", leftShortcut, linked.get().getLeftEntityField(),
+					rightShortcut, linked.get().getRightEntityField());
+		}
+
+		if (isGroup) {
+			jpqlFormatter.format(" GROUP BY T.%1$s, T.id", targetGroupFieldName);
+		}
+	}
+	
+	/**
+	 * Add parent entity relation clause to the JPQL expression. 
+	 * For example, we have the following hierarchy settings: 
+	 * 		HProject ->						HProject ->
+	 * 			CProject ->			OR 			CProject ->	
+	 * 				Stage ->						LocalEstimate ->
+	 * 					PlanObject							PlanObject
+	 * 
+	 * 	And if we'll go to PlanObject (thru Stage or LocalEstimate) we also need to join with CProject.
+	 *  Because otherwise we would have got all the PlanObject's items by Stage or by LocalEstimate		
+	 */
+	private void addParentIdSqlExpression(Formatter formatter, List<Entities> path, String parentEntity, Long parentId) {
+		if (!Objects.isNull(parentId) && StringUtils.isNotEmpty(parentEntity)) {
+			int parentEntityIndex = path.indexOf(Entities.valueOf(parentEntity.toUpperCase()));
+			if (parentEntityIndex > 0 && parentEntityIndex < path.size() - 1) {
+				formatter.format(" AND E_%1$d.id = %2$d", parentEntityIndex, parentId);
+			} else if (parentEntityIndex == 0) {
+				formatter.format(" AND S.id = %1$d", parentId);
+			} else if (parentEntityIndex == path.size() - 1) {
+				formatter.format(" AND T.id = %1$d", parentId);
+			} else if (parentEntityIndex == -1) {
+				throw new IllegalArgumentException("Entity " + parentEntity + " doesn't exist in the grouping path " + path 
+								+ ". Maybe there is another shorter path between these two entity nodes.");
+			}
+		}
 	}
 	
 	public EntityManager getEntityManager() {

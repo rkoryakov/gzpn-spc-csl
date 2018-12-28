@@ -26,6 +26,7 @@ public class NodeWrapper implements Serializable {
 	private NodeWrapper parent; // parent level for query data
 	private NodeWrapper child; // child level for query data
 	private BaseEntity item; // fetched data if the current node isn't a group
+	private Long id;
 	
 	private List<SortOrder<String>> sortOrdersForChildren;
 	private NodeFilter filterForChildren;
@@ -55,10 +56,19 @@ public class NodeWrapper implements Serializable {
 		this.groupFiledValue = groupFiledValue;
 	}
 	
-	public NodeWrapper(String entityName, BaseEntity item) {
+	public NodeWrapper(String entityName, String groupByFiledName, Object groupFiledValue, Long id) {
+		this();
+		this.entityName = entityName;
+		this.groupFiled = groupByFiledName;
+		this.groupFiledValue = groupFiledValue;
+		this.id = id;
+	}
+	
+	public NodeWrapper(String entityName, BaseEntity item, Long id) {
 		this();
 		this.entityName = entityName;
 		this.setItem(item);
+		this.id = id;
 	}
 	
 	public void generateHashCode() {
@@ -76,6 +86,15 @@ public class NodeWrapper implements Serializable {
 		this.hashCode = result;
 	}
 	
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	/**
 	 * Caption for rendering in UI tree
 	 */
