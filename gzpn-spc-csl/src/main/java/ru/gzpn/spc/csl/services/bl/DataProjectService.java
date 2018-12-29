@@ -10,14 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
-import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
-import ru.gzpn.spc.csl.model.repositories.PhaseRepository;
-import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
-import ru.gzpn.spc.csl.model.repositories.StageRepository;
-import ru.gzpn.spc.csl.model.repositories.WorkRepository;
-import ru.gzpn.spc.csl.model.repositories.WorkSetRepository;
 import ru.gzpn.spc.csl.model.utils.Entities;
 import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph;
 import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
@@ -28,55 +21,16 @@ public class DataProjectService {
 	public static final Logger logger = LoggerFactory.getLogger(DataProjectService.class);
 	@Autowired
 	private HProjectRepository hpRepository;
-	@Autowired
-	private CProjectRepository cpRepository;
-	@Autowired
-	private PhaseRepository phaseRepository;
-	@Autowired
-	private StageRepository stageRepository;
-	@Autowired
-	private PlanObjectRepository planObjectRepository;
-	@Autowired
-	private WorkRepository workRepository;
-	@Autowired
-	private LocalEstimateRepository localEstimateRepository;
-	@Autowired
-	private WorkSetRepository workSetRepository;
 	
-	
-	public WorkSetRepository getWorkSetRepository() {
-		return workSetRepository;
+	public HProjectRepository getBaseRepository() {
+		// we can use any implementation of the BaseRepository - we use HProjectRepository
+		return getHPRepository();
 	}
-
+	
 	public HProjectRepository getHPRepository() {
 		return hpRepository;
 	}
 	
-	public CProjectRepository getCPRepository() {
-		return cpRepository;
-	}
-	
-	public PhaseRepository getPhaseRepository() {
-		return phaseRepository;
-	}
-	
-	public StageRepository getStageRepository() {
-		return stageRepository;
-	}
-	
-	public PlanObjectRepository getPlanObjectRepository() {
-		return planObjectRepository;
-	}
-	
-	
-	public WorkRepository getWorkRepository() {
-		return workRepository;
-	}
-
-	public LocalEstimateRepository getLocalEstimateRepository() {
-		return localEstimateRepository;
-	}
-
 	/**
 	 * Items count of the given entity grouped by the given field
 	 * 
@@ -185,11 +139,6 @@ public class DataProjectService {
 	 */
 	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String entity, String fieldName, Object fieldValue, String groupFieldName) {
 		return getBaseRepository().getItemsGroupedByFieldValue(entity, fieldName, fieldValue, groupFieldName);
-	}
-	
-	public HProjectRepository getBaseRepository() {
-		// we can use any implementation of the BaseRepository - we use HProjectRepository
-		return getHPRepository();
 	}
 	
 	public <T> T executeByField(Supplier<T> suplier, String field) {

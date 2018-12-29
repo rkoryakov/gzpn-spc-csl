@@ -27,8 +27,10 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.model.WorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.services.bl.DataProjectService;
 import ru.gzpn.spc.csl.services.bl.DataUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.WorkSetService;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 import ru.gzpn.spc.csl.ui.common.NodeFilter;
 
@@ -56,11 +58,13 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	private static final int WORKSET_GRID_ROWS = 14;
 	private static final int WORKSET_GRID_HEIGHT = 568;
 	private static final int TREEPANEL_HEIGHT_CORRECTION = 38;
-	private static final int LEFT_SPLIT_POSITION = 230;
+	private static final int MAIN_MIN_SPLIT_POSITION = 30;
+	private static final int LEFT_MIN_SPLIT_POSITION = 200;
 	
 	private DataProjectService projectService;
 	private DataUserSettigsService dataUserSettigsService;
 	private MessageSource messageSource;
+	private CreateDocSettingsJson docSettingsJson;
 	
 	private VerticalLayout leftLayot;
 	private VerticalLayout rightLayout;
@@ -78,19 +82,20 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	private Button delWorksetButton;
 	
 	
-	public DocCreatingLayout(DataProjectService projectService, DataUserSettigsService dataUserSettigsService, MessageSource messageSource) {
+	public DocCreatingLayout(DataProjectService projectService, WorkSetService worksetService, DataUserSettigsService dataUserSettigsService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.dataUserSettigsService = dataUserSettigsService;
 		this.messageSource = messageSource;
-		NodeWrapper treeSettings = dataUserSettigsService.getCreateDocSettings().getLeftHierarchySettings();
+		docSettingsJson = dataUserSettigsService.getCreateDocSettings();
+		NodeWrapper treeSettings = docSettingsJson.getLeftHierarchySettings();
 		
 		projectTreeDataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
-		//worksetDataProvider = new WorksetDataProvider(projectService)
+		worksetDataProvider = new WorksetDataProvider(worksetService);
 
 		setSizeFull();
 		
-		setSplitPosition(50.0f, Unit.PERCENTAGE);
-		setMinSplitPosition(30, Unit.PERCENTAGE);
+		setSplitPosition(docSettingsJson.getMainSplitPosition(), Unit.PERCENTAGE);
+		setMinSplitPosition(MAIN_MIN_SPLIT_POSITION, Unit.PERCENTAGE);
 		addStyleName(ValoTheme.SPLITPANEL_LARGE);
 		setFirstComponent(createLeftLayout());
 		setSecondComponent(createRightLayout());
@@ -104,8 +109,8 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 		
 		HorizontalSplitPanel splitPanel = new HorizontalSplitPanel();
 		splitPanel.setSizeFull();
-		splitPanel.setSplitPosition(LEFT_SPLIT_POSITION, Unit.PIXELS);
-		splitPanel.setMinSplitPosition(LEFT_SPLIT_POSITION, Unit.PIXELS);
+		splitPanel.setMinSplitPosition(LEFT_MIN_SPLIT_POSITION, Unit.PIXELS);
+		splitPanel.setSplitPosition(docSettingsJson.getLeftSplitPosition(), Unit.PIXELS);
 		splitPanel.addComponent(createProjectTree());
 		splitPanel.addComponent(createWorksetGrid());
 		
@@ -140,12 +145,13 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 		worksetGrid.setSizeFull();
 		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS);
 		worksetGrid.setColumnReorderingAllowed(true);
+		worksetGrid.setDataProvider(worksetDataProvider);
+		
 		return worksetGrid;
 	}
 
 	private void addWorksetGridColumn(ColumnSettings settings) {
-		
-		switch (settings.getEntityFieldName()) {
+		switch (settings.getEntityFieldName()) {		
 		case WorkSet.FIELD_NAME:
 			addWorksetGridColumn(settings, WorkSet::getName, I18N_WORKSET_COLUMN_NAME);
 			break;
@@ -179,8 +185,11 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	
 	private <T> void addWorksetGridColumn(ColumnSettings settings, ValueProvider<WorkSet, T> provider, String i18nCaption) {
 		Column<WorkSet, T> column = worksetGrid.addColumn(provider);
+		column.setSortProperty(settings.getEntityFieldName());
+		column.setSortable(true);
 		column.setCaption(getI18nText(i18nCaption));
 		Double width = settings.getWidth();
+		
 		if (!Objects.isNull(width) && Double.isFinite(width) && width > 1) {
 			column.setWidth(width);
 		} else {

@@ -33,11 +33,13 @@ import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWork;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
+import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
 import ru.gzpn.spc.csl.model.repositories.PhaseRepository;
 import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
 import ru.gzpn.spc.csl.model.repositories.StageRepository;
 import ru.gzpn.spc.csl.model.repositories.WorkRepository;
+import ru.gzpn.spc.csl.model.repositories.WorkSetRepository;
 import ru.gzpn.spc.csl.model.utils.Entities;
 import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
@@ -46,13 +48,25 @@ import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 public class DataProjectServiceTest {
 	@Autowired
 	DataProjectService service;
-		
+	@Autowired
+	PhaseRepository phaseRepository;
+	@Autowired
+	StageRepository stageRepository;
+	@Autowired
+	CProjectRepository cpRepository;
+	@Autowired
+	PlanObjectRepository planObjRepository;
+	@Autowired
+	WorkRepository workRepository;
+	@Autowired
+	LocalEstimateRepository localEstimateRepository;
+	@Autowired
+	WorkSetRepository workSetRepository;
+	
 	@Test
 	@Transactional
 	@Commit
 	public void fillData() {
-		PhaseRepository phaseRepository = service.getPhaseRepository();
-		StageRepository stageRepository = service.getStageRepository();
 		fillPhases();
 		fillStages();
 		
@@ -74,14 +88,14 @@ public class DataProjectServiceTest {
 					cProject.setPhase(phase);
 					Stage stage = stageRepository.findAll().get((int)(3*Math.random()));
 					cProject.setStage(stage);
-					cProject = service.getCPRepository().save(cProject);
+					cProject = cpRepository.save(cProject);
 					
 					// PlanObjects
 					List<IPlanObject> planObjects = new ArrayList<>();
 					for (int k = 0; k < 5; k ++) {
 						PlanObject p = new PlanObject("00000" + i + "" + j + "" + k, "Plan Object " + (i * j + k + 1), "AC");
 						planObjects.add(p);
-						p = service.getPlanObjectRepository().save(p);
+						p = planObjRepository.save(p);
 						// Works
 						List<Work> works = new ArrayList<>();
 						for (int m = 0; m < 3; m ++) {
@@ -100,7 +114,7 @@ public class DataProjectServiceTest {
 							work.setType(WorkType.SMR);
 							work.setPlanObj(p);
 						}
-						service.getWorkRepository().saveAll(works);
+						workRepository.saveAll(works);
 						
 						// WorkSets
 						List<IWorkSet> worksetList = new ArrayList<>();
@@ -115,9 +129,9 @@ public class DataProjectServiceTest {
 							// LocalEstimate
 							LocalEstimate estimate = new LocalEstimate("00000" + i + "" + j + "" + k + "" + l, "Estimate " + num);
 							estimate.setStage(stage);
-							estimate = service.getLocalEstimateRepository().save(estimate);
+							estimate = localEstimateRepository.save(estimate);
 				
-							workset = service.getWorkSetRepository().save(workset);
+							workset = workSetRepository.save(workset);
 							worksetList.add((IWorkSet)workset);
 						}
 						p.setWorkList(works.stream().map(e->(IWork)e).collect(Collectors.toList()));
@@ -125,7 +139,7 @@ public class DataProjectServiceTest {
 					}
 					cProject.setPlanObjects(planObjects);
 					
-					cProject = service.getCPRepository().save(cProject);
+					cProject = cpRepository.save(cProject);
 					cprojects.add(cProject);
 				}
 				
@@ -140,45 +154,45 @@ public class DataProjectServiceTest {
 	private void fillPhases() {
 		
 		Phase phase1 = new Phase("Phase 1");
-		phase1 = service.getPhaseRepository().save(phase1);
+		phase1 = phaseRepository.save(phase1);
 		
 		Phase phase1_1 = new Phase("Phase 1.1", phase1);
-		phase1_1 = service.getPhaseRepository().save(phase1_1);
+		phase1_1 = phaseRepository.save(phase1_1);
 		List<IPhase> children = new ArrayList<>();
 		children.add(phase1_1);
 		phase1.setChildren(children);
-		phase1 = service.getPhaseRepository().save(phase1);
+		phase1 = phaseRepository.save(phase1);
 		
 		Phase phase2 = new Phase("Phase 2");
-		phase2 = service.getPhaseRepository().save(phase2);
+		phase2 = phaseRepository.save(phase2);
 		
 		Phase phase2_1 = new Phase("Phase 2.1", phase2);
-		phase2_1 = service.getPhaseRepository().save(phase2_1);
+		phase2_1 = phaseRepository.save(phase2_1);
 		
 		Phase phase2_2 = new Phase("Phase 2.2", phase2);
 		children = new ArrayList<>();
 		children.add(phase2_1);
-		phase2_2 = service.getPhaseRepository().save(phase2_2);
+		phase2_2 = phaseRepository.save(phase2_2);
 		children.add(phase2_2);
 		phase2.setChildren(children);	
-		phase2 = service.getPhaseRepository().save(phase2);
+		phase2 = phaseRepository.save(phase2);
 		
 		Phase phase2_2_1 = new Phase("Phase 2.2.1", phase2_2);
 		children = new ArrayList<>();
-		phase2_2_1 = service.getPhaseRepository().save(phase2_2_1);
+		phase2_2_1 = phaseRepository.save(phase2_2_1);
 		children.add(phase2_2_1);
 		phase2_2.setChildren(children);
-		phase2_2 = service.getPhaseRepository().save(phase2_2);
+		phase2_2 = phaseRepository.save(phase2_2);
 	}
 	
 	@Transactional
 	private IPhase getOrCreatePhase(Phase phase) {
-		PhaseRepository repository = service.getPhaseRepository();
-		Optional<Phase> result = repository.findOne(Example.of(phase));
+		
+		Optional<Phase> result = phaseRepository.findOne(Example.of(phase));
 		IPhase ph = result.get();
 		
 		if (!result.isPresent()) {
-			ph = repository.save(phase);
+			ph = phaseRepository.save(phase);
 		}
 		
 		return ph;
@@ -189,19 +203,19 @@ public class DataProjectServiceTest {
 		Stage stage1 = new Stage("Stage 1");
 		Stage stage2 = new Stage("Stage 2");
 		Stage stage3 = new Stage("Stage 3");
-		service.getStageRepository().save(stage1);
-		service.getStageRepository().save(stage2);
-		service.getStageRepository().save(stage3);
+		stageRepository.save(stage1);
+		stageRepository.save(stage2);
+		stageRepository.save(stage3);
 	}
 	
 	@Transactional
 	private Stage getOrCreateStage(Stage stage) {
-		StageRepository repository = service.getStageRepository();
-		Optional<Stage> result = repository.findOne(Example.of(stage));
+		
+		Optional<Stage> result = stageRepository.findOne(Example.of(stage));
 		Stage st = result.get();
 		
 		if (!result.isPresent()) {
-			st = repository.save(stage);
+			st = stageRepository.save(stage);
 		}
 		
 		return st;
@@ -209,14 +223,13 @@ public class DataProjectServiceTest {
 	
 	@Transactional
 	private PlanObject getOrCreatePlanObj(PlanObject planObject) {
-		PlanObjectRepository repository = service.getPlanObjectRepository();
-		Optional<PlanObject> result = repository.findOne(Example.of(planObject));
+		Optional<PlanObject> result = planObjRepository.findOne(Example.of(planObject));
 		PlanObject po = null;
 		
 		if (result.isPresent()) {
 			po = result.get();
 		} else {
-			po = repository.save(planObject);
+			po = planObjRepository.save(planObject);
 		}
 		
 		return po;
@@ -224,14 +237,14 @@ public class DataProjectServiceTest {
 	
 	@Transactional
 	private Work getOrCreateWork(Work work) {
-		WorkRepository repository = service.getWorkRepository();
-		Optional<Work> result = repository.findOne(Example.of(work));
+		
+		Optional<Work> result = workRepository.findOne(Example.of(work));
 		Work wk = null;
 		
 		if (result.isPresent()) {
 			wk = result.get();
 		} else {
-			wk = repository.save(work);
+			wk = workRepository.save(work);
 		}
 		
 		return wk;
@@ -239,14 +252,13 @@ public class DataProjectServiceTest {
 	
 	@Transactional
 	private LocalEstimate getOrCreateWork(LocalEstimate estimate) {
-		LocalEstimateRepository repository = service.getLocalEstimateRepository();
-		Optional<LocalEstimate> result = repository.findOne(Example.of(estimate));
+		Optional<LocalEstimate> result = localEstimateRepository.findOne(Example.of(estimate));
 		LocalEstimate est = null;
 		
 		if (result.isPresent()) {
 			est = result.get();
 		} else {
-			est = repository.save(estimate);
+			est = localEstimateRepository.save(estimate);
 		}
 		
 		return est;

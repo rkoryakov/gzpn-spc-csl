@@ -16,10 +16,15 @@ import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
 public class CreateDocSettingsJson implements Serializable {
 	private static final long serialVersionUID = -8491801489639919153L;
+	public static final Integer DEFAULT_LEFT_SPLIT_POSITION = 240;
+	private static final Integer DEFAULT_MAIN_SPLIT_POSITION = 50;
 	
 	// sequence of grouping fields/entities to show in a treeGreed component
 	private NodeWrapper leftTreeGroup;
 	private NodeWrapper rightTreeGroup;
+	private Integer mainSplitPosition;
+	private Integer leftSplitPosition;
+	
 	// the displayed columns of the end entity in the hierarchy 
 	private List<ColumnSettings> lefResultColumns;
 	private List<ColumnSettings> rightResultColumns;
@@ -89,9 +94,11 @@ public class CreateDocSettingsJson implements Serializable {
 	
 	public List<ColumnSettings> getRightDocumentsColumns() {
 		List<ColumnSettings> result = rightResultColumns;
+		
 		if (Objects.isNull(result)) {
 			result = getRightDefaultDocumentsColumns();
 		}
+		
 		return result;
 	}
 	
@@ -107,4 +114,33 @@ public class CreateDocSettingsJson implements Serializable {
 	public NodeWrapper getRightDefaultNodesHierarchy() {
 		return new NodeWrapper("Document");
 	}
+
+	public Integer getMainSplitPosition() {
+		Integer result = DEFAULT_MAIN_SPLIT_POSITION;
+		
+		if (!Objects.isNull(mainSplitPosition) && mainSplitPosition > 1 && mainSplitPosition < 100) {
+			result = mainSplitPosition;
+		}
+		
+		return result;
+	}
+	
+	public void setMainSplitPosition(Integer mainSplitPosition) {
+		this.mainSplitPosition = mainSplitPosition;
+	}
+
+	public Integer getLeftSplitPosition() {
+		Integer result = DEFAULT_LEFT_SPLIT_POSITION;
+		
+		if (!Objects.isNull(leftSplitPosition) && leftSplitPosition > 1) {
+			result = leftSplitPosition;
+		}
+		
+		return result;
+	}
+
+	public void setLeftSplitPosition(Integer leftSplitPosition) {
+		this.leftSplitPosition = leftSplitPosition;
+	}
+
 }
