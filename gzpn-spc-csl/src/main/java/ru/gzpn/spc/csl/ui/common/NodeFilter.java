@@ -121,7 +121,9 @@ public class NodeFilter {
 					isShown = applyCommonFilterOnEntity(item);
 				}
 			} else if (StringUtils.isNotEmpty(commonFilter)) {
-				isShown = item.getGroupFiledValue().toString().startsWith(commonFilter);
+				isShown = item.getGroupFiledValue().toString()
+							.toLowerCase()
+							.startsWith(commonFilter.toLowerCase());
 			}
 			return isShown;
 		};

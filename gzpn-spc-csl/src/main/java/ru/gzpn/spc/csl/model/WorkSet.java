@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -15,6 +17,10 @@ import ru.gzpn.spc.csl.model.interfaces.IWork;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 
 @Entity
+@NamedQueries({
+		@NamedQuery(name = "WorkSet.findByPlanObject", 
+				query = "SELECT w FROM WorkSet w WHERE w.planObject = ?1")
+})
 @Table(schema = "spc_csl_schema", name = "workset", 
 indexes = {
 		@Index(name = "spc_csl_idx_wkscode", columnList = "code"),
@@ -25,12 +31,6 @@ indexes = {
 })
 public class WorkSet extends BaseEntity implements IWorkSet, Serializable {
 	private static final long serialVersionUID = -1489774086979019274L;
-	
-	public static final String FIELD_NAME = "name";
-	public static final String FIELD_CODE = "code";
-	public static final String FIELD_PIR = "pir";
-	public static final String FIELD_SMR = "smr";
-	public static final String FIELD_PLAN_OBJECT = "planObject";
 	
 	@Column(length = 64)
 	private String code;
@@ -75,6 +75,11 @@ public class WorkSet extends BaseEntity implements IWorkSet, Serializable {
 	}
 	public void setPlanObject(IPlanObject planObject) {
 		this.planObject = planObject;
+	}
+	
+	@Override
+	public String toString() {
+		return "WorkSet [code=" + code + ", name=" + name + ", pir=" + pir + ", smr=" + smr + ", planObject=" + planObject + "]";
 	}
 	
 }

@@ -41,13 +41,14 @@ import ru.gzpn.spc.csl.model.repositories.StageRepository;
 import ru.gzpn.spc.csl.model.repositories.WorkRepository;
 import ru.gzpn.spc.csl.model.repositories.WorkSetRepository;
 import ru.gzpn.spc.csl.model.utils.Entities;
+import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
 import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class DataProjectServiceTest {
 	@Autowired
-	DataProjectService service;
+	IDataProjectService service;
 	@Autowired
 	PhaseRepository phaseRepository;
 	@Autowired
@@ -120,7 +121,7 @@ public class DataProjectServiceTest {
 						List<IWorkSet> worksetList = new ArrayList<>();
 						for (int l = 0; l < 5; l ++) {
 							int num = l + i * 5 * j * k * 5 + 1;
-							WorkSet workset = new WorkSet();
+							IWorkSet workset = new WorkSet();
 							workset.setName("Work Set " + i + "" + j + "" + k + "" + l);
 							workset.setCode("12000 " + i + "" + j + "" + k + "" + l);
 							workset.setPir(works.get(0));
@@ -131,7 +132,7 @@ public class DataProjectServiceTest {
 							estimate.setStage(stage);
 							estimate = localEstimateRepository.save(estimate);
 				
-							workset = workSetRepository.save(workset);
+							workset = workSetRepository.save((WorkSet)workset);
 							worksetList.add((IWorkSet)workset);
 						}
 						p.setWorkList(works.stream().map(e->(IWork)e).collect(Collectors.toList()));

@@ -1,54 +1,67 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 
 import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
 import com.vaadin.data.provider.QuerySortOrder;
+import com.vaadin.shared.data.sort.SortDirection;
 
-import ru.gzpn.spc.csl.model.WorkSet;
-import ru.gzpn.spc.csl.services.bl.WorkSetService;
-import ru.gzpn.spc.csl.ui.common.NodeFilter;
+import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
+import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.services.bl.WorkSetService.WorkSetFilter;
+import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
 
-public class WorksetDataProvider extends AbstractBackEndDataProvider<WorkSet, Void> {
+public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSet, Void> {
 	private static final long serialVersionUID = 1L;
 	public static final Logger logger = LogManager.getLogger(WorksetDataProvider.class);
 	
-	private WorkSetService service;
-	private NodeFilter filter;
+	private IWorkSetService service;
+	private WorkSetFilter filter;
 	/* The selected project item by which we are going to fetch WorkSets */
 	private NodeWrapper parentNode;
+	List<ColumnSettings> shownColumns;
 	
-	WorksetDataProvider(WorkSetService service) {
+	WorksetDataProvider(IWorkSetService service) {
 		this.service = service;
-		this.filter = new NodeFilter("");
+		this.filter = service.createWorkSetFilter();
 		this.parentNode = null;
 	}
 
 	@Override
-	protected Stream<WorkSet> fetchFromBackEnd(Query<WorkSet, Void> query) {
-		Stream<WorkSet> result = Stream.empty();
+	protected Stream<IWorkSet> fetchFromBackEnd(Query<IWorkSet, Void> query) {
+		Stream<IWorkSet> result = Stream.empty();
 		if (!Objects.isNull(parentNode)) {
-			List<QuerySortOrder> sortOrders = query.getSortOrders();
+			List<Order> worksetSorts = new ArrayList<>();
+			for (QuerySortOrder order : query.getSortOrders()) {
+				Direction direction = order.getDirection() == SortDirection.DESCENDING ?
+						Direction.DESC : Direction.ASC;
+				Order worksetSort = service.createSortOrder(order.getSorted(), direction);
+				worksetSorts.add(worksetSort);
+			}
+			result = service
+						.getItems(worksetSorts, query.getOffset(), query.getLimit())
+							.filter(getFilter().filter(shownColumns));
 		}
 		return result;
 	}
 
 	@Override
-	protected int sizeInBackEnd(Query<WorkSet, Void> query) {
+	protected int sizeInBackEnd(Query<IWorkSet, Void> query) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 	
-	public void setFilter(NodeFilter filter) {
-		if (!Objects.isNull(filter)) {
-			this.filter = filter;
-		}
+	public WorkSetFilter getFilter() {
+		return this.filter;
 	}
 	
 	/**
@@ -59,4 +72,14 @@ public class WorksetDataProvider extends AbstractBackEndDataProvider<WorkSet, Vo
 	public void setParentCondition(NodeWrapper parent) {
 		this.parentNode = parent;
 	}
+
+	public List<ColumnSettings> getShownColumns() {
+		return shownColumns;
+	}
+
+	public void setShownColumns(List<ColumnSettings> shownColumns) {
+		this.shownColumns = shownColumns;
+	}
+	
+	
 }

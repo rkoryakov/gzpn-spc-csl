@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import ru.gzpn.spc.csl.model.WorkSet;
+import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -62,16 +63,16 @@ public class CreateDocSettingsJson implements Serializable {
 		List<ColumnSettings> result = new ArrayList<>();
 		String entityName = WorkSet.class.getSimpleName();
 		
-		result.add(new ColumnSettings(entityName, WorkSet.FIELD_ID, null, false, 0));
-		result.add(new ColumnSettings(entityName, WorkSet.FIELD_NAME, null, true, 1));
-		result.add(new ColumnSettings(entityName, WorkSet.FIELD_CODE, null, true, 2));
-		result.add(new ColumnSettings(entityName, WorkSet.FIELD_PIR, null, true, 3));
-		result.add(new ColumnSettings(entityName, WorkSet.FIELD_SMR, null, true, 4));
+		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_ID, null, false, 0));
+		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_NAME, null, true, 1));
+		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_CODE, null, true, 2));
+		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_PIR, null, true, 3));
+		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_SMR, null, true, 4));
 		
-		result.add(new ColumnSettings(entityName, WorkSet.FIELD_PLAN_OBJECT, null, false, 5));
-		result.add(new ColumnSettings(entityName, WorkSet.FIELD_CREATE_DATE, null, false, 6));
-		result.add(new ColumnSettings(entityName, WorkSet.FIELD_CHANGE_DATE, null, false, 7));
-		result.add(new ColumnSettings(entityName, WorkSet.FIELD_VERSION, null, false, 8));
+		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_PLAN_OBJECT, null, false, 5));
+		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_CREATE_DATE, null, false, 6));
+		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_CHANGE_DATE, null, false, 7));
+		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_VERSION, null, false, 8));
 		
 		return result;
 	}

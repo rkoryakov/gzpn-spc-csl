@@ -25,12 +25,12 @@ import com.vaadin.ui.TreeGrid;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import ru.gzpn.spc.csl.model.WorkSet;
+import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
-import ru.gzpn.spc.csl.services.bl.DataProjectService;
-import ru.gzpn.spc.csl.services.bl.DataUserSettigsService;
-import ru.gzpn.spc.csl.services.bl.WorkSetService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 import ru.gzpn.spc.csl.ui.common.NodeFilter;
 
@@ -61,8 +61,8 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	private static final int MAIN_MIN_SPLIT_POSITION = 30;
 	private static final int LEFT_MIN_SPLIT_POSITION = 200;
 	
-	private DataProjectService projectService;
-	private DataUserSettigsService dataUserSettigsService;
+	private IDataProjectService projectService;
+	private IDataUserSettigsService dataUserSettigsService;
 	private MessageSource messageSource;
 	private CreateDocSettingsJson docSettingsJson;
 	
@@ -73,7 +73,7 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	private Button worksetFilterSettingsButton;
 	
 	private Tree<NodeWrapper> projectTree;
-	private Grid<WorkSet> worksetGrid;
+	private Grid<IWorkSet> worksetGrid;
 	private ProjectTreeDataProvider projectTreeDataProvider;
 	private WorksetDataProvider worksetDataProvider;
 	
@@ -82,7 +82,11 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	private Button delWorksetButton;
 	
 	
-	public DocCreatingLayout(DataProjectService projectService, WorkSetService worksetService, DataUserSettigsService dataUserSettigsService, MessageSource messageSource) {
+	public DocCreatingLayout(IDataProjectService projectService, 
+							IWorkSetService worksetService, 
+							IDataUserSettigsService dataUserSettigsService, 
+							MessageSource messageSource) {
+		
 		this.projectService = projectService;
 		this.dataUserSettigsService = dataUserSettigsService;
 		this.messageSource = messageSource;
@@ -152,39 +156,39 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 
 	private void addWorksetGridColumn(ColumnSettings settings) {
 		switch (settings.getEntityFieldName()) {		
-		case WorkSet.FIELD_NAME:
-			addWorksetGridColumn(settings, WorkSet::getName, I18N_WORKSET_COLUMN_NAME);
+		case IWorkSet.FIELD_NAME:
+			addWorksetGridColumn(settings, IWorkSet::getName, I18N_WORKSET_COLUMN_NAME);
 			break;
-		case WorkSet.FIELD_CODE:
-			addWorksetGridColumn(settings, WorkSet::getCode, I18N_WORKSET_COLUMN_CODE);
+		case IWorkSet.FIELD_CODE:
+			addWorksetGridColumn(settings, IWorkSet::getCode, I18N_WORKSET_COLUMN_CODE);
 			break;
-		case WorkSet.FIELD_PIR:
-			addWorksetGridColumn(settings, WorkSet::getPir, I18N_WORKSET_COLUMN_PIR);
+		case IWorkSet.FIELD_PIR:
+			addWorksetGridColumn(settings, IWorkSet::getPir, I18N_WORKSET_COLUMN_PIR);
 			break;
-		case WorkSet.FIELD_SMR:
-			addWorksetGridColumn(settings, WorkSet::getSmr, I18N_WORKSET_COLUMN_SMR);
+		case IWorkSet.FIELD_SMR:
+			addWorksetGridColumn(settings, IWorkSet::getSmr, I18N_WORKSET_COLUMN_SMR);
 			break;
-		case WorkSet.FIELD_PLAN_OBJECT:
-			addWorksetGridColumn(settings, WorkSet::getPlanObject, I18N_WORKSET_COLUMN_PLANOBJ);
+		case IWorkSet.FIELD_PLAN_OBJECT:
+			addWorksetGridColumn(settings, IWorkSet::getPlanObject, I18N_WORKSET_COLUMN_PLANOBJ);
 			break;
-		case WorkSet.FIELD_ID:
-			addWorksetGridColumn(settings, WorkSet::getId, I18N_WORKSET_COLUMN_ID);
+		case IWorkSet.FIELD_ID:
+			addWorksetGridColumn(settings, IWorkSet::getId, I18N_WORKSET_COLUMN_ID);
 			break;
-		case WorkSet.FIELD_VERSION:
-			addWorksetGridColumn(settings, WorkSet::getVersion, I18N_WORKSET_COLUMN_VERSION);
+		case IWorkSet.FIELD_VERSION:
+			addWorksetGridColumn(settings, IWorkSet::getVersion, I18N_WORKSET_COLUMN_VERSION);
 			break;
-		case WorkSet.FIELD_CREATE_DATE:
-			addWorksetGridColumn(settings, WorkSet::getCreateDate, I18N_WORKSET_COLUMN_CREATEDATE);
+		case IWorkSet.FIELD_CREATE_DATE:
+			addWorksetGridColumn(settings, IWorkSet::getCreateDate, I18N_WORKSET_COLUMN_CREATEDATE);
 			break;
-		case WorkSet.FIELD_CHANGE_DATE:
-			addWorksetGridColumn(settings, WorkSet::getChangeDate, I18N_WORKSET_COLUMN_CHANGEDATE);
+		case IWorkSet.FIELD_CHANGE_DATE:
+			addWorksetGridColumn(settings, IWorkSet::getChangeDate, I18N_WORKSET_COLUMN_CHANGEDATE);
 			break;
 			default:
 		}
 	}
 	
-	private <T> void addWorksetGridColumn(ColumnSettings settings, ValueProvider<WorkSet, T> provider, String i18nCaption) {
-		Column<WorkSet, T> column = worksetGrid.addColumn(provider);
+	private <T> void addWorksetGridColumn(ColumnSettings settings, ValueProvider<IWorkSet, T> provider, String i18nCaption) {
+		Column<IWorkSet, T> column = worksetGrid.addColumn(provider);
 		column.setSortProperty(settings.getEntityFieldName());
 		column.setSortable(true);
 		column.setCaption(getI18nText(i18nCaption));
@@ -262,15 +266,15 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 class WorkSetDocumentation extends VerticalLayout {
 	private static final long serialVersionUID = -7505276213420043371L;
 	
-	private DataProjectService projectService;
-	private DataUserSettigsService dataUserSettigsService;
+	private IDataProjectService projectService;
+	private IDataUserSettigsService dataUserSettigsService;
 	private MessageSource messageSource;
 	private TreeGrid<NodeWrapper> docTree;
 	private ProjectTreeDataProvider dataProvider;
 	private ConfigurableFilterDataProvider<NodeWrapper, NodeFilter, NodeFilter> configurableFilterDataProvider;
 	private DocCreatingLayout parent;
 	
-	public WorkSetDocumentation(DataProjectService projectService, DataUserSettigsService dataUserSettigsService, MessageSource messageSource) {
+	public WorkSetDocumentation(IDataProjectService projectService, IDataUserSettigsService dataUserSettigsService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.dataUserSettigsService = dataUserSettigsService;
 		this.messageSource = messageSource;
