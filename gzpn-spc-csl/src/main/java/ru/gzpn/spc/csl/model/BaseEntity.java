@@ -81,6 +81,31 @@ public abstract class BaseEntity implements IBaseEntity {
 		this.changeDate = changeDate;
 	}
 
+	
+	@Override
+	public int hashCode() {
+		return (int)(id ^ (id >>> 32));
+	}
+	
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BaseEntity other = (BaseEntity) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		
+		return true;
+	}
+
 	/* NOT USED */
 	public static Set<String> getEntityFields(Class<? extends IBaseEntity> c) {
 		return Arrays.asList(c.getDeclaredFields()).stream()
@@ -116,7 +141,9 @@ public abstract class BaseEntity implements IBaseEntity {
 	public static void main(String[] args) {
 		IWorkSet workSet = new WorkSet();
 		workSet.setId(1L);
-		Long s = 1L;
-		System.out.println("getFildValueGetter: " + getEntityFields(workSet.getClass()));
+		Long l = -4L;
+		//l = l ^ (l >>> 32);
+		
+		System.out.printf("1: %1$64s", Long.toBinaryString(l));
 	}
 }

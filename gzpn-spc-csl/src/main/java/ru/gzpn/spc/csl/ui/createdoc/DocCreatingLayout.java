@@ -2,6 +2,7 @@ package ru.gzpn.spc.csl.ui.createdoc;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,10 +133,19 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
 		projectTree.setSizeFull();
 		projectTree.setHeight(WORKSET_GRID_HEIGHT - TREEPANEL_HEIGHT_CORRECTION, Unit.PIXELS);
+		projectTree.addSelectionListener(listener -> {
+			Optional<NodeWrapper> selected = listener.getFirstSelectedItem();
+			if (selected.isPresent()) {
+				worksetDataProvider.setParentNode(selected.get());
+			}
+			worksetDataProvider.refreshAll();
+		});
+		
 		panel.setContent(projectTree);
 		panel.setSizeFull();
 		return panel;
 	}
+	
 	
 	private Component createWorksetGrid() {
 		worksetGrid = new Grid<>();
@@ -149,6 +159,7 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 		worksetGrid.setSizeFull();
 		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS);
 		worksetGrid.setColumnReorderingAllowed(true);
+		worksetDataProvider.setShownColumns(columnSettings);
 		worksetGrid.setDataProvider(worksetDataProvider);
 		
 		return worksetGrid;
@@ -163,10 +174,10 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 			addWorksetGridColumn(settings, IWorkSet::getCode, I18N_WORKSET_COLUMN_CODE);
 			break;
 		case IWorkSet.FIELD_PIR:
-			addWorksetGridColumn(settings, IWorkSet::getPir, I18N_WORKSET_COLUMN_PIR);
+			addWorksetGridColumn(settings, IWorkSet::getPirCaption, I18N_WORKSET_COLUMN_PIR);
 			break;
 		case IWorkSet.FIELD_SMR:
-			addWorksetGridColumn(settings, IWorkSet::getSmr, I18N_WORKSET_COLUMN_SMR);
+			addWorksetGridColumn(settings, IWorkSet::getSmrCaption, I18N_WORKSET_COLUMN_SMR);
 			break;
 		case IWorkSet.FIELD_PLAN_OBJECT:
 			addWorksetGridColumn(settings, IWorkSet::getPlanObject, I18N_WORKSET_COLUMN_PLANOBJ);
@@ -225,7 +236,9 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 		worksetFilterField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER));
 		
 		worksetFilterField.addValueChangeListener(e -> {
-
+			worksetDataProvider.getFilter().setCommonTextFilter(e.getValue());
+			worksetDataProvider.refreshAll();
+			logger.debug("[worksetFilterField.ValueChangeListener] {}", e.getValue());
 		});
 		return searchComp;
 	}

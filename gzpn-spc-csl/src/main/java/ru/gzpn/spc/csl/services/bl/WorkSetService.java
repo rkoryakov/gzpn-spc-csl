@@ -1,6 +1,8 @@
 package ru.gzpn.spc.csl.services.bl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -11,17 +13,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
-import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
 import ru.gzpn.spc.csl.model.repositories.WorkSetRepository;
+import ru.gzpn.spc.csl.model.utils.Entities;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
+import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 @Service
 @Transactional
@@ -45,20 +49,73 @@ public class WorkSetService implements IWorkSetService {
 	}
 	
 	@Override
-	public Stream<IWorkSet> getItems(List<Order> sortOrders, int offset, int limit) {
+	public Stream<IWorkSet> getAllItems(List<Order> sortOrders, int offset, int limit) {
 		int pageNumber = offset/limit;
 		PageRequest pageRequest = PageRequest.of(pageNumber, limit, Sort.by(sortOrders));
 		return repository.findAll(pageRequest).stream().map(e -> (IWorkSet)e);
 	}
 	
 	@Override
-	// TODO: check for improving...
-	public Stream<IWorkSet> getItems(Long planObjId, List<Order> sortOrders, int offset, int limit) {
+	public Stream<IWorkSet> getItemsByNode(NodeWrapper node, List<Order> sortOrders, int offset, int limit) {
 		int pageNumber = offset/limit;
-		IPlanObject planObject = planObjectRepository.findById(planObjId).get();
-		//planObject.setId(planObjId);
+		logger.debug("[getItemsByNode] pageNumber = {}", pageNumber);
 		PageRequest pageRequest = PageRequest.of(pageNumber, limit, Sort.by(sortOrders));
-		return repository.findByPlanObject(planObject, pageRequest).stream();
+		return getItemsByNode(node, pageRequest);
+	}
+	
+	protected Stream<IWorkSet> getItemsByNode(NodeWrapper node, Pageable pageable) {
+		List<IWorkSet> result = new ArrayList<>();
+		if (node.hasParent() && node.hasId()) {
+			switch(node.getEntityEnum()) {
+			case HPROJECT:
+				break;
+			case STAGE:
+				if (node.getParent().getEntityEnum() == Entities.CPROJECT) {
+					result = repository.findWorkSetByCProjectId(node.getParent().getId()/*, pageable*/);
+				} else {
+					result = repository.findWorkSetByStageId(node.getId()/*, pageable*/);
+				}
+				break;
+			case CPROJECT:
+				result = repository.findWorkSetByCProjectId(node.getId()/*, pageable*/);
+				break;
+			case PLANOBJECT:
+				result = repository.findByPlanObjectId(node.getId()/*, pageable*/);
+				break;
+			default:
+				break;
+			}
+		}
+		logger.debug("[getItemsByNode(NodeWrapper, Pageable)] result.size = {}", result.size());
+		return result.stream();
+	}
+	
+	@Override
+	public long getCountItemsByNode(NodeWrapper node) {
+		long result = 0;
+		if (node.hasParent() && node.hasId()) {
+			switch(node.getEntityEnum()) {
+			case HPROJECT:
+				break;
+			case STAGE:
+				if (node.getParent().getEntityEnum() == Entities.CPROJECT) {
+					result = repository.countWorkSetByCProjectId(node.getParent().getId());
+				} else {
+					result = repository.countWorkSetByStageId(node.getId());
+				}
+				break;
+			case CPROJECT:
+				result = repository.countWorkSetByCProjectId(node.getId());
+				break;
+			case PLANOBJECT:
+				result = repository.countByPlanObjectId(node.getId());
+				break;
+			default:
+				break;
+			}
+		}
+		
+		return result;
 	}
 	
 	public static class WorkSetFilter {
@@ -96,16 +153,21 @@ public class WorkSetService implements IWorkSetService {
 		}
 
 		public Predicate<IWorkSet> filter(List<ColumnSettings> shownColumns) {
-			// only common filter works
+			// only common filter is working now
 			return p -> {
-				if (StringUtils.isNoneBlank(commonTextFilter)) {
+				boolean result = false;
+				//logger.debug("[filter] shownColumns {}", shownColumns);
+				if (StringUtils.isNoneBlank(commonTextFilter) && Objects.nonNull(shownColumns)) {
 					for (ColumnSettings column : shownColumns) {
 						if (applyColumnFilter(p, column)) {
-							return true;
+							result = true;
+							break;
 						}
-					}		
+					}
+				} else {
+					result = true;
 				}
-				return false;
+				return result;
 			};
 		}
 		

@@ -48,16 +48,30 @@ public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSet, V
 				worksetSorts.add(worksetSort);
 			}
 			result = service
-						.getItems(worksetSorts, query.getOffset(), query.getLimit())
+						.getItemsByNode(parentNode, worksetSorts, query.getOffset(), query.getLimit())
 							.filter(getFilter().filter(shownColumns));
 		}
+		//logger.debug("[fetchFromBackEnd] result = {}", result.count());
 		return result;
 	}
 
 	@Override
 	protected int sizeInBackEnd(Query<IWorkSet, Void> query) {
-		// TODO Auto-generated method stub
-		return 0;
+		long result = 0;
+		if (!Objects.isNull(parentNode)) {
+			List<Order> worksetSorts = new ArrayList<>();
+			for (QuerySortOrder order : query.getSortOrders()) {
+				Direction direction = order.getDirection() == SortDirection.DESCENDING ?
+						Direction.DESC : Direction.ASC;
+				Order worksetSort = service.createSortOrder(order.getSorted(), direction);
+				worksetSorts.add(worksetSort);
+			}
+			result = service
+						.getItemsByNode(parentNode, worksetSorts, query.getOffset(), query.getLimit())
+							.filter(getFilter().filter(shownColumns)).count();
+		}
+		logger.debug("[fetchFromBackEnd] result = {}", result);
+		return (int)result;
 	}
 	
 	public WorkSetFilter getFilter() {
@@ -69,10 +83,14 @@ public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSet, V
 	 * the WorkSets will be fetched
 	 * @param parent
 	 */
-	public void setParentCondition(NodeWrapper parent) {
+	public void setParentNode(NodeWrapper parent) {
 		this.parentNode = parent;
 	}
 
+	public NodeWrapper getParentNode() {
+		return this.parentNode;
+	}
+	
 	public List<ColumnSettings> getShownColumns() {
 		return shownColumns;
 	}

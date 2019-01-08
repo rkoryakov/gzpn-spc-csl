@@ -62,7 +62,7 @@ public class DataProjectService implements IDataProjectService {
 	public Stream<NodeWrapper> getItemsGroupedByField(NodeWrapper node) {
 		return getItemsGroupedByField(node.getEntityName(), node.getGroupField())
 				.peek(e -> {
-					e.setParent(node);
+					//e.setParent(node);
 					e.setChild(node.getChild());
 					/* set hashCode for UI Vaadin */
 					e.generateHashCode();

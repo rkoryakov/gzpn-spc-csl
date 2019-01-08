@@ -221,7 +221,6 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 	private void createJpqlQueryGroupedByFieldValue(Formatter jpqlFormatter, String sourceEntity, String targetEntity,
 									String sourceFieldName, String targetGroupFieldName, Long parentId, String parentEntity) {
 		List<Entities> path = ProjectEntityGraph.getPathBetweenNodes(sourceEntity, targetEntity);
-		boolean isPathMoreOne = path.size() > 1;
 		boolean isGroup = StringUtils.isNotEmpty(targetGroupFieldName);
 
 		if (isGroup) {
@@ -237,7 +236,7 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		}
 
 		Optional<LinkedFields> sourceNext = ProjectEntityGraph.getLinkedFields(sourceEntity,
-				isPathMoreOne ? path.get(1).getName() : path.get(0).getName());
+				path.size() > 1 ? path.get(1).getName() : path.get(0).getName());
 		String leftSourceField = sourceNext.get().getLeftEntityField();
 		String rightSourceField = sourceNext.get().getRightEntityField();
 

@@ -1,14 +1,13 @@
 package ru.gzpn.spc.csl.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -17,10 +16,6 @@ import ru.gzpn.spc.csl.model.interfaces.IWork;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 
 @Entity
-@NamedQueries({
-		@NamedQuery(name = "WorkSet.findByPlanObject", 
-				query = "SELECT w FROM WorkSet w WHERE w.planObject = ?1")
-})
 @Table(schema = "spc_csl_schema", name = "workset", 
 indexes = {
 		@Index(name = "spc_csl_idx_wkscode", columnList = "code"),
@@ -58,15 +53,37 @@ public class WorkSet extends BaseEntity implements IWorkSet, Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 	public IWork getPir() {
 		return pir;
 	}
+	
+	@Override
+	public String getPirCaption() {
+		String result = "empty";
+		if (Objects.nonNull(getPir())) {
+			result = getPir().getCode();
+		}
+		return result;
+	}
+	
 	public void setPir(IWork pir) {
 		this.pir = pir;
 	}
+	
 	public IWork getSmr() {
 		return smr;
 	}
+	
+	@Override
+	public String getSmrCaption() {
+		String result = "empty";
+		if (Objects.nonNull(getSmr())) {
+			result = getSmr().getCode();
+		}
+		return result;
+	}
+	
 	public void setSmr(IWork smr) {
 		this.smr = smr;
 	}

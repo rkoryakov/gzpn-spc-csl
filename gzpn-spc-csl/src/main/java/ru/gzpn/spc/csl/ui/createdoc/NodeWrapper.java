@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.data.provider.SortOrder;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
+import ru.gzpn.spc.csl.model.utils.Entities;
 import ru.gzpn.spc.csl.ui.common.NodeFilter;
 
 /**
@@ -111,6 +112,10 @@ public class NodeWrapper implements Serializable {
 		return entityName;
 	}
 	
+	public Entities getEntityEnum() {
+		return Entities.valueOf(getEntityName().toUpperCase());
+	}
+	
 	public void setEntityName(String entityName) {
 		this.entityName = entityName;
 	}
@@ -184,7 +189,11 @@ public class NodeWrapper implements Serializable {
 	public boolean hasEntityItem() {
 		return this.item != null;
 	}
-
+	
+	public boolean hasId() {
+		return this.id != null && this.id != -1;
+	}
+	
 	public List<SortOrder<String>> getSortOredersForChildren() {
 		return sortOrdersForChildren;
 	}
