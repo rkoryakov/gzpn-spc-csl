@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.createdoc;
+package ru.gzpn.spc.csl.model.utils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.data.provider.SortOrder;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
-import ru.gzpn.spc.csl.model.utils.Entities;
-import ru.gzpn.spc.csl.ui.common.NodeFilter;
 
 /**
  * Holds the information about the current entity(node) and grouping fields.

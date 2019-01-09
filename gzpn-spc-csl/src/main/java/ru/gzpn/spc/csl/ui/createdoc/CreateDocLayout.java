@@ -28,16 +28,17 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
-import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.UserSettingsJson;
+import ru.gzpn.spc.csl.model.utils.NodeFilter;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
-import ru.gzpn.spc.csl.ui.common.NodeFilter;
 
-public class DocCreatingLayout extends HorizontalSplitPanel {
+public class CreateDocLayout extends HorizontalSplitPanel {
 	private static final long serialVersionUID = -883906550551450076L;
-	private static final Logger logger = LoggerFactory.getLogger(DocCreatingLayout.class);
+	private static final Logger logger = LoggerFactory.getLogger(CreateDocLayout.class);
 	
 	private static final String I18N_SEARCHFIELD_PLACEHOLDER = "createdoc.DocCreatingLayout.worksetFilterField.placeholder";
 	private static final String I18N_SEARCHSETTINGS_DESC = "createdoc.DocCreatingLayout.worksetFilterSettingsButton.desc";
@@ -60,12 +61,12 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	private static final int WORKSET_GRID_HEIGHT = 568;
 	private static final int TREEPANEL_HEIGHT_CORRECTION = 38;
 	private static final int MAIN_MIN_SPLIT_POSITION = 30;
-	private static final int LEFT_MIN_SPLIT_POSITION = 200;
+	private static final int LEFT_MIN_SPLIT_POSITION = 25;
 	
 	private IDataProjectService projectService;
 	private IDataUserSettigsService dataUserSettigsService;
 	private MessageSource messageSource;
-	private CreateDocSettingsJson docSettingsJson;
+	private UserSettingsJson docSettingsJson;
 	
 	private VerticalLayout leftLayot;
 	private VerticalLayout rightLayout;
@@ -83,7 +84,7 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 	private Button delWorksetButton;
 	
 	
-	public DocCreatingLayout(IDataProjectService projectService, 
+	public CreateDocLayout(IDataProjectService projectService, 
 							IWorkSetService worksetService, 
 							IDataUserSettigsService dataUserSettigsService, 
 							MessageSource messageSource) {
@@ -108,14 +109,14 @@ public class DocCreatingLayout extends HorizontalSplitPanel {
 
 	private Component createLeftLayout() {
 		leftLayot = new VerticalLayout();
-		leftLayot.setMargin(true);
-		leftLayot.setSpacing(true);
+		leftLayot.setMargin(false);
+		leftLayot.setSpacing(false);
 		leftLayot.setSizeFull();
 		
 		HorizontalSplitPanel splitPanel = new HorizontalSplitPanel();
 		splitPanel.setSizeFull();
-		splitPanel.setMinSplitPosition(LEFT_MIN_SPLIT_POSITION, Unit.PIXELS);
-		splitPanel.setSplitPosition(docSettingsJson.getLeftSplitPosition(), Unit.PIXELS);
+		splitPanel.setSplitPosition(docSettingsJson.getLeftSplitPosition(), Unit.PERCENTAGE);
+		splitPanel.setMinSplitPosition(LEFT_MIN_SPLIT_POSITION, Unit.PERCENTAGE);
 		splitPanel.addComponent(createProjectTree());
 		splitPanel.addComponent(createWorksetGrid());
 		
@@ -285,7 +286,7 @@ class WorkSetDocumentation extends VerticalLayout {
 	private TreeGrid<NodeWrapper> docTree;
 	private ProjectTreeDataProvider dataProvider;
 	private ConfigurableFilterDataProvider<NodeWrapper, NodeFilter, NodeFilter> configurableFilterDataProvider;
-	private DocCreatingLayout parent;
+	private CreateDocLayout parent;
 	
 	public WorkSetDocumentation(IDataProjectService projectService, IDataUserSettigsService dataUserSettigsService, MessageSource messageSource) {
 		this.projectService = projectService;
@@ -299,7 +300,7 @@ class WorkSetDocumentation extends VerticalLayout {
 		);
 	}
 	
-	public void setParent(DocCreatingLayout parent) {
+	public void setParent(CreateDocLayout parent) {
 		this.parent = parent;
 	}
 	

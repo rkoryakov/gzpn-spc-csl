@@ -18,14 +18,14 @@ import ru.gzpn.spc.csl.model.Phase;
 import ru.gzpn.spc.csl.model.Stage;
 import ru.gzpn.spc.csl.model.Work;
 import ru.gzpn.spc.csl.model.utils.Entities;
-import ru.gzpn.spc.csl.services.bl.DataProjectService;
+import ru.gzpn.spc.csl.services.bl.ProjectService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=Application.class)
 public class BaseRepositoryImplTest {
 
 	@Autowired
-	DataProjectService service;
+	ProjectService service;
 	
 	@Test
 	public void simpleNativeSQLTest() {

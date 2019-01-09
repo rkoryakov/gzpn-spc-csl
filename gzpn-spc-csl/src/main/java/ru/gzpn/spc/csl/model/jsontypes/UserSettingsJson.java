@@ -1,6 +1,5 @@
 package ru.gzpn.spc.csl.model.jsontypes;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -11,20 +10,20 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import ru.gzpn.spc.csl.model.WorkSet;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
-import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
-public class CreateDocSettingsJson implements Serializable {
+public class UserSettingsJson implements IUISettings {
 	private static final long serialVersionUID = -8491801489639919153L;
-	public static final Integer DEFAULT_LEFT_SPLIT_POSITION = 240;
-	private static final Integer DEFAULT_MAIN_SPLIT_POSITION = 50;
+	public static final int DEFAULT_LEFT_SPLIT_POSITION = 27;
+	private static final int DEFAULT_MAIN_SPLIT_POSITION = 52;
 	
 	// sequence of grouping fields/entities to show in a treeGreed component
 	private NodeWrapper leftTreeGroup;
 	private NodeWrapper rightTreeGroup;
-	private Integer mainSplitPosition;
-	private Integer leftSplitPosition;
+	private int mainSplitPosition;
+	private int leftSplitPosition;
 	
 	// the displayed columns of the end entity in the hierarchy 
 	private List<ColumnSettings> lefResultColumns;
@@ -133,7 +132,7 @@ public class CreateDocSettingsJson implements Serializable {
 	public Integer getLeftSplitPosition() {
 		Integer result = DEFAULT_LEFT_SPLIT_POSITION;
 		
-		if (!Objects.isNull(leftSplitPosition) && leftSplitPosition > 1) {
+		if (Objects.nonNull(leftSplitPosition) && leftSplitPosition > 1) {
 			result = leftSplitPosition;
 		}
 		

@@ -12,14 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
 import ru.gzpn.spc.csl.model.utils.Entities;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
-import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 @Service
 @Transactional
-public class DataProjectService implements IDataProjectService {
-	public static final Logger logger = LoggerFactory.getLogger(DataProjectService.class);
+public class ProjectService implements IDataProjectService {
+	public static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 	@Autowired
 	private HProjectRepository hpRepository;
 	

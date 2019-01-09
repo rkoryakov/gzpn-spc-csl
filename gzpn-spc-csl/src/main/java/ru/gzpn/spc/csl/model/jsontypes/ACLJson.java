@@ -30,5 +30,4 @@ public class ACLJson implements Serializable {
 	public void setEditRoles(Set<String> editRoles) {
 		this.editRoles = editRoles;
 	}
-
 }

@@ -15,17 +15,19 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 
-import ru.gzpn.spc.csl.services.bl.DataProjectService;
-import ru.gzpn.spc.csl.services.bl.DataUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.ProjectService;
+import ru.gzpn.spc.csl.services.bl.UserSettigsService;
 import ru.gzpn.spc.csl.services.bl.WorkSetService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
-import ru.gzpn.spc.csl.ui.createdoc.DocCreatingLayout;
+import ru.gzpn.spc.csl.ui.createdoc.CreateDocLayout;
 
 @SpringView(name = CreateDocView.NAME)
 @UIScope
 public class CreateDocView extends VerticalLayout implements View {
+
+	private static final long serialVersionUID = 1L;
 	public static final String NAME = "createDocView";
 	public static final Logger logger = LoggerFactory.getLogger(CreateDocView.class);
 	
@@ -39,12 +41,12 @@ public class CreateDocView extends VerticalLayout implements View {
 	private MessageSource messageSource;
 	
 	@Autowired
-	public void setDataProjectService(DataProjectService service) {
+	public void setDataProjectService(ProjectService service) {
 		projectService = service;
 	}
 	
 	@Autowired
-	public void setDataUserSettingsService(DataUserSettigsService service) {
+	public void setDataUserSettingsService(UserSettigsService service) {
 		userSettingsService = service;
 	}
 	
@@ -55,12 +57,12 @@ public class CreateDocView extends VerticalLayout implements View {
 	
 	public CreateDocView() {
 		setMargin(false);
-		setSpacing(true);
+		setSpacing(false);
 	}
 
 	@PostConstruct
 	void init() {
-		DocCreatingLayout layout = new DocCreatingLayout(projectService, worksetService, userSettingsService, messageSource);
+		CreateDocLayout layout = new CreateDocLayout(projectService, worksetService, userSettingsService, messageSource);
 		addComponent(layout);
 	}
 

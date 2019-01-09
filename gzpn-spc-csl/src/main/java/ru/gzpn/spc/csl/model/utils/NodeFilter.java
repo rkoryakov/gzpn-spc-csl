@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.common;
+package ru.gzpn.spc.csl.model.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -14,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
-import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 public class NodeFilter {
 	public static final Logger logger = LogManager.getLogger(NodeFilter.class);

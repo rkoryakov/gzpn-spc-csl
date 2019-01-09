@@ -1,6 +1,7 @@
 package ru.gzpn.spc.csl.services.bl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -19,13 +20,16 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
+import com.vaadin.data.provider.QuerySortOrder;
+import com.vaadin.shared.data.sort.SortDirection;
+
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
 import ru.gzpn.spc.csl.model.repositories.WorkSetRepository;
 import ru.gzpn.spc.csl.model.utils.Entities;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
-import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 @Service
 @Transactional
@@ -56,10 +60,9 @@ public class WorkSetService implements IWorkSetService {
 	}
 	
 	@Override
-	public Stream<IWorkSet> getItemsByNode(NodeWrapper node, List<Order> sortOrders, int offset, int limit) {
+	public Stream<IWorkSet> getItemsByNode(NodeWrapper node, int offset, int limit) {
 		int pageNumber = offset/limit;
-		logger.debug("[getItemsByNode] pageNumber = {}", pageNumber);
-		PageRequest pageRequest = PageRequest.of(pageNumber, limit, Sort.by(sortOrders));
+		PageRequest pageRequest = PageRequest.of(pageNumber, limit);
 		return getItemsByNode(node, pageRequest);
 	}
 	
@@ -86,36 +89,51 @@ public class WorkSetService implements IWorkSetService {
 				break;
 			}
 		}
-		logger.debug("[getItemsByNode(NodeWrapper, Pageable)] result.size = {}", result.size());
+
 		return result.stream();
 	}
 	
 	@Override
-	public long getCountItemsByNode(NodeWrapper node) {
-		long result = 0;
-		if (node.hasParent() && node.hasId()) {
-			switch(node.getEntityEnum()) {
-			case HPROJECT:
-				break;
-			case STAGE:
-				if (node.getParent().getEntityEnum() == Entities.CPROJECT) {
-					result = repository.countWorkSetByCProjectId(node.getParent().getId());
-				} else {
-					result = repository.countWorkSetByStageId(node.getId());
+	public Comparator<IWorkSet> sort(List<QuerySortOrder> list) {
+		return (a, b) -> {
+			int result = 0;
+			for (QuerySortOrder qso : list) {
+				switch (qso.getSorted()) {		
+				case IWorkSet.FIELD_NAME:
+					result = a.getName().compareTo(b.getName());
+					break;
+				case IWorkSet.FIELD_CODE:
+					result = a.getCode().compareTo(b.getCode());
+					break;
+				case IWorkSet.FIELD_PIR:
+					result = a.getPir().getCode().compareTo(b.getPir().getCode());
+					break;
+				case IWorkSet.FIELD_SMR:
+					result = a.getSmr().getCode().compareTo(b.getSmr().getCode());
+					break;
+				case IWorkSet.FIELD_PLAN_OBJECT:
+					result = a.getPlanObject().getName().compareTo(b.getPlanObject().getName());
+					break;
+				case IWorkSet.FIELD_ID:
+					result = a.getId().compareTo(b.getId());
+					break;
+				case IWorkSet.FIELD_VERSION:
+					result = a.getVersion().compareTo(b.getVersion());
+					break;
+				case IWorkSet.FIELD_CREATE_DATE:
+					result = a.getCreateDate().compareTo(b.getCreateDate());
+					break;
+				case IWorkSet.FIELD_CHANGE_DATE:
+					result = a.getChangeDate().compareTo(b.getChangeDate());
+					break;
+					default:
 				}
-				break;
-			case CPROJECT:
-				result = repository.countWorkSetByCProjectId(node.getId());
-				break;
-			case PLANOBJECT:
-				result = repository.countByPlanObjectId(node.getId());
-				break;
-			default:
-				break;
+				if (qso.getDirection() == SortDirection.DESCENDING) {
+					result *= -1;
+				}
 			}
-		}
-		
-		return result;
+			return result;
+		};
 	}
 	
 	public static class WorkSetFilter {
@@ -170,6 +188,7 @@ public class WorkSetService implements IWorkSetService {
 				return result;
 			};
 		}
+		
 		
 		private boolean applyColumnFilter(IWorkSet workset, ColumnSettings column) {
 			boolean result = false;

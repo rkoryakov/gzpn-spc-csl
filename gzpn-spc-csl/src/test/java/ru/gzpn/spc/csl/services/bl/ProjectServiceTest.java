@@ -41,12 +41,12 @@ import ru.gzpn.spc.csl.model.repositories.StageRepository;
 import ru.gzpn.spc.csl.model.repositories.WorkRepository;
 import ru.gzpn.spc.csl.model.repositories.WorkSetRepository;
 import ru.gzpn.spc.csl.model.utils.Entities;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
-import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class DataProjectServiceTest {
+public class ProjectServiceTest {
 	@Autowired
 	IDataProjectService service;
 	@Autowired
@@ -301,14 +301,14 @@ public class DataProjectServiceTest {
 	}
 	
 	private void getItemsGroupedByField(String entity, String field) {
-		DataProjectService.logger.debug("[TEST getItemsByGroupField('{}', '{}')] - {}", entity, field,
+		ProjectService.logger.debug("[TEST getItemsByGroupField('{}', '{}')] - {}", entity, field,
 				service.getItemsGroupedByField(entity, field)
 				.map(n-> n.getEntityName() + ",  " + n.getGroupField() + " = " + n.getGroupFiledValue())
 				.reduce(new StringBuilder(""), (p, s)-> p.append("\n").append(s),  (p, s)-> p.append(s)));
 	}
 	
 	private void getCountByGroupField(String entity, String field) {
-		DataProjectService.logger.debug("[TEST getCount('{}', '{}')] - {}", entity, field,
+		ProjectService.logger.debug("[TEST getCount('{}', '{}')] - {}", entity, field,
 				service.getCount(entity, field));
 	}
 }

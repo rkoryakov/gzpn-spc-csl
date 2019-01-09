@@ -13,18 +13,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.vaadin.data.provider.HierarchicalQuery;
 
-import ru.gzpn.spc.csl.services.bl.DataProjectService;
-import ru.gzpn.spc.csl.services.bl.DataUserSettigsService;
-import ru.gzpn.spc.csl.ui.common.NodeFilter;
+import ru.gzpn.spc.csl.model.utils.NodeFilter;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
+import ru.gzpn.spc.csl.services.bl.ProjectService;
+import ru.gzpn.spc.csl.services.bl.UserSettigsService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ProjectTreeDataProviderTest {
 	
 	@Autowired
-	DataProjectService projectService;
+	ProjectService projectService;
 	@Autowired
-	DataUserSettigsService userSettigsService;
+	UserSettigsService userSettigsService;
 
 	ProjectTreeDataProvider provider;
 	

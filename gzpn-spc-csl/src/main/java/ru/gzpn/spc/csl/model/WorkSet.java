@@ -24,7 +24,7 @@ indexes = {
 		@Index(name = "spc_csl_idx_wkpln", columnList = "pir_id"),
 		@Index(name = "spc_csl_idx_wkpln", columnList = "smr_id")
 })
-public class WorkSet extends BaseEntity implements IWorkSet, Serializable {
+public class WorkSet extends BaseEntity implements IWorkSet, Comparable<IWorkSet>, Serializable {
 	private static final long serialVersionUID = -1489774086979019274L;
 	
 	@Column(length = 64)
@@ -60,7 +60,7 @@ public class WorkSet extends BaseEntity implements IWorkSet, Serializable {
 	
 	@Override
 	public String getPirCaption() {
-		String result = "empty";
+		String result = "---";
 		if (Objects.nonNull(getPir())) {
 			result = getPir().getCode();
 		}
@@ -77,7 +77,7 @@ public class WorkSet extends BaseEntity implements IWorkSet, Serializable {
 	
 	@Override
 	public String getSmrCaption() {
-		String result = "empty";
+		String result = "---";
 		if (Objects.nonNull(getSmr())) {
 			result = getSmr().getCode();
 		}
@@ -97,6 +97,12 @@ public class WorkSet extends BaseEntity implements IWorkSet, Serializable {
 	@Override
 	public String toString() {
 		return "WorkSet [code=" + code + ", name=" + name + ", pir=" + pir + ", smr=" + smr + ", planObject=" + planObject + "]";
+	}
+	
+	@Override
+	public int compareTo(IWorkSet o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 }

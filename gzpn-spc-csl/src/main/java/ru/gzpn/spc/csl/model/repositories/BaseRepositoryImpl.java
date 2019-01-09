@@ -20,9 +20,9 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
 import ru.gzpn.spc.csl.model.utils.Entities;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph;
 import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph.Rib.LinkedFields;
-import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 @NoRepositoryBean
 public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepository<T, Long> implements BaseRepository<T> {
 	public static final Logger logger = LoggerFactory.getLogger(BaseRepositoryImpl.class);
@@ -90,7 +90,7 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		Stream<NodeWrapper> result = null;
 		
 		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
-			formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%2$s', e.%2$s, e.id) "
+			formatter.format("SELECT NEW ru.gzpn.spc.csl.model.utils.NodeWrapper('%1$s', '%2$s', e.%2$s, e.id) "
 							+ "FROM %1$s e GROUP BY e.%2$s, e.id", entity, groupField);
 			result = entityManager.createQuery(jpql.toString(), NodeWrapper.class).getResultList().stream();
 		}
@@ -107,11 +107,11 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
 
 			if (StringUtils.isNotEmpty(groupFieldName)) {
-				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', '%4$s', e.%4$s, e.id) "
+				formatter.format("SELECT NEW ru.gzpn.spc.csl.model.utils.NodeWrapper('%1$s', '%4$s', e.%4$s, e.id) "
 								+ "FROM %1$s e WHERE e.%2$s = :fieldValue GROUP BY e.%4$s, e.id",
 								entity, fieldName, fieldValue, groupFieldName);
 			} else {
-				formatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%1$s', e, e.id) "
+				formatter.format("SELECT NEW ru.gzpn.spc.csl.model.utils.NodeWrapper('%1$s', e, e.id) "
 								+ "FROM %1$s e WHERE e.%2$s = :fieldValue",
 								entity, fieldName);
 			}
@@ -157,10 +157,10 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		boolean isGroup = StringUtils.isNotEmpty(targetGroupFieldName);
 		
 		if (isGroup) {
-			jpqlFormatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%2$s', '%3$s', T.%3$s, T.id)"
+			jpqlFormatter.format("SELECT NEW ru.gzpn.spc.csl.model.utils.NodeWrapper('%2$s', '%3$s', T.%3$s, T.id)"
 					+ " FROM %1$s S, %2$s T", sourceEntity, targetEntity, targetGroupFieldName);
 		} else {
-			jpqlFormatter.format("SELECT DISTINCT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%2$s', T, T.id)"
+			jpqlFormatter.format("SELECT DISTINCT NEW ru.gzpn.spc.csl.model.utils.NodeWrapper('%2$s', T, T.id)"
 					+ " FROM %1$s S, %2$s T", sourceEntity, targetEntity);
 		}
 		
@@ -224,10 +224,10 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		boolean isGroup = StringUtils.isNotEmpty(targetGroupFieldName);
 
 		if (isGroup) {
-			jpqlFormatter.format("SELECT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%2$s', '%3$s', T.%3$s, T.id)"
+			jpqlFormatter.format("SELECT NEW ru.gzpn.spc.csl.model.utils.NodeWrapper('%2$s', '%3$s', T.%3$s, T.id)"
 					+ " FROM %1$s S, %2$s T", sourceEntity, targetEntity, targetGroupFieldName);
 		} else {
-			jpqlFormatter.format("SELECT DISTINCT NEW ru.gzpn.spc.csl.ui.createdoc.NodeWrapper('%2$s', T, T.id)"
+			jpqlFormatter.format("SELECT DISTINCT NEW ru.gzpn.spc.csl.model.utils.NodeWrapper('%2$s', T, T.id)"
 					+ " FROM %1$s S, %2$s T", sourceEntity, targetEntity);
 		}
 

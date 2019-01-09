@@ -3,7 +3,7 @@ package ru.gzpn.spc.csl.services.bl.interfaces;
 import java.util.stream.Stream;
 
 import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
-import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 
 public interface IDataProjectService {
 	public HProjectRepository getBaseRepository();

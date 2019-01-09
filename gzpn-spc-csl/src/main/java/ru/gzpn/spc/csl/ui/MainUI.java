@@ -72,7 +72,9 @@ public class MainUI extends UI {
 		head = createHead();
 		mainLayout = createMainLayout();
 		viewContainer = new Panel();
+		
 		navigator = new Navigator(this, viewContainer);
+		
 		menuBar = createMenu();
 		setContent(mainLayout);
 

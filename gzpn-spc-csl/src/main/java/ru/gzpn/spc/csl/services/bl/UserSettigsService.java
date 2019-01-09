@@ -11,27 +11,32 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.UserSettings;
-import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.UserSettingsJson;
 import ru.gzpn.spc.csl.model.repositories.UserSettingsRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
 
 @Service
 @Transactional
-public class DataUserSettigsService implements IDataUserSettigsService {
-	public static final Logger logger = LoggerFactory.getLogger(DataUserSettigsService.class);
+public class UserSettigsService implements IDataUserSettigsService {
+	public static final Logger logger = LoggerFactory.getLogger(UserSettigsService.class);
 	@Autowired
 	private UserSettingsRepository repository;
 	@Autowired
 	ServerProperties serverProperties;
 	
-	public CreateDocSettingsJson getCreateDocSettings() {
+	public UserSettingsJson getCreateDocSettings() {
+		String user = getCurrentUser();
+		return getCreateDocSettings(user);
+	}
+	
+	public String getCurrentUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String user = null;
+		
 		Object principal = new Object();
 		if (auth != null) {
 			principal = auth.getPrincipal();
 		}
-		
-		String user = null;
 		
 		if (principal instanceof UserDetails) {
 			user = ((UserDetails)principal).getUsername();
@@ -39,23 +44,23 @@ public class DataUserSettigsService implements IDataUserSettigsService {
 			user = principal.toString();
 		}
 		
-		return getCreateDocSettings(user);
+		return user;
 	}
-	
-	public CreateDocSettingsJson getCreateDocSettings(String userId) {
+
+	public UserSettingsJson getCreateDocSettings(String userId) {
 		UserSettings userSettings = repository.findByUserId(userId);
-		CreateDocSettingsJson result = null;
+		UserSettingsJson result = null;
 		
 		if (userSettings != null) {
 			result = userSettings.getDocSettingsJson();
 		} else {
-			result = new CreateDocSettingsJson();
+			result = new UserSettingsJson();
 		}
 		
 		return result;
 	}
 	
-	public void saveCreateDocSettingsJson(String userId, CreateDocSettingsJson createDoc) {
+	public void saveCreateDocSettingsJson(String userId, UserSettingsJson createDoc) {
 		UserSettings userSettings = repository.findByUserId(userId);
 		
 		if (userSettings != null) {

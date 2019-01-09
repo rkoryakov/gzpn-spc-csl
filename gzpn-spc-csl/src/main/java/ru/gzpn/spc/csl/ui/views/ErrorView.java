@@ -16,7 +16,7 @@ public class ErrorView extends VerticalLayout implements View {
 	private Label errorLabel;
 
 	public ErrorView() {
-		setMargin(true);
+		//setMargin(true);
 		errorLabel = new Label();
 		errorLabel.addStyleName(ValoTheme.LABEL_FAILURE);
 		errorLabel.setSizeUndefined();

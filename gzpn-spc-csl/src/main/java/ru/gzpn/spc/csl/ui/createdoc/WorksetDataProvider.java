@@ -1,22 +1,20 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.domain.Sort.Order;
 
 import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
 import com.vaadin.data.provider.QuerySortOrder;
-import com.vaadin.shared.data.sort.SortDirection;
 
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.WorkSetService.WorkSetFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
 
@@ -40,18 +38,10 @@ public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSet, V
 	protected Stream<IWorkSet> fetchFromBackEnd(Query<IWorkSet, Void> query) {
 		Stream<IWorkSet> result = Stream.empty();
 		if (!Objects.isNull(parentNode)) {
-			List<Order> worksetSorts = new ArrayList<>();
-			for (QuerySortOrder order : query.getSortOrders()) {
-				Direction direction = order.getDirection() == SortDirection.DESCENDING ?
-						Direction.DESC : Direction.ASC;
-				Order worksetSort = service.createSortOrder(order.getSorted(), direction);
-				worksetSorts.add(worksetSort);
-			}
 			result = service
-						.getItemsByNode(parentNode, worksetSorts, query.getOffset(), query.getLimit())
-							.filter(getFilter().filter(shownColumns));
+						.getItemsByNode(parentNode, query.getOffset(), query.getLimit())
+							.filter(getFilter().filter(shownColumns)).sorted(getSort(query.getSortOrders()));
 		}
-		//logger.debug("[fetchFromBackEnd] result = {}", result.count());
 		return result;
 	}
 
@@ -59,15 +49,8 @@ public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSet, V
 	protected int sizeInBackEnd(Query<IWorkSet, Void> query) {
 		long result = 0;
 		if (!Objects.isNull(parentNode)) {
-			List<Order> worksetSorts = new ArrayList<>();
-			for (QuerySortOrder order : query.getSortOrders()) {
-				Direction direction = order.getDirection() == SortDirection.DESCENDING ?
-						Direction.DESC : Direction.ASC;
-				Order worksetSort = service.createSortOrder(order.getSorted(), direction);
-				worksetSorts.add(worksetSort);
-			}
 			result = service
-						.getItemsByNode(parentNode, worksetSorts, query.getOffset(), query.getLimit())
+						.getItemsByNode(parentNode, query.getOffset(), query.getLimit())
 							.filter(getFilter().filter(shownColumns)).count();
 		}
 		logger.debug("[fetchFromBackEnd] result = {}", result);
@@ -78,6 +61,9 @@ public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSet, V
 		return this.filter;
 	}
 	
+	public Comparator<IWorkSet> getSort(List<QuerySortOrder> orders) {
+		return service.sort(orders);
+	}
 	/**
 	 * Use this setter in the UI to set the selected base item by which 
 	 * the WorkSets will be fetched

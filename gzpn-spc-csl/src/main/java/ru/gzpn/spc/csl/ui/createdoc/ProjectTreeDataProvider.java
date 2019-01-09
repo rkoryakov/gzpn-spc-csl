@@ -15,8 +15,9 @@ import com.vaadin.data.provider.HierarchicalQuery;
 import com.vaadin.data.provider.SortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
+import ru.gzpn.spc.csl.model.utils.NodeFilter;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
-import ru.gzpn.spc.csl.ui.common.NodeFilter;
 
 public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProvider<NodeWrapper, NodeFilter> {
 	private static final long serialVersionUID = 7274680832695288557L;

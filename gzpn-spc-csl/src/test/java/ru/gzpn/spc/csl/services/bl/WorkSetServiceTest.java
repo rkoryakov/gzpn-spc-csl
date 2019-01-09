@@ -16,9 +16,9 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
-import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -33,7 +33,7 @@ public class WorkSetServiceTest extends WorkSetService {
 	public void getItemsByNodeEmptyResultTest() {
 		List<Order> orders = new ArrayList<>();
 		NodeWrapper parentNode = settings.getCreateDocSettings().getLeftDefaultNodesHierarchy();
-		Stream<IWorkSet> result = getItemsByNode(parentNode, orders, 0, MAX_RESULTS);
+		Stream<IWorkSet> result = getItemsByNode(parentNode, 0, MAX_RESULTS);
 		assertThat(result).size().isZero();
 	}
 	
@@ -52,7 +52,7 @@ public class WorkSetServiceTest extends WorkSetService {
 		orders.add(createSortOrder("name", Direction.ASC));
 		orders.add(createSortOrder("code", Direction.DESC));
 		
-		Stream<IWorkSet> result = getItemsByNode(cProjectLevel.get(0), orders, 0, MAX_RESULTS);
+		Stream<IWorkSet> result = getItemsByNode(cProjectLevel.get(0), 0, MAX_RESULTS);
 
 		assertThat(result).size().isEqualTo(25);
 	}
@@ -76,7 +76,7 @@ public class WorkSetServiceTest extends WorkSetService {
 		orders.add(createSortOrder("name", Direction.ASC));
 		orders.add(createSortOrder("code", Direction.DESC));
 		
-		Stream<IWorkSet> result = getItemsByNode(stageLevel.get(0), orders, 0, MAX_RESULTS);
+		Stream<IWorkSet> result = getItemsByNode(stageLevel.get(0), 0, MAX_RESULTS);
 
 		assertThat(result.count()).isEqualTo(25);
 		  
