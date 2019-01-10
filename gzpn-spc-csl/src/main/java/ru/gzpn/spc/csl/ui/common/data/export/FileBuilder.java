@@ -10,6 +10,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.data.BeanPropertySet;
@@ -21,6 +23,8 @@ import com.vaadin.ui.Grid;
 
 public abstract class FileBuilder<T> {
     private static final String TMP_FILE_NAME = "tmp";
+
+	private static final Logger logger = LoggerFactory.getLogger(FileBuilder.class);
 
     File file;
     private Grid<T> grid;
@@ -71,12 +75,14 @@ public abstract class FileBuilder<T> {
 
     private void buildHeaderRow() {
         columns.forEach(column -> {
-            Optional<PropertyDefinition<T, ?>> propertyDefinition = propertySet.getProperty(column.getId());
-            if (propertyDefinition.isPresent()) {
+        	// Optional<PropertyDefinition<T, ?>> propertyDefinition = propertySet.getProperty(column.getId());
+            String columnCaption = column.getCaption();
+            
+            if (StringUtils.isNoneEmpty(columnCaption)) {
                 onNewCell();
-                buildColumnHeaderCell(propertyDefinition.get().getCaption());
+                buildColumnHeaderCell(columnCaption);
             } else {
-                LoggerFactory.getLogger(this.getClass()).warn(String.format("Column key %s is a property which cannot be found", column.getId()));
+                logger.warn(String.format("Column key %s is a property which cannot be found", column.getId()));
             }
         });
         headerRowBuilt = true;
@@ -95,7 +101,7 @@ public abstract class FileBuilder<T> {
             method.setAccessible(true);
             filter = method.invoke(grid.getDataCommunicator());
         } catch (Exception e) {
-            LoggerFactory.getLogger(this.getClass()).error("Unable to get filter from DataCommunicator");
+            logger.error("Unable to get filter from DataCommunicator");
         }
 
         Query streamQuery = new Query(0, grid.getDataProvider().size(new Query(filter)), grid.getDataCommunicator().getBackEndSorting(),

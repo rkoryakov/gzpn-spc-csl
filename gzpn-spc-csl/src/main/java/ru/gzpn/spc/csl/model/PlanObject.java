@@ -132,4 +132,11 @@ public class PlanObject extends BaseEntity implements IPlanObject, Serializable 
 	public void setWorkset(List<IWorkSet> workset) {
 		this.workset = workset;
 	}
+
+	@Override
+	public String toString() {
+		return "PlanObject [code=" + code + ", name=" + name + ", mark=" + mark + "]";
+	}
+	
+	
 }

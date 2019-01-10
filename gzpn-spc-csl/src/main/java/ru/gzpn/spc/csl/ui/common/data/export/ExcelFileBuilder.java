@@ -1,6 +1,10 @@
 package ru.gzpn.spc.csl.ui.common.data.export;
 
 import java.io.FileOutputStream;
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.Temporal;
 import java.util.Calendar;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -71,6 +75,16 @@ public class ExcelFileBuilder<T> extends FileBuilder<T> {
         } else if (value instanceof Double) {
             cell.setCellValue((Double) value);
             cell.setCellType(CellType.NUMERIC);
+        } else if (value instanceof Temporal) {
+        	Temporal t = (Temporal)value;
+        	try {
+        		DateTimeFormatter format = DateTimeFormatter.ofPattern("d.MM.yyyy hh:mm:ss O");
+        		cell.setCellValue(LocalDateTime.from(t).format(format));
+        	} catch (DateTimeException e) {
+        		DateTimeFormatter format = DateTimeFormatter.ofPattern("d.MM.yyyy hh:mm:ss");
+        		cell.setCellValue(LocalDateTime.from(t).format(format));
+        	}
+        	cell.setCellType(CellType.STRING);
         } else {
             cell.setCellValue(value.toString());
             cell.setCellType(CellType.STRING);

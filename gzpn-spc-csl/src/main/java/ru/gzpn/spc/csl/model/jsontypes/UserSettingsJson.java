@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.model.jsontypes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,10 +15,10 @@ import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
-public class UserSettingsJson {
+public class UserSettingsJson implements Serializable {
 	private static final long serialVersionUID = -8491801489639919153L;
 	public static final int DEFAULT_LEFT_SPLIT_POSITION = 27;
-	private static final int DEFAULT_MAIN_SPLIT_POSITION = 52;
+	public static final int DEFAULT_MAIN_SPLIT_POSITION = 52;
 	
 	// sequence of grouping fields/entities to show in a treeGreed component
 	private NodeWrapper leftTreeGroup;

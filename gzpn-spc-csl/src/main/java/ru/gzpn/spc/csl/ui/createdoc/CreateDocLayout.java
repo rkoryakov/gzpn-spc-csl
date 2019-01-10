@@ -217,12 +217,11 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 			column.setWidthUndefined();
 		}
 		
-		if (settings.isShown()) {	
-			column.setId(settings.getEntityFieldName().substring(IWorkSet.ENTITYNAME_DOT.length()));
-		} else {
+		if (!settings.isShown()) {	
 			column.setHidden(true);
 		}
 		
+		column.setId(settings.getEntityFieldName().substring(IWorkSet.ENTITYNAME_DOT.length()));
 	}
 	
 	private Component createLeftHeadFeautures() {
