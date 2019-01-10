@@ -66,6 +66,7 @@ dependencies {
 //	compile('com.sun.xml.bind:jaxb-impl')
 //	compile('javax.activation:activation')
 	compile("com.vaadin:vaadin-spring-boot-starter:${vaadinSpringVersion}")
+
 //	compile("com.vaadin:vaadin-spring-boot-starter:${vaadinSpringVersion}:javadoc")
 	//compile("com.vaadin:vaadin-grid-flow:1.1.0")
 	compile("com.vaadin:vaadin-push")
@@ -95,7 +96,9 @@ dependencies {
 	
 	
 	compile group: 'org.apache.commons', name: 'commons-dbcp2', version: '2.5.0'
-
+	// https://mvnrepository.com/artifact/org.apache.poi/poi
+	compile group: 'org.apache.poi', name: 'poi', version: '4.0.1'
+	
     compile("org.codehaus.groovy:groovy")
 	compile("org.springframework.boot:spring-boot-devtools")
 	runtime('org.postgresql:postgresql')

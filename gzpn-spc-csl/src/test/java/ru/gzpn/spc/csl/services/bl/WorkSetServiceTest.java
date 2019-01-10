@@ -32,7 +32,7 @@ public class WorkSetServiceTest extends WorkSetService {
 	@Test
 	public void getItemsByNodeEmptyResultTest() {
 		List<Order> orders = new ArrayList<>();
-		NodeWrapper parentNode = settings.getCreateDocSettings().getLeftDefaultNodesHierarchy();
+		NodeWrapper parentNode = settings.getUserSettings().getLeftDefaultNodesHierarchy();
 		Stream<IWorkSet> result = getItemsByNode(parentNode, 0, MAX_RESULTS);
 		assertThat(result).size().isZero();
 	}
@@ -40,7 +40,7 @@ public class WorkSetServiceTest extends WorkSetService {
 	@Test
 	public void getItemsByNodeCProjectTest() {
 		List<Order> orders = new ArrayList<>();
-		NodeWrapper parentNode = settings.getCreateDocSettings().getLeftDefaultNodesHierarchy();
+		NodeWrapper parentNode = settings.getUserSettings().getLeftDefaultNodesHierarchy();
 		List<NodeWrapper> hProjectLevel = projetcService.getItemsGroupedByField(parentNode)
 				.collect(Collectors.toList());
 		assertThat(hProjectLevel).size().isNotZero();
@@ -60,7 +60,7 @@ public class WorkSetServiceTest extends WorkSetService {
 	@Test
 	public void getItemsByNodeStageTest() {
 		List<Order> orders = new ArrayList<>();
-		NodeWrapper parentNode = settings.getCreateDocSettings().getLeftDefaultNodesHierarchy();
+		NodeWrapper parentNode = settings.getUserSettings().getLeftDefaultNodesHierarchy();
 		List<NodeWrapper> hProjectLevel = projetcService.getItemsGroupedByField(parentNode)
 				.collect(Collectors.toList());
 		assertThat(hProjectLevel).size().isNotZero();

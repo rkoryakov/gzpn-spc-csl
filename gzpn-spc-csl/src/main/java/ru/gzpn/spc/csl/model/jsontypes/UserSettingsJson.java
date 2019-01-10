@@ -14,7 +14,7 @@ import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
-public class UserSettingsJson implements IUISettings {
+public class UserSettingsJson {
 	private static final long serialVersionUID = -8491801489639919153L;
 	public static final int DEFAULT_LEFT_SPLIT_POSITION = 27;
 	private static final int DEFAULT_MAIN_SPLIT_POSITION = 52;

@@ -11,6 +11,8 @@ import org.springframework.context.MessageSource;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Button;
@@ -35,6 +37,7 @@ import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
+import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
 
 public class CreateDocLayout extends HorizontalSplitPanel {
 	private static final long serialVersionUID = -883906550551450076L;
@@ -43,8 +46,9 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 	private static final String I18N_SEARCHFIELD_PLACEHOLDER = "createdoc.DocCreatingLayout.worksetFilterField.placeholder";
 	private static final String I18N_SEARCHSETTINGS_DESC = "createdoc.DocCreatingLayout.worksetFilterSettingsButton.desc";
 	private static final String I18N_USERLAYOUTSETTINGS_DESC = "createdoc.DocCreatingLayout.userLayoutSettings.desc";
-	private static final String I18N_ADDTREEITEMBUTTON_DESC = "createdoc.DocCreatingLayout.addWorksetButton.desc";
-	private static final String I18N_DELTREEITEMBUTTON_DESC = "createdoc.DocCreatingLayout.delWorksetButton.desc";
+	private static final String I18N_ADDWORKSETBUTTON_DESC = "createdoc.DocCreatingLayout.addWorksetButton.desc";
+	private static final String I18N_DELWORKSETBUTTON_DESC = "createdoc.DocCreatingLayout.delWorksetButton.desc";
+	private static final String I18N_DOWNLOADWORKSETBUTTON_DESC = "createdoc.DocCreatingLayout.downloadWorksetButton.desc";
 	private static final String I18N_TREE_CAPTION = "createdoc.DocCreatingLayout.projectTreeCaption";
 	/* worksetGrid column captions*/
 	private static final String I18N_WORKSET_COLUMN_NAME = "createdoc.DocCreatingLayout.worksetGrid.columns.name";
@@ -82,6 +86,7 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 	private Button userLayoutSettings;
 	private Button addWorksetButton;
 	private Button delWorksetButton;
+	private Button downloadWorksetButton;
 	
 	
 	public CreateDocLayout(IDataProjectService projectService, 
@@ -92,7 +97,7 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		this.projectService = projectService;
 		this.dataUserSettigsService = dataUserSettigsService;
 		this.messageSource = messageSource;
-		docSettingsJson = dataUserSettigsService.getCreateDocSettings();
+		docSettingsJson = dataUserSettigsService.getUserSettings();
 		NodeWrapper treeSettings = docSettingsJson.getLeftHierarchySettings();
 		
 		projectTreeDataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
@@ -151,7 +156,7 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 	private Component createWorksetGrid() {
 		worksetGrid = new Grid<>();
 		List<ColumnSettings> columnSettings = dataUserSettigsService
-												.getCreateDocSettings()
+												.getUserSettings()
 													.getLeftWorksetColumns();
 		columnSettings.sort((cs1, cs2) -> 
 			Integer.compare(cs1.getOrderIndex(), cs2.getOrderIndex())
@@ -211,7 +216,13 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		} else {
 			column.setWidthUndefined();
 		}
-		column.setHidden(!settings.isShown());
+		
+		if (settings.isShown()) {	
+			column.setId(settings.getEntityFieldName().substring(IWorkSet.ENTITYNAME_DOT.length()));
+		} else {
+			column.setHidden(true);
+		}
+		
 	}
 	
 	private Component createLeftHeadFeautures() {
@@ -222,6 +233,7 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		layout.setWidth(100.f, Unit.PERCENTAGE);
 		horizontalLayout.addComponent(createWorksetFilter());
 		horizontalLayout.addComponent(createWorksetButtons());
+		horizontalLayout.addComponent(createExcelButton());
 		layout.addComponent(createSettingsButton(), "top:5px; left:5px");
 		layout.addComponent(horizontalLayout, "top:5px; right:5px");
 		return layout;
@@ -248,8 +260,8 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		JoinedLayout<Button, Button> bottons = new JoinedLayout<>();
 		addWorksetButton = new Button(VaadinIcons.PLUS);
 		delWorksetButton = new Button(VaadinIcons.MINUS);
-		addWorksetButton.setDescription(getI18nText(I18N_ADDTREEITEMBUTTON_DESC));
-		delWorksetButton.setDescription(getI18nText(I18N_DELTREEITEMBUTTON_DESC));
+		addWorksetButton.setDescription(getI18nText(I18N_ADDWORKSETBUTTON_DESC));
+		delWorksetButton.setDescription(getI18nText(I18N_DELWORKSETBUTTON_DESC));
 		addWorksetButton.setEnabled(false);
 		delWorksetButton.setEnabled(false);
 		
@@ -259,6 +271,17 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		return bottons;
 	}
 
+	private Component createExcelButton() {
+		downloadWorksetButton = new Button(VaadinIcons.TABLE);
+		downloadWorksetButton.setDescription(getI18nText(I18N_DOWNLOADWORKSETBUTTON_DESC));
+		StreamResource excelStreamResource = new StreamResource(
+				(StreamResource.StreamSource) () -> Exporter.exportAsExcel(worksetGrid), "workset.xls");
+		FileDownloader excelFileDownloader = new FileDownloader(excelStreamResource);
+		excelFileDownloader.extend(downloadWorksetButton);
+		
+		return downloadWorksetButton;
+	}
+	
 	private Component createSettingsButton() {
 		userLayoutSettings = new Button();
 		userLayoutSettings.setIcon(VaadinIcons.COG_O);
@@ -292,7 +315,7 @@ class WorkSetDocumentation extends VerticalLayout {
 		this.projectService = projectService;
 		this.dataUserSettigsService = dataUserSettigsService;
 		this.messageSource = messageSource;
-		NodeWrapper treeSettings = dataUserSettigsService.getCreateDocSettings().getRightHierarchySettings();
+		NodeWrapper treeSettings = dataUserSettigsService.getUserSettings().getRightHierarchySettings();
 		
 		dataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
 		configurableFilterDataProvider = dataProvider.withConfigurableFilter(

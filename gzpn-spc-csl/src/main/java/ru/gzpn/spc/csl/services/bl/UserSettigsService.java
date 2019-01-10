@@ -24,11 +24,13 @@ public class UserSettigsService implements IDataUserSettigsService {
 	@Autowired
 	ServerProperties serverProperties;
 	
-	public UserSettingsJson getCreateDocSettings() {
+	@Override
+	public UserSettingsJson getUserSettings() {
 		String user = getCurrentUser();
-		return getCreateDocSettings(user);
+		return getUserSettings(user);
 	}
 	
+	@Override
 	public String getCurrentUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String user = null;
@@ -47,7 +49,8 @@ public class UserSettigsService implements IDataUserSettigsService {
 		return user;
 	}
 
-	public UserSettingsJson getCreateDocSettings(String userId) {
+	@Override
+	public UserSettingsJson getUserSettings(String userId) {
 		UserSettings userSettings = repository.findByUserId(userId);
 		UserSettingsJson result = null;
 		
@@ -60,7 +63,8 @@ public class UserSettigsService implements IDataUserSettigsService {
 		return result;
 	}
 	
-	public void saveCreateDocSettingsJson(String userId, UserSettingsJson createDoc) {
+	@Override
+	public void save(String userId, UserSettingsJson createDoc) {
 		UserSettings userSettings = repository.findByUserId(userId);
 		
 		if (userSettings != null) {
