@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.ui.settings;
 
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
@@ -46,9 +47,11 @@ public abstract class UISettingsWindow extends Window {
 	}
 
 	public Component createFooterLayout() {
-		HorizontalLayout footerLayout = new HorizontalLayout();
+		footerLayout = new HorizontalLayout();
+		footerLayout.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
 		footerLayout.addComponent(createCancelButton());
 		footerLayout.addComponent(createSaveButton());
+		
 		return footerLayout;
 	}
 
@@ -101,5 +104,10 @@ public abstract class UISettingsWindow extends Window {
 
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		return (obj != null && this == obj);
+	}
+
 	public abstract String getI18nText(String key);
 }

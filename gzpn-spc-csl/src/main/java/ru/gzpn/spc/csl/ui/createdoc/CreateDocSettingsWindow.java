@@ -1,5 +1,8 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
+import org.springframework.context.MessageSource;
+
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
@@ -8,10 +11,18 @@ import ru.gzpn.spc.csl.ui.settings.UISettingsWindow;
 public class CreateDocSettingsWindow extends UISettingsWindow {
 
 	private static final long serialVersionUID = 1L;
-
-	public CreateDocSettingsWindow(IDataUserSettigsService settingsService) {
+	private MessageSource messageSource;
+	
+	public CreateDocSettingsWindow(IDataUserSettigsService settingsService, MessageSource messageSource) {
 		super(settingsService);
-		// TODO Auto-generated constructor stub
+		this.messageSource = messageSource;
+	}
+
+	@Override
+	public VerticalLayout createBodyLayout() {
+		VerticalLayout layout = new VerticalLayout();
+		//Split
+		return layout;
 	}
 
 	@Override
@@ -27,14 +38,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 	}
 
 	@Override
-	public VerticalLayout createBodyLayout() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getI18nText(String key) {
-		// TODO Auto-generated method stub
-		return null;
+		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
 	}
 }

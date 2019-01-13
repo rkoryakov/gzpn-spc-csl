@@ -1,8 +1,14 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +32,12 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.TreeGrid;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
+import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.UserSettingsJson;
 import ru.gzpn.spc.csl.model.utils.NodeFilter;
@@ -155,9 +164,9 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 	
 	private Component createWorksetGrid() {
 		worksetGrid = new Grid<>();
-		List<ColumnSettings> columnSettings = dataUserSettigsService
-												.getUserSettings()
-													.getLeftWorksetColumns();
+		UserSettingsJson userSettings = dataUserSettigsService.getUserSettings();
+		List<ColumnSettings> columnSettings = userSettings.getLeftWorksetColumns();
+		
 		columnSettings.sort((cs1, cs2) -> 
 			Integer.compare(cs1.getOrderIndex(), cs2.getOrderIndex())
 		);
@@ -167,8 +176,77 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		worksetGrid.setColumnReorderingAllowed(true);
 		worksetDataProvider.setShownColumns(columnSettings);
 		worksetGrid.setDataProvider(worksetDataProvider);
+		// test header groups
+		userSettings.getLeftColumnHeaders();
+		addWorksetHeaderColumns(userSettings);
 		
 		return worksetGrid;
+	}
+
+	private void addWorksetHeaderColumns(UserSettingsJson userSettings) {
+		final String headStyle = "v-grid-header-align-left";
+		if (userSettings.hasLeftColumnHeaders()) {
+			List<ColumnHeaderGroup> groups = userSettings.getLeftColumnHeaders();
+			Deque<List<ColumnHeaderGroup>> childGroups = new LinkedList<>();
+			childGroups.push(groups);
+		
+			HeaderRow headerRow = worksetGrid.prependHeaderRow();
+			headerRow.setStyleName(headStyle);
+			
+			while (!childGroups.isEmpty()) {
+				HeaderRow subRow = worksetGrid.prependHeaderRow();
+				subRow.setStyleName(headStyle);
+				List<ColumnHeaderGroup> list = childGroups.pop();
+				Iterator<ColumnHeaderGroup> it = list.iterator();
+				
+				while (it.hasNext()) {
+					ColumnHeaderGroup g = it.next();
+					// TODO: fix the bug
+					if (g.hasChildrenGroups()) {
+						childGroups.push(g.getChildren());
+						HeaderCell groupCell = subRow.join(getWorksetColumnIds(g.getChildren()));
+						groupCell.setText(g.getCaption());
+						it = g.getChildren().iterator();
+					
+					} else if (g.hasColumns()) {
+							HeaderCell groupCell = headerRow.join(g.getColumns().stream().map(column -> 
+									column.getEntityFieldName()
+										.substring(IWorkSet.ENTITYNAME_DOT.length()))
+											.toArray(String[]::new));
+							
+							groupCell.setText(g.getCaption());
+							childGroups.pollFirst();
+					}
+				}
+			}
+		}
+	}
+	
+	private String[] getWorksetColumnIds(List<ColumnHeaderGroup> groups) {
+		Deque<List<ColumnHeaderGroup>> childGroups = new LinkedList<>();
+		childGroups.push(groups);
+		Set<String> columnIds = new HashSet<>();
+		
+		while (!childGroups.isEmpty()) {
+			List<ColumnHeaderGroup> list = childGroups.pop();
+			Iterator<ColumnHeaderGroup> it = list.listIterator();
+			while (it.hasNext()) {
+				ColumnHeaderGroup g = it.next();
+				
+				if (g.hasChildrenGroups()) {
+					childGroups.push(g.getChildren());
+					it = g.getChildren().iterator();
+					
+				} else if (g.hasColumns()) {
+					columnIds.addAll(g.getColumns().stream().map(c -> 
+								c.getEntityFieldName()
+									.substring(IWorkSet.ENTITYNAME_DOT.length())).collect(Collectors.toList()));
+					//childGroups.pollFirst();
+				}
+			}
+		}
+		
+		return columnIds.toArray(new String[0]);
 	}
 
 	private void addWorksetGridColumn(ColumnSettings settings) {

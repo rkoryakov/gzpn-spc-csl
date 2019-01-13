@@ -4606,6 +4606,17 @@ div.v-layout.v-horizontal.v-widget {
 	text-align: left;
 }
 
+.GzpnSpcCsl .v-grid-header-align-left th {
+	position: relative;
+	background-color: #fafafa;
+	font-size: 14px;
+	font-weight: inherit;
+	border-left: 1px solid #d4d4d4;
+	border-bottom: 1px solid #d4d4d4;
+	
+	text-align: center;
+}
+
 .GzpnSpcCsl .v-grid-header th:first-child {
 	border-left: none;
 }

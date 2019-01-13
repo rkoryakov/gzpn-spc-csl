@@ -26,16 +26,48 @@ public class UserSettingsJson implements Serializable {
 	private int mainSplitPosition;
 	private int leftSplitPosition;
 	
-	// the displayed columns of the end entity in the hierarchy 
+	// the displayed columns
 	private List<ColumnSettings> lefResultColumns;
 	private List<ColumnSettings> rightResultColumns;
 	
-	public NodeWrapper getLeftHierarchySettings() {
-		NodeWrapper result = leftTreeGroup;
-		if (result == null) {
-			result = getLeftDefaultNodesHierarchy();
+	// null if there are no header groups
+	private List<ColumnHeaderGroup> leftColumnHeaders;
+	
+	public boolean hasLeftColumnHeaders() {
+		return leftColumnHeaders != null && !leftColumnHeaders.isEmpty();
+	}
+	
+	public List<ColumnHeaderGroup> getLeftColumnHeaders() {
+		if (Objects.isNull(leftColumnHeaders)) {
+			leftColumnHeaders = getDefaultColumnHeaderGroups();
 		}
+
+		return leftColumnHeaders;
+	}
+	
+	public List<ColumnHeaderGroup> getDefaultColumnHeaderGroups() {
+		
+		List<ColumnHeaderGroup> result = new ArrayList<>();
+		List<ColumnHeaderGroup> subGroups = new ArrayList<>();
+		ColumnHeaderGroup root0 = new ColumnHeaderGroup("Root group 0");
+		ColumnHeaderGroup root1 = new ColumnHeaderGroup("Root group 1");
+		
+		subGroups.add(new ColumnHeaderGroup("Group 1").addColumn(lefResultColumns.get(1)).addColumn(lefResultColumns.get(2)));
+		subGroups.add(new ColumnHeaderGroup("Group 2").addColumn(lefResultColumns.get(3)).addColumn(lefResultColumns.get(4)));
+		
+		root1.setChildren(subGroups);
+	//	root0.setChildren(Arrays.asList(root1));
+		result.add(root1);
+		
 		return result;
+	}
+	
+	 
+	public NodeWrapper getLeftHierarchySettings() {
+		if (leftTreeGroup == null) {
+			leftTreeGroup = getLeftDefaultNodesHierarchy();
+		}
+		return leftTreeGroup;
 	}
 	
 	public NodeWrapper getLeftDefaultNodesHierarchy() {
@@ -51,12 +83,11 @@ public class UserSettingsJson implements Serializable {
 	}
 	
 	public List<ColumnSettings> getLeftWorksetColumns() {
-		List<ColumnSettings> result = lefResultColumns;
-		if (Objects.isNull(result)) {
-			result = getLeftDefaultWorksetColumns();
+		if (Objects.isNull(lefResultColumns)) {
+			lefResultColumns = getLeftDefaultWorksetColumns();
 		}
 		
-		return result;
+		return lefResultColumns;
 	}
 	
 	private List<ColumnSettings> getLeftDefaultWorksetColumns() {
@@ -94,13 +125,11 @@ public class UserSettingsJson implements Serializable {
 	}
 	
 	public List<ColumnSettings> getRightDocumentsColumns() {
-		List<ColumnSettings> result = rightResultColumns;
-		
-		if (Objects.isNull(result)) {
-			result = getRightDefaultDocumentsColumns();
+		if (Objects.isNull(rightResultColumns)) {
+			rightResultColumns = getRightDefaultDocumentsColumns();
 		}
 		
-		return result;
+		return rightResultColumns;
 	}
 	
 	private List<ColumnSettings> getRightDefaultDocumentsColumns() {
