@@ -53,7 +53,19 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 	private MarginInfo marginForHeader;
 	private UserInfoTabSheet infoUser;
 	private HorizontalSplitPanel panel;
-
+	private static final String I18N_CAPTION_USERS = "adminView.caption.usersKey";
+	private static final String I18N_CAPTION_GROUPS = "adminView.caption.groupsKey";
+	
+	private static final String I18N_CAPTION_COLUMN_LOGIN = "adminView.caption.login";
+	private static final String I18N_CAPTION_COLUMN_FIRSTNAME = "adminView.caption.firstName";
+	private static final String I18N_CAPTION_COLUMN_LASTNAME = "adminView.caption.lastName";
+	private static final String I18N_CAPTION_COLUMN_EMAIL = "adminView.caption.email";
+	private static final String I18N_CAPTION_COLUMN_ID = "adminView.caption.id";
+	private static final String I18N_CAPTION_COLUMN_NAMEROLES = "adminView.caption.nameRoles";
+	private static final String I18N_CAPTION_COLUMN_TYPEROLES = "adminView.caption.typeRoles";
+	private static final String I18N_CAPTION_COLUMN_EDIT = "adminView.caption.edit";
+	private static final String I18N_CAPTION_COLUMN_DELETE = "adminView.caption.delete";
+	
 	public UsersAndRolesVerticalLayout(IdentityService identityService, MessageSource messageSource) {
 		this.identityService = identityService;
 		this.messageSource = messageSource;
@@ -141,9 +153,9 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 		comboBox.setSelectedItem(EnumUserGroup.USERS);
 		gridGroup.setVisible(false);
 		comboBox.setItemCaptionGenerator(item -> {
-			String result = getI18nText("adminView.caption.usersKey");
+			String result = getI18nText(I18N_CAPTION_USERS);
 			if (item == EnumUserGroup.GROUPS) {
-				result = getI18nText("adminView.caption.groupsKey");
+				result = getI18nText(I18N_CAPTION_GROUPS);
 			}
 			return result;
 		});
@@ -176,16 +188,12 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 	}
 
 	private Grid<UserTemplate> createGridUser() {
-		String loginCaption = getI18nText("adminView.caption.login");
-		String firstNameCaption = getI18nText("adminView.caption.firstName");
-		String lastNameCaption = getI18nText("adminView.caption.lastName");
-		String emailCaption = getI18nText("adminView.caption.email");
 		userFilter = userDataProvider.withConfigurableFilter();
 		Grid<UserTemplate> grid = new Grid<>();
-		grid.addColumn(UserTemplate::getId).setCaption(loginCaption);
-		grid.addColumn(UserTemplate::getFirstName).setCaption(firstNameCaption);
-		grid.addColumn(UserTemplate::getLastName).setCaption(lastNameCaption);
-		grid.addColumn(UserTemplate::getEmail).setCaption(emailCaption);
+		grid.addColumn(UserTemplate::getId).setCaption(I18N_CAPTION_COLUMN_LOGIN);
+		grid.addColumn(UserTemplate::getFirstName).setCaption(I18N_CAPTION_COLUMN_FIRSTNAME);
+		grid.addColumn(UserTemplate::getLastName).setCaption(I18N_CAPTION_COLUMN_LASTNAME);
+		grid.addColumn(UserTemplate::getEmail).setCaption(I18N_CAPTION_COLUMN_EMAIL);
 		grid.setDataProvider(userFilter);
 		grid.setColumnReorderingAllowed(true);
 		grid.setSizeFull();
@@ -205,19 +213,14 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 	}
 
 	private Grid<GroupTemplate> createGridGroup() {
-		String editCaption = getI18nText("adminView.caption.edit");
-		String deleteCaption = getI18nText("adminView.caption.delete");
-		String idCaption = getI18nText("adminView.caption.id");
-		String nameCaption = getI18nText("adminView.caption.nameRoles");
-		String typeCaption = getI18nText("adminView.caption.typeRoles");
 		groupFilter = groupDataProvider.withConfigurableFilter();
 		Grid<GroupTemplate> grid = new Grid<>();
 		grid.setSizeFull();
-		grid.addColumn(GroupTemplate::getId).setCaption(idCaption);
-		grid.addColumn(GroupTemplate::getName).setCaption(nameCaption);
-		grid.addColumn(GroupTemplate::getType).setCaption(typeCaption);
-		grid.addComponentColumn(GroupTemplate::getEdit).setCaption(editCaption).setWidth(105.0);
-		grid.addComponentColumn(GroupTemplate::getDelete).setCaption(deleteCaption).setWidth(105.0);
+		grid.addColumn(GroupTemplate::getId).setCaption(I18N_CAPTION_COLUMN_ID);
+		grid.addColumn(GroupTemplate::getName).setCaption(I18N_CAPTION_COLUMN_NAMEROLES);
+		grid.addColumn(GroupTemplate::getType).setCaption(I18N_CAPTION_COLUMN_TYPEROLES);
+		grid.addComponentColumn(GroupTemplate::getEdit).setCaption(I18N_CAPTION_COLUMN_EDIT).setWidth(105.0);
+		grid.addComponentColumn(GroupTemplate::getDelete).setCaption(I18N_CAPTION_COLUMN_DELETE).setWidth(105.0);
 		grid.setDataProvider(groupFilter);
 		grid.setColumnReorderingAllowed(true);
 		grid.setSizeFull();

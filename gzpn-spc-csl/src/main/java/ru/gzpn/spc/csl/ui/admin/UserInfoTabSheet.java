@@ -395,7 +395,6 @@ class UserInfoVerticalLayout extends VerticalLayout {
 			newPasswordField.setCaption(newPasswordCaption);
 			deleteButton.setEnabled(true);
 		}
-		
 	}	
 
 	private String getI18nText(String key) {
@@ -406,7 +405,6 @@ class UserInfoVerticalLayout extends VerticalLayout {
 		return messageSource.getMessage(key, params, VaadinSession.getCurrent().getLocale());
 	}
 }
-
 
 class UserAddGroupVerticalLayout extends VerticalLayout {
 	
