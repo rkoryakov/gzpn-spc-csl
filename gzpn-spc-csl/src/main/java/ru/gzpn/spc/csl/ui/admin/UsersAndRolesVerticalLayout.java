@@ -153,9 +153,9 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 		comboBox.setSelectedItem(EnumUserGroup.USERS);
 		gridGroup.setVisible(false);
 		comboBox.setItemCaptionGenerator(item -> {
-			String result = getI18nText(getI18nText(I18N_CAPTION_USERS));
+			String result = getI18nText(I18N_CAPTION_USERS);
 			if (item == EnumUserGroup.GROUPS) {
-				result = getI18nText(getI18nText(I18N_CAPTION_GROUPS));
+				result = getI18nText(I18N_CAPTION_GROUPS);
 			}
 			return result;
 		});
