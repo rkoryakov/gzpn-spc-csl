@@ -153,9 +153,9 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 		comboBox.setSelectedItem(EnumUserGroup.USERS);
 		gridGroup.setVisible(false);
 		comboBox.setItemCaptionGenerator(item -> {
-			String result = getI18nText(I18N_CAPTION_USERS);
+			String result = getI18nText(getI18nText(I18N_CAPTION_USERS));
 			if (item == EnumUserGroup.GROUPS) {
-				result = getI18nText(I18N_CAPTION_GROUPS);
+				result = getI18nText(getI18nText(I18N_CAPTION_GROUPS));
 			}
 			return result;
 		});
@@ -190,10 +190,10 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 	private Grid<UserTemplate> createGridUser() {
 		userFilter = userDataProvider.withConfigurableFilter();
 		Grid<UserTemplate> grid = new Grid<>();
-		grid.addColumn(UserTemplate::getId).setCaption(I18N_CAPTION_COLUMN_LOGIN);
-		grid.addColumn(UserTemplate::getFirstName).setCaption(I18N_CAPTION_COLUMN_FIRSTNAME);
-		grid.addColumn(UserTemplate::getLastName).setCaption(I18N_CAPTION_COLUMN_LASTNAME);
-		grid.addColumn(UserTemplate::getEmail).setCaption(I18N_CAPTION_COLUMN_EMAIL);
+		grid.addColumn(UserTemplate::getId).setCaption(getI18nText(I18N_CAPTION_COLUMN_LOGIN));
+		grid.addColumn(UserTemplate::getFirstName).setCaption(getI18nText(I18N_CAPTION_COLUMN_FIRSTNAME));
+		grid.addColumn(UserTemplate::getLastName).setCaption(getI18nText(I18N_CAPTION_COLUMN_LASTNAME));
+		grid.addColumn(UserTemplate::getEmail).setCaption(getI18nText(I18N_CAPTION_COLUMN_EMAIL));
 		grid.setDataProvider(userFilter);
 		grid.setColumnReorderingAllowed(true);
 		grid.setSizeFull();
@@ -216,11 +216,11 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 		groupFilter = groupDataProvider.withConfigurableFilter();
 		Grid<GroupTemplate> grid = new Grid<>();
 		grid.setSizeFull();
-		grid.addColumn(GroupTemplate::getId).setCaption(I18N_CAPTION_COLUMN_ID);
-		grid.addColumn(GroupTemplate::getName).setCaption(I18N_CAPTION_COLUMN_NAMEROLES);
-		grid.addColumn(GroupTemplate::getType).setCaption(I18N_CAPTION_COLUMN_TYPEROLES);
-		grid.addComponentColumn(GroupTemplate::getEdit).setCaption(I18N_CAPTION_COLUMN_EDIT).setWidth(105.0);
-		grid.addComponentColumn(GroupTemplate::getDelete).setCaption(I18N_CAPTION_COLUMN_DELETE).setWidth(105.0);
+		grid.addColumn(GroupTemplate::getId).setCaption(getI18nText(I18N_CAPTION_COLUMN_ID));
+		grid.addColumn(GroupTemplate::getName).setCaption(getI18nText(I18N_CAPTION_COLUMN_NAMEROLES));
+		grid.addColumn(GroupTemplate::getType).setCaption(getI18nText(I18N_CAPTION_COLUMN_TYPEROLES));
+		grid.addComponentColumn(GroupTemplate::getEdit).setCaption(getI18nText(I18N_CAPTION_COLUMN_EDIT)).setWidth(105.0);
+		grid.addComponentColumn(GroupTemplate::getDelete).setCaption(getI18nText(I18N_CAPTION_COLUMN_DELETE)).setWidth(105.0);
 		grid.setDataProvider(groupFilter);
 		grid.setColumnReorderingAllowed(true);
 		grid.setSizeFull();
