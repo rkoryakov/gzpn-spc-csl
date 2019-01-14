@@ -7,8 +7,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class DataUserSettigsServiceTest {
+public class UserSettigsServiceTest {
 
 	@Autowired
-	DataUserSettigsService settigsService;
+	UserSettigsService settigsService;
 }

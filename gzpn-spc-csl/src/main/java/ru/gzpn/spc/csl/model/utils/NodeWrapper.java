@@ -1,6 +1,12 @@
-package ru.gzpn.spc.csl.ui.createdoc;
+package ru.gzpn.spc.csl.model.utils;
 
 import java.io.Serializable;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.vaadin.data.provider.SortOrder;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
 
@@ -11,6 +17,7 @@ import ru.gzpn.spc.csl.model.BaseEntity;
  */
 public class NodeWrapper implements Serializable {
 	private static final long serialVersionUID = -6142105774113139782L;
+	public static final Logger logger = LoggerFactory.getLogger(NodeWrapper.class);
 	
 	private String entityName;
 	private String groupFiled;
@@ -18,30 +25,93 @@ public class NodeWrapper implements Serializable {
 	private NodeWrapper parent; // parent level for query data
 	private NodeWrapper child; // child level for query data
 	private BaseEntity item; // fetched data if the current node isn't a group
+	private Long id;
+	
+	private List<SortOrder<String>> sortOrdersForChildren;
+	private NodeFilter filterForChildren;
+	
+	private int hashCode;
+	
+	protected NodeWrapper() {
+	}
 	
 	public NodeWrapper(String entityName, String groupByFiled) {
+		this();
 		this.entityName = entityName;
 		this.groupFiled = groupByFiled;
+		
 	}
 	
 	public NodeWrapper(String entityName) {
+		this();
 		this.entityName = entityName;
 		this.groupFiled = null;
 	}
 	
 	public NodeWrapper(String entityName, String groupByFiledName, Object groupFiledValue) {
+		this();
 		this.entityName = entityName;
 		this.groupFiled = groupByFiledName;
 		this.groupFiledValue = groupFiledValue;
 	}
 	
-	public NodeWrapper(String entityName, BaseEntity item) {
+	public NodeWrapper(String entityName, String groupByFiledName, Object groupFiledValue, Long id) {
+		this();
+		this.entityName = entityName;
+		this.groupFiled = groupByFiledName;
+		this.groupFiledValue = groupFiledValue;
+		this.id = id;
+	}
+	
+	public NodeWrapper(String entityName, BaseEntity item, Long id) {
+		this();
 		this.entityName = entityName;
 		this.setItem(item);
+		this.id = id;
+	}
+	
+	public void generateHashCode() {
+		int result = 1;
+		
+		result = result ^ ((entityName == null) ? 10 : entityName.hashCode());
+		result = result ^ ((groupFiled == null) ? 10 : groupFiled.hashCode());
+		result = result ^ ((groupFiledValue == null) ? 10 : groupFiledValue.toString().hashCode());
+		result = result ^ ((item == null) ? 10 : item.hashCode());
+		
+		if (hasParent()) {
+			result = result ^ getParent().hashCode;
+		}
+		
+		this.hashCode = result;
+	}
+	
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	/**
+	 * Caption for rendering in UI tree
+	 */
+	public String getNodeCaption() {
+		String result = "";
+		if (isGrouping()) {
+			result = getGroupFiledValue().toString();
+		}
+		
+		return result;
 	}
 	
 	public String getEntityName() {
 		return entityName;
+	}
+	
+	public Entities getEntityEnum() {
+		return Entities.valueOf(getEntityName().toUpperCase());
 	}
 	
 	public void setEntityName(String entityName) {
@@ -117,16 +187,30 @@ public class NodeWrapper implements Serializable {
 	public boolean hasEntityItem() {
 		return this.item != null;
 	}
+	
+	public boolean hasId() {
+		return this.id != null && this.id != -1;
+	}
+	
+	public List<SortOrder<String>> getSortOredersForChildren() {
+		return sortOrdersForChildren;
+	}
+	
+	public void setSortOredersForChildren(List<SortOrder<String>> sortOrdersForChildren) {
+		this.sortOrdersForChildren = sortOrdersForChildren;
+	}
+	
+	public NodeFilter getFilterForChildren() {
+		return filterForChildren;
+	}
+
+	public void setFilterForChildren(NodeFilter filterForChildren) {
+		this.filterForChildren = filterForChildren;
+	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((entityName == null) ? 0 : entityName.hashCode());
-		result = prime * result + ((groupFiled == null) ? 0 : groupFiled.hashCode());
-		result = prime * result + ((groupFiledValue == null) ? 0 : groupFiledValue.hashCode());
-		result = prime * result + ((item == null) ? 0 : item.hashCode());
-		return result;
+		return hashCode;
 	}
 
 	@Override
@@ -137,29 +221,36 @@ public class NodeWrapper implements Serializable {
 			return false;
 	
 		NodeWrapper other = (NodeWrapper) obj;
-		
+	
 		if (entityName == null) {
-			if (other.entityName != null)
+			if (other.entityName != null) {
 				return false;
-		} else if (!entityName.equals(other.entityName))
+			}
+		} else if (!entityName.equals(other.entityName)) {
 			return false;
+		}
 		if (groupFiled == null) {
-			if (other.groupFiled != null)
+			if (other.groupFiled != null) {
 				return false;
-		} else if (!groupFiled.equals(other.groupFiled))
+			}
+		} else if (!groupFiled.equals(other.groupFiled)) {
 			return false;
+		}
 		if (groupFiledValue == null) {
-			if (other.groupFiledValue != null)
+			if (other.groupFiledValue != null) {
 				return false;
-		} else if (!groupFiledValue.equals(other.groupFiledValue))
+			}
+		} else if (!groupFiledValue.equals(other.groupFiledValue)) {
 			return false;
+		}
 		if (item == null) {
 			if (other.item != null)
 				return false;
-		} else if (!item.equals(other.item))
+		} else if (!item.equals(other.item)) {
 			return false;
+		}
 		
-		return true;
+		return other.hashCode() == this.hashCode();
 	}
 
 	@Override
@@ -167,6 +258,4 @@ public class NodeWrapper implements Serializable {
 		return "NodeWrapper [entityName=" + entityName + ", groupFiled=" + groupFiled + ", groupFiledValue="
 				+ groupFiledValue + ", item=" + item + ", hasParent()=" + hasParent() + ", hasChild()=" + hasChild() + "]";
 	}
-	
-	
 }

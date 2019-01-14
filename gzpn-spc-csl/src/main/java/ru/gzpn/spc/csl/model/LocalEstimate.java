@@ -54,7 +54,7 @@ public class LocalEstimate extends BaseEntity implements ILocalEstimate, Seriali
 	private String comment;
 	
 	@OneToMany(targetEntity = Work.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "wk_id", referencedColumnName = "id")
+	@JoinColumn(name = "lest_id", referencedColumnName = "id")
 	private List<IWork> works;
 
 	@ManyToOne(targetEntity = Document.class)

@@ -29,15 +29,15 @@ public enum Entities {
 	LOCALESTIMATE("LocalEstimate"),
 	CONTRACT("Contract"),
 	DOCUMENT("Document"),
-	ESTIMATE_CALCULATION("EstimateCalculation"),
-	ESTIMATE_COST("EstimateCost"),
-	ESTIMATE_HEAD("EstimateHead"),
+	ESTIMATECALCULATION("EstimateCalculation"),
+	ESTIMATECOST("EstimateCost"),
+	ESTIMATEHEAD("EstimateHead"),
 	MILESTONE("Milestone"),
-	OBJECT_ESTIMATE("ObjectEstimate"),
-	WORK_SET("WorkSet"),
+	OBJECTESTIMATE("ObjectEstimate"),
+	WORKSET("WorkSet"),
 	
-	USER_SETTINGS("UserSettings"),
-	LOCAL_ESTIMATE_HISTORY("LocalEstimateHistory");
+	USERSETTINGS("UserSettings"),
+	LOCALESTIMATEHISTORY("LocalEstimateHistory");
 	private String name;
 	
 	Entities(String name) {
@@ -63,13 +63,13 @@ public enum Entities {
 		case DOCUMENT:
 			result = Document.class;
 			break;
-		case ESTIMATE_CALCULATION:
+		case ESTIMATECALCULATION:
 			result = EstimateCalculation.class;
 			break;
-		case ESTIMATE_COST:
+		case ESTIMATECOST:
 			result = EstimateCost.class;
 			break;
-		case ESTIMATE_HEAD:
+		case ESTIMATEHEAD:
 			result = EstimateHead.class;
 			break;
 		case HPROJECT:
@@ -78,13 +78,13 @@ public enum Entities {
 		case LOCALESTIMATE:
 			result = LocalEstimate.class;
 			break;
-		case LOCAL_ESTIMATE_HISTORY:
+		case LOCALESTIMATEHISTORY:
 			result = LocalEstimateHistory.class;
 			break;
 		case MILESTONE:
 			result = Milestone.class;
 			break;
-		case OBJECT_ESTIMATE:
+		case OBJECTESTIMATE:
 			result = ObjectEstimate.class;
 			break;
 		case PHASE:
@@ -96,13 +96,13 @@ public enum Entities {
 		case STAGE:
 			result = Stage.class;
 			break;
-		case USER_SETTINGS:
+		case USERSETTINGS:
 			result = UserSettings.class;
 			break;
 		case WORK:
 			result = Work.class;
 			break;
-		case WORK_SET:
+		case WORKSET:
 			result = WorkSet.class;
 			break;
 		default:

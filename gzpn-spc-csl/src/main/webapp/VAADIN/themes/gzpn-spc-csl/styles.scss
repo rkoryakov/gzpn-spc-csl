@@ -1,0 +1,9 @@
+@import "gzpn-spc-csl.scss";
+@import "addons.scss";
+
+/* This file prefixes all rules with the theme name to avoid causing conflicts with other themes. */
+/* The actual styles should be defined in gzpn-spc-csl.scss */
+.gzpn-spc-csl {
+  @include addons;
+  @include gzpn-spc-csl;
+}

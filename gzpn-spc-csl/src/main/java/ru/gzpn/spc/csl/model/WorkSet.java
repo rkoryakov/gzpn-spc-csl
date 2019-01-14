@@ -1,38 +1,42 @@
 package ru.gzpn.spc.csl.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWork;
+import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 
 @Entity
 @Table(schema = "spc_csl_schema", name = "workset", 
 indexes = {
 		@Index(name = "spc_csl_idx_wkscode", columnList = "code"),
 		@Index(name = "spc_csl_idx_wkscode", columnList = "name"),
-		@Index(name = "spc_csl_idx_wkpln", columnList = "plan_obj_id")
+		@Index(name = "spc_csl_idx_wkpln", columnList = "plan_obj_id"),
+		@Index(name = "spc_csl_idx_wkpln", columnList = "pir_id"),
+		@Index(name = "spc_csl_idx_wkpln", columnList = "smr_id")
 })
-public class WorkSet extends BaseEntity implements Serializable {
+public class WorkSet extends BaseEntity implements IWorkSet, Comparable<IWorkSet>, Serializable {
 	private static final long serialVersionUID = -1489774086979019274L;
+	
 	@Column(length = 64)
 	private String code;
 	@Column(length = 256)
 	private String name;
-	@OneToMany(targetEntity = Work.class)
-	@JoinColumn(name = "wkset_id", referencedColumnName = "id")
-	private List<IWork> pir;
-	@OneToMany(targetEntity = Work.class)
-	@JoinColumn(name = "wkset_id", referencedColumnName = "id")
-	private List<IWork> smr;
+	@OneToOne(targetEntity = Work.class)
+	@JoinColumn(name = "pir_id", referencedColumnName = "id")
+	private IWork pir;
+	@OneToOne(targetEntity = Work.class)
+	@JoinColumn(name = "smr_id", referencedColumnName = "id")
+	private IWork smr;
 	@ManyToOne(targetEntity = PlanObject.class)
 	@JoinColumn(name = "plan_obj_id", referencedColumnName = "id")
 	private IPlanObject planObject;
@@ -49,16 +53,38 @@ public class WorkSet extends BaseEntity implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public List<IWork> getPir() {
+	
+	public IWork getPir() {
 		return pir;
 	}
-	public void setPir(List<IWork> pir) {
+	
+	@Override
+	public String getPirCaption() {
+		String result = "---";
+		if (Objects.nonNull(getPir())) {
+			result = getPir().getCode();
+		}
+		return result;
+	}
+	
+	public void setPir(IWork pir) {
 		this.pir = pir;
 	}
-	public List<IWork> getSmr() {
+	
+	public IWork getSmr() {
 		return smr;
 	}
-	public void setSmr(List<IWork> smr) {
+	
+	@Override
+	public String getSmrCaption() {
+		String result = "---";
+		if (Objects.nonNull(getSmr())) {
+			result = getSmr().getCode();
+		}
+		return result;
+	}
+	
+	public void setSmr(IWork smr) {
 		this.smr = smr;
 	}
 	public IPlanObject getPlanObject() {
@@ -67,4 +93,16 @@ public class WorkSet extends BaseEntity implements Serializable {
 	public void setPlanObject(IPlanObject planObject) {
 		this.planObject = planObject;
 	}
+	
+	@Override
+	public String toString() {
+		return "WorkSet [code=" + code + ", name=" + name + ", pir=" + pir + ", smr=" + smr + ", planObject=" + planObject + "]";
+	}
+	
+	@Override
+	public int compareTo(IWorkSet o) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 }

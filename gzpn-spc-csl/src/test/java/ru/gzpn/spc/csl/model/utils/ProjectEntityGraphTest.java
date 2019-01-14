@@ -74,19 +74,19 @@ public class ProjectEntityGraphTest {
 	
 	@Test
 	public void getLinkedFieldsTest11() {
-		Optional<LinkedFields> fields = ProjectEntityGraph.getLinkedFields(Entities.ESTIMATE_COST.name(), Entities.OBJECT_ESTIMATE.name());
+		Optional<LinkedFields> fields = ProjectEntityGraph.getLinkedFields(Entities.ESTIMATECOST.name(), Entities.OBJECTESTIMATE.name());
 		assertThat(fields.get()).isEqualTo(new LinkedFields("objectEstimate", "estimateCosts"));
 	}
 	
 	@Test
 	public void getLinkedFieldsTest12() {
-		Optional<LinkedFields> fields = ProjectEntityGraph.getLinkedFields(Entities.OBJECT_ESTIMATE.name(), Entities.ESTIMATE_HEAD.name());
+		Optional<LinkedFields> fields = ProjectEntityGraph.getLinkedFields(Entities.OBJECTESTIMATE.name(), Entities.ESTIMATEHEAD.name());
 		assertThat(fields.get()).isEqualTo(new LinkedFields("estimateHead", "objectEstimates"));
 	}
 	
 	@Test
 	public void getLinkedFieldsTest13() {
-		Optional<LinkedFields> fields = ProjectEntityGraph.getLinkedFields(Entities.ESTIMATE_CALCULATION.name(), Entities.OBJECT_ESTIMATE.name());
+		Optional<LinkedFields> fields = ProjectEntityGraph.getLinkedFields(Entities.ESTIMATECALCULATION.name(), Entities.OBJECTESTIMATE.name());
 		assertThat(fields.get()).isEqualTo(new LinkedFields("objectEstimates", "estimateCalculation"));
 	}
 	
@@ -98,7 +98,7 @@ public class ProjectEntityGraphTest {
 	
 	@Test
 	public void getLinkedFieldsTest15() {
-		Optional<LinkedFields> fields = ProjectEntityGraph.getLinkedFields(Entities.WORK.name(), Entities.WORK_SET.name());
+		Optional<LinkedFields> fields = ProjectEntityGraph.getLinkedFields(Entities.WORK.name(), Entities.WORKSET.name());
 		assertThat(fields.get()).isEqualTo(new LinkedFields("workSet", "id"));
 	}
 	
@@ -201,8 +201,8 @@ public class ProjectEntityGraphTest {
 	
 	@Test
 	public void getPathBetweenNodesTest13() {
-		List<Entities> result = ProjectEntityGraph.getPathBetweenNodes(Entities.ESTIMATE_COST.name(), Entities.PHASE.name());
-		assertThat(result).contains(Entities.ESTIMATE_COST, atIndex(0));
+		List<Entities> result = ProjectEntityGraph.getPathBetweenNodes(Entities.ESTIMATECOST.name(), Entities.PHASE.name());
+		assertThat(result).contains(Entities.ESTIMATECOST, atIndex(0));
 		assertThat(result).contains(Entities.LOCALESTIMATE, atIndex(1));
 		assertThat(result).contains(Entities.STAGE, atIndex(2));
 		assertThat(result).contains(Entities.CPROJECT, atIndex(3));
@@ -211,20 +211,20 @@ public class ProjectEntityGraphTest {
 	
 	@Test
 	public void getPathBetweenNodesTest14() {
-		List<Entities> result = ProjectEntityGraph.getPathBetweenNodes(Entities.OBJECT_ESTIMATE.name(), Entities.CONTRACT.name());
+		List<Entities> result = ProjectEntityGraph.getPathBetweenNodes(Entities.OBJECTESTIMATE.name(), Entities.CONTRACT.name());
 		assertThat(result).contains(Entities.CONTRACT, atIndex(4));
 		assertThat(result).contains(Entities.MILESTONE, atIndex(3));
 		assertThat(result).contains(Entities.CPROJECT, atIndex(2));
 		assertThat(result).contains(Entities.STAGE, atIndex(1));
-		assertThat(result).contains(Entities.OBJECT_ESTIMATE, atIndex(0));
+		assertThat(result).contains(Entities.OBJECTESTIMATE, atIndex(0));
 	}
 	
 	@Test
 	public void getPathBetweenNodesTest15() {
-		List<Entities> result = ProjectEntityGraph.getPathBetweenNodes(Entities.WORK_SET.name(), Entities.OBJECT_ESTIMATE.name());
-		assertThat(result).contains(Entities.OBJECT_ESTIMATE, atIndex(3));
+		List<Entities> result = ProjectEntityGraph.getPathBetweenNodes(Entities.WORKSET.name(), Entities.OBJECTESTIMATE.name());
+		assertThat(result).contains(Entities.OBJECTESTIMATE, atIndex(3));
 		assertThat(result).contains(Entities.LOCALESTIMATE, atIndex(2));
 		assertThat(result).contains(Entities.WORK, atIndex(1));
-		assertThat(result).contains(Entities.WORK_SET, atIndex(0));
+		assertThat(result).contains(Entities.WORKSET, atIndex(0));
 	}
 }

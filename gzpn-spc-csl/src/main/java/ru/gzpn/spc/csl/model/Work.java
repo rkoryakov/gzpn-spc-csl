@@ -31,7 +31,7 @@ indexes = {
 		@Index(name = "spc_csl_idx_wkname", columnList = "name"),
 		@Index(name = "spc_csl_idx_wktype", columnList = "type"),
 		@Index(name = "spc_csl_idx_wkplnobj", columnList = "plan_obj_id"),
-		@Index(name = "spc_csl_idx_wkest", columnList = "est_id"),
+		@Index(name = "spc_csl_idx_wkest", columnList = "lest_id"),
 		@Index(name = "spc_csl_idx_wkmil", columnList = "milst_id")
 })
 /**
@@ -55,7 +55,7 @@ public class Work extends BaseEntity implements IWork, Serializable {
 	private IPlanObject planObj;
 
 	@ManyToOne(targetEntity = LocalEstimate.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "est_id", referencedColumnName = "id")
+	@JoinColumn(name = "lest_id", referencedColumnName = "id")
 	private ILocalEstimate localEstimate;
 	
 	@OneToMany(targetEntity = Document.class)
