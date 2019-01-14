@@ -92,7 +92,7 @@ class UserInfoVerticalLayout extends VerticalLayout {
 	private Button deleteButton;
 	private MessageSource messageSource;
 	private IdentityService identityService;
-	private Binder<User> formBinder;
+	private Binder<User> userFormBinder;
 	private UsersAndRolesVerticalLayout usersAndRolesVerticalLayout;
 	private UIContainer container;
 	
@@ -129,12 +129,15 @@ class UserInfoVerticalLayout extends VerticalLayout {
 		newPasswordField = new PasswordField(newPasswordCaption, "");
 		newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 		newPasswordField.setReadOnly(true);
+		
+		newPasswordField.setVisible(false);
+		
 		loginField.setWidth(90.0f, Unit.PERCENTAGE);
 		firstNameField.setWidth(90.0f, Unit.PERCENTAGE);
 		lastNameField.setWidth(90.0f, Unit.PERCENTAGE);
 		emailField.setWidth(90.0f, Unit.PERCENTAGE);
 		newPasswordField.setWidth(90.0f, Unit.PERCENTAGE);
-		formBinder = createBinder();	
+		userFormBinder = createUserFormBinder();	
 		saveButton = createSaveButton(userDataProvider);
 		editButton = createEditButton();
 		cancelButton = createCancelButton(userDataProvider);
@@ -161,7 +164,7 @@ class UserInfoVerticalLayout extends VerticalLayout {
 		this.addComponents(buttonLayout);	
 	}
 	
-	private Binder<User> createBinder() {
+	private Binder<User> createUserFormBinder() {
 		Binder<User> binder = new Binder<>();
 		String necessarylogin = getI18nText("adminView.necessary.user.login");
 		String necessaryFirstName = getI18nText("adminView.necessary.user.firstName");
@@ -200,7 +203,7 @@ class UserInfoVerticalLayout extends VerticalLayout {
 			emailField.setReadOnly(false);
 			newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
 			newPasswordField.setReadOnly(false);
-
+			newPasswordField.setVisible(true);
 			saveButton.setVisible(true);
 			editButton.setEnabled(false);
 			deleteButton.setEnabled(false);
@@ -208,7 +211,7 @@ class UserInfoVerticalLayout extends VerticalLayout {
 			cancelButton.setVisible(true);
 			container.getCreateUserAndRolesButton().setEnabled(false);
 		});
-		formBinder.addValueChangeListener(event -> saveButton.setEnabled(formBinder.validate().isOk()));
+		userFormBinder.addValueChangeListener(event -> saveButton.setEnabled(userFormBinder.validate().isOk()));
 		return editButton;
 	}
 	
@@ -229,6 +232,8 @@ class UserInfoVerticalLayout extends VerticalLayout {
 			emailField.setReadOnly(true);
 			newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 			newPasswordField.setReadOnly(true);
+			
+			newPasswordField.setVisible(false);
 			User user = identityService.createUserQuery().userId(loginField.getValue()).singleResult();
 			String[] paramsForSave;
 			try {
@@ -243,13 +248,13 @@ class UserInfoVerticalLayout extends VerticalLayout {
 						String notificationChanged = getI18nText("adminView.notification.user.change", paramsForSave);
 						Notification.show(notificationChanged, Type.TRAY_NOTIFICATION);
 					}
-			      formBinder.writeBean(user);
+			      userFormBinder.writeBean(user);
 			    } catch (ValidationException e) {
 			      paramsForSave = new String[] {user.getId()};
 				  String notificationSaveErr = getI18nText("adminView.notification.user.change", paramsForSave);
 			      Notification.show(notificationSaveErr);
 			    }
-			formBinder.setBean(user);
+			userFormBinder.setBean(user);
 			identityService.saveUser(user);
 			userDataProvider.refreshAll();
 			saveButton.setEnabled(false);
@@ -277,14 +282,15 @@ class UserInfoVerticalLayout extends VerticalLayout {
 			    lastNameField.setValue("");
 			    emailField.setValue("");
 			    newPasswordField.setValue("");
+			    deleteButton.setEnabled(false);
 			} else if (user.getId() != null) {
 			    loginField.setValue(user.getId() == null ? "" : user.getId());
 			    firstNameField.setValue(user.getFirstName() == null ? "" : user.getFirstName());
 			    lastNameField.setValue(user.getLastName() == null ? "" : user.getLastName());
 			    emailField.setValue(user.getEmail() == null ? "" : user.getEmail());
 			    newPasswordField.setValue("");
+			    deleteButton.setEnabled(true);
 			}
-			
 			loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 			loginField.setReadOnly(true);
 			firstNameField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
@@ -295,7 +301,7 @@ class UserInfoVerticalLayout extends VerticalLayout {
 			emailField.setReadOnly(true);
 			newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 			newPasswordField.setReadOnly(true);
-	
+			newPasswordField.setVisible(false);
 			userDataProvider.refreshAll();
 			editButton.setEnabled(true);
 			editButton.setVisible(true);
@@ -303,7 +309,6 @@ class UserInfoVerticalLayout extends VerticalLayout {
 			cancelButton.setVisible(false);
 			saveButton.setEnabled(false);
 			saveButton.setVisible(false);
-			deleteButton.setEnabled(true);
 			container.getCreateUserAndRolesButton().setEnabled(true);
 		});	
 		
@@ -359,10 +364,6 @@ class UserInfoVerticalLayout extends VerticalLayout {
 			emailField.setValue("");
 			newPasswordField.setValue("");
 			newPasswordField.setCaption(passwordCaption);
-			deleteButton.setEnabled(false);
-
-			editButton.setEnabled(false);
-			editButton.setVisible(false);
 			if(loginField.getValue().isEmpty()) {
 				loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
 				loginField.setReadOnly(false);
@@ -375,14 +376,15 @@ class UserInfoVerticalLayout extends VerticalLayout {
 			emailField.setReadOnly(false);
 			newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
 			newPasswordField.setReadOnly(false);
-
+			newPasswordField.setVisible(true);
 			saveButton.setVisible(true);
 			editButton.setEnabled(false);
+			editButton.setVisible(false);
 			deleteButton.setEnabled(false);
 			cancelButton.setEnabled(true);
 			cancelButton.setVisible(true);
 			container.getCreateUserAndRolesButton().setEnabled(false);
-			formBinder.addValueChangeListener(event -> saveButton.setEnabled(formBinder.validate().isOk()));
+			userFormBinder.addValueChangeListener(event -> saveButton.setEnabled(userFormBinder.validate().isOk()));
 		}
 		else {
 			loginField.setValue(template.getId() == null ? "" : template.getId());
@@ -391,6 +393,7 @@ class UserInfoVerticalLayout extends VerticalLayout {
 			emailField.setValue(template.getEmail() == null ? "" : template.getEmail());
 			newPasswordField.setValue("");
 			newPasswordField.setCaption(newPasswordCaption);
+			deleteButton.setEnabled(true);
 		}
 		
 	}	

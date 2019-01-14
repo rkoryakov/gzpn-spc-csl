@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 
+import com.vaadin.data.Binder;
+import com.vaadin.data.ValidationException;
 import com.vaadin.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.server.VaadinSession;
@@ -279,7 +281,11 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 		String nameCaption = getI18nText("adminView.caption.nameRoles");
 		String typeCaption = getI18nText("adminView.caption.typeRoles");
 		String nameSaveButton = getI18nText("adminView.button.nameSaveButton");
-
+		//TODO: неверные данные
+		String necessarylogin = getI18nText("adminView.necessary.user.login");
+		String necessaryFirstName = getI18nText("adminView.necessary.user.firstName");
+		String necessaryLastName = getI18nText("adminView.necessary.user.lastName");
+		
 		final Window window = new Window(groupWindowCaption);
 		window.setModal(true);
 		window.setResizable(false);
@@ -287,60 +293,63 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 		final FormLayout content = new FormLayout();
 		content.setMargin(true);
 		content.addStyleName("outlined");
-
 		final TextField idField;
 		final TextField nameField;
 		final TextField typeField;
+		
+		Binder<Group> groupFormBinder  = new Binder<>();
 		Button saveButton = new Button(nameSaveButton);
-
+		saveButton.setEnabled(false);
 		if (currentGroup != null) {
 			idField = new TextField(idCaption, currentGroup.getId());
 			idField.setReadOnly(true);
 			nameField = new TextField(nameCaption, currentGroup.getName());
 			typeField = new TextField(typeCaption, currentGroup.getType());
 		}
-
 		else {
 			idField = new TextField(idCaption, "");
 			nameField = new TextField(nameCaption, "");
 			typeField = new TextField(typeCaption, "");
 		}
+		//TODO: заменить константы
+		groupFormBinder.forField(idField).asRequired(necessarylogin).bind(Group::getId, Group::setId);
+		groupFormBinder.forField(nameField).asRequired(necessaryFirstName).bind(Group::getName, Group::setName);
+		groupFormBinder.forField(typeField).asRequired(necessaryLastName).bind(Group::getType, Group::setType);
+
 		idField.setWidth(90.0f, Unit.PERCENTAGE);
 		nameField.setWidth(90.0f, Unit.PERCENTAGE);
 		typeField.setWidth(90.0f, Unit.PERCENTAGE);
-
 		content.addComponent(idField);
 		content.addComponent(nameField);
 		content.addComponent(typeField);
 		content.addComponent(saveButton);
-
 		window.setContent(content);
-
+		groupFormBinder.addValueChangeListener(event -> saveButton.setEnabled(groupFormBinder.validate().isOk()));
 		saveButton.addClickListener(event -> {
 			Group group = identityService.createGroupQuery().groupId(idField.getValue()).singleResult();
 			String[] paramsForSave;
-			if (group == null) {
-				group = identityService.newGroup(idField.getValue());
-				paramsForSave = new String[] {group.getId()};
-				group.setName(nameField.getValue());
-				group.setType(typeField.getValue());
-				identityService.saveGroup(group);
-				String notificationCreated = getI18nText("adminView.notification.group.created", paramsForSave);
-				Notification.show(notificationCreated, Type.TRAY_NOTIFICATION);
-				groupDataProvider.refreshAll();
-				window.close();
-				
-			} else if (group.getId() != null) {
-				paramsForSave = new String[] {group.getId()};
-				group.setName(nameField.getValue());
-				group.setType(typeField.getValue());
-				identityService.saveGroup(group);
-				String notificationChanged = getI18nText("adminView.notification.group.change", paramsForSave);
-				Notification.show(notificationChanged, Type.TRAY_NOTIFICATION);
-				groupDataProvider.refreshAll();
-			}
+			try {
+				if (group == null) {
+					group = identityService.newGroup(idField.getValue());
+					paramsForSave = new String[] {group.getId()};
+					String notificationCreated = getI18nText("adminView.notification.group.created", paramsForSave);
+					Notification.show(notificationCreated, Type.TRAY_NOTIFICATION);
+				} else if (group.getId() != null) {
+					paramsForSave = new String[] {group.getId()};
+					String notificationChanged = getI18nText("adminView.notification.group.change", paramsForSave);
+					Notification.show(notificationChanged, Type.TRAY_NOTIFICATION);
+				}
+			groupFormBinder.writeBean(group);
+		    } catch (ValidationException e) {
+		    	paramsForSave = new String[] {group.getId()};
+		    	String notificationSaveErr = getI18nText("adminView.notification.group.change", paramsForSave);
+		    	Notification.show(notificationSaveErr);
+		    }
+			groupFormBinder.setBean(group);
+			identityService.saveGroup(group);
+			groupDataProvider.refreshAll();
+			window.close();
 		});
-
 		return window;
 	}
 	
