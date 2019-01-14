@@ -30,7 +30,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.SingleSelectionModel;
 
-import ru.gzpn.spc.csl.ui.common.ConfirmDialog;
+import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
 
 public class UsersAndRolesVerticalLayout extends VerticalLayout {
 
@@ -59,7 +59,7 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 		createButton = createButtonCreate();
 		UIContainer container = new UIContainer();
 		container.setCreateUserAndRolesButton(createButton);
-		infoUser = new UserInfoTabSheet(identityService, messageSource, userDataProvider, groupDataProvider, container);
+		infoUser = new UserInfoTabSheet(identityService, messageSource, userDataProvider, container);
 		infoUser.setUserAndRolesTab(this);
 		headerHorizont = new HorizontalLayout();
 		resultPage = new VerticalLayout();
@@ -265,7 +265,7 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 			Notification.show(notificationDeleted, Type.WARNING_MESSAGE);
 		};
 		deleteButton.addClickListener(event -> {
-			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
+			ConfirmDialogWindow box = new ConfirmDialogWindow(textInfo, textOKButton, textCloseButton, okDeleteClick);
 			getUI().addWindow(box);
 		});
 		

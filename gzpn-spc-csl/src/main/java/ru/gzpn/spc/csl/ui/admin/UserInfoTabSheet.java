@@ -33,7 +33,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import ru.gzpn.spc.csl.ui.common.ConfirmDialog;
+import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 
 public class UserInfoTabSheet extends TabSheet {
@@ -48,7 +48,6 @@ public class UserInfoTabSheet extends TabSheet {
 	public UserInfoTabSheet(IdentityService identityService, 
 			MessageSource messageSource, 
 			DataProvider<UserTemplate, String> userDataProvider, 
-			DataProvider<GroupTemplate, String> groupDataProvider, 
 			UIContainer container) {
 		this.messageSource = messageSource;
 		this.identityService = identityService;
@@ -335,7 +334,7 @@ class UserInfoVerticalLayout extends VerticalLayout {
 		};
 		
 		deleteButton.addClickListener(event -> {
-			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
+			ConfirmDialogWindow box = new ConfirmDialogWindow(textInfo, textOKButton, textCloseButton, okDeleteClick);
 			getUI().addWindow(box);
 		});	
 		return deleteButton;
@@ -488,7 +487,7 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 			Notification.show(notificationDeleted, Type.WARNING_MESSAGE);
 		};
 		deleteButton.addClickListener(event -> {
-			ConfirmDialog box = new ConfirmDialog(textInfo, textOKButton, textCloseButton, okDeleteClick);
+			ConfirmDialogWindow box = new ConfirmDialogWindow(textInfo, textOKButton, textCloseButton, okDeleteClick);
 			getUI().addWindow(box);
 		});
 		return deleteButton;
