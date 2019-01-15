@@ -16,6 +16,7 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.ui.admin.UsersAndRolesVerticalLayout;
+import ru.gzpn.spc.csl.ui.admin.project.ProjectPermissionsVerticalLayout;
 
 @SpringView(name = AdminView.NAME)
 @UIScope
@@ -39,7 +40,9 @@ public class AdminView extends VerticalLayout implements View {
 	public void init() {
 		TabSheet tabSet = new TabSheet();
 		UsersAndRolesVerticalLayout admin = new UsersAndRolesVerticalLayout(identityService, messageSource);
+		ProjectPermissionsVerticalLayout project = new ProjectPermissionsVerticalLayout(identityService, messageSource);
 		tabSet.addTab(admin, getI18nText(I18N_CAPTION_TAB_ADMIN));
+		tabSet.addTab(project, "caption");
 		addComponent(tabSet);
 	}
 	

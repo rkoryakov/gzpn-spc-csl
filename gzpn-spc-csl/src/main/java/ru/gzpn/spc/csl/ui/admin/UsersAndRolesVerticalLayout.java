@@ -255,7 +255,6 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 	private Grid<GroupTemplate> createGridGroup() {
 		groupFilter = groupDataProvider.withConfigurableFilter();
 		Grid<GroupTemplate> grid = new Grid<>();
-		grid.setSizeFull();
 		grid.addColumn(GroupTemplate::getId).setCaption(getI18nText(I18N_CAPTION_IDROLES));
 		grid.addColumn(GroupTemplate::getName).setCaption(getI18nText(I18N_CAPTION_NAMEROLES));
 		grid.addColumn(GroupTemplate::getType).setCaption(getI18nText(I18N_CAPTION_TYPEROLES));
