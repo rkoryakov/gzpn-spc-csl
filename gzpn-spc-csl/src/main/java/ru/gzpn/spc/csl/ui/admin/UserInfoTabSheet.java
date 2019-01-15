@@ -521,7 +521,7 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 			}
 			catch(Exception e) {
 				String notificationTextErr = getI18nText(I18N_NOTIFICATION_USERADDGROUPERR, paramsForAdd);
-				Notification.show(notificationTextErr, Type.WARNING_MESSAGE);
+				Notification.show(notificationTextErr, Type.ERROR_MESSAGE);
 			}
 		});
 		return createButton;
@@ -543,7 +543,6 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 	}
 	
 	private Button createViewButton() {
-		//String nameViewButton = getI18nText("adminView.caption.view");
 		Button view = new Button(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_BUTTON_OK));
 		view.addClickListener(event ->{
 			joinedComponent.setVisible(false);

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -18,6 +19,7 @@ import com.vaadin.data.provider.DataProvider;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.grid.HeightMode;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
@@ -94,8 +96,10 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 		searchUserGroup = createSearchUserGroup();
 		selectUserGroup = createSelectUserGroup();
 		marginForHeader = new MarginInfo(true, false, false, false);
+		headerHorizont.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT);
 		headerHorizont.addComponents(searchUserGroup, selectUserGroup, createButton);
 		headerHorizont.setMargin(marginForHeader);
+		
 		resultPage.addComponents(headerHorizont, gridUser, gridGroup);
 		resultPage.setMargin(false);
 		panel.setSplitPosition(70, Unit.PERCENTAGE);
@@ -112,7 +116,9 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 		return DataProvider.fromFilteringCallbacks(query -> {
 			List<User> userList = identityService.createUserQuery().list()
 					.stream()
-						.filter(user -> user.getId().startsWith(query.getFilter().orElse(""))).collect(Collectors.toList());
+						.filter(user -> filterUser(user, query.getFilter().orElse("")))
+							.collect(Collectors.toList());
+			
 			return userList.stream().map(m -> {
 				UserTemplate user = new UserTemplate();
 				user.setId(m.getId());
@@ -124,15 +130,23 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 			});
 		}, query -> identityService.createUserQuery().list()
 					.stream()
-						.filter(user -> user.getId().startsWith(query.getFilter().orElse("")))
+						.filter(user -> filterUser(user, query.getFilter().orElse("")))
 							.collect(Collectors.toList()).size());
 	}
 	
+	private boolean filterUser(User user, String filter) {
+		return StringUtils.startsWithIgnoreCase(user.getId(), filter) ||
+			   StringUtils.startsWithIgnoreCase(user.getFirstName(), filter) ||
+			   StringUtils.startsWithIgnoreCase(user.getLastName(), filter);
+	}
+
 	private DataProvider<GroupTemplate, String> createGroupDataProvider() {
 		return DataProvider.fromFilteringCallbacks(query -> {
 			List<Group> groupList = identityService.createGroupQuery().list()
 					.stream()
-						.filter(group -> group.getId().startsWith(query.getFilter().orElse(""))).collect(Collectors.toList());
+						.filter(group -> filterGroup(group, query.getFilter().orElse("")))
+							.collect(Collectors.toList());
+			
 			return groupList.stream().map(m -> {
 				GroupTemplate group = new GroupTemplate();
 				group.setId(m.getId());
@@ -144,10 +158,16 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 			});
 		}, query -> identityService.createGroupQuery().list()
 					.stream()
-						.filter(group -> group.getId().startsWith(query.getFilter().orElse("")))
+						.filter(group -> filterGroup(group, query.getFilter().orElse("")))
 							.collect(Collectors.toList()).size());
 	}
 	
+	private boolean filterGroup(Group group, String filter) {
+		return StringUtils.startsWithIgnoreCase(group.getId(), filter) ||
+			   StringUtils.startsWithIgnoreCase(group.getName(), filter) ||
+			   StringUtils.startsWithIgnoreCase(group.getType(), filter);
+	}
+
 	public MessageSource getMessageSource() {
 		return messageSource;
 	}
@@ -194,6 +214,7 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 
 	private TextField createSearchUserGroup() {
 		TextField filterTextField = new TextField();
+		filterTextField.setWidth(300, Unit.PIXELS);
 		filterTextField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER));
 		filterTextField.addValueChangeListener(event -> {
 			if (selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.USERS)) {
