@@ -1,5 +1,9 @@
 package ru.gzpn.spc.csl.ui.settings;
 
+import java.util.Objects;
+
+import org.springframework.context.MessageSource;
+
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -7,7 +11,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-import ru.gzpn.spc.csl.model.jsontypes.UserSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
 
 public abstract class UISettingsWindow extends Window {
@@ -18,7 +22,8 @@ public abstract class UISettingsWindow extends Window {
 	public static final String I18N_SAVEBUTTON_CAP = "settings.UISettingsWindow.saveButton.cap";
 	
 	protected IDataUserSettigsService settingsService;
-	protected UserSettingsJson uiSettings;
+	protected CreateDocSettingsJson userSettings;
+	protected MessageSource messageSource;
 	protected String user;
 	
 	protected VerticalLayout bodyLayout;
@@ -27,26 +32,40 @@ public abstract class UISettingsWindow extends Window {
 	protected Button cancelButton;
 	protected Button saveButton;
 	
-	public UISettingsWindow(IDataUserSettigsService settingsService) {
+	public UISettingsWindow(IDataUserSettigsService settingsService, MessageSource messageSource) {
 		this.settingsService = settingsService;
 		this.user = settingsService.getCurrentUser();
+		this.messageSource = messageSource;
+		
 		createBody();
 		createFooter();
 		refreshUiElements();
 	}
 	
+	public CreateDocSettingsJson getUiSettings() {
+		if (Objects.isNull(userSettings)) {
+			userSettings = settingsService.getUserSettings();
+		}
+		return userSettings;
+	}
+
+	public void setUiSettings(CreateDocSettingsJson uiSettings) {
+		this.userSettings = uiSettings;
+	}
+
 	public void createBody() {
 		this.bodyLayout = createBodyLayout();
+		this.setContent(bodyLayout);
 	}
 
 	public abstract VerticalLayout createBodyLayout();
 
 	public void createFooter() {
-		Component footer = createFooterLayout();
+		HorizontalLayout footer = createFooterLayout();
 		this.bodyLayout.addComponent(footer);
 	}
 
-	public Component createFooterLayout() {
+	public HorizontalLayout createFooterLayout() {
 		footerLayout = new HorizontalLayout();
 		footerLayout.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
 		footerLayout.addComponent(createCancelButton());
@@ -67,7 +86,7 @@ public abstract class UISettingsWindow extends Window {
 	public Component createSaveButton() {
 		saveButton = new Button(getI18nText(I18N_SAVEBUTTON_CAP));
 		saveButton.addClickListener(listener -> {
-			save(this.uiSettings);
+			save(this.userSettings);
 			refreshUiElements();
 		});
 		
@@ -79,17 +98,17 @@ public abstract class UISettingsWindow extends Window {
 	 */
 	public abstract void refreshUiElements();
 	
-	public void save(UserSettingsJson uiSettings) {
+	public void save(CreateDocSettingsJson userSettings) {
 		onSave();
-		refreshUiSettings();
-		settingsService.save(user, uiSettings);
+		refreshSettings();
+		settingsService.save(user, userSettings);
 	}
 	
 	/**
-	 * Fill the {@code UserSettingsJson uiSettings} with actual data
+	 * Fill the {@code UserSettingsJson userSettings} with actual data
 	 * from UI elements
 	 */
-	public abstract void refreshUiSettings();
+	public abstract void refreshSettings();
 
 	public void cancel() {
 		onCancel();

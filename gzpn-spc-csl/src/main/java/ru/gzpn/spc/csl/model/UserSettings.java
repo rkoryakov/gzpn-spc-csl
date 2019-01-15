@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 
 import ru.gzpn.spc.csl.model.interfaces.IUserSettings;
-import ru.gzpn.spc.csl.model.jsontypes.UserSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 
 @Entity
 @Table(schema = "spc_csl_schema", name = "user_settings", indexes = {
@@ -22,8 +22,8 @@ public class UserSettings extends BaseEntity implements IUserSettings, Serializa
 	private String userId;
 	
 	@Column
-	@Type(type="UserSettingsJsonType")
-	private UserSettingsJson createDocSettingsJson;
+	@Type(type="CreateDocSettingsJsonType")
+	private CreateDocSettingsJson createDocSettingsJson;
 	
 	public UserSettings() {
 	}
@@ -36,11 +36,11 @@ public class UserSettings extends BaseEntity implements IUserSettings, Serializa
 		this.userId = userId;
 	}
 
-	public UserSettingsJson getDocSettingsJson() {
+	public CreateDocSettingsJson getDocSettingsJson() {
 		return createDocSettingsJson;
 	}
 
-	public void setDocSettingsJson(UserSettingsJson docSettingsJson) {
+	public void setDocSettingsJson(CreateDocSettingsJson docSettingsJson) {
 		this.createDocSettingsJson = docSettingsJson;
 	}
 }

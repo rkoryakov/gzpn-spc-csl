@@ -39,7 +39,6 @@ public class NodeWrapper implements Serializable {
 		this();
 		this.entityName = entityName;
 		this.groupFiled = groupByFiled;
-		
 	}
 	
 	public NodeWrapper(String entityName) {
@@ -104,6 +103,13 @@ public class NodeWrapper implements Serializable {
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * Represent Entity name + field name
+	 */
+	public String getNodeSettingsCaption() {
+		return getEntityName() + " - " + getGroupField();
 	}
 	
 	public String getEntityName() {

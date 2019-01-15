@@ -31,6 +31,10 @@ public class VaadinServletConfiguration extends SpringVaadinServlet {
 
 			return systemMessages;
 		});
-		
+		getService().addSessionInitListener(event -> {
+			String taskId = event.getRequest().getParameter("taskId");
+			String viewId = event.getRequest().getParameter("viewId");
+			logger.debug("taskId {}, viewId {}", taskId, viewId);
+		});
 	}
 }

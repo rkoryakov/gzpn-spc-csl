@@ -32,14 +32,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 
 		http.csrf().disable() // Use Vaadin's CSRF protection
-				.authorizeRequests().anyRequest().authenticated()			
-				.and().formLogin().loginPage("/login").permitAll() 
-				.and().logout().logoutUrl("/logout").logoutSuccessHandler((request, response, auth) -> {
-					RequestDispatcher dispatcher = request.getServletContext().getRequestDispatcher("/sessionExpired");
-					dispatcher.forward(request, response);
-				})
-				.permitAll()
-				.and().sessionManagement().sessionFixation().newSession(); 
+				.authorizeRequests().antMatchers("/login*").permitAll().anyRequest().authenticated().and()
+					.formLogin().loginPage("/login").permitAll().and()
+						.logout().logoutUrl("/logout").logoutSuccessHandler((request, response, auth) -> {
+								RequestDispatcher dispatcher = request.getServletContext()
+											.getRequestDispatcher("/sessionExpired");
+								dispatcher.forward(request, response);
+						}).permitAll().and()
+							.sessionManagement().sessionFixation().newSession(); 
 	}
 
 	@Override

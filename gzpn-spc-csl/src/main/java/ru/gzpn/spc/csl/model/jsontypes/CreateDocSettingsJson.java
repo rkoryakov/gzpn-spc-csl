@@ -15,7 +15,7 @@ import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
-public class UserSettingsJson implements Serializable {
+public class CreateDocSettingsJson implements Serializable {
 	private static final long serialVersionUID = -8491801489639919153L;
 	public static final int DEFAULT_LEFT_SPLIT_POSITION = 27;
 	public static final int DEFAULT_MAIN_SPLIT_POSITION = 52;
@@ -48,16 +48,18 @@ public class UserSettingsJson implements Serializable {
 	public List<ColumnHeaderGroup> getDefaultColumnHeaderGroups() {
 		
 		List<ColumnHeaderGroup> result = new ArrayList<>();
-		List<ColumnHeaderGroup> subGroups = new ArrayList<>();
-		ColumnHeaderGroup root0 = new ColumnHeaderGroup("Root group 0");
-		ColumnHeaderGroup root1 = new ColumnHeaderGroup("Root group 1");
-		
-		subGroups.add(new ColumnHeaderGroup("Group 1").addColumn(lefResultColumns.get(1)).addColumn(lefResultColumns.get(2)));
-		subGroups.add(new ColumnHeaderGroup("Group 2").addColumn(lefResultColumns.get(3)).addColumn(lefResultColumns.get(4)));
-		
-		root1.setChildren(subGroups);
-	//	root0.setChildren(Arrays.asList(root1));
-		result.add(root1);
+//		List<ColumnHeaderGroup> subGroups = new ArrayList<>();
+//		ColumnHeaderGroup root0 = new ColumnHeaderGroup("Root group 0");
+//		ColumnHeaderGroup root1 = new ColumnHeaderGroup("Root group 1");
+//		ColumnHeaderGroup root2 = new ColumnHeaderGroup("Root group 2");
+//		
+//		subGroups.add(new ColumnHeaderGroup("Group 1").addColumn(lefResultColumns.get(1)).addColumn(lefResultColumns.get(2)));
+//		subGroups.add(new ColumnHeaderGroup("Group 2").addColumn(lefResultColumns.get(3)).addColumn(lefResultColumns.get(4)));
+//		
+//		root2.setChildren(subGroups);
+//		root1.setChildren(Arrays.asList(root2));
+//		root0.setChildren(Arrays.asList(root1));
+//		result.add(root0);
 		
 		return result;
 	}

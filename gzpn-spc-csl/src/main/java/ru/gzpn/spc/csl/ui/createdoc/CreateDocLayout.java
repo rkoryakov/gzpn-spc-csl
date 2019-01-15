@@ -29,7 +29,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.Tree;
 import com.vaadin.ui.TreeGrid;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderCell;
@@ -39,12 +38,13 @@ import com.vaadin.ui.themes.ValoTheme;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
-import ru.gzpn.spc.csl.model.jsontypes.UserSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.utils.NodeFilter;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
+import ru.gzpn.spc.csl.ui.common.DraggableTree;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
 
@@ -70,24 +70,25 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 	private static final String I18N_WORKSET_COLUMN_CREATEDATE = "createdoc.DocCreatingLayout.worksetGrid.columns.createdate";
 	private static final String I18N_WORKSET_COLUMN_CHANGEDATE = "createdoc.DocCreatingLayout.worksetGrid.columns.changedate";
 	
-	private static final int WORKSET_GRID_ROWS = 14;
+	private static final int WORKSET_GRID_ROWS = 15;
 	private static final int WORKSET_GRID_HEIGHT = 568;
-	private static final int TREEPANEL_HEIGHT_CORRECTION = 38;
+	private static final int WORKSET_GRID_ROW_HEIGHT = 38;
 	private static final int MAIN_MIN_SPLIT_POSITION = 30;
 	private static final int LEFT_MIN_SPLIT_POSITION = 25;
+	private static final int HEAD_ROW_HEIGHT = 37;
 	
 	private IDataProjectService projectService;
-	private IDataUserSettigsService dataUserSettigsService;
+	private IDataUserSettigsService settingsService;
 	private MessageSource messageSource;
-	private UserSettingsJson docSettingsJson;
+	private CreateDocSettingsJson docSettingsJson;
 	
-	private VerticalLayout leftLayot;
+	private VerticalLayout leftLayout;
 	private VerticalLayout rightLayout;
 	
 	private TextField worksetFilterField;
 	private Button worksetFilterSettingsButton;
 	
-	private Tree<NodeWrapper> projectTree;
+	private DraggableTree<NodeWrapper> projectTree;
 	private Grid<IWorkSet> worksetGrid;
 	private ProjectTreeDataProvider projectTreeDataProvider;
 	private WorksetDataProvider worksetDataProvider;
@@ -96,17 +97,20 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 	private Button addWorksetButton;
 	private Button delWorksetButton;
 	private Button downloadWorksetButton;
+	private Panel projectTreePanel;
+	private IWorkSetService worksetService;
 	
 	
 	public CreateDocLayout(IDataProjectService projectService, 
 							IWorkSetService worksetService, 
-							IDataUserSettigsService dataUserSettigsService, 
+							IDataUserSettigsService settingsService, 
 							MessageSource messageSource) {
 		
 		this.projectService = projectService;
-		this.dataUserSettigsService = dataUserSettigsService;
+		this.settingsService = settingsService;
 		this.messageSource = messageSource;
-		docSettingsJson = dataUserSettigsService.getUserSettings();
+		this.worksetService = worksetService;
+		docSettingsJson = settingsService.getUserSettings();
 		NodeWrapper treeSettings = docSettingsJson.getLeftHierarchySettings();
 		
 		projectTreeDataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
@@ -122,10 +126,10 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 	}
 
 	private Component createLeftLayout() {
-		leftLayot = new VerticalLayout();
-		leftLayot.setMargin(false);
-		leftLayot.setSpacing(false);
-		leftLayot.setSizeFull();
+		leftLayout = new VerticalLayout();
+		leftLayout.setMargin(false);
+		leftLayout.setSpacing(false);
+		leftLayout.setSizeFull();
 		
 		HorizontalSplitPanel splitPanel = new HorizontalSplitPanel();
 		splitPanel.setSizeFull();
@@ -134,20 +138,20 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		splitPanel.addComponent(createProjectTree());
 		splitPanel.addComponent(createWorksetGrid());
 		
-		leftLayot.addComponent(createLeftHeadFeautures());
-		leftLayot.addComponent(splitPanel);
+		leftLayout.addComponent(createLeftHeadFeautures());
+		leftLayout.addComponent(splitPanel);
 		
-		return leftLayot;
+		return leftLayout;
 	}
 	
 	private Component createProjectTree() {
-		projectTree = new Tree<>();
-		Panel panel = new Panel(getI18nText(I18N_TREE_CAPTION));
+		projectTree = new DraggableTree<>();
+		projectTreePanel = new Panel(getI18nText(I18N_TREE_CAPTION));
 		projectTree.setDataProvider(projectTreeDataProvider);
 		projectTree.setItemCaptionGenerator(NodeWrapper::getNodeCaption);
 		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
-		projectTree.setSizeFull();
-		projectTree.setHeight(WORKSET_GRID_HEIGHT - TREEPANEL_HEIGHT_CORRECTION, Unit.PIXELS);
+		projectTreePanel.setSizeFull();
+		projectTree.setHeight(WORKSET_GRID_ROW_HEIGHT * WORKSET_GRID_ROWS + HEAD_ROW_HEIGHT - WORKSET_GRID_ROW_HEIGHT, Unit.PIXELS);
 		projectTree.addSelectionListener(listener -> {
 			Optional<NodeWrapper> selected = listener.getFirstSelectedItem();
 			if (selected.isPresent()) {
@@ -155,16 +159,19 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 			}
 			worksetDataProvider.refreshAll();
 		});
-		
-		panel.setContent(projectTree);
-		panel.setSizeFull();
-		return panel;
+//		TreeGridDragSource<NodeWrapper> dragSource = new TreeGridDragSource<NodeWrapper>(projectTree.getCompositionRoot());
+//		TreeGridDropTarget<NodeWrapper> dropTarget = new TreeGridDropTarget<>(projectTree.getCompositionRoot(), DropMode.ON_TOP);
+//		dragSource.addGridDragStartListener(dragEvent -> {Notification.show(dragEvent.getDraggedItems().toString());});
+//		dropTarget.addTreeGridDropListener(dropListener -> {Notification.show(dropListener.getDropTargetRow().toString());});
+		projectTreePanel.setContent(projectTree);
+		projectTreePanel.setSizeFull();
+		return projectTreePanel;
 	}
 	
 	
 	private Component createWorksetGrid() {
 		worksetGrid = new Grid<>();
-		UserSettingsJson userSettings = dataUserSettigsService.getUserSettings();
+		CreateDocSettingsJson userSettings = settingsService.getUserSettings();
 		List<ColumnSettings> columnSettings = userSettings.getLeftWorksetColumns();
 		
 		columnSettings.sort((cs1, cs2) -> 
@@ -179,11 +186,11 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		// test header groups
 		userSettings.getLeftColumnHeaders();
 		addWorksetHeaderColumns(userSettings);
-		
+
 		return worksetGrid;
 	}
 
-	private void addWorksetHeaderColumns(UserSettingsJson userSettings) {
+	private void addWorksetHeaderColumns(CreateDocSettingsJson userSettings) {
 		final String headStyle = "v-grid-header-align-left";
 		if (userSettings.hasLeftColumnHeaders()) {
 			List<ColumnHeaderGroup> groups = userSettings.getLeftColumnHeaders();
@@ -194,21 +201,22 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 			headerRow.setStyleName(headStyle);
 			
 			while (!childGroups.isEmpty()) {
-				HeaderRow subRow = worksetGrid.prependHeaderRow();
-				subRow.setStyleName(headStyle);
 				List<ColumnHeaderGroup> list = childGroups.pop();
 				Iterator<ColumnHeaderGroup> it = list.iterator();
 				
 				while (it.hasNext()) {
 					ColumnHeaderGroup g = it.next();
-					// TODO: fix the bug
+					// TODO: fix the bug: FIXED 14/01 10:50
 					if (g.hasChildrenGroups()) {
+						HeaderRow subRow = worksetGrid.prependHeaderRow();
+						subRow.setStyleName(headStyle);
 						childGroups.push(g.getChildren());
 						HeaderCell groupCell = subRow.join(getWorksetColumnIds(g.getChildren()));
 						groupCell.setText(g.getCaption());
-						it = g.getChildren().iterator();
+						break;
 					
 					} else if (g.hasColumns()) {
+						
 							HeaderCell groupCell = headerRow.join(g.getColumns().stream().map(column -> 
 									column.getEntityFieldName()
 										.substring(IWorkSet.ENTITYNAME_DOT.length()))
@@ -220,8 +228,10 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 				}
 			}
 		}
+		
+		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS - worksetGrid.getHeaderRowCount() + 1);
 	}
-	
+
 	private String[] getWorksetColumnIds(List<ColumnHeaderGroup> groups) {
 		Deque<List<ColumnHeaderGroup>> childGroups = new LinkedList<>();
 		childGroups.push(groups);
@@ -241,7 +251,6 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 					columnIds.addAll(g.getColumns().stream().map(c -> 
 								c.getEntityFieldName()
 									.substring(IWorkSet.ENTITYNAME_DOT.length())).collect(Collectors.toList()));
-					//childGroups.pollFirst();
 				}
 			}
 		}
@@ -363,11 +372,15 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		userLayoutSettings = new Button();
 		userLayoutSettings.setIcon(VaadinIcons.COG_O);
 		userLayoutSettings.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC));
+		userLayoutSettings.addClickListener(event -> {
+			CreateDocSettingsWindow settingsWindow = new CreateDocSettingsWindow(settingsService, messageSource);
+			getUI().getUI().addWindow(settingsWindow);
+		});
 		return userLayoutSettings;
 	}
 	
 	private Component createRightLayout() {
-		rightLayout = new WorkSetDocumentation(projectService, dataUserSettigsService, messageSource);
+		rightLayout = new WorkSetDocumentation(projectService, settingsService, messageSource);
 		
 		return rightLayout;
 	}

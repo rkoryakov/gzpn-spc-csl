@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.UserSettings;
-import ru.gzpn.spc.csl.model.jsontypes.UserSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.repositories.UserSettingsRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
 
@@ -25,7 +25,7 @@ public class UserSettigsService implements IDataUserSettigsService {
 	ServerProperties serverProperties;
 	
 	@Override
-	public UserSettingsJson getUserSettings() {
+	public CreateDocSettingsJson getUserSettings() {
 		String user = getCurrentUser();
 		return getUserSettings(user);
 	}
@@ -50,21 +50,21 @@ public class UserSettigsService implements IDataUserSettigsService {
 	}
 
 	@Override
-	public UserSettingsJson getUserSettings(String userId) {
+	public CreateDocSettingsJson getUserSettings(String userId) {
 		UserSettings userSettings = repository.findByUserId(userId);
-		UserSettingsJson result = null;
+		CreateDocSettingsJson result = null;
 		
 		if (userSettings != null) {
 			result = userSettings.getDocSettingsJson();
 		} else {
-			result = new UserSettingsJson();
+			result = new CreateDocSettingsJson();
 		}
 		
 		return result;
 	}
 	
 	@Override
-	public void save(String userId, UserSettingsJson createDoc) {
+	public void save(String userId, CreateDocSettingsJson createDoc) {
 		UserSettings userSettings = repository.findByUserId(userId);
 		
 		if (userSettings != null) {

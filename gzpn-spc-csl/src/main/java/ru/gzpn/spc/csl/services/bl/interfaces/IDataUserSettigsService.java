@@ -1,10 +1,10 @@
 package ru.gzpn.spc.csl.services.bl.interfaces;
 
-import ru.gzpn.spc.csl.model.jsontypes.UserSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 
 public interface IDataUserSettigsService {
-	public UserSettingsJson getUserSettings();
-	public UserSettingsJson getUserSettings(String userId);
-	public void save(String userId, UserSettingsJson createDoc);
+	public CreateDocSettingsJson getUserSettings();
+	public CreateDocSettingsJson getUserSettings(String userId);
+	public void save(String userId, CreateDocSettingsJson createDoc);
 	public String getCurrentUser();
 }
