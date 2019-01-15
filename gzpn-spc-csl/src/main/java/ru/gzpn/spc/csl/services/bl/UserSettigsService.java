@@ -1,5 +1,7 @@
 package ru.gzpn.spc.csl.services.bl;
 
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +57,12 @@ public class UserSettigsService implements IDataUserSettigsService {
 		CreateDocSettingsJson result = null;
 		
 		if (userSettings != null) {
-			result = userSettings.getDocSettingsJson();
+			result = userSettings.getCreateDocSettingsJson();
+			// JSON field is empty
+			if (Objects.isNull(result)) {
+				result = new CreateDocSettingsJson();
+			}
+		// no such user
 		} else {
 			result = new CreateDocSettingsJson();
 		}
@@ -68,11 +75,13 @@ public class UserSettigsService implements IDataUserSettigsService {
 		UserSettings userSettings = repository.findByUserId(userId);
 		
 		if (userSettings != null) {
-			userSettings.setDocSettingsJson(createDoc);
+			userSettings.setCreateDocSettingsJson(createDoc);
 		} else {
-			userSettings = new UserSettings(); 
-			userSettings.setDocSettingsJson(createDoc);
-			repository.save(userSettings);
+			userSettings = new UserSettings();
+			userSettings.setUserId(userId);
+			userSettings.setCreateDocSettingsJson(createDoc);
 		}
+	
+		repository.save(userSettings);
 	}
 }

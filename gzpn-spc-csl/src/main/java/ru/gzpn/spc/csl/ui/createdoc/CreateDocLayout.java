@@ -159,6 +159,7 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 			}
 			worksetDataProvider.refreshAll();
 		});
+		
 //		TreeGridDragSource<NodeWrapper> dragSource = new TreeGridDragSource<NodeWrapper>(projectTree.getCompositionRoot());
 //		TreeGridDropTarget<NodeWrapper> dropTarget = new TreeGridDropTarget<>(projectTree.getCompositionRoot(), DropMode.ON_TOP);
 //		dragSource.addGridDragStartListener(dragEvent -> {Notification.show(dragEvent.getDraggedItems().toString());});

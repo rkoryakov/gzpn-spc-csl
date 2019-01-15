@@ -36,6 +36,7 @@ public abstract class UISettingsWindow extends Window {
 		this.settingsService = settingsService;
 		this.user = settingsService.getCurrentUser();
 		this.messageSource = messageSource;
+		this.userSettings = settingsService.getUserSettings();
 		
 		createBody();
 		createFooter();

@@ -6,6 +6,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.vaadin.data.provider.SortOrder;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
@@ -15,23 +19,35 @@ import ru.gzpn.spc.csl.model.BaseEntity;
  * Used while creating tree structure entities where a node is an entity or 
  * is a group by some field of the current entity
  */
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonAutoDetect(fieldVisibility = Visibility.ANY)
 public class NodeWrapper implements Serializable {
 	private static final long serialVersionUID = -6142105774113139782L;
 	public static final Logger logger = LoggerFactory.getLogger(NodeWrapper.class);
-	
+
 	private String entityName;
 	private String groupFiled;
+	
+	@JsonIgnore
 	private Object groupFiledValue;
+	
+	@JsonIgnore
 	private NodeWrapper parent; // parent level for query data
+	
 	private NodeWrapper child; // child level for query data
+	
+	@JsonIgnore
 	private BaseEntity item; // fetched data if the current node isn't a group
+	@JsonIgnore
 	private Long id;
-	
+	@JsonIgnore
 	private List<SortOrder<String>> sortOrdersForChildren;
+	@JsonIgnore
 	private NodeFilter filterForChildren;
-	
+	@JsonIgnore
 	private int hashCode;
-	
+
 	protected NodeWrapper() {
 	}
 	
@@ -84,7 +100,6 @@ public class NodeWrapper implements Serializable {
 		this.hashCode = result;
 	}
 	
-	
 	public Long getId() {
 		return id;
 	}
@@ -96,6 +111,7 @@ public class NodeWrapper implements Serializable {
 	/**
 	 * Caption for rendering in UI tree
 	 */
+	@JsonIgnore
 	public String getNodeCaption() {
 		String result = "";
 		if (isGrouping()) {
@@ -108,6 +124,7 @@ public class NodeWrapper implements Serializable {
 	/**
 	 * Represent Entity name + field name
 	 */
+	@JsonIgnore
 	public String getNodeSettingsCaption() {
 		return getEntityName() + " - " + getGroupField();
 	}
@@ -116,6 +133,7 @@ public class NodeWrapper implements Serializable {
 		return entityName;
 	}
 	
+	@JsonIgnore
 	public Entities getEntityEnum() {
 		return Entities.valueOf(getEntityName().toUpperCase());
 	}
@@ -140,6 +158,7 @@ public class NodeWrapper implements Serializable {
 		this.groupFiledValue = value;
 	}
 
+	@JsonIgnore
 	public boolean hasGroupFieldValue() {
 		return getGroupFiledValue() != null;
 	}
@@ -174,10 +193,12 @@ public class NodeWrapper implements Serializable {
 		return child;
 	}
 	
+	@JsonIgnore
 	public boolean isGrouping() {
 		return getGroupField() != null;
 	}
 	
+	@JsonIgnore
 	public boolean isRoot() {
 		return this.parent == null;
 	}

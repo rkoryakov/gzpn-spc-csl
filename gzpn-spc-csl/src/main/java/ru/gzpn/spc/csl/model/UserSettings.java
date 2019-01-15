@@ -36,11 +36,12 @@ public class UserSettings extends BaseEntity implements IUserSettings, Serializa
 		this.userId = userId;
 	}
 
-	public CreateDocSettingsJson getDocSettingsJson() {
+	public CreateDocSettingsJson getCreateDocSettingsJson() {
 		return createDocSettingsJson;
 	}
 
-	public void setDocSettingsJson(CreateDocSettingsJson docSettingsJson) {
-		this.createDocSettingsJson = docSettingsJson;
+	public void setCreateDocSettingsJson(CreateDocSettingsJson createDocSettingsJson) {
+		this.createDocSettingsJson = createDocSettingsJson;
 	}
+
 }

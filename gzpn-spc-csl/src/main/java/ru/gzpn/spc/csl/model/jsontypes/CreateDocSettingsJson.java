@@ -171,8 +171,53 @@ public class CreateDocSettingsJson implements Serializable {
 		return result;
 	}
 
+	
 	public void setLeftSplitPosition(Integer leftSplitPosition) {
 		this.leftSplitPosition = leftSplitPosition;
+	}
+
+	public NodeWrapper getLeftTreeGroup() {
+		return leftTreeGroup;
+	}
+
+	public void setLeftTreeGroup(NodeWrapper leftTreeGroup) {
+		this.leftTreeGroup = leftTreeGroup;
+	}
+
+	public NodeWrapper getRightTreeGroup() {
+		return rightTreeGroup;
+	}
+
+	public void setRightTreeGroup(NodeWrapper rightTreeGroup) {
+		this.rightTreeGroup = rightTreeGroup;
+	}
+
+	public List<ColumnSettings> getLefResultColumns() {
+		return lefResultColumns;
+	}
+
+	public void setLefResultColumns(List<ColumnSettings> lefResultColumns) {
+		this.lefResultColumns = lefResultColumns;
+	}
+
+	public List<ColumnSettings> getRightResultColumns() {
+		return rightResultColumns;
+	}
+
+	public void setRightResultColumns(List<ColumnSettings> rightResultColumns) {
+		this.rightResultColumns = rightResultColumns;
+	}
+
+	public void setMainSplitPosition(int mainSplitPosition) {
+		this.mainSplitPosition = mainSplitPosition;
+	}
+
+	public void setLeftSplitPosition(int leftSplitPosition) {
+		this.leftSplitPosition = leftSplitPosition;
+	}
+
+	public void setLeftColumnHeaders(List<ColumnHeaderGroup> leftColumnHeaders) {
+		this.leftColumnHeaders = leftColumnHeaders;
 	}
 
 }
