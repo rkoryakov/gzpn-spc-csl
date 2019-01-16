@@ -37,7 +37,7 @@ import com.vaadin.ui.components.grid.SingleSelectionModel;
 import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
 
 public class UsersAndRolesVerticalLayout extends VerticalLayout {
-
+	
 	public static final Logger logger = LoggerFactory.getLogger(UsersAndRolesVerticalLayout.class);
 	private IdentityService identityService;
 	private MessageSource messageSource;
