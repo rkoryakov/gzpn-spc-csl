@@ -104,7 +104,7 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 		resultPage.setMargin(false);
 		panel.setSplitPosition(70, Unit.PERCENTAGE);
 		panel.setMaxSplitPosition(70, Unit.PERCENTAGE);
-		panel.setMinSplitPosition(30, Unit.PERCENTAGE);
+		panel.setMinSplitPosition(605, Unit.PIXELS);
 		panel.setFirstComponent(resultPage);
 		panel.setSecondComponent(infoUser);
 		panel.setHeight(100, Unit.PERCENTAGE);

@@ -42,7 +42,7 @@ public class AdminView extends VerticalLayout implements View {
 		UsersAndRolesVerticalLayout admin = new UsersAndRolesVerticalLayout(identityService, messageSource);
 		ProjectPermissionsVerticalLayout project = new ProjectPermissionsVerticalLayout(identityService, messageSource);
 		tabSet.addTab(admin, getI18nText(I18N_CAPTION_TAB_ADMIN));
-		tabSet.addTab(project, "caption");
+		tabSet.addTab(project, "Project permissions");
 		addComponent(tabSet);
 	}
 	

@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -24,9 +25,8 @@ import ru.gzpn.spc.csl.model.interfaces.IHProject;
 		@Index(name = "spc_csl_idx_hprjcode", columnList = "code", unique = true)
 	}
 )
-public class HProject extends ACLBasedEntity implements IHProject {
-	public static final String FIELD_NAME = "name";
-	public static final String FILED_CODE = "code";
+public class HProject extends ACLBasedEntity implements IHProject, Serializable {
+	private static final long serialVersionUID = 5772209969161264775L;
 	
 	private String name;
 	private String code;
@@ -34,8 +34,13 @@ public class HProject extends ACLBasedEntity implements IHProject {
 	@OneToMany(targetEntity = CProject.class, cascade = CascadeType.ALL)
 	@JoinColumn(name = "hp_id", referencedColumnName = "id")
 	private List<ICProject> capitalProjects;
+	
+	public String getName() {
+		return name;
+	}
 
-	public HProject() {
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public String getCode() {
@@ -44,14 +49,6 @@ public class HProject extends ACLBasedEntity implements IHProject {
 
 	public void setCode(String code) {
 		this.code = code;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public List<ICProject> getCapitalProjects() {
