@@ -104,7 +104,7 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 		resultPage.setMargin(false);
 		panel.setSplitPosition(70, Unit.PERCENTAGE);
 		panel.setMaxSplitPosition(70, Unit.PERCENTAGE);
-		panel.setMinSplitPosition(605, Unit.PIXELS);
+		panel.setMinSplitPosition(545, Unit.PIXELS);
 		panel.setFirstComponent(resultPage);
 		panel.setSecondComponent(infoUser);
 		panel.setHeight(100, Unit.PERCENTAGE);
@@ -214,7 +214,7 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 
 	private TextField createSearchUserGroup() {
 		TextField filterTextField = new TextField();
-		filterTextField.setWidth(300, Unit.PIXELS);
+		filterTextField.setWidth(240, Unit.PIXELS);
 		filterTextField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER));
 		filterTextField.addValueChangeListener(event -> {
 			if (selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.USERS)) {

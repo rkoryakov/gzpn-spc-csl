@@ -25,7 +25,7 @@ public class AdminView extends VerticalLayout implements View {
 	public static final String NAME = "adminView";
 	public static final Logger logger = LoggerFactory.getLogger(AdminView.class);
 	public static final String I18N_CAPTION_TAB_ADMIN = "adminView.caption.admin";
-	
+	public static final String I18N_CAPTION_TAB_PROJECT = "adminView.caption.project";
 	@Autowired
 	IdentityService identityService;
 	@Autowired
@@ -42,7 +42,7 @@ public class AdminView extends VerticalLayout implements View {
 		UsersAndRolesVerticalLayout admin = new UsersAndRolesVerticalLayout(identityService, messageSource);
 		ProjectPermissionsVerticalLayout project = new ProjectPermissionsVerticalLayout(identityService, messageSource);
 		tabSet.addTab(admin, getI18nText(I18N_CAPTION_TAB_ADMIN));
-		tabSet.addTab(project, "Project permissions");
+		tabSet.addTab(project, getI18nText(I18N_CAPTION_TAB_PROJECT));
 		addComponent(tabSet);
 	}
 	
