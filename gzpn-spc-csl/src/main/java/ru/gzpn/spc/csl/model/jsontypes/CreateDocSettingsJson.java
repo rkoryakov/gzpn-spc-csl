@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import ru.gzpn.spc.csl.model.WorkSet;
@@ -27,7 +28,7 @@ public class CreateDocSettingsJson implements Serializable {
 	private int leftSplitPosition;
 	
 	// the displayed columns
-	private List<ColumnSettings> lefResultColumns;
+	private List<ColumnSettings> leftResultColumns;
 	private List<ColumnSettings> rightResultColumns;
 	
 	// null if there are no header groups
@@ -65,13 +66,18 @@ public class CreateDocSettingsJson implements Serializable {
 	}
 	
 	 
-	public NodeWrapper getLeftHierarchySettings() {
+	public NodeWrapper getLeftTreeGroup() {
 		if (leftTreeGroup == null) {
 			leftTreeGroup = getLeftDefaultNodesHierarchy();
 		}
 		return leftTreeGroup;
 	}
+
+	public void setLeftTreeGroup(NodeWrapper leftTreeGroup) {
+		this.leftTreeGroup = leftTreeGroup;
+	}
 	
+	@JsonIgnore
 	public NodeWrapper getLeftDefaultNodesHierarchy() {
 		NodeWrapper root =  new NodeWrapper("HProject", "name");
 			root.addChild(new NodeWrapper("CProject", "name"))
@@ -80,19 +86,20 @@ public class CreateDocSettingsJson implements Serializable {
 		return root;
 	}
 	
-	public void setLeftHierarchySettings(NodeWrapper leftTreeGrid) {
-		this.leftTreeGroup = leftTreeGrid;
-	}
-	
-	public List<ColumnSettings> getLeftWorksetColumns() {
-		if (Objects.isNull(lefResultColumns)) {
-			lefResultColumns = getLeftDefaultWorksetColumns();
+	public List<ColumnSettings> getLeftResultColumns() {
+		if (Objects.isNull(leftResultColumns)) {
+			leftResultColumns = getLeftDefaultWorksetColumns();
 		}
 		
-		return lefResultColumns;
+		return leftResultColumns;
 	}
 	
-	private List<ColumnSettings> getLeftDefaultWorksetColumns() {
+	public void setLeftResultColumns(List<ColumnSettings> lefResultColumns) {
+		this.leftResultColumns = lefResultColumns;
+	}
+	
+	@JsonIgnore
+	public List<ColumnSettings> getLeftDefaultWorksetColumns() {
 		List<ColumnSettings> result = new ArrayList<>();
 		String entityName = WorkSet.class.getSimpleName();
 		
@@ -109,42 +116,40 @@ public class CreateDocSettingsJson implements Serializable {
 		
 		return result;
 	}
-
-	public void setLeftWorksetColumns(List<ColumnSettings> leftResultColumns) {
-		this.lefResultColumns = leftResultColumns;
-	}
 	
-	public NodeWrapper getRightHierarchySettings() {
+	public NodeWrapper getRightTreeGroup() {
 		NodeWrapper result = rightTreeGroup;
 		if (result == null) {
 			result = getRightDefaultNodesHierarchy();
 		}
 		return result;
 	}
-	
-	public void setRightHierarchySettings(NodeWrapper rightTreeGrid) {
-		this.rightTreeGroup = rightTreeGrid;
+
+	public void setRightTreeGroup(NodeWrapper rightTreeGroup) {
+		this.rightTreeGroup = rightTreeGroup;
 	}
 	
-	public List<ColumnSettings> getRightDocumentsColumns() {
+	@JsonIgnore
+	public NodeWrapper getRightDefaultNodesHierarchy() {
+		return new NodeWrapper("Document");
+	}
+	
+	public List<ColumnSettings> getRightResultColumns() {
 		if (Objects.isNull(rightResultColumns)) {
 			rightResultColumns = getRightDefaultDocumentsColumns();
 		}
 		
 		return rightResultColumns;
 	}
+
+	public void setRightResultColumns(List<ColumnSettings> rightResultColumns) {
+		this.rightResultColumns = rightResultColumns;
+	}
 	
-	private List<ColumnSettings> getRightDefaultDocumentsColumns() {
+	@JsonIgnore
+	public List<ColumnSettings> getRightDefaultDocumentsColumns() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	
-	public void setRightDocumentsColumns(List<ColumnSettings> rightresultColumns) {
-		this.rightResultColumns = rightresultColumns;
-	}
-	
-	public NodeWrapper getRightDefaultNodesHierarchy() {
-		return new NodeWrapper("Document");
 	}
 
 	public Integer getMainSplitPosition() {
@@ -156,10 +161,6 @@ public class CreateDocSettingsJson implements Serializable {
 		
 		return result;
 	}
-	
-	public void setMainSplitPosition(Integer mainSplitPosition) {
-		this.mainSplitPosition = mainSplitPosition;
-	}
 
 	public Integer getLeftSplitPosition() {
 		Integer result = DEFAULT_LEFT_SPLIT_POSITION;
@@ -170,42 +171,9 @@ public class CreateDocSettingsJson implements Serializable {
 		
 		return result;
 	}
-
 	
 	public void setLeftSplitPosition(Integer leftSplitPosition) {
 		this.leftSplitPosition = leftSplitPosition;
-	}
-
-	public NodeWrapper getLeftTreeGroup() {
-		return leftTreeGroup;
-	}
-
-	public void setLeftTreeGroup(NodeWrapper leftTreeGroup) {
-		this.leftTreeGroup = leftTreeGroup;
-	}
-
-	public NodeWrapper getRightTreeGroup() {
-		return rightTreeGroup;
-	}
-
-	public void setRightTreeGroup(NodeWrapper rightTreeGroup) {
-		this.rightTreeGroup = rightTreeGroup;
-	}
-
-	public List<ColumnSettings> getLefResultColumns() {
-		return lefResultColumns;
-	}
-
-	public void setLefResultColumns(List<ColumnSettings> lefResultColumns) {
-		this.lefResultColumns = lefResultColumns;
-	}
-
-	public List<ColumnSettings> getRightResultColumns() {
-		return rightResultColumns;
-	}
-
-	public void setRightResultColumns(List<ColumnSettings> rightResultColumns) {
-		this.rightResultColumns = rightResultColumns;
 	}
 
 	public void setMainSplitPosition(int mainSplitPosition) {
@@ -219,5 +187,4 @@ public class CreateDocSettingsJson implements Serializable {
 	public void setLeftColumnHeaders(List<ColumnHeaderGroup> leftColumnHeaders) {
 		this.leftColumnHeaders = leftColumnHeaders;
 	}
-
 }

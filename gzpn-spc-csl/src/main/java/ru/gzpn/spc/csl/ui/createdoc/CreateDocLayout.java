@@ -111,7 +111,7 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		this.messageSource = messageSource;
 		this.worksetService = worksetService;
 		docSettingsJson = settingsService.getUserSettings();
-		NodeWrapper treeSettings = docSettingsJson.getLeftHierarchySettings();
+		NodeWrapper treeSettings = docSettingsJson.getLeftTreeGroup();
 		
 		projectTreeDataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
 		worksetDataProvider = new WorksetDataProvider(worksetService);
@@ -160,10 +160,6 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 			worksetDataProvider.refreshAll();
 		});
 		
-//		TreeGridDragSource<NodeWrapper> dragSource = new TreeGridDragSource<NodeWrapper>(projectTree.getCompositionRoot());
-//		TreeGridDropTarget<NodeWrapper> dropTarget = new TreeGridDropTarget<>(projectTree.getCompositionRoot(), DropMode.ON_TOP);
-//		dragSource.addGridDragStartListener(dragEvent -> {Notification.show(dragEvent.getDraggedItems().toString());});
-//		dropTarget.addTreeGridDropListener(dropListener -> {Notification.show(dropListener.getDropTargetRow().toString());});
 		projectTreePanel.setContent(projectTree);
 		projectTreePanel.setSizeFull();
 		return projectTreePanel;
@@ -173,7 +169,7 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 	private Component createWorksetGrid() {
 		worksetGrid = new Grid<>();
 		CreateDocSettingsJson userSettings = settingsService.getUserSettings();
-		List<ColumnSettings> columnSettings = userSettings.getLeftWorksetColumns();
+		List<ColumnSettings> columnSettings = userSettings.getLeftResultColumns();
 		
 		columnSettings.sort((cs1, cs2) -> 
 			Integer.compare(cs1.getOrderIndex(), cs2.getOrderIndex())
@@ -406,7 +402,7 @@ class WorkSetDocumentation extends VerticalLayout {
 		this.projectService = projectService;
 		this.dataUserSettigsService = dataUserSettigsService;
 		this.messageSource = messageSource;
-		NodeWrapper treeSettings = dataUserSettigsService.getUserSettings().getRightHierarchySettings();
+		NodeWrapper treeSettings = dataUserSettigsService.getUserSettings().getRightTreeGroup();
 		
 		dataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
 		configurableFilterDataProvider = dataProvider.withConfigurableFilter(

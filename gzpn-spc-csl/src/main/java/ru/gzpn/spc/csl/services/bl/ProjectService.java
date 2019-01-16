@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
 import ru.gzpn.spc.csl.model.utils.Entities;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
@@ -22,6 +23,8 @@ public class ProjectService implements IDataProjectService {
 	public static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 	@Autowired
 	private HProjectRepository hpRepository;
+	@Autowired
+	private CProjectRepository cpRepository;
 	
 	public HProjectRepository getBaseRepository() {
 		// we can use any implementation of the BaseRepository - we use HProjectRepository

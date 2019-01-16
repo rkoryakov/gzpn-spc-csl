@@ -31,7 +31,7 @@ public class ProjectTreeDataProviderTest {
 	
 	@Before
 	public void initProviderForLeftTreeSettings() {
-		NodeWrapper settings = userSettigsService.getUserSettings().getLeftHierarchySettings();
+		NodeWrapper settings = userSettigsService.getUserSettings().getLeftTreeGroup();
 		provider = new ProjectTreeDataProvider(projectService, settings);
 	}
 	

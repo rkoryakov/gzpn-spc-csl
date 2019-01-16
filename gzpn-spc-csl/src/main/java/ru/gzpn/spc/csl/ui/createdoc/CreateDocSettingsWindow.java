@@ -1,20 +1,19 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.context.MessageSource;
 
 import com.vaadin.data.TreeData;
-import com.vaadin.data.provider.HierarchicalQuery;
 import com.vaadin.data.provider.TreeDataProvider;
-import com.vaadin.server.SerializablePredicate;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.shared.ui.grid.DropMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.TreeGridDragSource;
+import com.vaadin.ui.components.grid.TreeGridDropTarget;
 
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
@@ -29,7 +28,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 	
 	private VerticalLayout leftLayout;
 	private HorizontalSplitPanel splitPanel;
-	private Tree<NodeWrapper> projectTree;
+	private DraggableTree<NodeWrapper> projectTree;
 	private List<NodeWrapper> draggedItems;
 	private TreeDataProvider<NodeWrapper> treeDataProvider;
 	private TreeData<NodeWrapper> treeData;
@@ -72,21 +71,21 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		projectTree.setHeight(300, Unit.PIXELS);
 		refreshUiTreeData();
 		
-//		TreeGridDragSource<NodeWrapper> dragSource = new TreeGridDragSource<>(projectTree.getCompositionRoot());
-//		TreeGridDropTarget<NodeWrapper> dropTarget = new TreeGridDropTarget<>(projectTree.getCompositionRoot(), DropMode.ON_TOP);
-//		
-//		dragSource.addGridDragStartListener(event -> {
-//			draggedItems = event.getDraggedItems();
-//		});
-//		
-//		dropTarget.addTreeGridDropListener(event -> {
-//			event.getDropTargetRow().ifPresent(this::putDraggedItemsAt);
-//		});
+		TreeGridDragSource<NodeWrapper> dragSource = new TreeGridDragSource<>(projectTree.getCompositionRoot());
+		TreeGridDropTarget<NodeWrapper> dropTarget = new TreeGridDropTarget<>(projectTree.getCompositionRoot(), DropMode.ON_TOP);
+		
+		dragSource.addGridDragStartListener(event -> {
+			draggedItems = event.getDraggedItems();
+		});
+		
+		dropTarget.addTreeGridDropListener(event -> {
+			event.getDropTargetRow().ifPresent(this::putDraggedItemsAt);
+		});
 		
 		panel.setContent(projectTree);
 		panel.setSizeFull();
 		
-		projectTree.expand(treeDataProvider.fetchChildren(new HierarchicalQuery<NodeWrapper, SerializablePredicate<NodeWrapper>>(e -> true, null)).collect(Collectors.toList()));
+		
 		return panel;
 	}
 	
@@ -105,7 +104,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 	}
 
 	public void refreshUiTreeData() {
-		NodeWrapper rootNode = settingsService.getUserSettings().getLeftHierarchySettings();
+		NodeWrapper rootNode = settingsService.getUserSettings().getLeftTreeGroup();
 		NodeWrapper exp = rootNode;
 		treeData = new TreeData<>();
 		treeData.addItem(null, rootNode);
@@ -133,7 +132,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 			next = child;
 		}
 		
-		this.userSettings.setLeftHierarchySettings(result);
+		this.userSettings.setLeftTreeGroup(result);
 	}
 
 	@Override
