@@ -147,19 +147,7 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 	private Component createProjectTree() {
 		projectTree = new DraggableTree<>();
 		projectTreePanel = new Panel(getI18nText(I18N_TREE_CAPTION));
-		projectTree.setDataProvider(projectTreeDataProvider);
-		projectTree.setItemCaptionGenerator(NodeWrapper::getNodeCaption);
-		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
-		projectTreePanel.setSizeFull();
-		projectTree.setHeight(WORKSET_GRID_ROW_HEIGHT * WORKSET_GRID_ROWS + HEAD_ROW_HEIGHT - WORKSET_GRID_ROW_HEIGHT, Unit.PIXELS);
-		projectTree.addSelectionListener(listener -> {
-			Optional<NodeWrapper> selected = listener.getFirstSelectedItem();
-			if (selected.isPresent()) {
-				worksetDataProvider.setParentNode(selected.get());
-			}
-			worksetDataProvider.refreshAll();
-		});
-		
+		refreshProjectTree();
 		projectTreePanel.setContent(projectTree);
 		projectTreePanel.setSizeFull();
 		return projectTreePanel;
@@ -168,22 +156,7 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 	
 	private Component createWorksetGrid() {
 		worksetGrid = new Grid<>();
-		CreateDocSettingsJson userSettings = settingsService.getUserSettings();
-		List<ColumnSettings> columnSettings = userSettings.getLeftResultColumns();
-		
-		columnSettings.sort((cs1, cs2) -> 
-			Integer.compare(cs1.getOrderIndex(), cs2.getOrderIndex())
-		);
-		columnSettings.forEach(this::addWorksetGridColumn);
-		worksetGrid.setSizeFull();
-		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS);
-		worksetGrid.setColumnReorderingAllowed(true);
-		worksetDataProvider.setShownColumns(columnSettings);
-		worksetGrid.setDataProvider(worksetDataProvider);
-		// test header groups
-		userSettings.getLeftColumnHeaders();
-		addWorksetHeaderColumns(userSettings);
-
+		refreshWorksetGrid();
 		return worksetGrid;
 	}
 
@@ -203,7 +176,7 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 				
 				while (it.hasNext()) {
 					ColumnHeaderGroup g = it.next();
-					// TODO: fix the bug: FIXED 14/01 10:50
+
 					if (g.hasChildrenGroups()) {
 						HeaderRow subRow = worksetGrid.prependHeaderRow();
 						subRow.setStyleName(headStyle);
@@ -371,11 +344,59 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		userLayoutSettings.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC));
 		userLayoutSettings.addClickListener(event -> {
 			CreateDocSettingsWindow settingsWindow = new CreateDocSettingsWindow(settingsService, messageSource);
+			settingsWindow.addCloseListener(closeEvent -> {
+				refreshUiElements();
+			});
 			getUI().getUI().addWindow(settingsWindow);
 		});
 		return userLayoutSettings;
 	}
 	
+	
+	private void refreshUiElements() {
+		refreshProjectTree();
+		refreshWorksetGrid();
+	}
+	
+	private void refreshProjectTree() {
+		docSettingsJson = settingsService.getUserSettings();
+		NodeWrapper treeSettings = docSettingsJson.getLeftTreeGroup();
+		projectTreeDataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
+		projectTree.setDataProvider(projectTreeDataProvider);
+		projectTreePanel.setCaption(getI18nText(I18N_TREE_CAPTION));
+		projectTree.setItemCaptionGenerator(NodeWrapper::getNodeCaption);
+		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
+		projectTreePanel.setSizeFull();
+		projectTree.setHeight(WORKSET_GRID_ROW_HEIGHT * WORKSET_GRID_ROWS + HEAD_ROW_HEIGHT - WORKSET_GRID_ROW_HEIGHT, Unit.PIXELS);
+		projectTree.addSelectionListener(listener -> {
+			Optional<NodeWrapper> selected = listener.getFirstSelectedItem();
+			if (selected.isPresent()) {
+				worksetDataProvider.setParentNode(selected.get());
+			}
+			worksetDataProvider.refreshAll();
+		});
+	}
+	
+	private void refreshWorksetGrid() {
+		worksetGrid.removeAllColumns();
+		worksetDataProvider = new WorksetDataProvider(worksetService);
+		CreateDocSettingsJson userSettings = settingsService.getUserSettings();
+		List<ColumnSettings> columnSettings = userSettings.getLeftResultColumns();
+		
+		columnSettings.sort((cs1, cs2) -> 
+			Integer.compare(cs1.getOrderIndex(), cs2.getOrderIndex())
+		);
+		columnSettings.forEach(this::addWorksetGridColumn);
+		worksetGrid.setSizeFull();
+		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS);
+		worksetGrid.setColumnReorderingAllowed(true);
+		worksetDataProvider.setShownColumns(columnSettings);
+		worksetGrid.setDataProvider(worksetDataProvider);
+		// test header groups
+		userSettings.getLeftColumnHeaders();
+		addWorksetHeaderColumns(userSettings);
+	}
+
 	private Component createRightLayout() {
 		rightLayout = new WorkSetDocumentation(projectService, settingsService, messageSource);
 		

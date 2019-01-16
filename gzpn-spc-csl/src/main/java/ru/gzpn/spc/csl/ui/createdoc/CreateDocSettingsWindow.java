@@ -1,7 +1,11 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Objects;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.MessageSource;
 
 import com.vaadin.data.TreeData;
@@ -39,7 +43,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		this.setCaption(getI18nText(I18N_WINDOW_CAPTION));
 		this.setModal(true);
 		this.setWidth(70, Unit.PERCENTAGE);
-		this.setHeight(80, Unit.PERCENTAGE);
+		this.setHeight(60, Unit.PERCENTAGE);
 	}
 
 	@Override
@@ -48,6 +52,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		splitPanel = new HorizontalSplitPanel();
 		splitPanel.setFirstComponent(createLeftLayout());
 		splitPanel.setSecondComponent(createRightLayout());
+		splitPanel.setSplitPosition(30);
 		layout.addComponent(splitPanel);
 		return layout;
 	}
@@ -68,7 +73,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		projectTree.setItemCaptionGenerator(NodeWrapper::getNodeSettingsCaption);
 		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
 		projectTree.setSizeFull();
-		projectTree.setHeight(300, Unit.PIXELS);
+		projectTree.setHeight(90, Unit.PERCENTAGE);
 		refreshUiTreeData();
 		
 		TreeGridDragSource<NodeWrapper> dragSource = new TreeGridDragSource<>(projectTree.getCompositionRoot());
@@ -85,12 +90,52 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		panel.setContent(projectTree);
 		panel.setSizeFull();
 		
-		
 		return panel;
 	}
 	
 	private void putDraggedItemsAt(NodeWrapper to) {
-		
+		if (CollectionUtils.isNotEmpty(draggedItems)) {
+			NodeWrapper draggedNode = draggedItems.get(0);
+			
+			List<NodeWrapper> listNodes = new LinkedList<>();
+			TreeData<NodeWrapper> newTreeData = new TreeData<>();
+			NodeWrapper root = null;
+			List<NodeWrapper> children = treeData.getChildren(root);
+			
+			while (CollectionUtils.isNotEmpty(children)) {
+				listNodes.add(children.get(0));
+				children = treeData.getChildren(children.get(0));
+			}
+			
+			int pasteIndex = listNodes.indexOf(to);
+			int fromIndex = listNodes.indexOf(draggedNode);
+			listNodes.remove(draggedNode);
+			
+			// when we drag a node from top to bottom
+			if (pasteIndex - fromIndex > 0) {
+				pasteIndex = pasteIndex + 1;
+			}
+			
+			pasteIndex = (pasteIndex < 0 || pasteIndex > listNodes.size()) ? listNodes.size() : pasteIndex;
+			
+			listNodes.add(pasteIndex, draggedNode);
+			ListIterator<NodeWrapper> it = listNodes.listIterator();
+			while (it.hasNext()) {
+				NodeWrapper node = it.next();
+				node.setParent(root);
+				
+				if (Objects.nonNull(root)) {
+					root.setChild(node);
+				}
+				newTreeData.addItem(root, node);
+				root = node;
+			}
+			NodeWrapper lastNode = it.previous();
+			lastNode.setChild(null);
+			
+			treeData = newTreeData;
+			onRefreshUiTreeData(newTreeData);
+		}
 	}
 	
 	public Component createRightLayout() {
@@ -105,7 +150,6 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 
 	public void refreshUiTreeData() {
 		NodeWrapper rootNode = settingsService.getUserSettings().getLeftTreeGroup();
-		NodeWrapper exp = rootNode;
 		treeData = new TreeData<>();
 		treeData.addItem(null, rootNode);
 		
@@ -114,11 +158,15 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 			rootNode = rootNode.getChild();
 		}
 		
-		treeDataProvider = new TreeDataProvider<>(treeData);
-		projectTree.setDataProvider(treeDataProvider);
-		projectTree.expand(exp);
+		onRefreshUiTreeData(treeData);
 	}
 	
+	public void onRefreshUiTreeData(TreeData<NodeWrapper> treeData) {
+		treeDataProvider = new TreeDataProvider<>(treeData);
+		projectTree.setDataProvider(treeDataProvider);
+		projectTree.expandRecursively(treeData.getRootItems(), 10);
+	}
+
 	@Override
 	public void refreshSettings() {
 		NodeWrapper next = treeData.getRootItems().get(0);

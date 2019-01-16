@@ -10,6 +10,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
@@ -68,7 +69,7 @@ public abstract class UISettingsWindow extends Window {
 
 	public HorizontalLayout createFooterLayout() {
 		footerLayout = new HorizontalLayout();
-		footerLayout.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
+		footerLayout.setDefaultComponentAlignment(Alignment.TOP_LEFT);
 		footerLayout.addComponent(createCancelButton());
 		footerLayout.addComponent(createSaveButton());
 		
@@ -86,6 +87,7 @@ public abstract class UISettingsWindow extends Window {
 	
 	public Component createSaveButton() {
 		saveButton = new Button(getI18nText(I18N_SAVEBUTTON_CAP));
+		saveButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		saveButton.addClickListener(listener -> {
 			save(this.userSettings);
 			refreshUiElements();
@@ -100,9 +102,10 @@ public abstract class UISettingsWindow extends Window {
 	public abstract void refreshUiElements();
 	
 	public void save(CreateDocSettingsJson userSettings) {
-		onSave();
 		refreshSettings();
 		settingsService.save(user, userSettings);
+		onSave();
+		this.close();
 	}
 	
 	/**
