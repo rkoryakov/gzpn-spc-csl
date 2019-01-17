@@ -8,11 +8,9 @@ import org.apache.logging.log4j.Logger;
 import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
 
-import ru.gzpn.spc.csl.model.CProject;
-import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
 
-public class CProjectDataProvider extends AbstractBackEndDataProvider<ICProject, Void> {
+public class CProjectDataProvider extends AbstractBackEndDataProvider<ICProjectPresenter, Void> {
 	
 	public static final Logger logger = LogManager.getLogger(CProjectDataProvider.class);
 	private IDataProjectService service;
@@ -22,12 +20,12 @@ public class CProjectDataProvider extends AbstractBackEndDataProvider<ICProject,
 	}
 	
 	@Override
-	protected Stream<ICProject> fetchFromBackEnd(Query<ICProject, Void> query) {
-		return service.getCPRepository().findAll().stream().map(m -> (CProject)m);
+	protected Stream<ICProjectPresenter> fetchFromBackEnd(Query<ICProjectPresenter, Void> query) {
+		return service.getCPRepository().findAll().stream().map(item -> new CProjectPresenter(item));
 	}
 
 	@Override
-	protected int sizeInBackEnd(Query<ICProject, Void> query) {
+	protected int sizeInBackEnd(Query<ICProjectPresenter, Void> query) {
 		return (int) service.getCPRepository().count();
 	}
 }

@@ -16,7 +16,6 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
 import com.vaadin.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.data.provider.DataProvider;
-import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.ui.Alignment;
@@ -35,8 +34,9 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.SingleSelectionModel;
 
 import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
+import ru.gzpn.spc.csl.ui.common.I18n;
 
-public class UsersAndRolesVerticalLayout extends VerticalLayout {
+public class UsersAndRolesVerticalLayout extends VerticalLayout implements I18n {
 	
 	public static final Logger logger = LoggerFactory.getLogger(UsersAndRolesVerticalLayout.class);
 	private IdentityService identityService;
@@ -184,9 +184,9 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 		comboBox.setSelectedItem(EnumUserGroup.USERS);
 		gridGroup.setVisible(false);
 		comboBox.setItemCaptionGenerator(item -> {
-			String result = getI18nText(I18N_CAPTION_USERS);
+			String result = getI18nText(I18N_CAPTION_USERS, messageSource);
 			if (item == EnumUserGroup.GROUPS) {
-				result = getI18nText(I18N_CAPTION_GROUPS);
+				result = getI18nText(I18N_CAPTION_GROUPS, messageSource);
 			}
 			return result;
 		});
@@ -215,7 +215,7 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 	private TextField createSearchUserGroup() {
 		TextField filterTextField = new TextField();
 		filterTextField.setWidth(240, Unit.PIXELS);
-		filterTextField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER));
+		filterTextField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER, messageSource));
 		filterTextField.addValueChangeListener(event -> {
 			if (selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.USERS)) {
 				userFilter.setFilter(event.getValue());
@@ -231,10 +231,10 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 	private Grid<UserTemplate> createGridUser() {
 		userFilter = userDataProvider.withConfigurableFilter();
 		Grid<UserTemplate> grid = new Grid<>();
-		grid.addColumn(UserTemplate::getId).setCaption(getI18nText(I18N_CAPTION_LOGIN));
-		grid.addColumn(UserTemplate::getFirstName).setCaption(getI18nText(I18N_CAPTION_FIRSTNAME));
-		grid.addColumn(UserTemplate::getLastName).setCaption(getI18nText(I18N_CAPTION_LASTNAME));
-		grid.addColumn(UserTemplate::getEmail).setCaption(getI18nText(I18N_CAPTION_EMAIL));
+		grid.addColumn(UserTemplate::getId).setCaption(getI18nText(I18N_CAPTION_LOGIN, messageSource));
+		grid.addColumn(UserTemplate::getFirstName).setCaption(getI18nText(I18N_CAPTION_FIRSTNAME, messageSource));
+		grid.addColumn(UserTemplate::getLastName).setCaption(getI18nText(I18N_CAPTION_LASTNAME, messageSource));
+		grid.addColumn(UserTemplate::getEmail).setCaption(getI18nText(I18N_CAPTION_EMAIL, messageSource));
 		grid.setDataProvider(userFilter);
 		grid.setColumnReorderingAllowed(true);
 		grid.setSizeFull();
@@ -255,11 +255,11 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 	private Grid<GroupTemplate> createGridGroup() {
 		groupFilter = groupDataProvider.withConfigurableFilter();
 		Grid<GroupTemplate> grid = new Grid<>();
-		grid.addColumn(GroupTemplate::getId).setCaption(getI18nText(I18N_CAPTION_IDROLES));
-		grid.addColumn(GroupTemplate::getName).setCaption(getI18nText(I18N_CAPTION_NAMEROLES));
-		grid.addColumn(GroupTemplate::getType).setCaption(getI18nText(I18N_CAPTION_TYPEROLES));
-		grid.addComponentColumn(GroupTemplate::getEdit).setCaption(getI18nText(I18N_CAPTION_EDIT)).setWidth(105.0);
-		grid.addComponentColumn(GroupTemplate::getDelete).setCaption(getI18nText(I18N_CAPTION_DELETE)).setWidth(105.0);
+		grid.addColumn(GroupTemplate::getId).setCaption(getI18nText(I18N_CAPTION_IDROLES, messageSource));
+		grid.addColumn(GroupTemplate::getName).setCaption(getI18nText(I18N_CAPTION_NAMEROLES, messageSource));
+		grid.addColumn(GroupTemplate::getType).setCaption(getI18nText(I18N_CAPTION_TYPEROLES, messageSource));
+		grid.addComponentColumn(GroupTemplate::getEdit).setCaption(getI18nText(I18N_CAPTION_EDIT, messageSource)).setWidth(105.0);
+		grid.addComponentColumn(GroupTemplate::getDelete).setCaption(getI18nText(I18N_CAPTION_DELETE, messageSource)).setWidth(105.0);
 		grid.setDataProvider(groupFilter);
 		grid.setColumnReorderingAllowed(true);
 		grid.setSizeFull();
@@ -269,7 +269,7 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 	}
 
 	private Button createButtonCreate() {
-		Button create = new Button(getI18nText(I18N_CAPTION_BUTTON_CREATE));
+		Button create = new Button(getI18nText(I18N_CAPTION_BUTTON_CREATE, messageSource));
 		create.addClickListener(event -> {
 			if (selectUserGroup.getSelectedItem().get().equals(EnumUserGroup.USERS)) {
 				infoUser.getUserInfoVerticalLayout().setData(null);
@@ -301,20 +301,20 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 			identityService.deleteGroup(group.getId());
 			groupDataProvider.refreshAll();
 			String[] paramsForDelete = new String[] {group.getId()};
-			String notificationDeleted = getI18nText(I18N_NOTIFICATION_GROUPDELETED, paramsForDelete);
+			String notificationDeleted = getI18nText(I18N_NOTIFICATION_GROUPDELETED, paramsForDelete, messageSource);
 			Notification.show(notificationDeleted, Type.WARNING_MESSAGE);
 		};
 		deleteButton.addClickListener(event -> {
-			ConfirmDialogWindow box = new ConfirmDialogWindow(getI18nText(I18N_CONFIRMDIALOG_INFO_DELETEGROUP), 
-															  getI18nText(I18N_CAPTION_BUTTON_OK), 
-															  getI18nText(I18N_CAPTION_BUTTON_CLOSE), okDeleteClick);
+			ConfirmDialogWindow box = new ConfirmDialogWindow(getI18nText(I18N_CONFIRMDIALOG_INFO_DELETEGROUP, messageSource), 
+															  getI18nText(I18N_CAPTION_BUTTON_OK, messageSource), 
+															  getI18nText(I18N_CAPTION_BUTTON_CLOSE, messageSource), okDeleteClick);
 			getUI().addWindow(box);
 		});
 		return deleteButton;
 	}
 
 	private Window formGroup(Group currentGroup) {
-		final Window window = new Window(getI18nText(I18N_CAPTION_GROUP));
+		final Window window = new Window(getI18nText(I18N_CAPTION_GROUP, messageSource));
 		window.setModal(true);
 		window.setResizable(false);
 		window.setWidth(300.0f, Unit.PIXELS);
@@ -325,22 +325,22 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 		final TextField nameField;
 		final TextField typeField;
 		Binder<Group> groupFormBinder  = new Binder<>();
-		Button saveButton = new Button(getI18nText(I18N_CAPTION_BUTTON_SAVE));
+		Button saveButton = new Button(getI18nText(I18N_CAPTION_BUTTON_SAVE, messageSource));
 		saveButton.setEnabled(false);
 		if (currentGroup != null) {
-			idField = new TextField(getI18nText(I18N_CAPTION_IDROLES), currentGroup.getId());
+			idField = new TextField(getI18nText(I18N_CAPTION_IDROLES, messageSource), currentGroup.getId());
 			idField.setReadOnly(true);
-			nameField = new TextField(getI18nText(I18N_CAPTION_NAMEROLES), currentGroup.getName());
-			typeField = new TextField(getI18nText(I18N_CAPTION_TYPEROLES), currentGroup.getType());
+			nameField = new TextField(getI18nText(I18N_CAPTION_NAMEROLES, messageSource), currentGroup.getName());
+			typeField = new TextField(getI18nText(I18N_CAPTION_TYPEROLES, messageSource), currentGroup.getType());
 		}
 		else {
-			idField = new TextField(getI18nText(I18N_CAPTION_IDROLES), "");
-			nameField = new TextField(getI18nText(I18N_CAPTION_NAMEROLES), "");
-			typeField = new TextField(getI18nText(I18N_CAPTION_TYPEROLES), "");
+			idField = new TextField(getI18nText(I18N_CAPTION_IDROLES, messageSource), "");
+			nameField = new TextField(getI18nText(I18N_CAPTION_NAMEROLES, messageSource), "");
+			typeField = new TextField(getI18nText(I18N_CAPTION_TYPEROLES, messageSource), "");
 		}
-		groupFormBinder.forField(idField).asRequired(getI18nText(I18N_NECESSARY_GROUPID)).bind(Group::getId, Group::setId);
-		groupFormBinder.forField(nameField).asRequired(getI18nText(I18N_NECESSARY_GROUPNAME)).bind(Group::getName, Group::setName);
-		groupFormBinder.forField(typeField).asRequired(getI18nText(I18N_NECESSARY_GROUPTYPE)).bind(Group::getType, Group::setType);
+		groupFormBinder.forField(idField).asRequired(getI18nText(I18N_NECESSARY_GROUPID, messageSource)).bind(Group::getId, Group::setId);
+		groupFormBinder.forField(nameField).asRequired(getI18nText(I18N_NECESSARY_GROUPNAME, messageSource)).bind(Group::getName, Group::setName);
+		groupFormBinder.forField(typeField).asRequired(getI18nText(I18N_NECESSARY_GROUPTYPE, messageSource)).bind(Group::getType, Group::setType);
 		
 		idField.setWidth(90.0f, Unit.PERCENTAGE);
 		nameField.setWidth(90.0f, Unit.PERCENTAGE);
@@ -358,17 +358,17 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 				if (group == null) {
 					group = identityService.newGroup(idField.getValue());
 					paramsForSave = new String[] {group.getId()};
-					String notificationCreated = getI18nText(I18N_NOTIFICATION_GROUPCREATED, paramsForSave);
+					String notificationCreated = getI18nText(I18N_NOTIFICATION_GROUPCREATED, paramsForSave, messageSource);
 					Notification.show(notificationCreated, Type.TRAY_NOTIFICATION);
 				} else if (group.getId() != null) {
 					paramsForSave = new String[] {group.getId()};
-					String notificationChanged = getI18nText(I18N_NOTIFICATION_GROUPCHANGED, paramsForSave);
+					String notificationChanged = getI18nText(I18N_NOTIFICATION_GROUPCHANGED, paramsForSave, messageSource);
 					Notification.show(notificationChanged, Type.TRAY_NOTIFICATION);
 				}
 			groupFormBinder.writeBean(group);
 		    } catch (ValidationException e) {
 		    	paramsForSave = new String[] {group.getId()};
-		    	String notificationSaveErr = getI18nText(I18N_NOTIFICATION_GROUPCHANGED, paramsForSave);
+		    	String notificationSaveErr = getI18nText(I18N_NOTIFICATION_GROUPCHANGED, paramsForSave, messageSource);
 		    	Notification.show(notificationSaveErr);
 		    }
 			groupFormBinder.setBean(group);
@@ -377,14 +377,6 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout {
 			window.close();
 		});
 		return window;
-	}
-	
-	private String getI18nText(String key) {
-		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
-	}
-	
-	private String getI18nText(String key, String[] params) {
-		return messageSource.getMessage(key, params, VaadinSession.getCurrent().getLocale());
 	}
 }
 

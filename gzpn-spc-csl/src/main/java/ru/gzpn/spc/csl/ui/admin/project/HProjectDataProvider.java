@@ -8,11 +8,9 @@ import org.apache.logging.log4j.Logger;
 import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
 
-import ru.gzpn.spc.csl.model.HProject;
-import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
 
-public class HProjectDataProvider extends AbstractBackEndDataProvider<IHProject, Void> {
+public class HProjectDataProvider extends AbstractBackEndDataProvider<IHProjectPresenter, Void> {
 	
 	public static final Logger logger = LogManager.getLogger(HProjectDataProvider.class);
 	private IDataProjectService service;
@@ -22,13 +20,12 @@ public class HProjectDataProvider extends AbstractBackEndDataProvider<IHProject,
 	}
 	
 	@Override
-	protected Stream<IHProject> fetchFromBackEnd(Query<IHProject, Void> query) {
-		return service.getHPRepository().findAll().stream().map(m -> (HProject)m);
+	protected Stream<IHProjectPresenter> fetchFromBackEnd(Query<IHProjectPresenter, Void> query) {
+		return service.getHPRepository().findAll().stream().map(item -> new HProjectPresenter(item));
 	}
 
 	@Override
-	protected int sizeInBackEnd(Query<IHProject, Void> query) {
+	protected int sizeInBackEnd(Query<IHProjectPresenter, Void> query) {
 		return (int) service.getHPRepository().count();
 	}
-
 }

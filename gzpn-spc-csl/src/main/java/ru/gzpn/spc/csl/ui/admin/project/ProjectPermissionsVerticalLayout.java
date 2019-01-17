@@ -5,7 +5,6 @@ import java.util.EnumSet;
 import org.activiti.engine.IdentityService;
 import org.springframework.context.MessageSource;
 
-import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.ui.Alignment;
@@ -17,20 +16,19 @@ import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import ru.gzpn.spc.csl.model.interfaces.ICProject;
-import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.utils.Entities;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
 import ru.gzpn.spc.csl.ui.admin.UsersAndRolesVerticalLayout;
+import ru.gzpn.spc.csl.ui.common.I18n;
 
-public class ProjectPermissionsVerticalLayout extends VerticalLayout {
+public class ProjectPermissionsVerticalLayout extends VerticalLayout implements I18n {
 	
 	private IdentityService identityService;
 	private MessageSource messageSource;
 	private TextField searchProject;
 	private ComboBox<Entities> selectTypeProject;
-	private Grid<IHProject> gridHeavyProjects;
-	private Grid<ICProject> gridCapitalProjects;
+	private Grid<IHProjectPresenter> gridHeavyProjects;
+	private Grid<ICProjectPresenter> gridCapitalProjects;
 	private HorizontalLayout headerHorizontal;
 	private VerticalLayout resultPage;
 	private MarginInfo marginForHeader;
@@ -72,13 +70,13 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout {
 	private TextField createSearchProject() {
 		TextField filterTextField = new TextField();
 		filterTextField.setWidth(240, Unit.PIXELS);
-		filterTextField.setPlaceholder(getI18nText(UsersAndRolesVerticalLayout.I18N_SEARCHFIELD_PLACEHOLDER));
+		filterTextField.setPlaceholder(getI18nText(UsersAndRolesVerticalLayout.I18N_SEARCHFIELD_PLACEHOLDER, messageSource));
 		return filterTextField;
 	}
 	
 	private ComboBox<Entities> createSelectTypeProject() {
 		ComboBox<Entities> comboBox = new ComboBox<>();
-		comboBox.setWidth(280, Unit.PIXELS);
+		comboBox.setWidth(215, Unit.PIXELS);
 		comboBox.setItems(EnumSet.of(Entities.HPROJECT, Entities.CPROJECT));
 		comboBox.setTextInputAllowed(false);
 		comboBox.setEmptySelectionAllowed(false);
@@ -104,15 +102,15 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout {
 		return comboBox;
 	}
 	
-	private Grid<IHProject> createGridHeavyProjects() {
-		Grid<IHProject> grid = new Grid<>();
+	private Grid<IHProjectPresenter> createGridHeavyProjects() {
+		Grid<IHProjectPresenter> grid = new Grid<>();
 		grid.setSelectionMode(SelectionMode.MULTI);
-		grid.addColumn(IHProject::getId).setCaption("ID");
-		grid.addColumn(IHProject::getName).setCaption("Name");
-		grid.addColumn(IHProject::getCode).setCaption("Code");
-		grid.addColumn(IHProject::getCreateDate).setCaption("Create Date");
-		grid.addColumn(IHProject::getChangeDate).setCaption("Change Date");
-		grid.addColumn(IHProject::getVersion).setCaption("Version");
+		grid.addColumn(IHProjectPresenter::getId).setCaption("ID");
+		grid.addColumn(IHProjectPresenter::getName).setCaption("Name");
+		grid.addColumn(IHProjectPresenter::getCode).setCaption("Code");
+		grid.addColumn(IHProjectPresenter::getCreateDatePresenter).setCaption("Create Date");
+		grid.addColumn(IHProjectPresenter::getChangeDatePresenter).setCaption("Change Date");
+		grid.addColumn(IHProjectPresenter::getVersion).setCaption("Version");
 		grid.setColumnReorderingAllowed(true);
 		grid.setSizeFull();
 		grid.setHeightMode(HeightMode.ROW);
@@ -121,28 +119,24 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout {
 		return grid;
 	}
 	
-	private Grid<ICProject> createGridCapitalProjects() {
-		Grid<ICProject> grid = new Grid<>();
+	private Grid<ICProjectPresenter> createGridCapitalProjects() {
+		Grid<ICProjectPresenter> grid = new Grid<>();
 		grid.setSelectionMode(SelectionMode.MULTI);
-		grid.addColumn(ICProject::getId).setCaption("ID");
-		grid.addColumn(ICProject::getName).setCaption("Name");
-		grid.addColumn(ICProject::getCode).setCaption("Code");
-		grid.addColumn(ICProject::getStageCaption).setCaption("Stage");
-		grid.addColumn(ICProject::getPhaseCaption).setCaption("Phase");
-		grid.addColumn(ICProject::getHProjectCaption).setCaption("Heavy Project");
-		grid.addColumn(ICProject::getMilestoneCaption).setCaption("Milestone");
-		grid.addColumn(ICProject::getCreateDate).setCaption("Create Date");
-		grid.addColumn(ICProject::getChangeDate).setCaption("Change Date");
-		grid.addColumn(ICProject::getVersion).setCaption("Version");
+		grid.addColumn(ICProjectPresenter::getId).setCaption("ID");
+		grid.addColumn(ICProjectPresenter::getName).setCaption("Name");
+		grid.addColumn(ICProjectPresenter::getCode).setCaption("Code");
+		grid.addColumn(ICProjectPresenter::getStageCaption).setCaption("Stage");
+		grid.addColumn(ICProjectPresenter::getPhaseCaption).setCaption("Phase");
+		grid.addColumn(ICProjectPresenter::getHProjectCaption).setCaption("Heavy Project");
+		grid.addColumn(ICProjectPresenter::getMilestoneCaption).setCaption("Milestone");
+		grid.addColumn(ICProjectPresenter::getCreateDatePresenter).setCaption("Create Date");
+		grid.addColumn(ICProjectPresenter::getChangeDatePresenter).setCaption("Change Date");
+		grid.addColumn(ICProjectPresenter::getVersion).setCaption("Version");
 		grid.setColumnReorderingAllowed(true);
 		grid.setSizeFull();
 		grid.setHeightMode(HeightMode.ROW);
 		grid.setHeightByRows(14);
 		grid.setDataProvider(cpDataProvider);
 		return grid;
-	}
-	
-	private String getI18nText(String key) {
-		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
 	}
 }

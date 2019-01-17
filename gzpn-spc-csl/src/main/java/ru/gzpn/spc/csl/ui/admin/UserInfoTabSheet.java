@@ -16,7 +16,6 @@ import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -34,9 +33,10 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
+import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 
-public class UserInfoTabSheet extends TabSheet {
+public class UserInfoTabSheet extends TabSheet implements I18n {
 	
 	private UserInfoVerticalLayout userInfoVerticalLayout;
 	private UserAddGroupVerticalLayout userAddGroupTab;
@@ -54,8 +54,8 @@ public class UserInfoTabSheet extends TabSheet {
 		this.container = container;
 		userInfoVerticalLayout = new UserInfoVerticalLayout(identityService, messageSource, userDataProvider, container);
 		userAddGroupTab = new UserAddGroupVerticalLayout(identityService, messageSource);
-		this.addTab(userInfoVerticalLayout, getI18nText(I18N_CAPTION_EDITINFOUSER));
-		this.addTab(userAddGroupTab, getI18nText(I18N_CAPTION_EDITGROUPUSER));
+		this.addTab(userInfoVerticalLayout, getI18nText(I18N_CAPTION_EDITINFOUSER, messageSource));
+		this.addTab(userAddGroupTab, getI18nText(I18N_CAPTION_EDITGROUPUSER, messageSource));
 		userInfoVerticalLayout.setUserAndRolesVerticalLayout(usersAndRolesTab);
 	}
 	
@@ -70,13 +70,9 @@ public class UserInfoTabSheet extends TabSheet {
 	public void setUserAndRolesTab(UsersAndRolesVerticalLayout tab) {
 		usersAndRolesTab = tab;
 	}
-	
-	private String getI18nText(String key) {
-		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
-	}
 }
 
-class UserInfoVerticalLayout extends VerticalLayout {
+class UserInfoVerticalLayout extends VerticalLayout implements I18n {
 	
 	private final TextField loginField;
 	private final TextField firstNameField;
@@ -117,19 +113,19 @@ class UserInfoVerticalLayout extends VerticalLayout {
 		final FormLayout infoLayout = new FormLayout();
 		final HorizontalLayout buttonLayout = new HorizontalLayout();
 		
-		loginField = new TextField(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_LOGIN), "");
+		loginField = new TextField(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_LOGIN, messageSource), "");
 		loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 		loginField.setReadOnly(true);
-		firstNameField = new TextField(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_FIRSTNAME), "");
+		firstNameField = new TextField(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_FIRSTNAME, messageSource), "");
 		firstNameField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 		firstNameField.setReadOnly(true);
-		lastNameField = new TextField(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_LASTNAME), "");
+		lastNameField = new TextField(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_LASTNAME, messageSource), "");
 		lastNameField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 		lastNameField.setReadOnly(true);
-		emailField = new TextField(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_EMAIL), "");
+		emailField = new TextField(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_EMAIL, messageSource), "");
 		emailField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 		emailField.setReadOnly(true);
-		newPasswordField = new PasswordField(getI18nText(I18N_CAPTION_NEWPSW), "");
+		newPasswordField = new PasswordField(getI18nText(I18N_CAPTION_NEWPSW, messageSource), "");
 		newPasswordField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, true);
 		newPasswordField.setReadOnly(true);
 		newPasswordField.setVisible(false);
@@ -168,19 +164,19 @@ class UserInfoVerticalLayout extends VerticalLayout {
 	
 	private Binder<User> createUserFormBinder() {
 		Binder<User> binder = new Binder<>();
-		binder.forField(loginField).asRequired(getI18nText(I18N_NECESSARY_USERLOGIN)).bind(User::getId, User::setId);
-		binder.forField(firstNameField).asRequired(getI18nText(I18N_NECESSARY_USERFIRSTNAME)).bind(User::getFirstName, User::setFirstName);
-		binder.forField(lastNameField).asRequired(getI18nText(I18N_NECESSARY_USERLASTNAME)).bind(User::getLastName, User::setLastName);
-		binder.forField(emailField).asRequired(getI18nText(I18N_NECESSARY_USEREMAIL))
-			.withValidator(new EmailValidator(getI18nText(I18N_NECESSARY_EMAILVALID))).bind(User::getEmail, User::setEmail);
-		binder.forField(newPasswordField).asRequired(getI18nText(I18N_NECESSARY_USERPSW))
-            .withValidator(new StringLengthValidator(getI18nText(I18N_NECESSARY_PSWVALID), 6, null))
+		binder.forField(loginField).asRequired(getI18nText(I18N_NECESSARY_USERLOGIN, messageSource)).bind(User::getId, User::setId);
+		binder.forField(firstNameField).asRequired(getI18nText(I18N_NECESSARY_USERFIRSTNAME, messageSource)).bind(User::getFirstName, User::setFirstName);
+		binder.forField(lastNameField).asRequired(getI18nText(I18N_NECESSARY_USERLASTNAME, messageSource)).bind(User::getLastName, User::setLastName);
+		binder.forField(emailField).asRequired(getI18nText(I18N_NECESSARY_USEREMAIL, messageSource))
+			.withValidator(new EmailValidator(getI18nText(I18N_NECESSARY_EMAILVALID, messageSource))).bind(User::getEmail, User::setEmail);
+		binder.forField(newPasswordField).asRequired(getI18nText(I18N_NECESSARY_USERPSW, messageSource))
+            .withValidator(new StringLengthValidator(getI18nText(I18N_NECESSARY_PSWVALID, messageSource), 6, null))
             .bind((usrLocal) -> "", (usrLocal, pwd) -> usrLocal.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(pwd)));
 		return binder;
 	}
 
 	private Button createEditButton() {
-		editButton = new Button(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_EDIT));
+		editButton = new Button(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_EDIT, messageSource));
 		editButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		editButton.addClickListener(event -> {
 			editButton.setEnabled(false);
@@ -210,7 +206,7 @@ class UserInfoVerticalLayout extends VerticalLayout {
 	}
 	
 	private Button createSaveButton(DataProvider<UserTemplate, String> userDataProvider) {
-		saveButton = new Button(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_BUTTON_SAVE));
+		saveButton = new Button(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_BUTTON_SAVE, messageSource));
 		saveButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		saveButton.setEnabled(false);
 		saveButton.setVisible(false);
@@ -233,18 +229,18 @@ class UserInfoVerticalLayout extends VerticalLayout {
 			      if (user == null) {	
 						user = identityService.newUser(loginField.getValue());
 						paramsForSave = new String[] {user.getId()};
-						String notificationCreated = getI18nText(I18N_NOTIFICATION_USERCREATED, paramsForSave);
+						String notificationCreated = getI18nText(I18N_NOTIFICATION_USERCREATED, paramsForSave, messageSource);
 						Notification.show(notificationCreated, Type.TRAY_NOTIFICATION);
 						
 					} else if (user.getId() != null) {
 						paramsForSave = new String[] {user.getId()};
-						String notificationChanged = getI18nText(I18N_NOTIFICATION_USERCHANGED, paramsForSave);
+						String notificationChanged = getI18nText(I18N_NOTIFICATION_USERCHANGED, paramsForSave, messageSource);
 						Notification.show(notificationChanged, Type.TRAY_NOTIFICATION);
 					}
 			      userFormBinder.writeBean(user);
 			    } catch (ValidationException e) {
 			      paramsForSave = new String[] {user.getId()};
-				  String notificationSaveErr = getI18nText(I18N_NOTIFICATION_USERCHANGED, paramsForSave);
+				  String notificationSaveErr = getI18nText(I18N_NOTIFICATION_USERCHANGED, paramsForSave, messageSource);
 			      Notification.show(notificationSaveErr);
 			    }
 			userFormBinder.setBean(user);
@@ -263,7 +259,7 @@ class UserInfoVerticalLayout extends VerticalLayout {
 	}
 	
 	private Button createCancelButton(DataProvider<UserTemplate, String> userDataProvider) {
-		cancelButton = new Button(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_BUTTON_CLOSE));
+		cancelButton = new Button(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_BUTTON_CLOSE, messageSource));
 		cancelButton.setEnabled(false);
 		cancelButton.setVisible(false);
 		cancelButton.addClickListener(event -> {
@@ -308,7 +304,7 @@ class UserInfoVerticalLayout extends VerticalLayout {
 	}
 	
 	private Button createDeleteButton(DataProvider<UserTemplate, String> userDataProvider) {
-		deleteButton = new Button(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_DELETE));
+		deleteButton = new Button(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_DELETE, messageSource));
 		deleteButton.setStyleName(ValoTheme.BUTTON_DANGER);
 		deleteButton.setIcon(VaadinIcons.TRASH);
 		ClickListener okDeleteClick = event -> {
@@ -316,7 +312,7 @@ class UserInfoVerticalLayout extends VerticalLayout {
 			identityService.deleteUser(user.getId());
 			userDataProvider.refreshAll();
 			String[] paramsForDelete = new String[] {user.getId()};
-			String notificationDeleted = getI18nText(I18N_NOTIFICATION_USERDELETED, paramsForDelete);
+			String notificationDeleted = getI18nText(I18N_NOTIFICATION_USERDELETED, paramsForDelete, messageSource);
 			Notification.show(notificationDeleted, Type.WARNING_MESSAGE);
 			loginField.setValue("");
 			firstNameField.setValue("");
@@ -325,9 +321,9 @@ class UserInfoVerticalLayout extends VerticalLayout {
 			newPasswordField.setValue("");
 		};
 		deleteButton.addClickListener(event -> {
-			ConfirmDialogWindow box = new ConfirmDialogWindow(getI18nText(I18N_CONFIRMDIALOG_INFO_DELETEUSER), 
-															  getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_BUTTON_OK), 
-															  getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_BUTTON_CLOSE), 
+			ConfirmDialogWindow box = new ConfirmDialogWindow(getI18nText(I18N_CONFIRMDIALOG_INFO_DELETEUSER, messageSource), 
+															  getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_BUTTON_OK, messageSource), 
+															  getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_BUTTON_CLOSE, messageSource), 
 															  okDeleteClick);
 			getUI().addWindow(box);
 		});	
@@ -350,7 +346,7 @@ class UserInfoVerticalLayout extends VerticalLayout {
 			lastNameField.setValue("");
 			emailField.setValue("");
 			newPasswordField.setValue("");
-			newPasswordField.setCaption(getI18nText(I18N_CAPTION_PSW));
+			newPasswordField.setCaption(getI18nText(I18N_CAPTION_PSW, messageSource));
 			if(loginField.getValue().isEmpty()) {
 				loginField.setStyleName(ValoTheme.TEXTAREA_BORDERLESS, false);
 				loginField.setReadOnly(false);
@@ -379,21 +375,14 @@ class UserInfoVerticalLayout extends VerticalLayout {
 			lastNameField.setValue(template.getLastName() == null ? "" : template.getLastName());
 			emailField.setValue(template.getEmail() == null ? "" : template.getEmail());
 			newPasswordField.setValue("");
-			newPasswordField.setCaption(getI18nText(I18N_CAPTION_NEWPSW));
+			newPasswordField.setCaption(getI18nText(I18N_CAPTION_NEWPSW, messageSource));
 			deleteButton.setEnabled(true);
 		}
 	}	
 
-	private String getI18nText(String key) {
-		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
-	}
-	
-	private String getI18nText(String key, String[] params) {
-		return messageSource.getMessage(key, params, VaadinSession.getCurrent().getLocale());
-	}
 }
 
-class UserAddGroupVerticalLayout extends VerticalLayout {
+class UserAddGroupVerticalLayout extends VerticalLayout implements I18n {
 	
 	private MessageSource messageSource;
 	private IdentityService identityService;
@@ -471,13 +460,13 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 			identityService.deleteMembership(userID, group.getId());
 			groupForUser.refreshAll();
 			String[] paramsForDelete = new String[] {group.getId(), userID};
-			String notificationDeleted = getI18nText(I18N_NOTIFICATION_DELETEDFROMUSER, paramsForDelete);
+			String notificationDeleted = getI18nText(I18N_NOTIFICATION_DELETEDFROMUSER, paramsForDelete, messageSource);
 			Notification.show(notificationDeleted, Type.WARNING_MESSAGE);
 		};
 		deleteButton.addClickListener(event -> {
-			ConfirmDialogWindow box = new ConfirmDialogWindow(getI18nText(UsersAndRolesVerticalLayout.I18N_CONFIRMDIALOG_INFO_DELETEGROUP), 
-					 										  getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_BUTTON_OK), 
-					 										  getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_BUTTON_CLOSE), 
+			ConfirmDialogWindow box = new ConfirmDialogWindow(getI18nText(UsersAndRolesVerticalLayout.I18N_CONFIRMDIALOG_INFO_DELETEGROUP, messageSource), 
+					 										  getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_BUTTON_OK, messageSource), 
+					 										  getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_BUTTON_CLOSE, messageSource), 
 					 										  okDeleteClick);
 			getUI().addWindow(box);
 		});
@@ -493,7 +482,7 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 	
 	private ComboBox<String> createSelectGroup(DataProvider<String, String> selectGroupProvider) {
 		ComboBox<String> groupSelect = new ComboBox<>();
-		groupSelect.setPlaceholder(getI18nText(UsersAndRolesVerticalLayout.I18N_SEARCHFIELD_PLACEHOLDER));
+		groupSelect.setPlaceholder(getI18nText(UsersAndRolesVerticalLayout.I18N_SEARCHFIELD_PLACEHOLDER, messageSource));
 		groupSelect.setDataProvider(selectGroupProvider);
 		groupSelect.setPageLength(5);
 		groupSelect.addSelectionListener(event -> {
@@ -516,11 +505,11 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 			try {
 				identityService.createMembership(currentUser.getId(), selectGroup.getValue());
 				groupForUser.refreshAll();
-				String notificationTextAdd = getI18nText(I18N_NOTIFICATION_USERADDGROUP, paramsForAdd);
+				String notificationTextAdd = getI18nText(I18N_NOTIFICATION_USERADDGROUP, paramsForAdd, messageSource);
 				Notification.show(notificationTextAdd, Type.WARNING_MESSAGE);
 			}
 			catch(Exception e) {
-				String notificationTextErr = getI18nText(I18N_NOTIFICATION_USERADDGROUPERR, paramsForAdd);
+				String notificationTextErr = getI18nText(I18N_NOTIFICATION_USERADDGROUPERR, paramsForAdd, messageSource);
 				Notification.show(notificationTextErr, Type.ERROR_MESSAGE);
 			}
 		});
@@ -528,7 +517,7 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 	}
 	
 	private Button createEditButton() {
-		Button edit = new Button(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_EDIT));
+		Button edit = new Button(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_EDIT, messageSource));
 		edit.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		edit.addClickListener(event ->{
 			joinedComponent.setVisible(true);
@@ -543,7 +532,7 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 	}
 	
 	private Button createViewButton() {
-		Button view = new Button(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_BUTTON_OK));
+		Button view = new Button(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_BUTTON_OK, messageSource));
 		view.addClickListener(event ->{
 			joinedComponent.setVisible(false);
 			joinedComponent.setEnabled(false);
@@ -560,20 +549,13 @@ class UserAddGroupVerticalLayout extends VerticalLayout {
 		Grid<GroupTemplate> grid = new Grid<>();
 		groupUserIDFilter = groupForUser.withConfigurableFilter();
 		grid.setSizeFull();
-		grid.addColumn(GroupTemplate::getId).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_IDROLES));
-		grid.addColumn(GroupTemplate::getName).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_NAMEROLES));
-		grid.addColumn(GroupTemplate::getType).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_TYPEROLES));
-		grid.addComponentColumn(GroupTemplate::getDelete).setHidden(true).setId("del").setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_DELETE)).setWidth(95.0);
+		grid.addColumn(GroupTemplate::getId).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_IDROLES, messageSource));
+		grid.addColumn(GroupTemplate::getName).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_NAMEROLES, messageSource));
+		grid.addColumn(GroupTemplate::getType).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_TYPEROLES, messageSource));
+		grid.addComponentColumn(GroupTemplate::getDelete).setHidden(true).setId("del").setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_DELETE, messageSource)).setWidth(95.0);
 		grid.setWidth(100, Unit.PERCENTAGE);
 		grid.setDataProvider(groupUserIDFilter);
 		return grid;
 	}
 	
-	private String getI18nText(String key) {
-		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
-	}
-	
-	private String getI18nText(String key, String[] params) {
-		return messageSource.getMessage(key, params, VaadinSession.getCurrent().getLocale());
-	}
 }
