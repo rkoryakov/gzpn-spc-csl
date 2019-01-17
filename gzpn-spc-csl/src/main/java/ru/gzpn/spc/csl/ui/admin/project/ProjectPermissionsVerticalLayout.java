@@ -69,6 +69,7 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout {
 	
 	private ComboBox<Entities> createSelectTypeProject() {
 		ComboBox<Entities> comboBox = new ComboBox<>();
+		comboBox.setWidth(280, Unit.PIXELS);
 		comboBox.setItems(EnumSet.of(Entities.HPROJECT, Entities.CPROJECT));
 		comboBox.setTextInputAllowed(false);
 		comboBox.setEmptySelectionAllowed(false);
