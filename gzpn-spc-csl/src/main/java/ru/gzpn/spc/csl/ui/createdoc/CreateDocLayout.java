@@ -38,8 +38,10 @@ import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.DocumentService;
+import ru.gzpn.spc.csl.services.bl.interfaces.ICreateDocService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
 import ru.gzpn.spc.csl.ui.common.DraggableTree;
 import ru.gzpn.spc.csl.ui.common.I18n;
@@ -79,6 +81,9 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	private IProjectService projectService;
 	private IUserSettigsService settingsService;
 	private MessageSource messageSource;
+	private IWorkSetService worksetService;
+	private ICreateDocService createDocService;
+	
 	private CreateDocSettingsJson docSettingsJson;
 	
 	private VerticalLayout leftLayout;
@@ -97,18 +102,14 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	private Button delWorksetButton;
 	private Button downloadWorksetButton;
 	private Panel projectTreePanel;
-	private IWorkSetService worksetService;
 	
-	
-	public CreateDocLayout(IProjectService projectService, 
-							IWorkSetService worksetService, 
-							IUserSettigsService settingsService, 
-							MessageSource messageSource) {
+	public CreateDocLayout(ICreateDocService createDocService) {
+		this.projectService = createDocService.getProjectService();
+		this.settingsService = createDocService.getUserSettingsService();
+		this.messageSource = createDocService.getMessageSource();
+		this.worksetService = createDocService.getWorkService();
+		this.createDocService = createDocService;
 		
-		this.projectService = projectService;
-		this.settingsService = settingsService;
-		this.messageSource = messageSource;
-		this.worksetService = worksetService;
 		this.currentUser = settingsService.getCurrentUser();
 		
 		docSettingsJson = settingsService.getUserSettings();
@@ -413,7 +414,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	}
 
 	private Component createRightLayout() {
-		rightLayout = new WorkSetDocumentation(projectService, settingsService, messageSource);
+		rightLayout = new WorkSetDocumentation(this.createDocService);
 		rightLayout.setParent(this);
 		return rightLayout;
 	}
@@ -421,20 +422,19 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 
 class WorkSetDocumentation extends VerticalLayout implements I18n {
 	private static final long serialVersionUID = -7505276213420043371L;
-	
-	private IProjectService projectService;
+
 	private IUserSettigsService dataUserSettigsService;
 	private MessageSource messageSource;
-	private Grid<IDocument> docTree;
+	private DocumentService documentService;
 	
+	private Grid<IDocument> documentsGrid;	
 	private DocumentsDataProvider documnentsDataProvider;
 	private CreateDocLayout parent;
 	
-	public WorkSetDocumentation(IProjectService projectService, IUserSettigsService dataUserSettigsService, MessageSource messageSource) {
-		this.projectService = projectService;
-		this.dataUserSettigsService = dataUserSettigsService;
-		this.messageSource = messageSource;
-		NodeWrapper treeSettings = dataUserSettigsService.getUserSettings().getRightTreeGroup();
+	public WorkSetDocumentation(ICreateDocService service) {
+		this.documentService = service.getDocumentService();
+		this.dataUserSettigsService = service.getUserSettingsService();
+		this.messageSource = service.getMessageSource();
 		
 		
 	}
@@ -443,8 +443,10 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 		this.parent = parent;
 	}
 	
-
 	public void refreshUiElements() {
+		documnentsDataProvider = new DocumentsDataProvider(documentService);
 		this.removeAllComponents();
+		dataUserSettigsService.getUserSettings().getRightTreeGroup();
+		
 	}
 }

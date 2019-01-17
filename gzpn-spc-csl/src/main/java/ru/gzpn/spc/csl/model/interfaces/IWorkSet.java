@@ -1,5 +1,7 @@
 package ru.gzpn.spc.csl.model.interfaces;
 
+import java.util.List;
+
 public interface IWorkSet extends IBaseEntity {
 	public static final String ENTITYNAME_DOT = "workset.";
 	
@@ -26,4 +28,6 @@ public interface IWorkSet extends IBaseEntity {
 	public void setSmr(IWork smr);
 	public IPlanObject getPlanObject();
 	public void setPlanObject(IPlanObject planObject);
+	List<IDocument> getDocuments();
+	void setDocuments(List<IDocument> documents);
 }

@@ -14,8 +14,9 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.ui.common.I18n;
 
-public abstract class UISettingsWindow extends Window {
+public abstract class UISettingsWindow extends Window implements I18n {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -77,7 +78,7 @@ public abstract class UISettingsWindow extends Window {
 	}
 
 	public Component createCancelButton() {
-		cancelButton = new Button(getI18nText(I18N_CANCELBUTTON_CAP));
+		cancelButton = new Button(getI18nText(I18N_CANCELBUTTON_CAP, messageSource));
 		cancelButton.addClickListener(listener -> 
 			cancel()
 		);
@@ -86,7 +87,7 @@ public abstract class UISettingsWindow extends Window {
 	}
 	
 	public Component createSaveButton() {
-		saveButton = new Button(getI18nText(I18N_SAVEBUTTON_CAP));
+		saveButton = new Button(getI18nText(I18N_SAVEBUTTON_CAP, messageSource));
 		saveButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		saveButton.addClickListener(listener -> {
 			save(this.userSettings);
@@ -131,6 +132,4 @@ public abstract class UISettingsWindow extends Window {
 	public boolean equals(Object obj) {
 		return (obj != null && this == obj);
 	}
-
-	public abstract String getI18nText(String key);
 }

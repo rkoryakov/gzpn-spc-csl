@@ -21,4 +21,7 @@ public interface IDocument {
 	void setLocalEstimate(List<ILocalEstimate> localEstimates);
 	IWork getWork();
 	void setWork(IWork work);
+	void setWorkset(IWorkSet workset);
+	IWorkSet getWorkset();
+	void setLocalEstimates(List<ILocalEstimate> localEstimates);
 }
