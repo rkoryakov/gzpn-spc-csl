@@ -35,6 +35,10 @@ public class ProjectService implements IDataProjectService {
 		return hpRepository;
 	}
 	
+	public CProjectRepository getCPRepository() {
+		return cpRepository;
+	}
+	
 	/**
 	 * Items count of the given entity grouped by the given field
 	 * 

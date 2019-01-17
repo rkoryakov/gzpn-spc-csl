@@ -46,7 +46,7 @@ import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ProjectServiceTest {
+public class CProjectServiceTest {
 	@Autowired
 	IDataProjectService service;
 	@Autowired

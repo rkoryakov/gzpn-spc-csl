@@ -17,9 +17,10 @@ import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import ru.gzpn.spc.csl.model.CProject;
-import ru.gzpn.spc.csl.model.HProject;
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.utils.Entities;
+import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
 import ru.gzpn.spc.csl.ui.admin.UsersAndRolesVerticalLayout;
 
 public class ProjectPermissionsVerticalLayout extends VerticalLayout {
@@ -28,16 +29,24 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout {
 	private MessageSource messageSource;
 	private TextField searchProject;
 	private ComboBox<Entities> selectTypeProject;
-	private Grid<HProject> gridHeavyProjects;
-	private Grid<CProject> gridCapitalProjects;
+	private Grid<IHProject> gridHeavyProjects;
+	private Grid<ICProject> gridCapitalProjects;
 	private HorizontalLayout headerHorizontal;
 	private VerticalLayout resultPage;
 	private MarginInfo marginForHeader;
 	private HorizontalSplitPanel panel;
+	private CProjectDataProvider cpDataProvider;
+	private HProjectDataProvider hpDataProvider;
+	private IDataProjectService projectService;
 
-	public ProjectPermissionsVerticalLayout(IdentityService identityService, MessageSource messageSource) {
+	public ProjectPermissionsVerticalLayout(IDataProjectService projectService, IdentityService identityService, MessageSource messageSource) {
+		this.projectService = projectService;
 		this.identityService = identityService;
 		this.messageSource = messageSource;
+		
+		cpDataProvider = new CProjectDataProvider(projectService);
+		hpDataProvider = new HProjectDataProvider(projectService);
+		
 		panel = new HorizontalSplitPanel();
 		headerHorizontal = new HorizontalLayout();
 		resultPage = new VerticalLayout();
@@ -95,39 +104,41 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout {
 		return comboBox;
 	}
 	
-	private Grid<HProject> createGridHeavyProjects() {
-		Grid<HProject> grid = new Grid<>();
+	private Grid<IHProject> createGridHeavyProjects() {
+		Grid<IHProject> grid = new Grid<>();
 		grid.setSelectionMode(SelectionMode.MULTI);
-		grid.addColumn(HProject::getId).setCaption("ID");
-		grid.addColumn(HProject::getName).setCaption("Name");
-		grid.addColumn(HProject::getCode).setCaption("Code");
-		grid.addColumn(HProject::getCreateDate).setCaption("Create Date");
-		grid.addColumn(HProject::getChangeDate).setCaption("Change Date");
-		grid.addColumn(HProject::getVersion).setCaption("Version");
+		grid.addColumn(IHProject::getId).setCaption("ID");
+		grid.addColumn(IHProject::getName).setCaption("Name");
+		grid.addColumn(IHProject::getCode).setCaption("Code");
+		grid.addColumn(IHProject::getCreateDate).setCaption("Create Date");
+		grid.addColumn(IHProject::getChangeDate).setCaption("Change Date");
+		grid.addColumn(IHProject::getVersion).setCaption("Version");
 		grid.setColumnReorderingAllowed(true);
 		grid.setSizeFull();
 		grid.setHeightMode(HeightMode.ROW);
 		grid.setHeightByRows(14);
+		grid.setDataProvider(hpDataProvider);
 		return grid;
 	}
 	
-	private Grid<CProject> createGridCapitalProjects() {
-		Grid<CProject> grid = new Grid<>();
+	private Grid<ICProject> createGridCapitalProjects() {
+		Grid<ICProject> grid = new Grid<>();
 		grid.setSelectionMode(SelectionMode.MULTI);
-		grid.addColumn(CProject::getId).setCaption("ID");
-		grid.addColumn(CProject::getName).setCaption("Name");
-		grid.addColumn(CProject::getCode).setCaption("Code");
-		grid.addColumn(CProject::getStageCaption).setCaption("Stage");
-		grid.addColumn(CProject::getPhaseCaption).setCaption("Phase");
-		grid.addColumn(CProject::getHProjectCaption).setCaption("Heavy Project");
-		grid.addColumn(CProject::getMilestoneCaption).setCaption("Milestone");
-		grid.addColumn(CProject::getCreateDate).setCaption("Create Date");
-		grid.addColumn(CProject::getChangeDate).setCaption("Change Date");
-		grid.addColumn(CProject::getVersion).setCaption("Version");
+		grid.addColumn(ICProject::getId).setCaption("ID");
+		grid.addColumn(ICProject::getName).setCaption("Name");
+		grid.addColumn(ICProject::getCode).setCaption("Code");
+		grid.addColumn(ICProject::getStageCaption).setCaption("Stage");
+		grid.addColumn(ICProject::getPhaseCaption).setCaption("Phase");
+		grid.addColumn(ICProject::getHProjectCaption).setCaption("Heavy Project");
+		grid.addColumn(ICProject::getMilestoneCaption).setCaption("Milestone");
+		grid.addColumn(ICProject::getCreateDate).setCaption("Create Date");
+		grid.addColumn(ICProject::getChangeDate).setCaption("Change Date");
+		grid.addColumn(ICProject::getVersion).setCaption("Version");
 		grid.setColumnReorderingAllowed(true);
 		grid.setSizeFull();
 		grid.setHeightMode(HeightMode.ROW);
 		grid.setHeightByRows(14);
+		grid.setDataProvider(cpDataProvider);
 		return grid;
 	}
 	

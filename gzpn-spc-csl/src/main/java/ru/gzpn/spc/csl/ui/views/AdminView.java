@@ -15,6 +15,7 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 
+import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
 import ru.gzpn.spc.csl.ui.admin.UsersAndRolesVerticalLayout;
 import ru.gzpn.spc.csl.ui.admin.project.ProjectPermissionsVerticalLayout;
 
@@ -30,6 +31,8 @@ public class AdminView extends VerticalLayout implements View {
 	IdentityService identityService;
 	@Autowired
 	MessageSource messageSource;
+	@Autowired
+	IDataProjectService projectService;
 
 	public AdminView() {
 		setMargin(true);
@@ -40,7 +43,7 @@ public class AdminView extends VerticalLayout implements View {
 	public void init() {
 		TabSheet tabSet = new TabSheet();
 		UsersAndRolesVerticalLayout admin = new UsersAndRolesVerticalLayout(identityService, messageSource);
-		ProjectPermissionsVerticalLayout project = new ProjectPermissionsVerticalLayout(identityService, messageSource);
+		ProjectPermissionsVerticalLayout project = new ProjectPermissionsVerticalLayout(projectService, identityService, messageSource);
 		tabSet.addTab(admin, getI18nText(I18N_CAPTION_TAB_ADMIN));
 		tabSet.addTab(project, getI18nText(I18N_CAPTION_TAB_PROJECT));
 		addComponent(tabSet);
