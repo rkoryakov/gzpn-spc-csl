@@ -17,7 +17,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.services.bl.DocumentService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
 import ru.gzpn.spc.csl.ui.createdoc.CreateDocLayout;
 
@@ -32,7 +32,7 @@ public class CreateDocView extends VerticalLayout implements View {
 	@Autowired
 	private IProjectService projectService;
 	@Autowired
-	private IDataUserSettigsService userSettingsService;
+	private IUserSettigsService userSettingsService;
 	@Autowired
 	private IWorkSetService worksetService;
 	@Autowired 

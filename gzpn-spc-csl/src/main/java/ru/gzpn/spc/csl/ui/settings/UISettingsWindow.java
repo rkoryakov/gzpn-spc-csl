@@ -13,7 +13,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
-import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 
 public abstract class UISettingsWindow extends Window {
 
@@ -22,7 +22,7 @@ public abstract class UISettingsWindow extends Window {
 	public static final String I18N_CANCELBUTTON_CAP = "settings.UISettingsWindow.cancelButton.cap";
 	public static final String I18N_SAVEBUTTON_CAP = "settings.UISettingsWindow.saveButton.cap";
 	
-	protected IDataUserSettigsService settingsService;
+	protected IUserSettigsService settingsService;
 	protected CreateDocSettingsJson userSettings;
 	protected MessageSource messageSource;
 	protected String user;
@@ -33,7 +33,7 @@ public abstract class UISettingsWindow extends Window {
 	protected Button cancelButton;
 	protected Button saveButton;
 	
-	public UISettingsWindow(IDataUserSettigsService settingsService, MessageSource messageSource) {
+	public UISettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
 		this.settingsService = settingsService;
 		this.user = settingsService.getCurrentUser();
 		this.messageSource = messageSource;

@@ -20,7 +20,7 @@ import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.components.grid.TreeGridDropTarget;
 
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
-import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.DraggableTree;
 import ru.gzpn.spc.csl.ui.settings.UISettingsWindow;
 
@@ -37,7 +37,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 	private TreeDataProvider<NodeWrapper> treeDataProvider;
 	private TreeData<NodeWrapper> treeData;
 	
-	public CreateDocSettingsWindow(IDataUserSettigsService settingsService, MessageSource messageSource) {
+	public CreateDocSettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
 		super(settingsService, messageSource);
 		this.center();
 		this.setCaption(getI18nText(I18N_WINDOW_CAPTION));

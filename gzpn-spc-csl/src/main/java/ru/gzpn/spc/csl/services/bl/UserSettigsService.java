@@ -15,11 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.gzpn.spc.csl.model.UserSettings;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.repositories.UserSettingsRepository;
-import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 
 @Service
 @Transactional
-public class UserSettigsService implements IDataUserSettigsService {
+public class UserSettigsService implements IUserSettigsService {
 	public static final Logger logger = LoggerFactory.getLogger(UserSettigsService.class);
 	@Autowired
 	private UserSettingsRepository repository;
