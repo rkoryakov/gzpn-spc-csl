@@ -48,4 +48,12 @@ public interface ICProject extends IBaseEntity{
 	public List<IEstimateCalculation> getEstimateCalculations();
 
 	public void setEstimateCalculations(List<IEstimateCalculation> estimateCalculations);
+	
+	public String getStageCaption();
+	
+	public String getPhaseCaption();
+	
+	public String getMilestoneCaption();
+	
+	public String getHProjectCaption();
 }

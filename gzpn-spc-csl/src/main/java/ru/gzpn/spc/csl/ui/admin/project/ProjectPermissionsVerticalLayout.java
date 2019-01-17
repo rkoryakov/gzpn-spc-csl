@@ -75,13 +75,12 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout {
 		comboBox.setSelectedItem(Entities.HPROJECT);
 		gridCapitalProjects.setVisible(false);
 		comboBox.setItemCaptionGenerator(item -> {
-			String result = "Heavy Prolect";
+			String result = "Крупные проекты";
 			if (item == Entities.CPROJECT) {
-				result = "Capital Prolect";
+				result = "Капитальные проекты";
 			}
 			return result;
 		});
-		
 		comboBox.addSelectionListener(event -> {
 			if (event.getSelectedItem().get().equals(Entities.HPROJECT)) {
 				gridHeavyProjects.setVisible(true);
@@ -117,10 +116,10 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout {
 		grid.addColumn(CProject::getId).setCaption("ID");
 		grid.addColumn(CProject::getName).setCaption("Name");
 		grid.addColumn(CProject::getCode).setCaption("Code");
-		grid.addColumn(CProject::getStage).setCaption("Stage");
-		grid.addColumn(CProject::getPhase).setCaption("Phase");
-		grid.addColumn(CProject::getHproject).setCaption("Heavy Project");
-		grid.addColumn(CProject::getMilestone).setCaption("Milestone");
+		grid.addColumn(CProject::getStageCaption).setCaption("Stage");
+		grid.addColumn(CProject::getPhaseCaption).setCaption("Phase");
+		grid.addColumn(CProject::getHProjectCaption).setCaption("Heavy Project");
+		grid.addColumn(CProject::getMilestoneCaption).setCaption("Milestone");
 		grid.addColumn(CProject::getCreateDate).setCaption("Create Date");
 		grid.addColumn(CProject::getChangeDate).setCaption("Change Date");
 		grid.addColumn(CProject::getVersion).setCaption("Version");

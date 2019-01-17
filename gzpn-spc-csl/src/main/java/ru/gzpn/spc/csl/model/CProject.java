@@ -2,6 +2,7 @@ package ru.gzpn.spc.csl.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.Index;
@@ -120,4 +121,41 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 	public void setEstimateCalculations(List<IEstimateCalculation> estimateCalculations) {
 		this.estimateCalculations = estimateCalculations;
 	}
+	
+	@Override
+	public String getStageCaption() {
+		String result = "---";
+		if (Objects.nonNull(getStage())) {
+			result = getStage().getName();
+		}
+		return result;
+	}
+	
+	@Override
+	public String getPhaseCaption() {
+		String result = "---";
+		if (Objects.nonNull(getPhase())) {
+			result = getPhase().getName();
+		}
+		return result;
+	}
+	
+	@Override
+	public String getMilestoneCaption() {
+		String result = "---";
+		if (Objects.nonNull(getMilestone())) {
+			result = getMilestone().getCode();
+		}
+		return result;
+	}
+	
+	@Override
+	public String getHProjectCaption() {
+		String result = "---";
+		if (Objects.nonNull(getHproject())) {
+			result = getHproject().getCode();
+		}
+		return result;
+	}
+	
 }
