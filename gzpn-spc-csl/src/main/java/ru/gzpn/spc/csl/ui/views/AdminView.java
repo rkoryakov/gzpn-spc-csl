@@ -14,7 +14,7 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 
-import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.ui.admin.UsersAndRolesVerticalLayout;
 import ru.gzpn.spc.csl.ui.admin.project.ProjectPermissionsVerticalLayout;
 import ru.gzpn.spc.csl.ui.common.I18n;
@@ -32,7 +32,7 @@ public class AdminView extends VerticalLayout implements View, I18n{
 	@Autowired
 	MessageSource messageSource;
 	@Autowired
-	IDataProjectService projectService;
+	IProjectService projectService;
 
 	public AdminView() {
 		setMargin(true);

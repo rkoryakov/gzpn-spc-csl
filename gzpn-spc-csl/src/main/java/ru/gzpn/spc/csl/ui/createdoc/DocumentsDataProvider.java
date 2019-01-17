@@ -10,9 +10,13 @@ import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;
 
 @SuppressWarnings("serial")
 public class DocumentsDataProvider extends AbstractBackEndDataProvider<IDocument, Void> {
-	
-	private IDocumentService service;
+
+	private IDocumentService documentService;
 	private DocumentFilter filter;
+	
+	public DocumentsDataProvider(IDocumentService documentService) {
+		this.documentService = documentService;
+	}
 	
 	@Override
 	protected Stream<IDocument> fetchFromBackEnd(Query<IDocument, Void> query) {

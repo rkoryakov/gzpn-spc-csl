@@ -8,14 +8,14 @@ import org.apache.logging.log4j.Logger;
 import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
 
-import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 
 public class HProjectDataProvider extends AbstractBackEndDataProvider<IHProjectPresenter, Void> {
 	
 	public static final Logger logger = LogManager.getLogger(HProjectDataProvider.class);
-	private IDataProjectService service;
+	private IProjectService service;
 	
-	HProjectDataProvider(IDataProjectService service) {
+	HProjectDataProvider(IProjectService service) {
 		this.service = service;
 	}
 	

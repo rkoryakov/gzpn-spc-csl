@@ -6,7 +6,7 @@ import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 
-public interface IDataProjectService {
+public interface IProjectService {
 	public HProjectRepository getBaseRepository();
 	public HProjectRepository getHPRepository();
 	public CProjectRepository getCPRepository();

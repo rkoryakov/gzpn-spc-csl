@@ -17,7 +17,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.model.utils.Entities;
-import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.ui.admin.UsersAndRolesVerticalLayout;
 import ru.gzpn.spc.csl.ui.common.I18n;
 
@@ -35,9 +35,9 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 	private HorizontalSplitPanel panel;
 	private CProjectDataProvider cpDataProvider;
 	private HProjectDataProvider hpDataProvider;
-	private IDataProjectService projectService;
+	private IProjectService projectService;
 
-	public ProjectPermissionsVerticalLayout(IDataProjectService projectService, IdentityService identityService, MessageSource messageSource) {
+	public ProjectPermissionsVerticalLayout(IProjectService projectService, IdentityService identityService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.identityService = identityService;
 		this.messageSource = messageSource;
