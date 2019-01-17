@@ -9,15 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.repositories.DocumentRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;
+import ru.gzpn.spc.csl.ui.common.I18n;
 
 @Service
-public class DocumentService implements IDocumentService {
+@Transactional
+public class DocumentService implements IDocumentService, I18n {
 
 	@Autowired
 	DocumentRepository documentRepository;

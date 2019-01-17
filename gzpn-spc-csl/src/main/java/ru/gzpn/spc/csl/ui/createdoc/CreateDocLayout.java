@@ -42,11 +42,11 @@ import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
 import ru.gzpn.spc.csl.ui.common.DraggableTree;
-import ru.gzpn.spc.csl.ui.common.IUIComponent;
+import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
 
-public class CreateDocLayout extends HorizontalSplitPanel implements IUIComponent {
+public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	private static final long serialVersionUID = -883906550551450076L;
 	private static final Logger logger = LoggerFactory.getLogger(CreateDocLayout.class);
 	
@@ -419,7 +419,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements IUIComponen
 	}
 }
 
-class WorkSetDocumentation extends VerticalLayout implements IUIComponent {
+class WorkSetDocumentation extends VerticalLayout implements I18n {
 	private static final long serialVersionUID = -7505276213420043371L;
 	
 	private IDataProjectService projectService;
