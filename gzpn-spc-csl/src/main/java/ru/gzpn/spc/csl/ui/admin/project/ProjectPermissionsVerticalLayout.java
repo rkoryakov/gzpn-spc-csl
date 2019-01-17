@@ -71,6 +71,15 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 		TextField filterTextField = new TextField();
 		filterTextField.setWidth(240, Unit.PIXELS);
 		filterTextField.setPlaceholder(getI18nText(UsersAndRolesVerticalLayout.I18N_SEARCHFIELD_PLACEHOLDER, messageSource));
+		filterTextField.addValueChangeListener(event -> {
+			if (selectTypeProject.getSelectedItem().get().equals(Entities.HPROJECT)) {
+//				userFilter.setFilter(event.getValue());
+//				userFilter.refreshAll();
+			} else if (selectTypeProject.getSelectedItem().get().equals(Entities.CPROJECT)) {
+//				groupFilter.setFilter(event.getValue());
+//				groupFilter.refreshAll();
+			}
+		});
 		return filterTextField;
 	}
 	
