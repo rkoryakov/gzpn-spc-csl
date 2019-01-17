@@ -219,10 +219,12 @@ public class NodeWrapper implements Serializable {
 		return this.id != null && this.id != -1;
 	}
 	
+	@JsonIgnore
 	public List<SortOrder<String>> getSortOredersForChildren() {
 		return sortOrdersForChildren;
 	}
 	
+	@JsonIgnore
 	public void setSortOredersForChildren(List<SortOrder<String>> sortOrdersForChildren) {
 		this.sortOrdersForChildren = sortOrdersForChildren;
 	}

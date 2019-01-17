@@ -71,7 +71,7 @@ public class UserSettigsService implements IDataUserSettigsService {
 	}
 	
 	@Override
-	public void save(String userId, CreateDocSettingsJson createDoc) {
+	public void saveCreateDocSettings(String userId, CreateDocSettingsJson createDoc) {
 		UserSettings userSettings = repository.findByUserId(userId);
 		
 		if (userSettings != null) {

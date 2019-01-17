@@ -38,42 +38,52 @@ public class Document extends BaseEntity implements IDocument, Serializable {
 	@JoinColumn(name = "wk_id", referencedColumnName = "id")
 	IWork work;
 
+	@Override
 	public String getCode() {
 		return code;
 	}
 
+	@Override
 	public void setCode(String code) {
 		this.code = code;
 	}
 
+	@Override
 	public DocType getType() {
 		return type;
 	}
 
+	@Override
 	public void setType(DocType type) {
 		this.type = type;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	@Override
 	public List<ILocalEstimate> getLocalEstimates() {
 		return localEstimates;
 	}
 
+	@Override
 	public void setLocalEstimate(List<ILocalEstimate> localEstimates) {
 		this.localEstimates = localEstimates;
 	}
-
+	
+	@Override
 	public IWork getWork() {
 		return work;
 	}
 
+	@Override
 	public void setWork(IWork work) {
 		this.work = work;
 	}

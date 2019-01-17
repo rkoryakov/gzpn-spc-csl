@@ -103,7 +103,7 @@ public abstract class UISettingsWindow extends Window {
 	
 	public void save(CreateDocSettingsJson userSettings) {
 		refreshSettings();
-		settingsService.save(user, userSettings);
+		settingsService.saveCreateDocSettings(user, userSettings);
 		onSave();
 		this.close();
 	}

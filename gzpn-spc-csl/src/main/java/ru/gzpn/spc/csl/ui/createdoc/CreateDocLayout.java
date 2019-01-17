@@ -15,11 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 
 import com.vaadin.data.ValueProvider;
-import com.vaadin.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
-import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -29,26 +27,26 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
-import com.vaadin.ui.TreeGrid;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
+import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
-import ru.gzpn.spc.csl.model.utils.NodeFilter;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
 import ru.gzpn.spc.csl.ui.common.DraggableTree;
+import ru.gzpn.spc.csl.ui.common.IUIComponent;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
 
-public class CreateDocLayout extends HorizontalSplitPanel {
+public class CreateDocLayout extends HorizontalSplitPanel implements IUIComponent {
 	private static final long serialVersionUID = -883906550551450076L;
 	private static final Logger logger = LoggerFactory.getLogger(CreateDocLayout.class);
 	
@@ -71,11 +69,12 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 	private static final String I18N_WORKSET_COLUMN_CHANGEDATE = "createdoc.DocCreatingLayout.worksetGrid.columns.changedate";
 	
 	private static final int WORKSET_GRID_ROWS = 15;
-	private static final int WORKSET_GRID_HEIGHT = 568;
 	private static final int WORKSET_GRID_ROW_HEIGHT = 38;
 	private static final int MAIN_MIN_SPLIT_POSITION = 30;
 	private static final int LEFT_MIN_SPLIT_POSITION = 25;
 	private static final int HEAD_ROW_HEIGHT = 37;
+	
+	private String currentUser;
 	
 	private IDataProjectService projectService;
 	private IDataUserSettigsService settingsService;
@@ -110,6 +109,8 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		this.settingsService = settingsService;
 		this.messageSource = messageSource;
 		this.worksetService = worksetService;
+		this.currentUser = settingsService.getCurrentUser();
+		
 		docSettingsJson = settingsService.getUserSettings();
 		NodeWrapper treeSettings = docSettingsJson.getLeftTreeGroup();
 		
@@ -119,10 +120,25 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		setSizeFull();
 		
 		setSplitPosition(docSettingsJson.getMainSplitPosition(), Unit.PERCENTAGE);
+		addSplitPositionChangeListener(this::onMainSplitPositionChange);
 		setMinSplitPosition(MAIN_MIN_SPLIT_POSITION, Unit.PERCENTAGE);
 		addStyleName(ValoTheme.SPLITPANEL_LARGE);
 		setFirstComponent(createLeftLayout());
 		setSecondComponent(createRightLayout());
+	}
+
+	private void onMainSplitPositionChange(SplitPositionChangeEvent event) {
+		docSettingsJson.setMainSplitPosition((int)event.getSplitPosition());
+		saveUserSettings();
+	}
+	
+	private void onLeftSplitPositionChange(SplitPositionChangeEvent event) {
+		docSettingsJson.setLeftSplitPosition((int)event.getSplitPosition());
+		saveUserSettings();
+	}
+	
+	private void saveUserSettings() {
+		settingsService.saveCreateDocSettings(this.currentUser, docSettingsJson);
 	}
 
 	private Component createLeftLayout() {
@@ -135,6 +151,7 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		splitPanel.setSizeFull();
 		splitPanel.setSplitPosition(docSettingsJson.getLeftSplitPosition(), Unit.PERCENTAGE);
 		splitPanel.setMinSplitPosition(LEFT_MIN_SPLIT_POSITION, Unit.PERCENTAGE);
+		splitPanel.addSplitPositionChangeListener(this::onLeftSplitPositionChange);
 		splitPanel.addComponent(createProjectTree());
 		splitPanel.addComponent(createWorksetGrid());
 		
@@ -146,13 +163,31 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 	
 	private Component createProjectTree() {
 		projectTree = new DraggableTree<>();
-		projectTreePanel = new Panel(getI18nText(I18N_TREE_CAPTION));
+		projectTreePanel = new Panel(getI18nText(I18N_TREE_CAPTION, messageSource));
 		refreshProjectTree();
 		projectTreePanel.setContent(projectTree);
 		projectTreePanel.setSizeFull();
 		return projectTreePanel;
 	}
 	
+	private void refreshProjectTree() {
+		docSettingsJson = settingsService.getUserSettings();
+		NodeWrapper treeSettings = docSettingsJson.getLeftTreeGroup();
+		projectTreeDataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
+		projectTree.setDataProvider(projectTreeDataProvider);
+		projectTreePanel.setCaption(getI18nText(I18N_TREE_CAPTION, messageSource));
+		projectTree.setItemCaptionGenerator(NodeWrapper::getNodeCaption);
+		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
+		projectTreePanel.setSizeFull();
+		projectTree.setHeight(WORKSET_GRID_ROW_HEIGHT * WORKSET_GRID_ROWS + HEAD_ROW_HEIGHT - WORKSET_GRID_ROW_HEIGHT, Unit.PIXELS);
+		projectTree.addSelectionListener(listener -> {
+			Optional<NodeWrapper> selected = listener.getFirstSelectedItem();
+			if (selected.isPresent()) {
+				worksetDataProvider.setParentNode(selected.get());
+			}
+			worksetDataProvider.refreshAll();
+		});
+	}
 	
 	private Component createWorksetGrid() {
 		worksetGrid = new Grid<>();
@@ -160,6 +195,26 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		return worksetGrid;
 	}
 
+	public void refreshWorksetGrid() {
+		worksetGrid.removeAllColumns();
+		worksetDataProvider = new WorksetDataProvider(worksetService);
+		CreateDocSettingsJson userSettings = settingsService.getUserSettings();
+		List<ColumnSettings> columnSettings = userSettings.getLeftResultColumns();
+		
+		columnSettings.sort((cs1, cs2) -> 
+			Integer.compare(cs1.getOrderIndex(), cs2.getOrderIndex())
+		);
+		columnSettings.forEach(this::addWorksetGridColumn);
+		worksetGrid.setSizeFull();
+		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS);
+		worksetGrid.setColumnReorderingAllowed(true);
+		worksetDataProvider.setShownColumns(columnSettings);
+		worksetGrid.setDataProvider(worksetDataProvider);
+		// test header groups
+		userSettings.getLeftColumnHeaders();
+		addWorksetHeaderColumns(userSettings);
+	}
+	
 	private void addWorksetHeaderColumns(CreateDocSettingsJson userSettings) {
 		final String headStyle = "v-grid-header-align-left";
 		if (userSettings.hasLeftColumnHeaders()) {
@@ -265,10 +320,10 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		Column<IWorkSet, T> column = worksetGrid.addColumn(provider);
 		column.setSortProperty(settings.getEntityFieldName());
 		column.setSortable(true);
-		column.setCaption(getI18nText(i18nCaption));
+		column.setCaption(getI18nText(i18nCaption, messageSource));
 		Double width = settings.getWidth();
 		
-		if (!Objects.isNull(width) && Double.isFinite(width) && width > 1) {
+		if (Objects.nonNull(width) && Double.isFinite(width) && width > 1) {
 			column.setWidth(width);
 		} else {
 			column.setWidthUndefined();
@@ -278,7 +333,7 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 			column.setHidden(true);
 		}
 		
-		column.setId(settings.getEntityFieldName().substring(IWorkSet.ENTITYNAME_DOT.length()));
+		column.setId(settings.getEntityFieldName());
 	}
 	
 	private Component createLeftHeadFeautures() {
@@ -300,9 +355,9 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		worksetFilterField.setWidth(200.0f, Unit.PIXELS);
 		worksetFilterSettingsButton = new Button();
 		worksetFilterSettingsButton.setIcon(VaadinIcons.FILTER);
-		worksetFilterSettingsButton.setDescription(getI18nText(I18N_SEARCHSETTINGS_DESC));
+		worksetFilterSettingsButton.setDescription(getI18nText(I18N_SEARCHSETTINGS_DESC, messageSource));
 		JoinedLayout<TextField, Button> searchComp = new JoinedLayout<>(worksetFilterField, worksetFilterSettingsButton);
-		worksetFilterField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER));
+		worksetFilterField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER, messageSource));
 		
 		worksetFilterField.addValueChangeListener(e -> {
 			worksetDataProvider.getFilter().setCommonTextFilter(e.getValue());
@@ -316,8 +371,8 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		JoinedLayout<Button, Button> bottons = new JoinedLayout<>();
 		addWorksetButton = new Button(VaadinIcons.PLUS);
 		delWorksetButton = new Button(VaadinIcons.MINUS);
-		addWorksetButton.setDescription(getI18nText(I18N_ADDWORKSETBUTTON_DESC));
-		delWorksetButton.setDescription(getI18nText(I18N_DELWORKSETBUTTON_DESC));
+		addWorksetButton.setDescription(getI18nText(I18N_ADDWORKSETBUTTON_DESC, messageSource));
+		delWorksetButton.setDescription(getI18nText(I18N_DELWORKSETBUTTON_DESC, messageSource));
 		addWorksetButton.setEnabled(false);
 		delWorksetButton.setEnabled(false);
 		
@@ -329,7 +384,7 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 
 	private Component createExcelButton() {
 		downloadWorksetButton = new Button(VaadinIcons.TABLE);
-		downloadWorksetButton.setDescription(getI18nText(I18N_DOWNLOADWORKSETBUTTON_DESC));
+		downloadWorksetButton.setDescription(getI18nText(I18N_DOWNLOADWORKSETBUTTON_DESC, messageSource));
 		StreamResource excelStreamResource = new StreamResource(
 				(StreamResource.StreamSource) () -> Exporter.exportAsExcel(worksetGrid), "workset.xls");
 		FileDownloader excelFileDownloader = new FileDownloader(excelStreamResource);
@@ -341,7 +396,7 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 	private Component createSettingsButton() {
 		userLayoutSettings = new Button();
 		userLayoutSettings.setIcon(VaadinIcons.COG_O);
-		userLayoutSettings.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC));
+		userLayoutSettings.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC, messageSource));
 		userLayoutSettings.addClickListener(event -> {
 			CreateDocSettingsWindow settingsWindow = new CreateDocSettingsWindow(settingsService, messageSource);
 			settingsWindow.addCloseListener(closeEvent -> {
@@ -352,71 +407,26 @@ public class CreateDocLayout extends HorizontalSplitPanel {
 		return userLayoutSettings;
 	}
 	
-	
 	private void refreshUiElements() {
 		refreshProjectTree();
 		refreshWorksetGrid();
 	}
-	
-	private void refreshProjectTree() {
-		docSettingsJson = settingsService.getUserSettings();
-		NodeWrapper treeSettings = docSettingsJson.getLeftTreeGroup();
-		projectTreeDataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
-		projectTree.setDataProvider(projectTreeDataProvider);
-		projectTreePanel.setCaption(getI18nText(I18N_TREE_CAPTION));
-		projectTree.setItemCaptionGenerator(NodeWrapper::getNodeCaption);
-		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
-		projectTreePanel.setSizeFull();
-		projectTree.setHeight(WORKSET_GRID_ROW_HEIGHT * WORKSET_GRID_ROWS + HEAD_ROW_HEIGHT - WORKSET_GRID_ROW_HEIGHT, Unit.PIXELS);
-		projectTree.addSelectionListener(listener -> {
-			Optional<NodeWrapper> selected = listener.getFirstSelectedItem();
-			if (selected.isPresent()) {
-				worksetDataProvider.setParentNode(selected.get());
-			}
-			worksetDataProvider.refreshAll();
-		});
-	}
-	
-	private void refreshWorksetGrid() {
-		worksetGrid.removeAllColumns();
-		worksetDataProvider = new WorksetDataProvider(worksetService);
-		CreateDocSettingsJson userSettings = settingsService.getUserSettings();
-		List<ColumnSettings> columnSettings = userSettings.getLeftResultColumns();
-		
-		columnSettings.sort((cs1, cs2) -> 
-			Integer.compare(cs1.getOrderIndex(), cs2.getOrderIndex())
-		);
-		columnSettings.forEach(this::addWorksetGridColumn);
-		worksetGrid.setSizeFull();
-		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS);
-		worksetGrid.setColumnReorderingAllowed(true);
-		worksetDataProvider.setShownColumns(columnSettings);
-		worksetGrid.setDataProvider(worksetDataProvider);
-		// test header groups
-		userSettings.getLeftColumnHeaders();
-		addWorksetHeaderColumns(userSettings);
-	}
 
 	private Component createRightLayout() {
 		rightLayout = new WorkSetDocumentation(projectService, settingsService, messageSource);
-		
+		rightLayout.setParent(this);
 		return rightLayout;
-	}
-	
-	private String getI18nText(String key) {
-		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
 	}
 }
 
-class WorkSetDocumentation extends VerticalLayout {
+class WorkSetDocumentation extends VerticalLayout implements IUIComponent {
 	private static final long serialVersionUID = -7505276213420043371L;
 	
 	private IDataProjectService projectService;
 	private IDataUserSettigsService dataUserSettigsService;
 	private MessageSource messageSource;
-	private TreeGrid<NodeWrapper> docTree;
-	private ProjectTreeDataProvider dataProvider;
-	private ConfigurableFilterDataProvider<NodeWrapper, NodeFilter, NodeFilter> configurableFilterDataProvider;
+	private Grid<IDocument> docTree;
+	private DocumentsDataProvider documnentsDataProvider;
 	private CreateDocLayout parent;
 	
 	public WorkSetDocumentation(IDataProjectService projectService, IDataUserSettigsService dataUserSettigsService, MessageSource messageSource) {
@@ -425,21 +435,15 @@ class WorkSetDocumentation extends VerticalLayout {
 		this.messageSource = messageSource;
 		NodeWrapper treeSettings = dataUserSettigsService.getUserSettings().getRightTreeGroup();
 		
-		dataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
-		configurableFilterDataProvider = dataProvider.withConfigurableFilter(
-				(NodeFilter queryFilter, NodeFilter configuredFilter) -> configuredFilter
-		);
+		
 	}
 	
 	public void setParent(CreateDocLayout parent) {
 		this.parent = parent;
 	}
 	
-	public void init() {
-		
-	}
-	
-	private String getI18nText(String key) {
-		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
+
+	public void refreshUiElements() {
+		this.removeAllComponents();
 	}
 }

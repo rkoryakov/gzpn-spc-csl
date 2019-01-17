@@ -155,7 +155,7 @@ public class CreateDocSettingsJson implements Serializable {
 	public Integer getMainSplitPosition() {
 		Integer result = DEFAULT_MAIN_SPLIT_POSITION;
 		
-		if (!Objects.isNull(mainSplitPosition) && mainSplitPosition > 1 && mainSplitPosition < 100) {
+		if (!Objects.isNull(mainSplitPosition) && mainSplitPosition > 1 && mainSplitPosition <= 100) {
 			result = mainSplitPosition;
 		}
 		
@@ -165,7 +165,7 @@ public class CreateDocSettingsJson implements Serializable {
 	public Integer getLeftSplitPosition() {
 		Integer result = DEFAULT_LEFT_SPLIT_POSITION;
 		
-		if (Objects.nonNull(leftSplitPosition) && leftSplitPosition > 1) {
+		if (Objects.nonNull(leftSplitPosition) && leftSplitPosition > 1 && leftSplitPosition <= 100) {
 			result = leftSplitPosition;
 		}
 		

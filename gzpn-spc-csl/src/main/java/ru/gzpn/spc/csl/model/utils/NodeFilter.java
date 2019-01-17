@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.model.utils;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -15,7 +16,8 @@ import org.apache.logging.log4j.Logger;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
 
-public class NodeFilter {
+@SuppressWarnings("serial")
+public class NodeFilter implements Serializable {
 	public static final Logger logger = LogManager.getLogger(NodeFilter.class);
 	private String commonFilter;
 	
