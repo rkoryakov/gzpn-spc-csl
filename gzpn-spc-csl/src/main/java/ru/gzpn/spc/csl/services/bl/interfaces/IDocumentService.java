@@ -7,4 +7,6 @@ import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 
 public interface IDocumentService {
 	List<IDocument> getDocuments(IWorkSet workset);
+
+	void initI18n();
 }

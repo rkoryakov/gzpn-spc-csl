@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.services.bl;
 
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -7,10 +8,10 @@ import java.util.function.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.gzpn.spc.csl.model.enums.DocType;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
@@ -28,28 +29,33 @@ public class DocumentService implements IDocumentService, I18n {
 	@Autowired
 	MessageSource message;
 	
-	public DocumentService() {
-		LocaleContextHolder.getLocale();
+	private EnumMap<DocType, String> documentTypeCaptions;
+	
+	@Override
+	public void initI18n() {
+		documentTypeCaptions = new EnumMap<>(DocType.class);
+		for (DocType dt : DocType.values()) {
+			documentTypeCaptions.put(dt, getI18nText(dt.getI18n(), message));
+		}
 	}
 	
 	@Override
 	public List<IDocument> getDocuments(IWorkSet workset) {
-		
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }
 
 class DocumentFilter {
-
 	private String commonTextFilter;
 	private String codeFilter;
 	private String nameFilter;
-	// and some other field filters...
+	
+	private EnumMap<DocType, String> documentTypeCaptions;
 
-	private DocumentFilter() {
-			
-		}
+	public DocumentFilter(EnumMap<DocType, String> types) {
+		this.documentTypeCaptions = types;
+	}
 
 	public String getCommonTextFilter() {
 		return commonTextFilter;
@@ -79,7 +85,6 @@ class DocumentFilter {
 		// only common filter is working now
 		return p -> {
 			boolean result = false;
-			// logger.debug("[filter] shownColumns {}", shownColumns);
 			if (StringUtils.isNoneBlank(commonTextFilter) && Objects.nonNull(shownColumns)) {
 				for (ColumnSettings column : shownColumns) {
 					if (applyColumnFilter(p, column)) {
@@ -105,9 +110,8 @@ class DocumentFilter {
 			result = document.getCode().toLowerCase().startsWith(commonTextFilter);
 			break;
 		case IDocument.FIELD_TYPE:
-			//result = document.getType().toLowerCase().startsWith(commonTextFilter);
+			documentTypeCaptions.get(document.getType()).toLowerCase().startsWith(commonTextFilter);
 			break;
-		
 		default:
 		}
 

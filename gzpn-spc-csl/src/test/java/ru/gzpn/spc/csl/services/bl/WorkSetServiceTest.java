@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
-import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
 
 @RunWith(SpringRunner.class)
@@ -27,7 +27,7 @@ public class WorkSetServiceTest extends WorkSetService {
 	@Autowired
 	IDataUserSettigsService settings;
 	@Autowired 
-	IDataProjectService projetcService;
+	IProjectService projetcService;
 	
 	@Test
 	public void getItemsByNodeEmptyResultTest() {

@@ -15,11 +15,11 @@ import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
 import ru.gzpn.spc.csl.model.utils.Entities;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph;
-import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 
 @Service
 @Transactional
-public class ProjectService implements IDataProjectService {
+public class ProjectService implements IProjectService {
 	public static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 	@Autowired
 	private HProjectRepository hpRepository;

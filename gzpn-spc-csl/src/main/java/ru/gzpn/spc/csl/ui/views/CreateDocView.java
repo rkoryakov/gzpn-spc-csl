@@ -15,10 +15,8 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 
-import ru.gzpn.spc.csl.services.bl.ProjectService;
-import ru.gzpn.spc.csl.services.bl.UserSettigsService;
-import ru.gzpn.spc.csl.services.bl.WorkSetService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
+import ru.gzpn.spc.csl.services.bl.DocumentService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
 import ru.gzpn.spc.csl.ui.createdoc.CreateDocLayout;
@@ -31,29 +29,16 @@ public class CreateDocView extends VerticalLayout implements View {
 	public static final String NAME = "createDocView";
 	public static final Logger logger = LoggerFactory.getLogger(CreateDocView.class);
 	
-	private IDataProjectService projectService;
-	
+	@Autowired
+	private IProjectService projectService;
+	@Autowired
 	private IDataUserSettigsService userSettingsService;
-	
+	@Autowired
 	private IWorkSetService worksetService;
-	
 	@Autowired 
 	private MessageSource messageSource;
-	
 	@Autowired
-	public void setDataProjectService(ProjectService service) {
-		projectService = service;
-	}
-	
-	@Autowired
-	public void setDataUserSettingsService(UserSettigsService service) {
-		userSettingsService = service;
-	}
-	
-	@Autowired
-	public void setWorksetService(WorkSetService service) {
-		worksetService = service;
-	}
+	DocumentService documentService;
 	
 	public CreateDocView() {
 		setMargin(false);

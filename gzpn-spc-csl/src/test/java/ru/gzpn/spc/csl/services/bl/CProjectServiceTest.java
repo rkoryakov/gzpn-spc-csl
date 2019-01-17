@@ -42,13 +42,13 @@ import ru.gzpn.spc.csl.model.repositories.WorkRepository;
 import ru.gzpn.spc.csl.model.repositories.WorkSetRepository;
 import ru.gzpn.spc.csl.model.utils.Entities;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
-import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CProjectServiceTest {
 	@Autowired
-	IDataProjectService service;
+	IProjectService service;
 	@Autowired
 	PhaseRepository phaseRepository;
 	@Autowired

@@ -38,8 +38,8 @@ import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
-import ru.gzpn.spc.csl.services.bl.interfaces.IDataProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
 import ru.gzpn.spc.csl.ui.common.DraggableTree;
 import ru.gzpn.spc.csl.ui.common.I18n;
@@ -76,7 +76,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	
 	private String currentUser;
 	
-	private IDataProjectService projectService;
+	private IProjectService projectService;
 	private IDataUserSettigsService settingsService;
 	private MessageSource messageSource;
 	private CreateDocSettingsJson docSettingsJson;
@@ -100,7 +100,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	private IWorkSetService worksetService;
 	
 	
-	public CreateDocLayout(IDataProjectService projectService, 
+	public CreateDocLayout(IProjectService projectService, 
 							IWorkSetService worksetService, 
 							IDataUserSettigsService settingsService, 
 							MessageSource messageSource) {
@@ -422,14 +422,15 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 class WorkSetDocumentation extends VerticalLayout implements I18n {
 	private static final long serialVersionUID = -7505276213420043371L;
 	
-	private IDataProjectService projectService;
+	private IProjectService projectService;
 	private IDataUserSettigsService dataUserSettigsService;
 	private MessageSource messageSource;
 	private Grid<IDocument> docTree;
+	
 	private DocumentsDataProvider documnentsDataProvider;
 	private CreateDocLayout parent;
 	
-	public WorkSetDocumentation(IDataProjectService projectService, IDataUserSettigsService dataUserSettigsService, MessageSource messageSource) {
+	public WorkSetDocumentation(IProjectService projectService, IDataUserSettigsService dataUserSettigsService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.dataUserSettigsService = dataUserSettigsService;
 		this.messageSource = messageSource;
