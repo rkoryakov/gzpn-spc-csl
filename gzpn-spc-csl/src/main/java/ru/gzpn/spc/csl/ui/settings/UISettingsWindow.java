@@ -1,9 +1,14 @@
 package ru.gzpn.spc.csl.ui.settings;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.springframework.context.MessageSource;
 
+import com.vaadin.event.Action;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -23,6 +28,10 @@ public abstract class UISettingsWindow extends Window implements I18n {
 	public static final String I18N_CANCELBUTTON_CAP = "settings.UISettingsWindow.cancelButton.cap";
 	public static final String I18N_SAVEBUTTON_CAP = "settings.UISettingsWindow.saveButton.cap";
 	
+	// event actions
+	public static final Action SAVE_ACTION = new Action("saveAction");
+	public static final Action CANCEL_ACTION = new Action("cancelAction");
+	
 	protected IUserSettigsService settingsService;
 	protected CreateDocSettingsJson userSettings;
 	protected MessageSource messageSource;
@@ -33,16 +42,25 @@ public abstract class UISettingsWindow extends Window implements I18n {
 
 	protected Button cancelButton;
 	protected Button saveButton;
+
+	private Map<Action, Set<Listener>> listeners;
 	
 	public UISettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
 		this.settingsService = settingsService;
 		this.user = settingsService.getCurrentUser();
 		this.messageSource = messageSource;
 		this.userSettings = settingsService.getUserSettings();
+		initEventActions();
 		
 		createBody();
 		createFooter();
 		refreshUiElements();
+	}
+	
+	protected void initEventActions() {
+		listeners = new HashMap<>();
+		listeners.put(SAVE_ACTION, new HashSet<>());
+		listeners.put(CANCEL_ACTION, new HashSet<>());
 	}
 	
 	public CreateDocSettingsJson getUiSettings() {
@@ -121,11 +139,25 @@ public abstract class UISettingsWindow extends Window implements I18n {
 	}
 
 	public void onCancel() {
-
+		handleAction(CANCEL_ACTION);
 	}
 	
 	public void onSave() {
-
+		handleAction(SAVE_ACTION);
+	}
+	
+	public void handleAction(Action action) {
+		for (Listener listener : listeners.get(action)) {
+			listener.componentEvent(new Event(this));
+		}
+	}
+	
+	public void addOnSaveListener(Listener listener) {
+		listeners.get(SAVE_ACTION).add(listener);
+	}
+	
+	public void addOnCancelListener(Listener listener) {
+		listeners.get(CANCEL_ACTION).add(listener);
 	}
 	
 	@Override

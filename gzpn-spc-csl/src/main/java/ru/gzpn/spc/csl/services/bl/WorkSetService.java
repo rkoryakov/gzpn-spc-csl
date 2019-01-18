@@ -94,7 +94,7 @@ public class WorkSetService implements IWorkSetService {
 	}
 	
 	@Override
-	public Comparator<IWorkSet> sort(List<QuerySortOrder> list) {
+	public Comparator<IWorkSet> getSortComparator(List<QuerySortOrder> list) {
 		return (a, b) -> {
 			int result = 0;
 			for (QuerySortOrder qso : list) {
