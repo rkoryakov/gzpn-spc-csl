@@ -10,7 +10,6 @@ import org.springframework.context.MessageSource;
 
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
-import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.grid.DropMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalSplitPanel;
@@ -20,7 +19,7 @@ import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.components.grid.TreeGridDropTarget;
 
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
-import ru.gzpn.spc.csl.services.bl.interfaces.IDataUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.DraggableTree;
 import ru.gzpn.spc.csl.ui.settings.UISettingsWindow;
 
@@ -37,10 +36,10 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 	private TreeDataProvider<NodeWrapper> treeDataProvider;
 	private TreeData<NodeWrapper> treeData;
 	
-	public CreateDocSettingsWindow(IDataUserSettigsService settingsService, MessageSource messageSource) {
+	public CreateDocSettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
 		super(settingsService, messageSource);
 		this.center();
-		this.setCaption(getI18nText(I18N_WINDOW_CAPTION));
+		this.setCaption(getI18nText(I18N_WINDOW_CAPTION, messageSource));
 		this.setModal(true);
 		this.setWidth(70, Unit.PERCENTAGE);
 		this.setHeight(60, Unit.PERCENTAGE);
@@ -68,7 +67,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 	
 	public Component createProjectTree() {
 		projectTree = new DraggableTree<>();
-		Panel panel = new Panel(getI18nText(I18N_TREE_CAPTION));
+		Panel panel = new Panel(getI18nText(I18N_TREE_CAPTION, messageSource));
 		
 		projectTree.setItemCaptionGenerator(NodeWrapper::getNodeSettingsCaption);
 		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
@@ -181,10 +180,5 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		}
 		
 		this.userSettings.setLeftTreeGroup(result);
-	}
-
-	@Override
-	public String getI18nText(String key) {
-		return messageSource.getMessage(key, null, VaadinSession.getCurrent().getLocale());
 	}
 }

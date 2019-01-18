@@ -6,6 +6,7 @@ import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
 
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
+import ru.gzpn.spc.csl.services.bl.DocumentService.DocumentFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;
 
 @SuppressWarnings("serial")
@@ -16,6 +17,7 @@ public class DocumentsDataProvider extends AbstractBackEndDataProvider<IDocument
 	
 	public DocumentsDataProvider(IDocumentService documentService) {
 		this.documentService = documentService;
+		this.filter = new DocumentFilter(documentService.getDocumentTypeCaptions());
 	}
 	
 	@Override

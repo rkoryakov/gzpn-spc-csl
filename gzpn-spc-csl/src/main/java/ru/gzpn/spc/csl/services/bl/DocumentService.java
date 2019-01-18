@@ -2,6 +2,7 @@ package ru.gzpn.spc.csl.services.bl;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -29,92 +30,92 @@ public class DocumentService implements IDocumentService, I18n {
 	@Autowired
 	MessageSource message;
 	
-	private EnumMap<DocType, String> documentTypeCaptions;
-	
 	@Override
-	public void initI18n() {
-		documentTypeCaptions = new EnumMap<>(DocType.class);
+	public Map<DocType, String> getDocumentTypeCaptions() {
+		EnumMap<DocType, String> documentTypeCaptions = new EnumMap<>(DocType.class);
 		for (DocType dt : DocType.values()) {
 			documentTypeCaptions.put(dt, getI18nText(dt.getI18n(), message));
 		}
+		return documentTypeCaptions;
 	}
 	
 	@Override
 	public List<IDocument> getDocuments(IWorkSet workset) {
-
-		return null;
+		return workset.getDocuments();
 	}
-}
-
-class DocumentFilter {
-	private String commonTextFilter;
-	private String codeFilter;
-	private String nameFilter;
 	
-	private EnumMap<DocType, String> documentTypeCaptions;
+	public static final class DocumentFilter {
+		private String commonTextFilter;
+		private String codeFilter;
+		private String nameFilter;
+		
+		private Map<DocType, String> documentTypeCaptions;
 
-	public DocumentFilter(EnumMap<DocType, String> types) {
-		this.documentTypeCaptions = types;
-	}
-
-	public String getCommonTextFilter() {
-		return commonTextFilter;
-	}
-
-	public void setCommonTextFilter(String commonTextFilter) {
-		this.commonTextFilter = commonTextFilter.toLowerCase();
-	}
-
-	public String getCodeFilter() {
-		return codeFilter;
-	}
-
-	public void setCodeFilter(String codeFilter) {
-		this.codeFilter = codeFilter;
-	}
-
-	public String getNameFilter() {
-		return nameFilter;
-	}
-
-	public void setNameFilter(String nameFilter) {
-		this.nameFilter = nameFilter;
-	}
-
-	public Predicate<IDocument> filter(List<ColumnSettings> shownColumns) {
-		// only common filter is working now
-		return p -> {
-			boolean result = false;
-			if (StringUtils.isNoneBlank(commonTextFilter) && Objects.nonNull(shownColumns)) {
-				for (ColumnSettings column : shownColumns) {
-					if (applyColumnFilter(p, column)) {
-						result = true;
-						break;
-					}
-				}
-			} else {
-				result = true;
-			}
-			return result;
-		};
-	}
-
-	private boolean applyColumnFilter(IDocument document, ColumnSettings column) {
-		boolean result = false;
-
-		switch (column.getEntityFieldName()) {
-		case IDocument.FIELD_NAME:
-			result = document.getName().toLowerCase().startsWith(commonTextFilter);
-			break;
-		case IDocument.FIELD_CODE:
-			result = document.getCode().toLowerCase().startsWith(commonTextFilter);
-			break;
-		case IDocument.FIELD_TYPE:
-			documentTypeCaptions.get(document.getType()).toLowerCase().startsWith(commonTextFilter);
-			break;
-		default:
+		public DocumentFilter(Map<DocType, String> map) {
+			this.documentTypeCaptions = map;
 		}
 
-		return result;
+		public String getCommonTextFilter() {
+			return commonTextFilter;
+		}
+
+		public void setCommonTextFilter(String commonTextFilter) {
+			this.commonTextFilter = commonTextFilter.toLowerCase();
+		}
+
+		public String getCodeFilter() {
+			return codeFilter;
+		}
+
+		public void setCodeFilter(String codeFilter) {
+			this.codeFilter = codeFilter;
+		}
+
+		public String getNameFilter() {
+			return nameFilter;
+		}
+
+		public void setNameFilter(String nameFilter) {
+			this.nameFilter = nameFilter;
+		}
+
+		public Predicate<IDocument> filter(List<ColumnSettings> shownColumns) {
+			// only common filter is working now
+			return p -> {
+				boolean result = false;
+				if (StringUtils.isNoneBlank(commonTextFilter) && Objects.nonNull(shownColumns)) {
+					for (ColumnSettings column : shownColumns) {
+						if (applyColumnFilter(p, column)) {
+							result = true;
+							break;
+						}
+					}
+				} else {
+					result = true;
+				}
+				return result;
+			};
+		}
+
+		private boolean applyColumnFilter(IDocument document, ColumnSettings column) {
+			boolean result = false;
+
+			switch (column.getEntityFieldName()) {
+			case IDocument.FIELD_NAME:
+				result = document.getName().toLowerCase().startsWith(commonTextFilter);
+				break;
+			case IDocument.FIELD_CODE:
+				result = document.getCode().toLowerCase().startsWith(commonTextFilter);
+				break;
+			case IDocument.FIELD_TYPE:
+				documentTypeCaptions.get(document.getType()).toLowerCase().startsWith(commonTextFilter);
+				break;
+			default:
+			}
+
+			return result;
+		}
 	}
 }
+
+
