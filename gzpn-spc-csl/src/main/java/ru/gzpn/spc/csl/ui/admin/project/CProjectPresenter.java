@@ -6,8 +6,11 @@ import java.util.Objects;
 import ru.gzpn.spc.csl.model.CProject;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 
+@SuppressWarnings("serial")
 public class CProjectPresenter extends CProject implements ICProjectPresenter {
 
+	private ICProject cProject;
+	
 	CProjectPresenter(ICProject icProject){
 		this.setId(icProject.getId());
 		this.setName(icProject.getName());
@@ -21,16 +24,30 @@ public class CProjectPresenter extends CProject implements ICProjectPresenter {
 		this.setVersion(icProject.getVersion());
 		this.setPlanObjects(icProject.getPlanObjects());
 		this.setEstimateCalculations(icProject.getEstimateCalculations());
+		this.cProject = icProject;
 	}
 	
+	@Override
+	public ICProject getcProject() {
+		return cProject;
+	}
+	
+	@Override
+	public void setcProject(ICProject cProject) {
+		this.cProject = cProject;
+	}
+
+	@Override
 	public String getCreateDatePresenter() {
 		return DateTimeFormatter.ofPattern("dd/MM/yyyy - hh:mm:ss").format(this.getCreateDate());
 	}
 	
+	@Override
 	public String getChangeDatePresenter() {
 		return DateTimeFormatter.ofPattern("dd/MM/yyyy - hh:mm:ss").format(this.getChangeDate());
 	}
 	
+	@Override
 	public String getStageCaption() {
 		String result = "---";
 		if (Objects.nonNull(getStage())) {
@@ -39,6 +56,7 @@ public class CProjectPresenter extends CProject implements ICProjectPresenter {
 		return result;
 	}
 	
+	@Override
 	public String getPhaseCaption() {
 		String result = "---";
 		if (Objects.nonNull(getPhase())) {
@@ -47,6 +65,7 @@ public class CProjectPresenter extends CProject implements ICProjectPresenter {
 		return result;
 	}
 	
+	@Override
 	public String getMilestoneCaption() {
 		String result = "---";
 		if (Objects.nonNull(getMilestone())) {
@@ -55,6 +74,7 @@ public class CProjectPresenter extends CProject implements ICProjectPresenter {
 		return result;
 	}
 	
+	@Override
 	public String getHProjectCaption() {
 		String result = "---";
 		if (Objects.nonNull(getHproject())) {

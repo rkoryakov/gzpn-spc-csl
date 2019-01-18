@@ -53,11 +53,14 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 		searchProject = createSearchProject();
 		selectTypeProject = createSelectTypeProject();
 		marginForHeader = new MarginInfo(true, false, false, false);
+		
 		headerHorizontal.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT);
 		headerHorizontal.addComponents(searchProject, selectTypeProject);
 		headerHorizontal.setMargin(marginForHeader);
+		
 		resultPage.addComponents(headerHorizontal, gridHeavyProjects, gridCapitalProjects);
 		resultPage.setMargin(false);
+		
 		panel.setSplitPosition(70, Unit.PERCENTAGE);
 		panel.setMaxSplitPosition(70, Unit.PERCENTAGE);
 		panel.setMinSplitPosition(30, Unit.PERCENTAGE);
@@ -73,11 +76,11 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 		filterTextField.setPlaceholder(getI18nText(UsersAndRolesVerticalLayout.I18N_SEARCHFIELD_PLACEHOLDER, messageSource));
 		filterTextField.addValueChangeListener(event -> {
 			if (selectTypeProject.getSelectedItem().get().equals(Entities.HPROJECT)) {
-//				userFilter.setFilter(event.getValue());
-//				userFilter.refreshAll();
+				hpDataProvider.getFilter().setCommonTextFilter(event.getValue());
+				hpDataProvider.refreshAll();
 			} else if (selectTypeProject.getSelectedItem().get().equals(Entities.CPROJECT)) {
-//				groupFilter.setFilter(event.getValue());
-//				groupFilter.refreshAll();
+				cpDataProvider.getFilter().setCommonTextFilter(event.getValue());
+				cpDataProvider.refreshAll();
 			}
 		});
 		return filterTextField;
@@ -114,12 +117,12 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 	private Grid<IHProjectPresenter> createGridHeavyProjects() {
 		Grid<IHProjectPresenter> grid = new Grid<>();
 		grid.setSelectionMode(SelectionMode.MULTI);
-		grid.addColumn(IHProjectPresenter::getId).setCaption("ID");
-		grid.addColumn(IHProjectPresenter::getName).setCaption("Name");
-		grid.addColumn(IHProjectPresenter::getCode).setCaption("Code");
-		grid.addColumn(IHProjectPresenter::getCreateDatePresenter).setCaption("Create Date");
-		grid.addColumn(IHProjectPresenter::getChangeDatePresenter).setCaption("Change Date");
-		grid.addColumn(IHProjectPresenter::getVersion).setCaption("Version");
+		grid.addColumn(IHProjectPresenter::getId).setCaption("ID").setId(IHProjectPresenter.FIELD_ID).setSortable(true);
+		grid.addColumn(IHProjectPresenter::getName).setCaption("Name").setId(IHProjectPresenter.FIELD_NAME).setSortable(true);
+		grid.addColumn(IHProjectPresenter::getCode).setCaption("Code").setId(IHProjectPresenter.FIELD_CODE).setSortable(true);
+		grid.addColumn(IHProjectPresenter::getCreateDatePresenter).setCaption("Create Date").setId(IHProjectPresenter.FIELD_CREATE_DATE).setSortable(true);
+		grid.addColumn(IHProjectPresenter::getChangeDatePresenter).setCaption("Change Date").setId(IHProjectPresenter.FIELD_CHANGE_DATE).setSortable(true);
+		grid.addColumn(IHProjectPresenter::getVersion).setCaption("Version").setId(IHProjectPresenter.FIELD_VERSION).setSortable(true);
 		grid.setColumnReorderingAllowed(true);
 		grid.setSizeFull();
 		grid.setHeightMode(HeightMode.ROW);
@@ -131,16 +134,16 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 	private Grid<ICProjectPresenter> createGridCapitalProjects() {
 		Grid<ICProjectPresenter> grid = new Grid<>();
 		grid.setSelectionMode(SelectionMode.MULTI);
-		grid.addColumn(ICProjectPresenter::getId).setCaption("ID");
-		grid.addColumn(ICProjectPresenter::getName).setCaption("Name");
-		grid.addColumn(ICProjectPresenter::getCode).setCaption("Code");
-		grid.addColumn(ICProjectPresenter::getStageCaption).setCaption("Stage");
-		grid.addColumn(ICProjectPresenter::getPhaseCaption).setCaption("Phase");
-		grid.addColumn(ICProjectPresenter::getHProjectCaption).setCaption("Heavy Project");
-		grid.addColumn(ICProjectPresenter::getMilestoneCaption).setCaption("Milestone");
-		grid.addColumn(ICProjectPresenter::getCreateDatePresenter).setCaption("Create Date");
-		grid.addColumn(ICProjectPresenter::getChangeDatePresenter).setCaption("Change Date");
-		grid.addColumn(ICProjectPresenter::getVersion).setCaption("Version");
+		grid.addColumn(ICProjectPresenter::getId).setCaption("ID").setId(ICProjectPresenter.FIELD_ID).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getName).setCaption("Name").setId(ICProjectPresenter.FIELD_NAME).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getCode).setCaption("Code").setId(ICProjectPresenter.FIELD_CODE).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getStageCaption).setCaption("Stage").setId(ICProjectPresenter.FILED_STAGE).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getPhaseCaption).setCaption("Phase").setId(ICProjectPresenter.FILED_PHASE).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getHProjectCaption).setCaption("Heavy Project").setId(ICProjectPresenter.FILED_HPROJECT).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getMilestoneCaption).setCaption("Milestone").setId(ICProjectPresenter.FILED_MILESTONE).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getCreateDatePresenter).setCaption("Create Date").setId(ICProjectPresenter.FIELD_CREATE_DATE).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getChangeDatePresenter).setCaption("Change Date").setId(ICProjectPresenter.FIELD_CHANGE_DATE).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getVersion).setCaption("Version").setId(ICProjectPresenter.FIELD_VERSION).setSortable(true);
 		grid.setColumnReorderingAllowed(true);
 		grid.setSizeFull();
 		grid.setHeightMode(HeightMode.ROW);
