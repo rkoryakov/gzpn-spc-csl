@@ -10,4 +10,5 @@ import ru.gzpn.spc.csl.model.interfaces.IWork;
 @Repository
 public interface DocumentRepository extends BaseRepository<Document> {
 	public List<Document> findDocumentsByWork(IWork work);
+	public long getCountByWorkId(long id);
 }

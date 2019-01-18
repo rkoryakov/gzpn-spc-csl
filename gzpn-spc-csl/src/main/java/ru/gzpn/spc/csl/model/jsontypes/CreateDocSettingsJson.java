@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import ru.gzpn.spc.csl.model.WorkSet;
+import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 
@@ -33,6 +34,7 @@ public class CreateDocSettingsJson implements Serializable {
 	
 	// null if there are no header groups
 	private List<ColumnHeaderGroup> leftColumnHeaders;
+	private List<ColumnHeaderGroup> rightColumnHeaders;
 	
 	public boolean hasLeftColumnHeaders() {
 		return leftColumnHeaders != null && !leftColumnHeaders.isEmpty();
@@ -40,22 +42,22 @@ public class CreateDocSettingsJson implements Serializable {
 	
 	public List<ColumnHeaderGroup> getLeftColumnHeaders() {
 		if (Objects.isNull(leftColumnHeaders)) {
-			leftColumnHeaders = getDefaultColumnHeaderGroups();
+			leftColumnHeaders = getLeftDefaultColumnHeaderGroups();
 		}
-
 		return leftColumnHeaders;
 	}
 	
-	public List<ColumnHeaderGroup> getDefaultColumnHeaderGroups() {
+	@JsonIgnore
+	public List<ColumnHeaderGroup> getLeftDefaultColumnHeaderGroups() {
 		
 		List<ColumnHeaderGroup> result = new ArrayList<>();
-//		List<ColumnHeaderGroup> subGroups = new ArrayList<>();
+		List<ColumnHeaderGroup> subGroups = new ArrayList<>();
 //		ColumnHeaderGroup root0 = new ColumnHeaderGroup("Root group 0");
 //		ColumnHeaderGroup root1 = new ColumnHeaderGroup("Root group 1");
 //		ColumnHeaderGroup root2 = new ColumnHeaderGroup("Root group 2");
 //		
-//		subGroups.add(new ColumnHeaderGroup("Group 1").addColumn(lefResultColumns.get(1)).addColumn(lefResultColumns.get(2)));
-//		subGroups.add(new ColumnHeaderGroup("Group 2").addColumn(lefResultColumns.get(3)).addColumn(lefResultColumns.get(4)));
+//		subGroups.add(new ColumnHeaderGroup("Group 1").addColumn(leftResultColumns.get(1)).addColumn(leftResultColumns.get(2)));
+//		subGroups.add(new ColumnHeaderGroup("Group 2").addColumn(leftResultColumns.get(3)).addColumn(leftResultColumns.get(4)));
 //		
 //		root2.setChildren(subGroups);
 //		root1.setChildren(Arrays.asList(root2));
@@ -65,7 +67,41 @@ public class CreateDocSettingsJson implements Serializable {
 		return result;
 	}
 	
+	public void setLeftColumnHeaders(List<ColumnHeaderGroup> leftColumnHeaders) {
+		this.leftColumnHeaders = leftColumnHeaders;
+	}
 	 
+	public List<ColumnHeaderGroup> getRightColumnHeaders() {
+		if (Objects.isNull(rightColumnHeaders)) {
+			rightColumnHeaders = getRightDefaultColumnHeaderGroups();
+		}
+		return rightColumnHeaders;
+	}
+	
+	@JsonIgnore
+	public List<ColumnHeaderGroup> getRightDefaultColumnHeaderGroups() {
+		
+		List<ColumnHeaderGroup> result = new ArrayList<>();
+		List<ColumnHeaderGroup> subGroups = new ArrayList<>();
+//		ColumnHeaderGroup root0 = new ColumnHeaderGroup("Root group 0");
+//		ColumnHeaderGroup root1 = new ColumnHeaderGroup("Root group 1");
+//		ColumnHeaderGroup root2 = new ColumnHeaderGroup("Root group 2");
+//		
+//		subGroups.add(new ColumnHeaderGroup("Group 1").addColumn(leftResultColumns.get(1)).addColumn(leftResultColumns.get(2)));
+//		subGroups.add(new ColumnHeaderGroup("Group 2").addColumn(leftResultColumns.get(3)).addColumn(leftResultColumns.get(4)));
+//		
+//		root2.setChildren(subGroups);
+//		root1.setChildren(Arrays.asList(root2));
+//		root0.setChildren(Arrays.asList(root1));
+//		result.add(root0);
+		
+		return result;
+	}
+	
+	public void setRightColumnHeaders(List<ColumnHeaderGroup> rightColumnHeaders) {
+		this.rightColumnHeaders = rightColumnHeaders;
+	}
+	
 	public NodeWrapper getLeftTreeGroup() {
 		if (leftTreeGroup == null) {
 			leftTreeGroup = getLeftDefaultNodesHierarchy();
@@ -148,8 +184,21 @@ public class CreateDocSettingsJson implements Serializable {
 	
 	@JsonIgnore
 	public List<ColumnSettings> getRightDefaultDocumentsColumns() {
-		// TODO Auto-generated method stub
-		return null;
+		List<ColumnSettings> result = new ArrayList<>();
+		String entityName = WorkSet.class.getSimpleName();
+		
+		result.add(new ColumnSettings(entityName, IDocument.FIELD_ID, null, false, 0));
+		result.add(new ColumnSettings(entityName, IDocument.FIELD_NAME, null, true, 1));
+		result.add(new ColumnSettings(entityName, IDocument.FIELD_CODE, null, true, 2));
+		result.add(new ColumnSettings(entityName, IDocument.FIELD_TYPE, null, true, 3));
+		result.add(new ColumnSettings(entityName, IDocument.FIELD_WORK, null, true, 4));
+		
+		result.add(new ColumnSettings(entityName, IDocument.FIELD_WORKSET, null, false, 5));
+		result.add(new ColumnSettings(entityName, IDocument.FIELD_CREATE_DATE, null, false, 6));
+		result.add(new ColumnSettings(entityName, IDocument.FIELD_CHANGE_DATE, null, false, 7));
+		result.add(new ColumnSettings(entityName, IDocument.FIELD_VERSION, null, false, 8));
+		
+		return result;
 	}
 
 	public Integer getMainSplitPosition() {
@@ -184,7 +233,4 @@ public class CreateDocSettingsJson implements Serializable {
 		this.leftSplitPosition = leftSplitPosition;
 	}
 
-	public void setLeftColumnHeaders(List<ColumnHeaderGroup> leftColumnHeaders) {
-		this.leftColumnHeaders = leftColumnHeaders;
-	}
 }

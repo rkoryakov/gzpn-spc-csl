@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.services.bl;
 
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.vaadin.data.provider.QuerySortOrder;
+import com.vaadin.shared.data.sort.SortDirection;
 
 import ru.gzpn.spc.csl.model.enums.DocType;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
@@ -42,6 +46,48 @@ public class DocumentService implements IDocumentService, I18n {
 	@Override
 	public List<IDocument> getDocuments(IWorkSet workset) {
 		return workset.getDocuments();
+	}
+	
+	@Override
+	public long getDocumentsCount(IWorkSet workset) {
+		return documentRepository.getCountByWorkId(workset.getId());
+	}
+	
+	@Override
+	public Comparator<IDocument> getSortComparator(List<QuerySortOrder> list) {
+		return (a, b) -> {
+			int result = 0;
+			for (QuerySortOrder qso : list) {
+				switch (qso.getSorted()) {		
+				case IDocument.FIELD_NAME:
+					result = a.getName().compareTo(b.getName());
+					break;
+				case IDocument.FIELD_CODE:
+					result = a.getCode().compareTo(b.getCode());
+					break;
+				case IDocument.FIELD_TYPE:
+					result = a.getType().compareTo(b.getType());
+					break;
+				case IDocument.FIELD_ID:
+					result = a.getId().compareTo(b.getId());
+					break;
+				case IDocument.FIELD_VERSION:
+					result = a.getVersion().compareTo(b.getVersion());
+					break;
+				case IDocument.FIELD_CREATE_DATE:
+					result = a.getCreateDate().compareTo(b.getCreateDate());
+					break;
+				case IDocument.FIELD_CHANGE_DATE:
+					result = a.getChangeDate().compareTo(b.getChangeDate());
+					break;
+					default:
+				}
+				if (qso.getDirection() == SortDirection.DESCENDING) {
+					result *= -1;
+				}
+			}
+			return result;
+		};
 	}
 	
 	public static final class DocumentFilter {
@@ -79,7 +125,7 @@ public class DocumentService implements IDocumentService, I18n {
 			this.nameFilter = nameFilter;
 		}
 
-		public Predicate<IDocument> filter(List<ColumnSettings> shownColumns) {
+		public Predicate<IDocument> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// only common filter is working now
 			return p -> {
 				boolean result = false;
