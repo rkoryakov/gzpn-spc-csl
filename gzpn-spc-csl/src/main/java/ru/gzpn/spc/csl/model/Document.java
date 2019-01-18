@@ -85,11 +85,6 @@ public class Document extends BaseEntity implements IDocument, Serializable {
 	}
 	
 	@Override
-	public void setLocalEstimate(List<ILocalEstimate> localEstimates) {
-		this.localEstimates = localEstimates;
-	}
-	
-	@Override
 	public IWork getWork() {
 		return work;
 	}

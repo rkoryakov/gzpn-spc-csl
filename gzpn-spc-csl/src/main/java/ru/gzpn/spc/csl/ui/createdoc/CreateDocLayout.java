@@ -18,6 +18,7 @@ import com.vaadin.data.ValueProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
+import com.vaadin.shared.Registration;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -32,7 +33,6 @@ import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
-import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
@@ -102,6 +102,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	private Button delWorksetButton;
 	private Button downloadWorksetButton;
 	private Panel projectTreePanel;
+	private Registration preojectTreeItemSelectRegistration;
 	
 	public CreateDocLayout(ICreateDocService createDocService) {
 		this.projectService = createDocService.getProjectService();
@@ -163,8 +164,8 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	}
 	
 	public Component createProjectTree() {
-		projectTree = new DraggableTree<>();
 		projectTreePanel = new Panel(getI18nText(I18N_TREE_CAPTION, messageSource));
+		projectTree = new DraggableTree<>();
 		refreshProjectTree();
 		projectTreePanel.setContent(projectTree);
 		projectTreePanel.setSizeFull();
@@ -181,7 +182,10 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
 		projectTreePanel.setSizeFull();
 		projectTree.setHeight(WORKSET_GRID_ROW_HEIGHT * WORKSET_GRID_ROWS + HEAD_ROW_HEIGHT - WORKSET_GRID_ROW_HEIGHT, Unit.PIXELS);
-		projectTree.addSelectionListener(listener -> {
+		if (Objects.nonNull(preojectTreeItemSelectRegistration)) {
+			preojectTreeItemSelectRegistration.remove();
+		}
+		preojectTreeItemSelectRegistration = projectTree.addSelectionListener(listener -> {
 			Optional<NodeWrapper> selected = listener.getFirstSelectedItem();
 			if (selected.isPresent()) {
 				worksetDataProvider.setParentNode(selected.get());
@@ -197,7 +201,6 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	}
 
 	public void refreshWorksetGrid() {
-		worksetGrid.removeAllColumns();
 		worksetDataProvider = new WorksetDataProvider(worksetService);
 		CreateDocSettingsJson userSettings = settingsService.getUserSettings();
 		List<ColumnSettings> columnSettings = userSettings.getLeftResultColumns();
@@ -205,6 +208,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		columnSettings.sort((cs1, cs2) -> 
 			Integer.compare(cs1.getOrderIndex(), cs2.getOrderIndex())
 		);
+		worksetGrid.removeAllColumns();
 		columnSettings.forEach(this::addWorksetGridColumn);
 		worksetGrid.setSizeFull();
 		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS);
@@ -213,51 +217,62 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		worksetGrid.setDataProvider(worksetDataProvider);
 		// test header groups
 		userSettings.getLeftColumnHeaders();
-		addWorksetHeaderColumns(userSettings);
+		createWorksetHeaderColumns(userSettings);
 	}
 	
-	public void addWorksetHeaderColumns(CreateDocSettingsJson userSettings) {
-		final String headStyle = "v-grid-header-align-left";
+	public void createWorksetHeaderColumns(CreateDocSettingsJson userSettings) {
 		if (userSettings.hasLeftColumnHeaders()) {
-			List<ColumnHeaderGroup> groups = userSettings.getLeftColumnHeaders();
-			Deque<List<ColumnHeaderGroup>> childGroups = new LinkedList<>();
-			childGroups.push(groups);
-		
-			HeaderRow headerRow = worksetGrid.prependHeaderRow();
-			headerRow.setStyleName(headStyle);
-			
-			while (!childGroups.isEmpty()) {
-				List<ColumnHeaderGroup> list = childGroups.pop();
-				Iterator<ColumnHeaderGroup> it = list.iterator();
-				
-				while (it.hasNext()) {
-					ColumnHeaderGroup g = it.next();
-
-					if (g.hasChildrenGroups()) {
-						HeaderRow subRow = worksetGrid.prependHeaderRow();
-						subRow.setStyleName(headStyle);
-						childGroups.push(g.getChildren());
-						HeaderCell groupCell = subRow.join(getWorksetColumnIds(g.getChildren()));
-						groupCell.setText(g.getCaption());
-						break;
-					
-					} else if (g.hasColumns()) {
-						
-							HeaderCell groupCell = headerRow.join(g.getColumns().stream().map(column -> 
-									column.getEntityFieldName()
-										.substring(IWorkSet.ENTITYNAME_DOT.length()))
-											.toArray(String[]::new));
-							
-							groupCell.setText(g.getCaption());
-							childGroups.pollFirst();
-					}
-				}
-			}
+			refreshColumnHeaderGroups(userSettings.getLeftColumnHeaders());
 		}
-		
 		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS - worksetGrid.getHeaderRowCount() + 1);
 	}
 
+	public void refreshColumnHeaderGroups(List<ColumnHeaderGroup> groups) {
+		final String headStyle = "v-grid-header-align-left";
+		Deque<List<ColumnHeaderGroup>> childGroups = new LinkedList<>();
+		childGroups.push(groups);
+		removePrepandedHeaderRows();
+		
+		HeaderRow headerRow = worksetGrid.prependHeaderRow();
+		headerRow.setStyleName(headStyle);
+
+		while (!childGroups.isEmpty()) {
+			List<ColumnHeaderGroup> list = childGroups.pop();
+			Iterator<ColumnHeaderGroup> it = list.iterator();
+			
+			while (it.hasNext()) {
+				ColumnHeaderGroup g = it.next();
+
+				if (g.hasChildrenGroups()) {
+					HeaderRow subRow = worksetGrid.prependHeaderRow();
+					subRow.setStyleName(headStyle);
+					childGroups.push(g.getChildren());
+					HeaderCell groupCell = subRow.join(getWorksetColumnIds(g.getChildren()));
+					groupCell.setText(g.getCaption());
+					break;
+				
+				} else if (g.hasColumns()) {
+					
+						HeaderCell groupCell = headerRow.join(g.getColumns().stream().map(column -> 
+								column.getEntityFieldName())
+										.toArray(String[]::new));
+						
+						groupCell.setText(g.getCaption());
+						childGroups.pollFirst();
+				}
+			}
+		}
+	}
+	
+	public void removePrepandedHeaderRows() {
+		int count = worksetGrid.getHeaderRowCount();
+		if (count > 1) {
+			for (int i = 0; i < count - 1; i ++) {
+				worksetGrid.removeHeaderRow(0);
+			}
+		}
+	}
+	
 	public String[] getWorksetColumnIds(List<ColumnHeaderGroup> groups) {
 		Deque<List<ColumnHeaderGroup>> childGroups = new LinkedList<>();
 		childGroups.push(groups);
@@ -275,8 +290,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 					
 				} else if (g.hasColumns()) {
 					columnIds.addAll(g.getColumns().stream().map(c -> 
-								c.getEntityFieldName()
-									.substring(IWorkSet.ENTITYNAME_DOT.length())).collect(Collectors.toList()));
+								c.getEntityFieldName()).collect(Collectors.toList()));
 				}
 			}
 		}
@@ -363,7 +377,6 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		worksetFilterField.addValueChangeListener(e -> {
 			worksetDataProvider.getFilter().setCommonTextFilter(e.getValue());
 			worksetDataProvider.refreshAll();
-			logger.debug("[worksetFilterField.ValueChangeListener] {}", e.getValue());
 		});
 		return searchComp;
 	}
@@ -400,9 +413,9 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		userLayoutSettings.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC, messageSource));
 		userLayoutSettings.addClickListener(event -> {
 			CreateDocSettingsWindow settingsWindow = new CreateDocSettingsWindow(settingsService, messageSource);
-			settingsWindow.addCloseListener(closeEvent -> {
-				refreshUiElements();
-			});
+			settingsWindow.addOnSaveListener(closeEvent -> 
+				refreshUiElements()
+			);
 			getUI().getUI().addWindow(settingsWindow);
 		});
 		return userLayoutSettings;
@@ -429,7 +442,7 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 	private MessageSource messageSource;
 	private DocumentService documentService;
 	
-	private Grid<IDocument> documentsGrid;	
+	private Grid<IDocumentPresenter> documentsGrid;	
 	private DocumentsDataProvider documnentsDataProvider;
 	private CreateDocLayout parent;
 	
@@ -456,12 +469,11 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 
 	public Component createDocumentGrid() {
 		documentsGrid = new Grid<>();
-		refreshDocumentGrid();
+//		refreshDocumentGrid(); TODO:
 		return documentsGrid;
 	}
 
-	private void refreshDocumentGrid() {
-		
+//	private void refreshDocumentGrid() {
 //		documentsGrid.removeAllColumns();
 //		documnentsDataProvider = new DocumentsDataProvider(documentService);
 //		CreateDocSettingsJson userSettings = settingsService.getUserSettings();
@@ -474,10 +486,51 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 //		documentsGrid.setSizeFull();
 //		documentsGrid.setHeightByRows(DOCUMENT_GRID_ROWS);
 //		documentsGrid.setColumnReorderingAllowed(true);
-//		documentsGrid.setShownColumns(columnSettings);
+//		documnentsDataProvider.setShownColumns(columnSettings);
 //		documentsGrid.setDataProvider(documnentsDataProvider);
 //		// test header groups
 //		userSettings.getLeftColumnHeaders();
-//		addWorksetHeaderColumns(userSettings);
-	}
+//		addDocumentHeaderColumns(userSettings);
+//	}
+	
+//	public void addDocumentGridColumn(ColumnSettings settings) {
+//		switch (settings.getEntityFieldName()) {		
+//		case IWorkSet.FIELD_NAME:
+//			addWorksetGridColumn(settings, IDocumentPresenter::getName, I18N_DOCUMENT_COLUMN_NAME);
+//			break;
+//		case IWorkSet.FIELD_CODE:
+//			addWorksetGridColumn(settings, IDocumentPresenter::getCode, I18N_DOCUMENT_COLUMN_CODE);
+//			break;
+//		case IWorkSet.FIELD_PIR:
+//			addWorksetGridColumn(settings, IDocumentPresenter::getPirCaption, I18N_DOCUMENT_);
+//			break;
+//		case IWorkSet.FIELD_SMR:
+//			addWorksetGridColumn(settings, IDocumentPresenter::getSmrCaption, I18N_DOCUMENT_);
+//			break;
+//		case IWorkSet.FIELD_PLAN_OBJECT:
+//			addWorksetGridColumn(settings, IDocumentPresenter::getPlanObject, I18N_DOCUMENT);
+//			break;
+//		case IWorkSet.FIELD_ID:
+//			addWorksetGridColumn(settings, IDocumentPresenter::getId, I18N_DOCUMENT_COLUMN_ID);
+//			break;
+//		case IWorkSet.FIELD_VERSION:
+//			addWorksetGridColumn(settings, IDocumentPresenter::getVersion, I18N_DOCUMENT_COLUMN_VERSION);
+//			break;
+//		case IWorkSet.FIELD_CREATE_DATE:
+//			addWorksetGridColumn(settings, IDocumentPresenter::getCreateDate, I18N_DOCUMENT_COLUMN_CREATEDATE);
+//			break;
+//		case IWorkSet.FIELD_CHANGE_DATE:
+//			addWorksetGridColumn(settings, IDocumentPresenter::getChangeDate, I18N_DOCUMENT_COLUMN_CHANGEDATE);
+//			break;
+//			default:
+//		}
+//	}
+//	
+//	public void addDocumentHeaderColumns(CreateDocSettingsJson userSettings) {
+//		if (userSettings.hasLeftColumnHeaders()) {
+//			refreshColumnHeaderGroups(userSettings.getLeftColumnHeaders());
+//		}
+//		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS - worksetGrid.getHeaderRowCount() + 1);
+//	}
+	
 }

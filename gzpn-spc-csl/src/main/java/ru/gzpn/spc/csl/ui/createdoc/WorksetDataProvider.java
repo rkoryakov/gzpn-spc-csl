@@ -24,7 +24,7 @@ public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSet, V
 	private WorkSetFilter filter;
 	/* The selected project item by which we are going to fetch WorkSets */
 	private NodeWrapper parentNode;
-	List<ColumnSettings> shownColumns;
+	private List<ColumnSettings> shownColumns;
 	
 	WorksetDataProvider(IWorkSetService service) {
 		this.service = service;

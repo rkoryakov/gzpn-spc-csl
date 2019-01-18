@@ -7,8 +7,8 @@ public interface IWorkSet extends IBaseEntity {
 	
 	public static final String FIELD_NAME = ENTITYNAME_DOT + "name";
 	public static final String FIELD_CODE = ENTITYNAME_DOT + "code";
-	public static final String FIELD_PIR = ENTITYNAME_DOT + "pir.code";
-	public static final String FIELD_SMR = ENTITYNAME_DOT + "smr.code";
+	public static final String FIELD_PIR = ENTITYNAME_DOT + "pir";
+	public static final String FIELD_SMR = ENTITYNAME_DOT + "smr";
 	public static final String FIELD_PLAN_OBJECT = ENTITYNAME_DOT + "planObject";
 	/* Overrode fields */
 	public static final String FIELD_ID = ENTITYNAME_DOT + IBaseEntity.FIELD_ID;

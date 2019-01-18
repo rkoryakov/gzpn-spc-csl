@@ -1,19 +1,24 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
 
-import ru.gzpn.spc.csl.model.interfaces.IDocument;
+import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
+import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.services.bl.DocumentService.DocumentFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;
 
 @SuppressWarnings("serial")
-public class DocumentsDataProvider extends AbstractBackEndDataProvider<IDocument, Void> {
+public class DocumentsDataProvider extends AbstractBackEndDataProvider<IDocumentPresenter, Void> {
 
 	private IDocumentService documentService;
 	private DocumentFilter filter;
+	private List<ColumnSettings> shownColumns;
+	private IWorkSet parentWorkSet;
 	
 	public DocumentsDataProvider(IDocumentService documentService) {
 		this.documentService = documentService;
@@ -21,15 +26,45 @@ public class DocumentsDataProvider extends AbstractBackEndDataProvider<IDocument
 	}
 	
 	@Override
-	protected Stream<IDocument> fetchFromBackEnd(Query<IDocument, Void> query) {
-		// TODO Auto-generated method stub
-		return null;
+	protected Stream<IDocumentPresenter> fetchFromBackEnd(Query<IDocumentPresenter, Void> query) {
+		Stream<IDocumentPresenter> result = Stream.empty();
+		if (!Objects.isNull(parentWorkSet)) { 
+			result = documentService.getDocuments(parentWorkSet).stream().map(
+								item -> (IDocumentPresenter) new DocumentPresenter(item)
+							).filter(getFilter().getFilterPredicate(shownColumns))
+								.sorted(documentService.getSortComparator(query.getSortOrders()));
+		}
+		return result;
 	}
 
 	@Override
-	protected int sizeInBackEnd(Query<IDocument, Void> query) {
-		// TODO Auto-generated method stub
-		return 0;
+	protected int sizeInBackEnd(Query<IDocumentPresenter, Void> query) {
+		return (int)documentService.getDocuments(parentWorkSet).stream().map(
+					item -> (IDocumentPresenter) new DocumentPresenter(item)
+					).filter(getFilter().getFilterPredicate(shownColumns)).count();
+	}
+	
+	public DocumentFilter getFilter() {
+		return filter;
 	}
 
+	public void setFilter(DocumentFilter filter) {
+		this.filter = filter;
+	}
+
+	public List<ColumnSettings> getShownColumns() {
+		return shownColumns;
+	}
+
+	public void setShownColumns(List<ColumnSettings> shownColumns) {
+		this.shownColumns = shownColumns;
+	}
+
+	public IWorkSet getParentWorkSet() {
+		return parentWorkSet;
+	}
+
+	public void setParentWorkSet(IWorkSet parentWorkSet) {
+		this.parentWorkSet = parentWorkSet;
+	}
 }
