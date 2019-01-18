@@ -21,5 +21,5 @@ public interface IWorkSetService {
 	 * Get items by selected NodeWrapper. It might be a Stage, CProject or PlanObject
 	 */
 	public Stream<IWorkSet> getItemsByNode(NodeWrapper node, int offset, int limit);
-	public Comparator<IWorkSet> sort(List<QuerySortOrder> list);
+	public Comparator<IWorkSet> getSortComparator(List<QuerySortOrder> list);
 }

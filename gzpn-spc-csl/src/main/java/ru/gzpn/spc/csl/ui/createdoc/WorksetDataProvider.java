@@ -1,6 +1,5 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -10,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
-import com.vaadin.data.provider.QuerySortOrder;
 
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
@@ -40,7 +38,8 @@ public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSet, V
 		if (!Objects.isNull(parentNode)) {
 			result = service
 						.getItemsByNode(parentNode, query.getOffset(), query.getLimit())
-							.filter(getFilter().filter(shownColumns)).sorted(getSort(query.getSortOrders()));
+							.filter(getFilter().filter(shownColumns))
+								.sorted(service.getSortComparator(query.getSortOrders()));
 		}
 		return result;
 	}
@@ -61,9 +60,6 @@ public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSet, V
 		return this.filter;
 	}
 	
-	public Comparator<IWorkSet> getSort(List<QuerySortOrder> orders) {
-		return service.sort(orders);
-	}
 	/**
 	 * Use this setter in the UI to set the selected base item by which 
 	 * the WorkSets will be fetched

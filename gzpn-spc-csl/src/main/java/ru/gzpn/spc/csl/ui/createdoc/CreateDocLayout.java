@@ -128,21 +128,21 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		setSecondComponent(createRightLayout());
 	}
 
-	private void onMainSplitPositionChange(SplitPositionChangeEvent event) {
+	public void onMainSplitPositionChange(SplitPositionChangeEvent event) {
 		docSettingsJson.setMainSplitPosition((int)event.getSplitPosition());
 		saveUserSettings();
 	}
 	
-	private void onLeftSplitPositionChange(SplitPositionChangeEvent event) {
+	public void onLeftSplitPositionChange(SplitPositionChangeEvent event) {
 		docSettingsJson.setLeftSplitPosition((int)event.getSplitPosition());
 		saveUserSettings();
 	}
 	
-	private void saveUserSettings() {
+	public void saveUserSettings() {
 		settingsService.saveCreateDocSettings(this.currentUser, docSettingsJson);
 	}
 
-	private Component createLeftLayout() {
+	public Component createLeftLayout() {
 		leftLayout = new VerticalLayout();
 		leftLayout.setMargin(false);
 		leftLayout.setSpacing(false);
@@ -162,7 +162,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		return leftLayout;
 	}
 	
-	private Component createProjectTree() {
+	public Component createProjectTree() {
 		projectTree = new DraggableTree<>();
 		projectTreePanel = new Panel(getI18nText(I18N_TREE_CAPTION, messageSource));
 		refreshProjectTree();
@@ -171,7 +171,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		return projectTreePanel;
 	}
 	
-	private void refreshProjectTree() {
+	public void refreshProjectTree() {
 		docSettingsJson = settingsService.getUserSettings();
 		NodeWrapper treeSettings = docSettingsJson.getLeftTreeGroup();
 		projectTreeDataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
@@ -190,7 +190,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		});
 	}
 	
-	private Component createWorksetGrid() {
+	public Component createWorksetGrid() {
 		worksetGrid = new Grid<>();
 		refreshWorksetGrid();
 		return worksetGrid;
@@ -216,7 +216,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		addWorksetHeaderColumns(userSettings);
 	}
 	
-	private void addWorksetHeaderColumns(CreateDocSettingsJson userSettings) {
+	public void addWorksetHeaderColumns(CreateDocSettingsJson userSettings) {
 		final String headStyle = "v-grid-header-align-left";
 		if (userSettings.hasLeftColumnHeaders()) {
 			List<ColumnHeaderGroup> groups = userSettings.getLeftColumnHeaders();
@@ -258,7 +258,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS - worksetGrid.getHeaderRowCount() + 1);
 	}
 
-	private String[] getWorksetColumnIds(List<ColumnHeaderGroup> groups) {
+	public String[] getWorksetColumnIds(List<ColumnHeaderGroup> groups) {
 		Deque<List<ColumnHeaderGroup>> childGroups = new LinkedList<>();
 		childGroups.push(groups);
 		Set<String> columnIds = new HashSet<>();
@@ -284,7 +284,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		return columnIds.toArray(new String[0]);
 	}
 
-	private void addWorksetGridColumn(ColumnSettings settings) {
+	public void addWorksetGridColumn(ColumnSettings settings) {
 		switch (settings.getEntityFieldName()) {		
 		case IWorkSet.FIELD_NAME:
 			addWorksetGridColumn(settings, IWorkSet::getName, I18N_WORKSET_COLUMN_NAME);
@@ -317,7 +317,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		}
 	}
 	
-	private <T> void addWorksetGridColumn(ColumnSettings settings, ValueProvider<IWorkSet, T> provider, String i18nCaption) {
+	public <T> void addWorksetGridColumn(ColumnSettings settings, ValueProvider<IWorkSet, T> provider, String i18nCaption) {
 		Column<IWorkSet, T> column = worksetGrid.addColumn(provider);
 		column.setSortProperty(settings.getEntityFieldName());
 		column.setSortable(true);
@@ -337,7 +337,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		column.setId(settings.getEntityFieldName());
 	}
 	
-	private Component createLeftHeadFeautures() {
+	public Component createLeftHeadFeautures() {
 		AbsoluteLayout layout = new AbsoluteLayout();
 		HorizontalLayout horizontalLayout = new HorizontalLayout();
 		layout.setStyleName("gzpn-head");
@@ -351,7 +351,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		return layout;
 	}
 
-	private Component createWorksetFilter() {
+	public Component createWorksetFilter() {
 		worksetFilterField = new TextField();
 		worksetFilterField.setWidth(200.0f, Unit.PIXELS);
 		worksetFilterSettingsButton = new Button();
@@ -368,8 +368,8 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		return searchComp;
 	}
 
-	private Component createWorksetButtons() {
-		JoinedLayout<Button, Button> bottons = new JoinedLayout<>();
+	public Component createWorksetButtons() {
+		JoinedLayout<Button, Button> buttons = new JoinedLayout<>();
 		addWorksetButton = new Button(VaadinIcons.PLUS);
 		delWorksetButton = new Button(VaadinIcons.MINUS);
 		addWorksetButton.setDescription(getI18nText(I18N_ADDWORKSETBUTTON_DESC, messageSource));
@@ -377,13 +377,13 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		addWorksetButton.setEnabled(false);
 		delWorksetButton.setEnabled(false);
 		
-		bottons.addComponent(addWorksetButton);
-		bottons.addComponent(delWorksetButton);
+		buttons.addComponent(addWorksetButton);
+		buttons.addComponent(delWorksetButton);
 		
-		return bottons;
+		return buttons;
 	}
 
-	private Component createExcelButton() {
+	public Component createExcelButton() {
 		downloadWorksetButton = new Button(VaadinIcons.TABLE);
 		downloadWorksetButton.setDescription(getI18nText(I18N_DOWNLOADWORKSETBUTTON_DESC, messageSource));
 		StreamResource excelStreamResource = new StreamResource(
@@ -394,7 +394,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		return downloadWorksetButton;
 	}
 	
-	private Component createSettingsButton() {
+	public Component createSettingsButton() {
 		userLayoutSettings = new Button();
 		userLayoutSettings.setIcon(VaadinIcons.COG_O);
 		userLayoutSettings.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC, messageSource));
@@ -408,12 +408,12 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		return userLayoutSettings;
 	}
 	
-	private void refreshUiElements() {
+	public void refreshUiElements() {
 		refreshProjectTree();
 		refreshWorksetGrid();
 	}
 
-	private Component createRightLayout() {
+	public Component createRightLayout() {
 		rightLayout = new WorkSetDocumentation(this.createDocService);
 		rightLayout.setParent(this);
 		return rightLayout;
@@ -423,7 +423,9 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 class WorkSetDocumentation extends VerticalLayout implements I18n {
 	private static final long serialVersionUID = -7505276213420043371L;
 
-	private IUserSettigsService dataUserSettigsService;
+	private static final double DOCUMENT_GRID_ROWS = 10;
+
+	private IUserSettigsService settingsService;
 	private MessageSource messageSource;
 	private DocumentService documentService;
 	
@@ -433,10 +435,9 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 	
 	public WorkSetDocumentation(ICreateDocService service) {
 		this.documentService = service.getDocumentService();
-		this.dataUserSettigsService = service.getUserSettingsService();
+		this.settingsService = service.getUserSettingsService();
 		this.messageSource = service.getMessageSource();
-		
-		
+		refreshUiElements();
 	}
 	
 	public void setParent(CreateDocLayout parent) {
@@ -444,9 +445,39 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 	}
 	
 	public void refreshUiElements() {
-		documnentsDataProvider = new DocumentsDataProvider(documentService);
 		this.removeAllComponents();
-		dataUserSettigsService.getUserSettings().getRightTreeGroup();
+		setMargin(false);
+		setSpacing(false);
+		setSizeFull();
 		
+		settingsService.getUserSettings().getRightTreeGroup();
+		addComponent(createDocumentGrid());
+	}
+
+	public Component createDocumentGrid() {
+		documentsGrid = new Grid<>();
+		refreshDocumentGrid();
+		return documentsGrid;
+	}
+
+	private void refreshDocumentGrid() {
+		
+//		documentsGrid.removeAllColumns();
+//		documnentsDataProvider = new DocumentsDataProvider(documentService);
+//		CreateDocSettingsJson userSettings = settingsService.getUserSettings();
+//		List<ColumnSettings> columnSettings = userSettings.getRightResultColumns();
+//		
+//		columnSettings.sort((cs1, cs2) -> 
+//			Integer.compare(cs1.getOrderIndex(), cs2.getOrderIndex())
+//		);
+//		columnSettings.forEach(this::addDocumentGridColumn);
+//		documentsGrid.setSizeFull();
+//		documentsGrid.setHeightByRows(DOCUMENT_GRID_ROWS);
+//		documentsGrid.setColumnReorderingAllowed(true);
+//		documentsGrid.setShownColumns(columnSettings);
+//		documentsGrid.setDataProvider(documnentsDataProvider);
+//		// test header groups
+//		userSettings.getLeftColumnHeaders();
+//		addWorksetHeaderColumns(userSettings);
 	}
 }
