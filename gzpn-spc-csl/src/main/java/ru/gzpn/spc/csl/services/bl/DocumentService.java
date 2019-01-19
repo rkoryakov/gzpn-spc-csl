@@ -1,9 +1,7 @@
 package ru.gzpn.spc.csl.services.bl;
 
 import java.util.Comparator;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -16,32 +14,23 @@ import org.springframework.transaction.annotation.Transactional;
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
-import ru.gzpn.spc.csl.model.enums.DocType;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.repositories.DocumentRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;
 import ru.gzpn.spc.csl.ui.common.I18n;
+import ru.gzpn.spc.csl.ui.createdoc.IDocumentPresenter;
 
 @Service
 @Transactional
-public class DocumentService implements IDocumentService, I18n {
+public class DocumentService implements IDocumentService {
 
 	@Autowired
 	DocumentRepository documentRepository;
 	
 	@Autowired
-	MessageSource message;
-	
-	@Override
-	public Map<DocType, String> getDocumentTypeCaptions() {
-		EnumMap<DocType, String> documentTypeCaptions = new EnumMap<>(DocType.class);
-		for (DocType dt : DocType.values()) {
-			documentTypeCaptions.put(dt, getI18nText(dt.getI18n(), message));
-		}
-		return documentTypeCaptions;
-	}
+	MessageSource source;
 	
 	@Override
 	public List<IDocument> getDocuments(IWorkSet workset) {
@@ -51,6 +40,11 @@ public class DocumentService implements IDocumentService, I18n {
 	@Override
 	public long getDocumentsCount(IWorkSet workset) {
 		return documentRepository.getCountByWorkId(workset.getId());
+	}
+	
+	@Override
+	public MessageSource getMessageSource() {
+		return source;
 	}
 	
 	@Override
@@ -90,15 +84,14 @@ public class DocumentService implements IDocumentService, I18n {
 		};
 	}
 	
-	public static final class DocumentFilter {
+	public static final class DocumentFilter implements I18n {
 		private String commonTextFilter;
 		private String codeFilter;
 		private String nameFilter;
+		private MessageSource source;
 		
-		private Map<DocType, String> documentTypeCaptions;
-
-		public DocumentFilter(Map<DocType, String> map) {
-			this.documentTypeCaptions = map;
+		public DocumentFilter(MessageSource source) {
+			this.source = source;
 		}
 
 		public String getCommonTextFilter() {
@@ -146,17 +139,20 @@ public class DocumentService implements IDocumentService, I18n {
 		private boolean applyColumnFilter(IDocument document, ColumnSettings column) {
 			boolean result = false;
 
-			switch (column.getEntityFieldName()) {
-			case IDocument.FIELD_NAME:
-				result = document.getName().toLowerCase().startsWith(commonTextFilter);
-				break;
-			case IDocument.FIELD_CODE:
-				result = document.getCode().toLowerCase().startsWith(commonTextFilter);
-				break;
-			case IDocument.FIELD_TYPE:
-				documentTypeCaptions.get(document.getType()).toLowerCase().startsWith(commonTextFilter);
-				break;
-			default:
+			if (document instanceof IDocumentPresenter) {
+				IDocumentPresenter documentPresenter = (IDocumentPresenter)document;
+				switch (column.getEntityFieldName()) {
+				case IDocument.FIELD_NAME:
+					result = documentPresenter.getName().toLowerCase().startsWith(commonTextFilter);
+					break;
+				case IDocument.FIELD_CODE:
+					result = documentPresenter.getCode().toLowerCase().startsWith(commonTextFilter);
+					break;
+				case IDocument.FIELD_TYPE:
+					result = documentPresenter.getTypeText(source).toLowerCase().startsWith(commonTextFilter);
+					break;
+				default:
+				}
 			}
 
 			return result;

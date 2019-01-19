@@ -1,12 +1,15 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
+import org.springframework.context.MessageSource;
+
 import ru.gzpn.spc.csl.model.Document;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
+import ru.gzpn.spc.csl.ui.common.I18n;
 
 @SuppressWarnings("serial")
-public class DocumentPresenter extends Document implements IDocumentPresenter { 
+public class DocumentPresenter extends Document implements IDocumentPresenter, I18n {
 	private IDocument document;
-
+	
 	public DocumentPresenter(IDocument document) {
 		setId(document.getId());
 		setChangeDate(document.getChangeDate());
@@ -22,11 +25,29 @@ public class DocumentPresenter extends Document implements IDocumentPresenter {
 		setDocument(document);
 	}
 
+	@Override
 	public IDocument getDocument() {
 		return document;
 	}
 
+	@Override
 	public void setDocument(IDocument document) {
 		this.document = document;
+	}
+
+	@Override
+	public String getTypeText(MessageSource source) {
+		return this.getType().getText(source, getLocale());
+	}
+
+	@Override
+	public String getWorkText() {
+		return getWork().getName();
+	}
+
+	@Override
+	public String getWorksetText() {
+		// TODO Auto-generated method stub
+		return getWorkset().getName();
 	}
 }

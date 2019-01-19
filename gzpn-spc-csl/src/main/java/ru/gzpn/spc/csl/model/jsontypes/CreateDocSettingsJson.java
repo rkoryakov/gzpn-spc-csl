@@ -51,7 +51,7 @@ public class CreateDocSettingsJson implements Serializable {
 	public List<ColumnHeaderGroup> getLeftDefaultColumnHeaderGroups() {
 		
 		List<ColumnHeaderGroup> result = new ArrayList<>();
-		List<ColumnHeaderGroup> subGroups = new ArrayList<>();
+//		List<ColumnHeaderGroup> subGroups = new ArrayList<>();
 //		ColumnHeaderGroup root0 = new ColumnHeaderGroup("Root group 0");
 //		ColumnHeaderGroup root1 = new ColumnHeaderGroup("Root group 1");
 //		ColumnHeaderGroup root2 = new ColumnHeaderGroup("Root group 2");

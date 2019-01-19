@@ -1,8 +1,11 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Stream;
+
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
@@ -19,10 +22,12 @@ public class DocumentsDataProvider extends AbstractBackEndDataProvider<IDocument
 	private DocumentFilter filter;
 	private List<ColumnSettings> shownColumns;
 	private IWorkSet parentWorkSet;
+	private Locale locale;
 	
 	public DocumentsDataProvider(IDocumentService documentService) {
 		this.documentService = documentService;
-		this.filter = new DocumentFilter(documentService.getDocumentTypeCaptions());
+		this.filter = new DocumentFilter(documentService.getMessageSource());
+		this.locale = LocaleContextHolder.getLocale();
 	}
 	
 	@Override

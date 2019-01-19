@@ -33,6 +33,7 @@ import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
+import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
@@ -215,7 +216,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		worksetGrid.setColumnReorderingAllowed(true);
 		worksetDataProvider.setShownColumns(columnSettings);
 		worksetGrid.setDataProvider(worksetDataProvider);
-		// test header groups
+		// test column headers
 		userSettings.getLeftColumnHeaders();
 		createWorksetHeaderColumns(userSettings);
 	}
@@ -273,28 +274,27 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		}
 	}
 	
+	/**
+	 * Get column Ids that are contained in the given head groups:
+	 *  _____________________________________
+	 * |	 Header1	 |  	Header2	     |
+	 * |colum1 | column2 | column3 | column4 |
+	 * 
+	 */
 	public String[] getWorksetColumnIds(List<ColumnHeaderGroup> groups) {
-		Deque<List<ColumnHeaderGroup>> childGroups = new LinkedList<>();
-		childGroups.push(groups);
 		Set<String> columnIds = new HashSet<>();
-		
-		while (!childGroups.isEmpty()) {
-			List<ColumnHeaderGroup> list = childGroups.pop();
-			Iterator<ColumnHeaderGroup> it = list.listIterator();
+
+		for (int i = 0; i < groups.size(); i ++) {
+			Iterator<ColumnHeaderGroup> it = groups.listIterator(i);
 			while (it.hasNext()) {
 				ColumnHeaderGroup g = it.next();
-				
 				if (g.hasChildrenGroups()) {
-					childGroups.push(g.getChildren());
 					it = g.getChildren().iterator();
-					
 				} else if (g.hasColumns()) {
-					columnIds.addAll(g.getColumns().stream().map(c -> 
-								c.getEntityFieldName()).collect(Collectors.toList()));
+					columnIds.addAll(g.getColumns().stream().map(c -> c.getEntityFieldName()).collect(Collectors.toSet()));
 				}
 			}
 		}
-		
 		return columnIds.toArray(new String[0]);
 	}
 
@@ -436,8 +436,19 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 class WorkSetDocumentation extends VerticalLayout implements I18n {
 	private static final long serialVersionUID = -7505276213420043371L;
 
+	public static final String I18N_DOCUMENT_COLUMN_NAME = "createdoc.DocCreatingLayout.documentGrid.columns.name";
+	public static final String I18N_DOCUMENT_COLUMN_CODE = "createdoc.DocCreatingLayout.documentGrid.columns.code";
+	
+	private static final String I18N_DOCUMENT_COLUMN_TYPE = "createdoc.DocCreatingLayout.documentGrid.columns.type";
+	private static final String I18N_DOCUMENT_COLUMN_WORK = "createdoc.DocCreatingLayout.documentGrid.columns.work";
+	private static final String I18N_DOCUMENT_COLUMN_WORKSET = "createdoc.DocCreatingLayout.documentGrid.columns.workset";
+	private static final String I18N_DOCUMENT_COLUMN_ID = "createdoc.DocCreatingLayout.documentGrid.columns.id";
+	private static final String I18N_DOCUMENT_COLUMN_VERSION = "createdoc.DocCreatingLayout.documentGrid.columns.version";
+	private static final String I18N_DOCUMENT_COLUMN_CREATEDATE = "createdoc.DocCreatingLayout.documentGrid.columns.createdate";
+	private static final String I18N_DOCUMENT_COLUMN_CHANGEDATE = "createdoc.DocCreatingLayout.documentGrid.columns.changedate";
+	
 	private static final double DOCUMENT_GRID_ROWS = 10;
-
+	
 	private IUserSettigsService settingsService;
 	private MessageSource messageSource;
 	private DocumentService documentService;
@@ -469,68 +480,158 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 
 	public Component createDocumentGrid() {
 		documentsGrid = new Grid<>();
-//		refreshDocumentGrid(); TODO:
+		refreshDocumentGrid();
 		return documentsGrid;
 	}
 
-//	private void refreshDocumentGrid() {
-//		documentsGrid.removeAllColumns();
-//		documnentsDataProvider = new DocumentsDataProvider(documentService);
-//		CreateDocSettingsJson userSettings = settingsService.getUserSettings();
-//		List<ColumnSettings> columnSettings = userSettings.getRightResultColumns();
-//		
-//		columnSettings.sort((cs1, cs2) -> 
-//			Integer.compare(cs1.getOrderIndex(), cs2.getOrderIndex())
-//		);
-//		columnSettings.forEach(this::addDocumentGridColumn);
-//		documentsGrid.setSizeFull();
-//		documentsGrid.setHeightByRows(DOCUMENT_GRID_ROWS);
-//		documentsGrid.setColumnReorderingAllowed(true);
-//		documnentsDataProvider.setShownColumns(columnSettings);
-//		documentsGrid.setDataProvider(documnentsDataProvider);
-//		// test header groups
-//		userSettings.getLeftColumnHeaders();
-//		addDocumentHeaderColumns(userSettings);
-//	}
+	private void refreshDocumentGrid() {
+		documentsGrid.removeAllColumns();
+		documnentsDataProvider = new DocumentsDataProvider(documentService);
+		CreateDocSettingsJson userSettings = settingsService.getUserSettings();
+		List<ColumnSettings> columnSettings = userSettings.getRightResultColumns();
+		
+		columnSettings.sort((cs1, cs2) -> 
+			Integer.compare(cs1.getOrderIndex(), cs2.getOrderIndex())
+		);
+		columnSettings.forEach(this::addDocumentGridColumn);
+		documentsGrid.setSizeFull();
+		documentsGrid.setHeightByRows(DOCUMENT_GRID_ROWS);
+		documentsGrid.setColumnReorderingAllowed(true);
+		documnentsDataProvider.setShownColumns(columnSettings);
+		documentsGrid.setDataProvider(documnentsDataProvider);
+
+		addDocumentHeaderColumns(userSettings);
+	}
 	
-//	public void addDocumentGridColumn(ColumnSettings settings) {
-//		switch (settings.getEntityFieldName()) {		
-//		case IWorkSet.FIELD_NAME:
-//			addWorksetGridColumn(settings, IDocumentPresenter::getName, I18N_DOCUMENT_COLUMN_NAME);
-//			break;
-//		case IWorkSet.FIELD_CODE:
-//			addWorksetGridColumn(settings, IDocumentPresenter::getCode, I18N_DOCUMENT_COLUMN_CODE);
-//			break;
-//		case IWorkSet.FIELD_PIR:
-//			addWorksetGridColumn(settings, IDocumentPresenter::getPirCaption, I18N_DOCUMENT_);
-//			break;
-//		case IWorkSet.FIELD_SMR:
-//			addWorksetGridColumn(settings, IDocumentPresenter::getSmrCaption, I18N_DOCUMENT_);
-//			break;
-//		case IWorkSet.FIELD_PLAN_OBJECT:
-//			addWorksetGridColumn(settings, IDocumentPresenter::getPlanObject, I18N_DOCUMENT);
-//			break;
-//		case IWorkSet.FIELD_ID:
-//			addWorksetGridColumn(settings, IDocumentPresenter::getId, I18N_DOCUMENT_COLUMN_ID);
-//			break;
-//		case IWorkSet.FIELD_VERSION:
-//			addWorksetGridColumn(settings, IDocumentPresenter::getVersion, I18N_DOCUMENT_COLUMN_VERSION);
-//			break;
-//		case IWorkSet.FIELD_CREATE_DATE:
-//			addWorksetGridColumn(settings, IDocumentPresenter::getCreateDate, I18N_DOCUMENT_COLUMN_CREATEDATE);
-//			break;
-//		case IWorkSet.FIELD_CHANGE_DATE:
-//			addWorksetGridColumn(settings, IDocumentPresenter::getChangeDate, I18N_DOCUMENT_COLUMN_CHANGEDATE);
-//			break;
-//			default:
-//		}
-//	}
-//	
-//	public void addDocumentHeaderColumns(CreateDocSettingsJson userSettings) {
-//		if (userSettings.hasLeftColumnHeaders()) {
-//			refreshColumnHeaderGroups(userSettings.getLeftColumnHeaders());
-//		}
-//		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS - worksetGrid.getHeaderRowCount() + 1);
-//	}
+	
+	public void addDocumentGridColumn(ColumnSettings settings) {
+		switch (settings.getEntityFieldName()) {		
+		case IDocument.FIELD_NAME:
+			addDocumnentGridColumn(settings, IDocumentPresenter::getName, I18N_DOCUMENT_COLUMN_NAME);
+			break;
+		case IDocument.FIELD_CODE:
+			addDocumnentGridColumn(settings, IDocumentPresenter::getCode, I18N_DOCUMENT_COLUMN_CODE);
+			break;
+		case IDocument.FIELD_TYPE:
+			addDocumnentGridColumn(settings, field -> field.getTypeText(this.messageSource), I18N_DOCUMENT_COLUMN_TYPE);
+			break;
+		case IDocument.FIELD_WORK:
+			addDocumnentGridColumn(settings, IDocumentPresenter::getWorkText, I18N_DOCUMENT_COLUMN_WORK);
+			break;
+		case IDocument.FIELD_WORKSET:
+			addDocumnentGridColumn(settings, IDocumentPresenter::getWorksetText, I18N_DOCUMENT_COLUMN_WORKSET);
+			break;
+		case IDocument.FIELD_ID:
+			addDocumnentGridColumn(settings, IDocumentPresenter::getId, I18N_DOCUMENT_COLUMN_ID);
+			break;
+		case IDocument.FIELD_VERSION:
+			addDocumnentGridColumn(settings, IDocumentPresenter::getVersion, I18N_DOCUMENT_COLUMN_VERSION);
+			break;
+		case IDocument.FIELD_CREATE_DATE:
+			addDocumnentGridColumn(settings, IDocumentPresenter::getCreateDate, I18N_DOCUMENT_COLUMN_CREATEDATE);
+			break;
+		case IDocument.FIELD_CHANGE_DATE:
+			addDocumnentGridColumn(settings, IDocumentPresenter::getChangeDate, I18N_DOCUMENT_COLUMN_CHANGEDATE);
+			break;
+			default:
+		}
+	}
+	
+	public <T> void addDocumnentGridColumn(ColumnSettings settings, ValueProvider<IDocumentPresenter, T> provider, String i18nCaption) {
+		Column<IDocumentPresenter, T> column = documentsGrid.addColumn(provider);
+		column.setSortProperty(settings.getEntityFieldName());
+		column.setSortable(true);
+		column.setCaption(getI18nText(i18nCaption, messageSource));
+		Double width = settings.getWidth();
+		
+		if (Objects.nonNull(width) && Double.isFinite(width) && width > 1) {
+			column.setWidth(width);
+		} else {
+			column.setWidthUndefined();
+		}
+		
+		if (!settings.isShown()) {	
+			column.setHidden(true);
+		}
+		
+		column.setId(settings.getEntityFieldName());
+	}
+	
+	public void addDocumentHeaderColumns(CreateDocSettingsJson userSettings) {
+		if (userSettings.hasLeftColumnHeaders()) {
+			refreshColumnHeaderGroups(userSettings.getRightColumnHeaders());
+		}
+		documentsGrid.setHeightByRows(DOCUMENT_GRID_ROWS - documentsGrid.getHeaderRowCount() + 1);
+	}
+
+	public void refreshColumnHeaderGroups(List<ColumnHeaderGroup> groups) {
+		final String headStyle = "v-grid-header-align-left";
+		Deque<List<ColumnHeaderGroup>> childGroups = new LinkedList<>();
+		childGroups.push(groups);
+		removePrepandedHeaderRows();
+		
+		HeaderRow headerRow = documentsGrid.prependHeaderRow();
+		headerRow.setStyleName(headStyle);
+
+		while (!childGroups.isEmpty()) {
+			List<ColumnHeaderGroup> list = childGroups.pop();
+			Iterator<ColumnHeaderGroup> it = list.iterator();
+			
+			while (it.hasNext()) {
+				ColumnHeaderGroup g = it.next();
+
+				if (g.hasChildrenGroups()) {
+					HeaderRow subRow = documentsGrid.prependHeaderRow();
+					subRow.setStyleName(headStyle);
+					childGroups.push(g.getChildren());
+					HeaderCell groupCell = subRow.join(getDocumentColumnIds(g.getChildren()));
+					groupCell.setText(g.getCaption());
+					break;
+				
+				} else if (g.hasColumns()) {
+					
+						HeaderCell groupCell = headerRow.join(g.getColumns().stream().map(column -> 
+								column.getEntityFieldName())
+										.toArray(String[]::new));
+						
+						groupCell.setText(g.getCaption());
+						childGroups.pollFirst();
+				}
+			}
+		}
+	}
+	
+	public void removePrepandedHeaderRows() {
+		int count = documentsGrid.getHeaderRowCount();
+		if (count > 1) {
+			for (int i = 0; i < count - 1; i ++) {
+				documentsGrid.removeHeaderRow(0);
+			}
+		}
+	}
+	
+	/**
+	 * Get column Ids that are contained in the given head groups:
+	 *  _____________________________________
+	 * |	 Header1	 |  	Header2	     |
+	 * |colum1 | column2 | column3 | column4 |
+	 * 
+	 */
+	public String[] getDocumentColumnIds(List<ColumnHeaderGroup> groups) {
+		Set<String> columnIds = new HashSet<>();
+
+		for (int i = 0; i < groups.size(); i ++) {
+			Iterator<ColumnHeaderGroup> it = groups.listIterator(i);
+			while (it.hasNext()) {
+				ColumnHeaderGroup g = it.next();
+				if (g.hasChildrenGroups()) {
+					it = g.getChildren().iterator();
+				} else if (g.hasColumns()) {
+					columnIds.addAll(g.getColumns().stream().map(c -> c.getEntityFieldName()).collect(Collectors.toSet()));
+				}
+			}
+		}
+		return columnIds.toArray(new String[0]);
+	}
 	
 }
