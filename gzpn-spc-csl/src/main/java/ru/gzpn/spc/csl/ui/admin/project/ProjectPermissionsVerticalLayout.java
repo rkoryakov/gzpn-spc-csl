@@ -39,7 +39,9 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 	private IProjectService projectService;
 	private ProjectAddGroupVerticalLayout projectAddGroup;
 
-	public ProjectPermissionsVerticalLayout(IProjectService projectService, IdentityService identityService, MessageSource messageSource) {
+	public ProjectPermissionsVerticalLayout(IProjectService projectService, 
+											IdentityService identityService, 
+											MessageSource messageSource) {
 		this.projectService = projectService;
 		this.identityService = identityService;
 		this.messageSource = messageSource;
@@ -47,8 +49,7 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 		cpDataProvider = new CProjectDataProvider(projectService);
 		hpDataProvider = new HProjectDataProvider(projectService);
 
-		projectAddGroup = new ProjectAddGroupVerticalLayout(messageSource, identityService, projectService);
-		projectAddGroup.getSaveButton().addClickListener(clickEvent -> hpDataProvider.refreshAll());
+		projectAddGroup = new ProjectAddGroupVerticalLayout(messageSource, identityService, projectService, cpDataProvider, hpDataProvider);
 		panel = new HorizontalSplitPanel();
 		headerHorizontal = new HorizontalLayout();
 		resultPage = new VerticalLayout();
@@ -114,9 +115,11 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 			if (event.getSelectedItem().get().equals(Entities.HPROJECT)) {
 				gridHeavyProjects.setVisible(true);
 				gridCapitalProjects.setVisible(false);
+				hpDataProvider.refreshAll();
 			} else if (event.getSelectedItem().get().equals(Entities.CPROJECT)) {
 				gridHeavyProjects.setVisible(false);
 				gridCapitalProjects.setVisible(true);
+				cpDataProvider.refreshAll();
 			}
 			searchProject.setValue("");
 		});
@@ -143,6 +146,7 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 			singleSelect.getSelectedItem().ifPresent(item -> {
 				this.getProjectAddGroup().setCurrentIHProject(item);
 				projectAddGroup.setVisible(true);
+				hpDataProvider.refreshAll();
 			})
 		);
 		return grid;
@@ -172,6 +176,7 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 			singleSelect.getSelectedItem().ifPresent(item -> {
 				this.getProjectAddGroup().setCurrentICProject(item);
 				projectAddGroup.setVisible(true);
+				cpDataProvider.refreshAll();
 			})
 		);
 		return grid;

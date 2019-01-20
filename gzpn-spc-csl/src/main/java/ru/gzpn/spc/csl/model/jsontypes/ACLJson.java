@@ -16,15 +16,15 @@ public class ACLJson implements Serializable {
 	Set<String> roles;
 //	Set<String> editRoles;
 
-	public Set<String> getReadOnlyRoles() {
+	public Set<String> getRoles() {
 		if(roles == null) {
 			roles = new HashSet<>();
 		}
 		return roles;
 	}
 
-	public void setReadOnlyRoles(Set<String> readOnlyRoles) {
-		this.roles = readOnlyRoles;
+	public void setRoles(Set<String> roles) {
+		this.roles = roles;
 	}
 
 //	public Set<String> getEditRoles() {

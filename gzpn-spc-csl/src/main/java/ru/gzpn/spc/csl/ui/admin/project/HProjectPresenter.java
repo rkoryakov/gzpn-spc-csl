@@ -33,11 +33,11 @@ public class HProjectPresenter extends HProject implements IHProjectPresenter {
 	
 	@Override
 	public String getCreateDatePresenter() {
-		return DateTimeFormatter.ofPattern("dd/MM/yyyy - hh:mm:ss").format(this.getCreateDate());
+		return DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss").format(this.getCreateDate());
 	}
 	
 	@Override
 	public String getChangeDatePresenter() {
-		return DateTimeFormatter.ofPattern("dd/MM/yyyy - hh:mm:ss").format(this.getChangeDate());
+		return DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss").format(this.getChangeDate());
 	}
 }
