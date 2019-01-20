@@ -1,7 +1,9 @@
 package ru.gzpn.spc.csl.ui.admin.project;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
@@ -22,6 +24,10 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import ru.gzpn.spc.csl.model.HProject;
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.IHProject;
+import ru.gzpn.spc.csl.model.jsontypes.ACLJson;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.ui.admin.GroupTemplate;
 import ru.gzpn.spc.csl.ui.admin.UsersAndRolesVerticalLayout;
@@ -43,12 +49,13 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 	private ConfigurableFilterDataProvider<String, Void, String> selectGroupFilter;
 	private Button editButton;
 	private Button viewButton;
-	private DataProvider<GroupTemplate, String> groupForUser = createDataProvider();
-	private ConfigurableFilterDataProvider<GroupTemplate, Void, String> groupUserIDFilter;
-	private ICProjectPresenter currentICProject;
-	private IHProjectPresenter currentIHProject;
+	private DataProvider<GroupTemplate, String> groupForProject = createDataProvider();
+	private ConfigurableFilterDataProvider<GroupTemplate, Void, String> groupProjectIDFilter;
+	private ICProject currentICProject;
+	private IHProject currentIHProject;
 	private Grid<GroupTemplate> gridGroupAddProject;
 	private JoinedLayout<AbstractComponent, AbstractComponent> joinedComponent;
+	
 	public static final String I18N_NOTIFICATION_DELETEDFROMUSER = "adminView.notification.group.deletedFromUser";
 	public static final String I18N_NOTIFICATION_USERADDGROUP = "adminView.notification.user.addGroup";
 	public static final String I18N_NOTIFICATION_USERADDGROUPERR = "adminView.notification.user.addGroupErr";
@@ -94,24 +101,36 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 
 	private DataProvider<GroupTemplate, String> createDataProvider() {
 		return DataProvider.fromFilteringCallbacks(query -> {
-			List<Group> groupList = identityService.createGroupQuery().groupMember(query.getFilter().orElse("admin")).list();
-			return groupList.stream().map(m -> {
-				GroupTemplate group = new GroupTemplate();
-				group.setId(m.getId());
-				group.setName(m.getName());
-				group.setType(m.getType());
-				group.setDelete(buttonDeleteGroupMemberProject(query.getFilter().orElse("admin"), m));
-				return group;
-			});
-		}, query -> (int) identityService.createGroupQuery().groupMember(query.getFilter().orElse("admin")).count());
+			Stream<GroupTemplate> gs = Stream.empty();
+			if(Objects.nonNull(currentIHProject.getAcl())) {
+			 gs = currentIHProject.getAcl().getReadOnlyRoles()
+						.stream().flatMap(item -> identityService.createGroupQuery().groupId(item).list().stream())
+							.map(item -> {
+								GroupTemplate group = new GroupTemplate();
+								group.setId(item.getId());
+								group.setName(item.getName());
+								group.setType(item.getType());
+								group.setDelete(buttonDeleteGroupMemberProject(currentIHProject.getId().toString(), item));
+								return group;
+							});
+			}
+			return gs;
+		}
+		, query -> {
+			int result = 0;
+			if(Objects.nonNull(currentIHProject.getAcl())) {
+				result = currentIHProject.getAcl().getReadOnlyRoles().size();
+			}
+			return result;
+		});
 	}
 
-	private Button buttonDeleteGroupMemberProject(String userID, Group group) {
+	private Button buttonDeleteGroupMemberProject(String projectID, Group group) {
 		Button deleteButton = new Button();
 		ClickListener okDeleteClick = event -> {
-			identityService.deleteMembership(userID, group.getId());
-			groupForUser.refreshAll();
-			String[] paramsForDelete = new String[] {group.getId(), userID};
+			//identityService.deleteMembership(projectID, group.getId());
+			groupForProject.refreshAll();
+			String[] paramsForDelete = new String[] {group.getId(), projectID};
 			String notificationDeleted = getI18nText(I18N_NOTIFICATION_DELETEDFROMUSER, paramsForDelete, messageSource);
 			Notification.show(notificationDeleted, Type.WARNING_MESSAGE);
 		};
@@ -125,20 +144,17 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 		return deleteButton;
 	}
 
-	public void setICProject(ICProjectPresenter template) {
-		currentICProject = template;
-		//User user = identityService.createUserQuery().userId(currentICProject.getId()).singleResult();
-		groupForUser.refreshAll();
-		//groupUserIDFilter.setFilter(user.getId());
-	}	
-	
-	public void setIHProject(IHProjectPresenter template) {
-		currentIHProject = template;
-		currentIHProject.getHProject();
-		groupForUser.refreshAll();
-		//groupUserIDFilter.setFilter(user.getId());
-	}	
-	
+
+	public void setCurrentICProject(ICProjectPresenter currentICProject) {
+		this.currentICProject = currentICProject.getCProject();
+		groupForProject.refreshAll();
+	}
+
+	public void setCurrentIHProject(IHProjectPresenter currentIHProject) {
+		this.currentIHProject = currentIHProject.getHProject();
+		groupForProject.refreshAll();
+	}
+
 	private ComboBox<String> createSelectGroup(DataProvider<String, String> selectGroupProvider) {
 		ComboBox<String> groupSelect = new ComboBox<>();
 		groupSelect.setPlaceholder(getI18nText(UsersAndRolesVerticalLayout.I18N_SEARCHFIELD_PLACEHOLDER, messageSource));
@@ -159,19 +175,26 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 	private Button createAddGroupButton() {
 		Button createButton = new Button();
 		createButton.setIcon(VaadinIcons.PLUS);
-//		createButton.addClickListener(event -> {
-//			String[] paramsForAdd = new String[] {selectGroup.getValue(), currentUser.getId()};
-//			try {
-//				identityService.createMembership(currentUser.getId(), selectGroup.getValue());
-//				groupForUser.refreshAll();
-//				String notificationTextAdd = getI18nText(I18N_NOTIFICATION_USERADDGROUP, paramsForAdd, messageSource);
-//				Notification.show(notificationTextAdd, Type.WARNING_MESSAGE);
-//			}
-//			catch(Exception e) {
-//				String notificationTextErr = getI18nText(I18N_NOTIFICATION_USERADDGROUPERR, paramsForAdd, messageSource);
-//				Notification.show(notificationTextErr, Type.ERROR_MESSAGE);
-//			}
-//		});
+ 		createButton.addClickListener(event -> {
+ 			String[] paramsForAdd = new String[] {selectGroup.getValue(), currentIHProject.getId().toString()};
+// 			try {
+ 				//Set<String> groupSet = currentIHProject.getAcl().getReadOnlyRoles();
+ 			//	groupSet.add(selectGroup.getValue());
+ 				ACLJson acljson = currentIHProject.getAcl();
+ 				acljson.getReadOnlyRoles().add(selectGroup.getValue());
+ 				//acljson.setReadOnlyRoles(groupSet);
+ 				currentIHProject.setAcl(acljson);
+ 				projectService.getHPRepository().save((HProject)currentIHProject);
+ 				//identityService.createMembership(currentIHProject.getId().toString(), selectGroup.getValue());
+ 				groupForProject.refreshAll();
+ 				String notificationTextAdd = getI18nText(I18N_NOTIFICATION_USERADDGROUP, paramsForAdd, messageSource);
+ 				Notification.show(notificationTextAdd, Type.WARNING_MESSAGE);
+// 			}
+// 			catch(Exception e) {
+// 				String notificationTextErr = getI18nText(I18N_NOTIFICATION_USERADDGROUPERR, paramsForAdd, messageSource);
+// 				Notification.show(notificationTextErr, Type.ERROR_MESSAGE);
+// 			}
+ 		});
 		return createButton;
 	}
 	
@@ -206,16 +229,14 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 	
 	private Grid<GroupTemplate> createGroupAddProject() {
 		Grid<GroupTemplate> grid = new Grid<>();
-		groupUserIDFilter = groupForUser.withConfigurableFilter();
+		groupProjectIDFilter = groupForProject.withConfigurableFilter();
 		grid.setSizeFull();
 		grid.addColumn(GroupTemplate::getId).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_IDROLES, messageSource));
 		grid.addColumn(GroupTemplate::getName).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_NAMEROLES, messageSource));
 		grid.addColumn(GroupTemplate::getType).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_TYPEROLES, messageSource));
 		grid.addComponentColumn(GroupTemplate::getDelete).setHidden(true).setId("del").setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_DELETE, messageSource)).setWidth(95.0);
 		grid.setWidth(100, Unit.PERCENTAGE);
-		grid.setDataProvider(groupUserIDFilter);
+		grid.setDataProvider(groupProjectIDFilter);
 		return grid;
 	}
-	
-	
 }

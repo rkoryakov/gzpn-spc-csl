@@ -140,7 +140,7 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 		SingleSelectionModel<IHProjectPresenter> singleSelect = (SingleSelectionModel<IHProjectPresenter>) grid.getSelectionModel();
 		singleSelect.addSingleSelectionListener(event -> 
 			singleSelect.getSelectedItem().ifPresent(item -> {
-				this.getProjectAddGroup().setIHProject(item);
+				this.getProjectAddGroup().setCurrentIHProject(item);
 				projectAddGroup.setVisible(true);
 			})
 		);
@@ -169,7 +169,7 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 		SingleSelectionModel<ICProjectPresenter> singleSelect = (SingleSelectionModel<ICProjectPresenter>) grid.getSelectionModel();
 		singleSelect.addSingleSelectionListener(event -> 
 			singleSelect.getSelectedItem().ifPresent(item -> {
-				this.getProjectAddGroup().setICProject(item);
+				this.getProjectAddGroup().setCurrentICProject(item);
 				projectAddGroup.setVisible(true);
 			})
 		);

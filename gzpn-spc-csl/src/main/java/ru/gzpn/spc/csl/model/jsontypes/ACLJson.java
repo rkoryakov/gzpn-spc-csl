@@ -1,6 +1,7 @@
 package ru.gzpn.spc.csl.model.jsontypes;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -16,7 +17,11 @@ public class ACLJson implements Serializable {
 //	Set<String> editRoles;
 
 	public Set<String> getReadOnlyRoles() {
-		return roles;
+		Set<String> result = roles;
+		if(roles == null) {
+			result = new HashSet<>();
+		}
+		return result;
 	}
 
 	public void setReadOnlyRoles(Set<String> readOnlyRoles) {

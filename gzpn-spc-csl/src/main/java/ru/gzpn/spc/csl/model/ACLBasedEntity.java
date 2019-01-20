@@ -20,6 +20,9 @@ public abstract class ACLBasedEntity extends BaseEntity implements IACLBasedEnti
 
 	@Override
 	public ACLJson getAcl() {
+		if(acl == null) {
+			acl = new ACLJson();
+		}
 		return acl;
 	}
 
