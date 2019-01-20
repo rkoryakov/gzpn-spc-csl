@@ -2,7 +2,6 @@ package ru.gzpn.spc.csl.model;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -78,15 +77,6 @@ public class WorkSet extends BaseEntity implements IWorkSet, Comparable<IWorkSet
 	}
 	
 	@Override
-	public String getPirCaption() {
-		String result = "---";
-		if (Objects.nonNull(getPir())) {
-			result = getPir().getCode();
-		}
-		return result;
-	}
-	
-	@Override
 	public void setPir(IWork pir) {
 		this.pir = pir;
 	}
@@ -94,15 +84,6 @@ public class WorkSet extends BaseEntity implements IWorkSet, Comparable<IWorkSet
 	@Override
 	public IWork getSmr() {
 		return smr;
-	}
-	
-	@Override
-	public String getSmrCaption() {
-		String result = "---";
-		if (Objects.nonNull(getSmr())) {
-			result = getSmr().getCode();
-		}
-		return result;
 	}
 	
 	@Override

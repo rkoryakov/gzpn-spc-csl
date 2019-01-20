@@ -21,10 +21,8 @@ public interface IWorkSet extends IBaseEntity {
 	public String getCode();
 	public void setCode(String code);
 	public IWork getPir();
-	public String getPirCaption();
 	public void setPir(IWork pir);
 	public IWork getSmr();
-	public String getSmrCaption();
 	public void setSmr(IWork smr);
 	public IPlanObject getPlanObject();
 	public void setPlanObject(IPlanObject planObject);

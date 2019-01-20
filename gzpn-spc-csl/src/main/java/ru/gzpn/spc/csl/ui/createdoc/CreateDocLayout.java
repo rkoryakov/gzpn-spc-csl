@@ -94,7 +94,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	private Button worksetFilterSettingsButton;
 	
 	private DraggableTree<NodeWrapper> projectTree;
-	private Grid<IWorkSet> worksetGrid;
+	private Grid<IWorkSetPresenter> worksetGrid;
 	private ProjectTreeDataProvider projectTreeDataProvider;
 	private WorksetDataProvider worksetDataProvider;
 	
@@ -301,38 +301,38 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	public void addWorksetGridColumn(ColumnSettings settings) {
 		switch (settings.getEntityFieldName()) {		
 		case IWorkSet.FIELD_NAME:
-			addWorksetGridColumn(settings, IWorkSet::getName, I18N_WORKSET_COLUMN_NAME);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getName, I18N_WORKSET_COLUMN_NAME);
 			break;
 		case IWorkSet.FIELD_CODE:
-			addWorksetGridColumn(settings, IWorkSet::getCode, I18N_WORKSET_COLUMN_CODE);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getCode, I18N_WORKSET_COLUMN_CODE);
 			break;
 		case IWorkSet.FIELD_PIR:
-			addWorksetGridColumn(settings, IWorkSet::getPirCaption, I18N_WORKSET_COLUMN_PIR);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getPirText, I18N_WORKSET_COLUMN_PIR);
 			break;
 		case IWorkSet.FIELD_SMR:
-			addWorksetGridColumn(settings, IWorkSet::getSmrCaption, I18N_WORKSET_COLUMN_SMR);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getSmrText, I18N_WORKSET_COLUMN_SMR);
 			break;
 		case IWorkSet.FIELD_PLAN_OBJECT:
-			addWorksetGridColumn(settings, IWorkSet::getPlanObject, I18N_WORKSET_COLUMN_PLANOBJ);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getPlanObject, I18N_WORKSET_COLUMN_PLANOBJ);
 			break;
 		case IWorkSet.FIELD_ID:
-			addWorksetGridColumn(settings, IWorkSet::getId, I18N_WORKSET_COLUMN_ID);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getId, I18N_WORKSET_COLUMN_ID);
 			break;
 		case IWorkSet.FIELD_VERSION:
-			addWorksetGridColumn(settings, IWorkSet::getVersion, I18N_WORKSET_COLUMN_VERSION);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getVersion, I18N_WORKSET_COLUMN_VERSION);
 			break;
 		case IWorkSet.FIELD_CREATE_DATE:
-			addWorksetGridColumn(settings, IWorkSet::getCreateDate, I18N_WORKSET_COLUMN_CREATEDATE);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getCreateDate, I18N_WORKSET_COLUMN_CREATEDATE);
 			break;
 		case IWorkSet.FIELD_CHANGE_DATE:
-			addWorksetGridColumn(settings, IWorkSet::getChangeDate, I18N_WORKSET_COLUMN_CHANGEDATE);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getChangeDate, I18N_WORKSET_COLUMN_CHANGEDATE);
 			break;
 			default:
 		}
 	}
 	
-	public <T> void addWorksetGridColumn(ColumnSettings settings, ValueProvider<IWorkSet, T> provider, String i18nCaption) {
-		Column<IWorkSet, T> column = worksetGrid.addColumn(provider);
+	public <T> void addWorksetGridColumn(ColumnSettings settings, ValueProvider<IWorkSetPresenter, T> provider, String i18nCaption) {
+		Column<IWorkSetPresenter, T> column = worksetGrid.addColumn(provider);
 		column.setSortProperty(settings.getEntityFieldName());
 		column.setSortable(true);
 		column.setCaption(getI18nText(i18nCaption, messageSource));

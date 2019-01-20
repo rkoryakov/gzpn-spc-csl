@@ -10,13 +10,12 @@ import org.apache.logging.log4j.Logger;
 import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
 
-import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.WorkSetService.WorkSetFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
 
-public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSet, Void> {
+public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSetPresenter, Void> {
 	private static final long serialVersionUID = 1L;
 	public static final Logger logger = LogManager.getLogger(WorksetDataProvider.class);
 	
@@ -33,26 +32,27 @@ public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSet, V
 	}
 
 	@Override
-	protected Stream<IWorkSet> fetchFromBackEnd(Query<IWorkSet, Void> query) {
-		Stream<IWorkSet> result = Stream.empty();
+	protected Stream<IWorkSetPresenter> fetchFromBackEnd(Query<IWorkSetPresenter, Void> query) {
+		Stream<IWorkSetPresenter> result = Stream.empty();
 		if (!Objects.isNull(parentNode)) {
 			result = service
 						.getItemsByNode(parentNode, query.getOffset(), query.getLimit())
-							.filter(getFilter().filter(shownColumns))
-								.sorted(service.getSortComparator(query.getSortOrders()));
+							.map(item -> (IWorkSetPresenter) new WorkSetPresenter(item))
+								.filter(getFilter().filter(shownColumns))
+									.sorted(service.getSortComparator(query.getSortOrders()));
 		}
 		return result;
 	}
 
 	@Override
-	protected int sizeInBackEnd(Query<IWorkSet, Void> query) {
+	protected int sizeInBackEnd(Query<IWorkSetPresenter, Void> query) {
 		long result = 0;
 		if (!Objects.isNull(parentNode)) {
 			result = service
 						.getItemsByNode(parentNode, query.getOffset(), query.getLimit())
 							.filter(getFilter().filter(shownColumns)).count();
 		}
-		logger.debug("[fetchFromBackEnd] result = {}", result);
+
 		return (int)result;
 	}
 	

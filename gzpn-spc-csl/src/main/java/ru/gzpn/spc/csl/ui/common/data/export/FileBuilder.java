@@ -128,7 +128,7 @@ public abstract class FileBuilder<T> {
             Optional<PropertyDefinition<T, ?>> propertyDefinition = propertySet.getProperty(column.getId());
             if (propertyDefinition.isPresent()) {
                 onNewCell();
-                buildCell(propertyDefinition.get().getGetter().apply(item));
+                buildCell(column.getValueProvider().apply(item)/*propertyDefinition.get().getGetter().apply(item)*/);
             } else {
                 throw new ExporterException("Column key: " + column.getId() + " is a property which cannot be found");
             }
