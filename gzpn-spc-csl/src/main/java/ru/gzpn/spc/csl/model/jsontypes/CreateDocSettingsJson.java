@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import ru.gzpn.spc.csl.model.Document;
 import ru.gzpn.spc.csl.model.WorkSet;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
@@ -185,7 +186,7 @@ public class CreateDocSettingsJson implements Serializable {
 	@JsonIgnore
 	public List<ColumnSettings> getRightDefaultDocumentsColumns() {
 		List<ColumnSettings> result = new ArrayList<>();
-		String entityName = WorkSet.class.getSimpleName();
+		String entityName = Document.class.getSimpleName();
 		
 		result.add(new ColumnSettings(entityName, IDocument.FIELD_ID, null, false, 0));
 		result.add(new ColumnSettings(entityName, IDocument.FIELD_NAME, null, true, 1));

@@ -34,7 +34,8 @@ public class DocumentService implements IDocumentService {
 	
 	@Override
 	public List<IDocument> getDocuments(IWorkSet workset) {
-		return workset.getDocuments();
+
+		return documentRepository.findDocumentsByWorkset(workset);
 	}
 	
 	@Override

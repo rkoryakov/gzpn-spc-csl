@@ -13,9 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
@@ -54,16 +52,16 @@ public class WorkSetService implements IWorkSetService {
 	
 	@Override
 	public Stream<IWorkSet> getAllItems(List<Order> sortOrders, int offset, int limit) {
-		int pageNumber = offset/limit;
-		PageRequest pageRequest = PageRequest.of(pageNumber, limit, Sort.by(sortOrders));
-		return repository.findAll(pageRequest).stream().map(e -> (IWorkSet)e);
+//		int pageNumber = offset/limit;
+//		PageRequest pageRequest = PageRequest.of(pageNumber, limit, Sort.by(sortOrders));
+		return repository.findAll().stream().map(e -> (IWorkSet)e);
 	}
 	
 	@Override
 	public Stream<IWorkSet> getItemsByNode(NodeWrapper node, int offset, int limit) {
-		int pageNumber = offset/limit;
-		PageRequest pageRequest = PageRequest.of(pageNumber, limit);
-		return getItemsByNode(node, pageRequest);
+//		int pageNumber = offset/limit;
+//		PageRequest pageRequest = PageRequest.of(pageNumber, limit);
+		return getItemsByNode(node, null);
 	}
 	
 	protected Stream<IWorkSet> getItemsByNode(NodeWrapper node, Pageable pageable) {
