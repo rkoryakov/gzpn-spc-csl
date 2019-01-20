@@ -53,23 +53,23 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	private static final long serialVersionUID = -883906550551450076L;
 	private static final Logger logger = LoggerFactory.getLogger(CreateDocLayout.class);
 	
-	private static final String I18N_SEARCHFIELD_PLACEHOLDER = "createdoc.DocCreatingLayout.worksetFilterField.placeholder";
-	private static final String I18N_SEARCHSETTINGS_DESC = "createdoc.DocCreatingLayout.worksetFilterSettingsButton.desc";
-	private static final String I18N_USERLAYOUTSETTINGS_DESC = "createdoc.DocCreatingLayout.userLayoutSettings.desc";
-	private static final String I18N_ADDWORKSETBUTTON_DESC = "createdoc.DocCreatingLayout.addWorksetButton.desc";
-	private static final String I18N_DELWORKSETBUTTON_DESC = "createdoc.DocCreatingLayout.delWorksetButton.desc";
-	private static final String I18N_DOWNLOADWORKSETBUTTON_DESC = "createdoc.DocCreatingLayout.downloadWorksetButton.desc";
-	private static final String I18N_TREE_CAPTION = "createdoc.DocCreatingLayout.projectTreeCaption";
+	static final String I18N_SEARCHFIELD_PLACEHOLDER = "createdoc.CreateDocLayout.worksetFilterField.placeholder";
+	static final String I18N_SEARCHSETTINGS_DESC = "createdoc.CreateDocLayout.worksetFilterSettingsButton.desc";
+	static final String I18N_USERLAYOUTSETTINGS_DESC = "createdoc.CreateDocLayout.userLayoutSettings.desc";
+	static final String I18N_ADDWORKSETBUTTON_DESC = "createdoc.CreateDocLayout.addWorksetButton.desc";
+	static final String I18N_DELWORKSETBUTTON_DESC = "createdoc.CreateDocLayout.delWorksetButton.desc";
+	static final String I18N_DOWNLOADWORKSETBUTTON_DESC = "createdoc.CreateDocLayout.downloadWorksetButton.desc";
+	static final String I18N_TREE_CAPTION = "createdoc.CreateDocLayout.projectTreeCaption";
 	/* worksetGrid column captions*/
-	private static final String I18N_WORKSET_COLUMN_NAME = "createdoc.DocCreatingLayout.worksetGrid.columns.name";
-	private static final String I18N_WORKSET_COLUMN_CODE = "createdoc.DocCreatingLayout.worksetGrid.columns.code";
-	private static final String I18N_WORKSET_COLUMN_PIR = "createdoc.DocCreatingLayout.worksetGrid.columns.pir";
-	private static final String I18N_WORKSET_COLUMN_SMR = "createdoc.DocCreatingLayout.worksetGrid.columns.smr";
-	private static final String I18N_WORKSET_COLUMN_PLANOBJ = "createdoc.DocCreatingLayout.worksetGrid.columns.planobj";
-	private static final String I18N_WORKSET_COLUMN_ID = "createdoc.DocCreatingLayout.worksetGrid.columns.id";
-	private static final String I18N_WORKSET_COLUMN_VERSION = "createdoc.DocCreatingLayout.worksetGrid.columns.ver";
-	private static final String I18N_WORKSET_COLUMN_CREATEDATE = "createdoc.DocCreatingLayout.worksetGrid.columns.createdate";
-	private static final String I18N_WORKSET_COLUMN_CHANGEDATE = "createdoc.DocCreatingLayout.worksetGrid.columns.changedate";
+	private static final String I18N_WORKSET_COLUMN_NAME = "createdoc.CreateDocLayout.worksetGrid.columns.name";
+	private static final String I18N_WORKSET_COLUMN_CODE = "createdoc.CreateDocLayout.worksetGrid.columns.code";
+	private static final String I18N_WORKSET_COLUMN_PIR = "createdoc.CreateDocLayout.worksetGrid.columns.pir";
+	private static final String I18N_WORKSET_COLUMN_SMR = "createdoc.CreateDocLayout.worksetGrid.columns.smr";
+	private static final String I18N_WORKSET_COLUMN_PLANOBJ = "createdoc.CreateDocLayout.worksetGrid.columns.planobj";
+	private static final String I18N_WORKSET_COLUMN_ID = "createdoc.CreateDocLayout.worksetGrid.columns.id";
+	private static final String I18N_WORKSET_COLUMN_VERSION = "createdoc.CreateDocLayout.worksetGrid.columns.ver";
+	private static final String I18N_WORKSET_COLUMN_CREATEDATE = "createdoc.CreateDocLayout.worksetGrid.columns.createdate";
+	private static final String I18N_WORKSET_COLUMN_CHANGEDATE = "createdoc.CreateDocLayout.worksetGrid.columns.changedate";
 	
 	private static final int WORKSET_GRID_ROWS = 15;
 	private static final int WORKSET_GRID_ROW_HEIGHT = 38;
@@ -88,7 +88,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	private CreateDocSettingsJson docSettingsJson;
 	
 	private VerticalLayout leftLayout;
-	private VerticalLayout rightLayout;
+	private WorkSetDocumentation rightLayout;
 	
 	private TextField worksetFilterField;
 	private Button worksetFilterSettingsButton;
@@ -216,6 +216,18 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		worksetGrid.setColumnReorderingAllowed(true);
 		worksetDataProvider.setShownColumns(columnSettings);
 		worksetGrid.setDataProvider(worksetDataProvider);
+		
+		/* WorkSet Item Select */
+		worksetGrid.addSelectionListener(selectEvent -> {
+			if (Objects.nonNull(this.rightLayout)) {
+				Optional<IWorkSetPresenter> item = selectEvent.getFirstSelectedItem();
+				if (item.isPresent()) {
+					rightLayout.getDocumentsDataProvider().setParentWorkSet(item.get().getWorkset());
+					rightLayout.getDocumentsDataProvider().refreshAll();
+				}
+			}
+		});
+		
 		// test column headers
 		userSettings.getLeftColumnHeaders();
 		createWorksetHeaderColumns(userSettings);
@@ -436,16 +448,23 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 class WorkSetDocumentation extends VerticalLayout implements I18n {
 	private static final long serialVersionUID = -7505276213420043371L;
 
-	public static final String I18N_DOCUMENT_COLUMN_NAME = "createdoc.DocCreatingLayout.documentGrid.columns.name";
-	public static final String I18N_DOCUMENT_COLUMN_CODE = "createdoc.DocCreatingLayout.documentGrid.columns.code";
+	public static final String I18N_SEARCHFIELD_PLACEHOLDER = "createdoc.WorkSetDocumentation.documentFilterField.placeholder";
+	public static final String I18N_SEARCHSETTINGS_DESC = "createdoc.WorkSetDocumentation.documentFilterSettingsButton.desc";
+	public static final String I18N_USERLAYOUTSETTINGS_DESC = CreateDocLayout.I18N_USERLAYOUTSETTINGS_DESC;
+	public static final String I18N_ADDDOCUMENTBUTTON_DESC = "createdoc.WorkSetDocumentation.addDocumentButton.desc";
+	public static final String I18N_DELDOCUMENTBUTTON_DESC = "createdoc.WorkSetDocumentation.delDocumentButton.desc";
+	public static final String I18N_DOWNLOADDOCUMENTSBUTTON_DESC = "createdoc.WorkSetDocumentation.downloadDocumentsButton.desc";
 	
-	private static final String I18N_DOCUMENT_COLUMN_TYPE = "createdoc.DocCreatingLayout.documentGrid.columns.type";
-	private static final String I18N_DOCUMENT_COLUMN_WORK = "createdoc.DocCreatingLayout.documentGrid.columns.work";
-	private static final String I18N_DOCUMENT_COLUMN_WORKSET = "createdoc.DocCreatingLayout.documentGrid.columns.workset";
-	private static final String I18N_DOCUMENT_COLUMN_ID = "createdoc.DocCreatingLayout.documentGrid.columns.id";
-	private static final String I18N_DOCUMENT_COLUMN_VERSION = "createdoc.DocCreatingLayout.documentGrid.columns.version";
-	private static final String I18N_DOCUMENT_COLUMN_CREATEDATE = "createdoc.DocCreatingLayout.documentGrid.columns.createdate";
-	private static final String I18N_DOCUMENT_COLUMN_CHANGEDATE = "createdoc.DocCreatingLayout.documentGrid.columns.changedate";
+	public static final String I18N_DOCUMENT_COLUMN_NAME = "createdoc.WorkSetDocumentation.documentGrid.columns.name";
+	public static final String I18N_DOCUMENT_COLUMN_CODE = "createdoc.WorkSetDocumentation.documentGrid.columns.code";
+	
+	public static final String I18N_DOCUMENT_COLUMN_TYPE = "createdoc.WorkSetDocumentation.documentGrid.columns.type";
+	public static final String I18N_DOCUMENT_COLUMN_WORK = "createdoc.WorkSetDocumentation.documentGrid.columns.work";
+	public static final String I18N_DOCUMENT_COLUMN_WORKSET = "createdoc.WorkSetDocumentation.documentGrid.columns.workset";
+	public static final String I18N_DOCUMENT_COLUMN_ID = "createdoc.WorkSetDocumentation.documentGrid.columns.id";
+	public static final String I18N_DOCUMENT_COLUMN_VERSION = "createdoc.WorkSetDocumentation.documentGrid.columns.version";
+	public static final String I18N_DOCUMENT_COLUMN_CREATEDATE = "createdoc.WorkSetDocumentation.documentGrid.columns.createdate";
+	public static final String I18N_DOCUMENT_COLUMN_CHANGEDATE = "createdoc.WorkSetDocumentation.documentGrid.columns.changedate";
 	
 	private static final double DOCUMENT_GRID_ROWS = 10;
 	
@@ -454,14 +473,27 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 	private DocumentService documentService;
 	
 	private Grid<IDocumentPresenter> documentsGrid;	
-	private DocumentsDataProvider documnentsDataProvider;
+	private DocumentsDataProvider documentsDataProvider;
 	private CreateDocLayout parent;
+
+	private TextField documentsFilterField;
+
+	private Button documentsFilterSettingsButton;
+	private Button addDocumentButton;
+	private Button delDocumentButton;
+	private Button downloadDocumentsButton;
+
+	private Button userLayoutSettings;
 	
 	public WorkSetDocumentation(ICreateDocService service) {
 		this.documentService = service.getDocumentService();
 		this.settingsService = service.getUserSettingsService();
 		this.messageSource = service.getMessageSource();
 		refreshUiElements();
+	}
+	
+	public DocumentsDataProvider getDocumentsDataProvider() {
+		return documentsDataProvider;
 	}
 	
 	public void setParent(CreateDocLayout parent) {
@@ -474,10 +506,80 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 		setSpacing(false);
 		setSizeFull();
 		
-		settingsService.getUserSettings().getRightTreeGroup();
+		addComponent(createRightHeadFeautures());
 		addComponent(createDocumentGrid());
 	}
 
+	public Component createRightHeadFeautures() {
+		AbsoluteLayout layout = new AbsoluteLayout();
+		HorizontalLayout horizontalLayout = new HorizontalLayout();
+		layout.setStyleName("gzpn-head");
+		layout.setHeight(50.0f, Unit.PIXELS);
+		layout.setWidth(100.f, Unit.PERCENTAGE);
+		horizontalLayout.addComponent(createDocumentsFilter());
+		horizontalLayout.addComponent(createWorksetButtons());
+		horizontalLayout.addComponent(createExcelButton());
+		layout.addComponent(createSettingsButton(), "top:5px; left:5px");
+		layout.addComponent(horizontalLayout, "top:5px; right:5px");
+		return layout;
+	}
+
+	public Component createDocumentsFilter() {
+		documentsFilterField = new TextField();
+		documentsFilterField.setWidth(200.0f, Unit.PIXELS);
+		documentsFilterSettingsButton = new Button();
+		documentsFilterSettingsButton.setIcon(VaadinIcons.FILTER);
+		documentsFilterSettingsButton.setDescription(getI18nText(I18N_SEARCHSETTINGS_DESC, messageSource));
+		JoinedLayout<TextField, Button> searchComp = new JoinedLayout<>(documentsFilterField, documentsFilterSettingsButton);
+		documentsFilterField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER, messageSource));
+		
+		documentsFilterField.addValueChangeListener(e -> {
+			documentsDataProvider.getFilter().setCommonTextFilter(e.getValue());
+			documentsDataProvider.refreshAll();
+		});
+		return searchComp;
+	}
+
+	public Component createWorksetButtons() {
+		JoinedLayout<Button, Button> buttons = new JoinedLayout<>();
+		addDocumentButton = new Button(VaadinIcons.PLUS);
+		delDocumentButton = new Button(VaadinIcons.MINUS);
+		addDocumentButton.setDescription(getI18nText(I18N_ADDDOCUMENTBUTTON_DESC, messageSource));
+		delDocumentButton.setDescription(getI18nText(I18N_DELDOCUMENTBUTTON_DESC, messageSource));
+		addDocumentButton.setEnabled(false);
+		delDocumentButton.setEnabled(false);
+		
+		buttons.addComponent(addDocumentButton);
+		buttons.addComponent(delDocumentButton);
+		
+		return buttons;
+	}
+
+	public Component createExcelButton() {
+		downloadDocumentsButton = new Button(VaadinIcons.TABLE);
+		downloadDocumentsButton.setDescription(getI18nText(I18N_DOWNLOADDOCUMENTSBUTTON_DESC, messageSource));
+		StreamResource excelStreamResource = new StreamResource(
+				(StreamResource.StreamSource) () -> Exporter.exportAsExcel(documentsGrid), "documents.xls");
+		FileDownloader excelFileDownloader = new FileDownloader(excelStreamResource);
+		excelFileDownloader.extend(downloadDocumentsButton);
+		
+		return downloadDocumentsButton;
+	}
+	
+	public Component createSettingsButton() {
+		userLayoutSettings = new Button();
+		userLayoutSettings.setIcon(VaadinIcons.COG_O);
+		userLayoutSettings.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC, messageSource));
+		userLayoutSettings.addClickListener(event -> {
+			CreateDocSettingsWindow settingsWindow = new CreateDocSettingsWindow(settingsService, messageSource);
+			settingsWindow.addOnSaveListener(closeEvent -> 
+				refreshUiElements()
+			);
+			getUI().getUI().addWindow(settingsWindow);
+		});
+		return userLayoutSettings;
+	}
+	
 	public Component createDocumentGrid() {
 		documentsGrid = new Grid<>();
 		refreshDocumentGrid();
@@ -486,7 +588,7 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 
 	private void refreshDocumentGrid() {
 		documentsGrid.removeAllColumns();
-		documnentsDataProvider = new DocumentsDataProvider(documentService);
+		documentsDataProvider = new DocumentsDataProvider(documentService);
 		CreateDocSettingsJson userSettings = settingsService.getUserSettings();
 		List<ColumnSettings> columnSettings = userSettings.getRightResultColumns();
 		
@@ -497,8 +599,8 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 		documentsGrid.setSizeFull();
 		documentsGrid.setHeightByRows(DOCUMENT_GRID_ROWS);
 		documentsGrid.setColumnReorderingAllowed(true);
-		documnentsDataProvider.setShownColumns(columnSettings);
-		documentsGrid.setDataProvider(documnentsDataProvider);
+		documentsDataProvider.setShownColumns(columnSettings);
+		documentsGrid.setDataProvider(documentsDataProvider);
 
 		addDocumentHeaderColumns(userSettings);
 	}

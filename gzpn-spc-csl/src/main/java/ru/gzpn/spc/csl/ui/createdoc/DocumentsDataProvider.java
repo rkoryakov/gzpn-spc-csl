@@ -44,9 +44,13 @@ public class DocumentsDataProvider extends AbstractBackEndDataProvider<IDocument
 
 	@Override
 	protected int sizeInBackEnd(Query<IDocumentPresenter, Void> query) {
-		return (int)documentService.getDocuments(parentWorkSet).stream().map(
+		int result = 0;
+		if (!Objects.isNull(parentWorkSet)) { 
+		result  = (int)documentService.getDocuments(parentWorkSet).stream().map(
 					item -> (IDocumentPresenter) new DocumentPresenter(item)
 					).filter(getFilter().getFilterPredicate(shownColumns)).count();
+		}
+		return result;
 	}
 	
 	public DocumentFilter getFilter() {
