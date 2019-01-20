@@ -12,22 +12,22 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ACLJson implements Serializable {
 	private static final long serialVersionUID = -5207546411091576809L;
 	
-	Set<String> viewRoles;
-	Set<String> editRoles;
+	Set<String> roles;
+//	Set<String> editRoles;
 
 	public Set<String> getReadOnlyRoles() {
-		return viewRoles;
+		return roles;
 	}
 
 	public void setReadOnlyRoles(Set<String> readOnlyRoles) {
-		this.viewRoles = readOnlyRoles;
+		this.roles = readOnlyRoles;
 	}
 
-	public Set<String> getEditRoles() {
-		return editRoles;
-	}
-
-	public void setEditRoles(Set<String> editRoles) {
-		this.editRoles = editRoles;
-	}
+//	public Set<String> getEditRoles() {
+//		return editRoles;
+//	}
+//
+//	public void setEditRoles(Set<String> editRoles) {
+//		this.editRoles = editRoles;
+//	}
 }

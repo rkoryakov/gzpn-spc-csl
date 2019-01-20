@@ -10,17 +10,18 @@ import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.SingleSelectionModel;
 
 import ru.gzpn.spc.csl.model.utils.Entities;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.ui.admin.UsersAndRolesVerticalLayout;
 import ru.gzpn.spc.csl.ui.common.I18n;
 
+@SuppressWarnings("serial")
 public class ProjectPermissionsVerticalLayout extends VerticalLayout implements I18n {
 	
 	private IdentityService identityService;
@@ -36,6 +37,7 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 	private CProjectDataProvider cpDataProvider;
 	private HProjectDataProvider hpDataProvider;
 	private IProjectService projectService;
+	private ProjectAddGroupVerticalLayout projectAddGroup;
 
 	public ProjectPermissionsVerticalLayout(IProjectService projectService, IdentityService identityService, MessageSource messageSource) {
 		this.projectService = projectService;
@@ -44,7 +46,8 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 		
 		cpDataProvider = new CProjectDataProvider(projectService);
 		hpDataProvider = new HProjectDataProvider(projectService);
-		
+
+		projectAddGroup = new ProjectAddGroupVerticalLayout(messageSource, identityService, projectService);
 		panel = new HorizontalSplitPanel();
 		headerHorizontal = new HorizontalLayout();
 		resultPage = new VerticalLayout();
@@ -65,9 +68,14 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 		panel.setMaxSplitPosition(70, Unit.PERCENTAGE);
 		panel.setMinSplitPosition(30, Unit.PERCENTAGE);
 		panel.setFirstComponent(resultPage);
+		panel.setSecondComponent(projectAddGroup);
 		panel.setHeight(100, Unit.PERCENTAGE);
 		setHeight(100, Unit.PERCENTAGE);
 		addComponent(panel);
+	}
+
+	public ProjectAddGroupVerticalLayout getProjectAddGroup() {
+		return projectAddGroup;
 	}
 
 	private TextField createSearchProject() {
@@ -116,7 +124,6 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 	
 	private Grid<IHProjectPresenter> createGridHeavyProjects() {
 		Grid<IHProjectPresenter> grid = new Grid<>();
-		grid.setSelectionMode(SelectionMode.MULTI);
 		grid.addColumn(IHProjectPresenter::getId).setCaption("ID").setId(IHProjectPresenter.FIELD_ID).setSortable(true);
 		grid.addColumn(IHProjectPresenter::getName).setCaption("Name").setId(IHProjectPresenter.FIELD_NAME).setSortable(true);
 		grid.addColumn(IHProjectPresenter::getCode).setCaption("Code").setId(IHProjectPresenter.FIELD_CODE).setSortable(true);
@@ -128,12 +135,20 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 		grid.setHeightMode(HeightMode.ROW);
 		grid.setHeightByRows(14);
 		grid.setDataProvider(hpDataProvider);
+		
+		projectAddGroup.setVisible(false);	
+		SingleSelectionModel<IHProjectPresenter> singleSelect = (SingleSelectionModel<IHProjectPresenter>) grid.getSelectionModel();
+		singleSelect.addSingleSelectionListener(event -> 
+			singleSelect.getSelectedItem().ifPresent(item -> {
+				this.getProjectAddGroup().setIHProject(item);
+				projectAddGroup.setVisible(true);
+			})
+		);
 		return grid;
 	}
 	
 	private Grid<ICProjectPresenter> createGridCapitalProjects() {
 		Grid<ICProjectPresenter> grid = new Grid<>();
-		grid.setSelectionMode(SelectionMode.MULTI);
 		grid.addColumn(ICProjectPresenter::getId).setCaption("ID").setId(ICProjectPresenter.FIELD_ID).setSortable(true);
 		grid.addColumn(ICProjectPresenter::getName).setCaption("Name").setId(ICProjectPresenter.FIELD_NAME).setSortable(true);
 		grid.addColumn(ICProjectPresenter::getCode).setCaption("Code").setId(ICProjectPresenter.FIELD_CODE).setSortable(true);
@@ -149,6 +164,15 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 		grid.setHeightMode(HeightMode.ROW);
 		grid.setHeightByRows(14);
 		grid.setDataProvider(cpDataProvider);
+		
+		projectAddGroup.setVisible(false);	
+		SingleSelectionModel<ICProjectPresenter> singleSelect = (SingleSelectionModel<ICProjectPresenter>) grid.getSelectionModel();
+		singleSelect.addSingleSelectionListener(event -> 
+			singleSelect.getSelectedItem().ifPresent(item -> {
+				this.getProjectAddGroup().setICProject(item);
+				projectAddGroup.setVisible(true);
+			})
+		);
 		return grid;
 	}
 }

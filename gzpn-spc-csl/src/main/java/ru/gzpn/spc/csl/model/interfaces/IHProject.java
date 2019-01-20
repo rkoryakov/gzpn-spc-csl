@@ -2,7 +2,7 @@ package ru.gzpn.spc.csl.model.interfaces;
 
 import java.util.List;
 
-public interface IHProject extends IBaseEntity{
+public interface IHProject extends IACLBasedEntity {
 	public static final String ENTITYNAME_DOT = "hproject.";
 	
 	public static final String FIELD_NAME = ENTITYNAME_DOT + "name";
@@ -14,14 +14,9 @@ public interface IHProject extends IBaseEntity{
 	public static final String FIELD_VERSION = ENTITYNAME_DOT + IBaseEntity.FIELD_VERSION;
 	
 	public String getName();
-
 	public void setName(String name);
-	
 	public String getCode();
-
 	public void setCode(String code);
-
 	public List<ICProject> getCapitalProjects();
-
 	public void setCapitalProjects(List<ICProject> capitalProjects);
 }

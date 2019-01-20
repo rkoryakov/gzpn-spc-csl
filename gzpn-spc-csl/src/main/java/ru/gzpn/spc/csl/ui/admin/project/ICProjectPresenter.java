@@ -4,8 +4,8 @@ import ru.gzpn.spc.csl.model.interfaces.ICProject;
 
 public interface ICProjectPresenter extends ICProject {
 	
-	public ICProject getcProject();
-	public void setcProject(ICProject cProject);
+	public ICProject getCProject();
+	public void setCProject(ICProject cProject);
 	public String getCreateDatePresenter();
 	public String getChangeDatePresenter();
 	public String getStageCaption();

@@ -22,12 +22,12 @@ public class HProjectPresenter extends HProject implements IHProjectPresenter {
 	}
 	
 	@Override
-	public IHProject gethProject() {
+	public IHProject getHProject() {
 		return hProject;
 	}
 
 	@Override
-	public void sethProject(IHProject hProject) {
+	public void setHProject(IHProject hProject) {
 		this.hProject = hProject;
 	}
 	

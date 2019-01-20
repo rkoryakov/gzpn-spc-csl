@@ -36,6 +36,7 @@ import com.vaadin.ui.components.grid.SingleSelectionModel;
 import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
 import ru.gzpn.spc.csl.ui.common.I18n;
 
+@SuppressWarnings("serial")
 public class UsersAndRolesVerticalLayout extends VerticalLayout implements I18n {
 	
 	public static final Logger logger = LoggerFactory.getLogger(UsersAndRolesVerticalLayout.class);

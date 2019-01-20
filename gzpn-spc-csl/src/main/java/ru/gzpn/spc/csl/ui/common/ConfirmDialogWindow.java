@@ -7,6 +7,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
+@SuppressWarnings("serial")
 public class ConfirmDialogWindow extends Window {
 
 	private Button okButton;

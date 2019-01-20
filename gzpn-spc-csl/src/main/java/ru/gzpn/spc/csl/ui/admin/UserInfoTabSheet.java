@@ -36,6 +36,7 @@ import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
 import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 
+@SuppressWarnings("serial")
 public class UserInfoTabSheet extends TabSheet implements I18n {
 	
 	private UserInfoVerticalLayout userInfoVerticalLayout;
@@ -72,6 +73,7 @@ public class UserInfoTabSheet extends TabSheet implements I18n {
 	}
 }
 
+@SuppressWarnings("serial")
 class UserInfoVerticalLayout extends VerticalLayout implements I18n {
 	
 	private final TextField loginField;
@@ -382,6 +384,7 @@ class UserInfoVerticalLayout extends VerticalLayout implements I18n {
 
 }
 
+@SuppressWarnings("serial")
 class UserAddGroupVerticalLayout extends VerticalLayout implements I18n {
 	
 	private MessageSource messageSource;

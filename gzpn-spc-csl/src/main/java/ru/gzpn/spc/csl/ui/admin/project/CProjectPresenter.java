@@ -28,12 +28,12 @@ public class CProjectPresenter extends CProject implements ICProjectPresenter {
 	}
 	
 	@Override
-	public ICProject getcProject() {
+	public ICProject getCProject() {
 		return cProject;
 	}
 	
 	@Override
-	public void setcProject(ICProject cProject) {
+	public void setCProject(ICProject cProject) {
 		this.cProject = cProject;
 	}
 
