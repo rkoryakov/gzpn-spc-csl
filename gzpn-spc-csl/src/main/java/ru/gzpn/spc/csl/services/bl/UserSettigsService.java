@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.UserSettings;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
 import ru.gzpn.spc.csl.model.repositories.UserSettingsRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 
@@ -27,7 +28,7 @@ public class UserSettigsService implements IUserSettigsService {
 	ServerProperties serverProperties;
 	
 	@Override
-	public CreateDocSettingsJson getUserSettings() {
+	public ISettingsJson getUserSettings() {
 		String user = getCurrentUser();
 		return getUserSettings(user);
 	}
@@ -52,36 +53,49 @@ public class UserSettigsService implements IUserSettigsService {
 	}
 
 	@Override
-	public CreateDocSettingsJson getUserSettings(String userId) {
+	public ISettingsJson getUserSettings(String userId) {
+		return getUserSettings(userId, null);
+	}
+	
+	@Override
+	public ISettingsJson getUserSettings(String userId, ISettingsJson defaultValue) {
 		UserSettings userSettings = repository.findByUserId(userId);
-		CreateDocSettingsJson result = null;
+		ISettingsJson result = null;
 		
 		if (userSettings != null) {
 			result = userSettings.getCreateDocSettingsJson();
 			// JSON field is empty
 			if (Objects.isNull(result)) {
-				result = new CreateDocSettingsJson();
+				result = defaultValue;
 			}
-		// no such user
+		// no such user settings
 		} else {
-			result = new CreateDocSettingsJson();
+			result = defaultValue;
 		}
 		
 		return result;
 	}
 	
 	@Override
-	public void saveCreateDocSettings(String userId, CreateDocSettingsJson createDoc) {
+	public void save(String userId, ISettingsJson settingsJson) {
 		UserSettings userSettings = repository.findByUserId(userId);
 		
 		if (userSettings != null) {
-			userSettings.setCreateDocSettingsJson(createDoc);
+			setUserSettings(userSettings, settingsJson);
 		} else {
 			userSettings = new UserSettings();
 			userSettings.setUserId(userId);
-			userSettings.setCreateDocSettingsJson(createDoc);
+			setUserSettings(userSettings, settingsJson);
 		}
 	
 		repository.save(userSettings);
 	}
+
+	private void setUserSettings(UserSettings settings, ISettingsJson settingsJson) {
+		if (settingsJson instanceof CreateDocSettingsJson) {
+			settings.setCreateDocSettingsJson((CreateDocSettingsJson)settingsJson);
+		}
+	}
+	
+	
 }

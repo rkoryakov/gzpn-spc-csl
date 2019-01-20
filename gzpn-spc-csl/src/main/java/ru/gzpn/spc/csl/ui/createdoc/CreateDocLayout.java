@@ -114,7 +114,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		
 		this.currentUser = settingsService.getCurrentUser();
 		
-		docSettingsJson = settingsService.getUserSettings();
+		docSettingsJson = (CreateDocSettingsJson)settingsService.getUserSettings();
 		NodeWrapper treeSettings = docSettingsJson.getLeftTreeGroup();
 		
 		projectTreeDataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
@@ -141,7 +141,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	}
 	
 	public void saveUserSettings() {
-		settingsService.saveCreateDocSettings(this.currentUser, docSettingsJson);
+		settingsService.save(this.currentUser, docSettingsJson);
 	}
 
 	public Component createLeftLayout() {
@@ -174,7 +174,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	}
 	
 	public void refreshProjectTree() {
-		docSettingsJson = settingsService.getUserSettings();
+		docSettingsJson = (CreateDocSettingsJson)settingsService.getUserSettings();
 		NodeWrapper treeSettings = docSettingsJson.getLeftTreeGroup();
 		projectTreeDataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
 		projectTree.setDataProvider(projectTreeDataProvider);
@@ -203,7 +203,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 
 	public void refreshWorksetGrid() {
 		worksetDataProvider = new WorksetDataProvider(worksetService);
-		CreateDocSettingsJson userSettings = settingsService.getUserSettings();
+		CreateDocSettingsJson userSettings = (CreateDocSettingsJson)settingsService.getUserSettings();
 		List<ColumnSettings> columnSettings = userSettings.getLeftResultColumns();
 		
 		columnSettings.sort((cs1, cs2) -> 
@@ -589,7 +589,7 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 	private void refreshDocumentGrid() {
 		documentsGrid.removeAllColumns();
 		documentsDataProvider = new DocumentsDataProvider(documentService);
-		CreateDocSettingsJson userSettings = settingsService.getUserSettings();
+		CreateDocSettingsJson userSettings = (CreateDocSettingsJson)settingsService.getUserSettings();
 		List<ColumnSettings> columnSettings = userSettings.getRightResultColumns();
 		
 		columnSettings.sort((cs1, cs2) -> 

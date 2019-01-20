@@ -27,7 +27,7 @@ public class UserSettigsServiceTest {
 	
 	@Test
 	public void testJson() {
-		CreateDocSettingsJson settings = settigsService.getUserSettings();
+		CreateDocSettingsJson settings = (CreateDocSettingsJson)settigsService.getUserSettings();
 		NodeWrapper nodeSettings = settings.getLeftDefaultNodesHierarchy();
 		
 		ColumnHeaderGroup head1 = new ColumnHeaderGroup("root1");

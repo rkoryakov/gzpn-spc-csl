@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
+import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
@@ -32,7 +33,7 @@ public class WorkSetServiceTest extends WorkSetService {
 	@Test
 	public void getItemsByNodeEmptyResultTest() {
 		List<Order> orders = new ArrayList<>();
-		NodeWrapper parentNode = settings.getUserSettings().getLeftDefaultNodesHierarchy();
+		NodeWrapper parentNode = ((CreateDocSettingsJson)settings.getUserSettings()).getLeftDefaultNodesHierarchy();
 		Stream<IWorkSet> result = getItemsByNode(parentNode, 0, MAX_RESULTS);
 		assertThat(result).size().isZero();
 	}
@@ -40,7 +41,7 @@ public class WorkSetServiceTest extends WorkSetService {
 	@Test
 	public void getItemsByNodeCProjectTest() {
 		List<Order> orders = new ArrayList<>();
-		NodeWrapper parentNode = settings.getUserSettings().getLeftDefaultNodesHierarchy();
+		NodeWrapper parentNode = ((CreateDocSettingsJson)settings.getUserSettings()).getLeftDefaultNodesHierarchy();
 		List<NodeWrapper> hProjectLevel = projetcService.getItemsGroupedByField(parentNode)
 				.collect(Collectors.toList());
 		assertThat(hProjectLevel).size().isNotZero();
@@ -60,7 +61,7 @@ public class WorkSetServiceTest extends WorkSetService {
 	@Test
 	public void getItemsByNodeStageTest() {
 		List<Order> orders = new ArrayList<>();
-		NodeWrapper parentNode = settings.getUserSettings().getLeftDefaultNodesHierarchy();
+		NodeWrapper parentNode = ((CreateDocSettingsJson)settings.getUserSettings()).getLeftDefaultNodesHierarchy();
 		List<NodeWrapper> hProjectLevel = projetcService.getItemsGroupedByField(parentNode)
 				.collect(Collectors.toList());
 		assertThat(hProjectLevel).size().isNotZero();

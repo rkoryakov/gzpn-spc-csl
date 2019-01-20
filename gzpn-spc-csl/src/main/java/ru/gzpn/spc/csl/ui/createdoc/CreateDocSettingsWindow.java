@@ -18,6 +18,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.components.grid.TreeGridDropTarget;
 
+import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.DraggableTree;
@@ -72,7 +73,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		projectTree.setItemCaptionGenerator(NodeWrapper::getNodeSettingsCaption);
 		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
 		projectTree.setSizeFull();
-		projectTree.setHeight(90, Unit.PERCENTAGE);
+		projectTree.setHeight(40, Unit.PERCENTAGE);
 		refreshUiTreeData();
 		
 		TreeGridDragSource<NodeWrapper> dragSource = new TreeGridDragSource<>(projectTree.getCompositionRoot());
@@ -148,7 +149,8 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 	}
 
 	public void refreshUiTreeData() {
-		NodeWrapper rootNode = settingsService.getUserSettings().getLeftTreeGroup();
+		CreateDocSettingsJson settingsJson = (CreateDocSettingsJson)settingsService.getUserSettings();
+		NodeWrapper rootNode = settingsJson.getLeftTreeGroup();
 		treeData = new TreeData<>();
 		treeData.addItem(null, rootNode);
 		
@@ -179,6 +181,6 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 			next = child;
 		}
 		
-		this.userSettings.setLeftTreeGroup(result);
+		((CreateDocSettingsJson)this.userSettings).setLeftTreeGroup(result);
 	}
 }

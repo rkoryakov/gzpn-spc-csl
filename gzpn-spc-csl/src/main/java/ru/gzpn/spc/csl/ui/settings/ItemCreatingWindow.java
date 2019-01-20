@@ -3,7 +3,6 @@ package ru.gzpn.spc.csl.ui.settings;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.context.MessageSource;
@@ -17,23 +16,22 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.I18n;
 
-public abstract class UISettingsWindow extends Window implements I18n {
-
+public abstract class ItemCreatingWindow extends Window implements I18n {
 	private static final long serialVersionUID = 1L;
 	
-	public static final String I18N_CANCELBUTTON_CAP = "settings.UISettingsWindow.cancelButton.cap";
-	public static final String I18N_SAVEBUTTON_CAP = "settings.UISettingsWindow.saveButton.cap";
+	public static final String I18N_CANCELBUTTON_CAP = "ItemCreatingWindow.cancelButton.cap";
+	public static final String I18N_SAVEBUTTON_CAP = "ItemCreatingWindow.saveButton.cap";
 	
 	// event actions
 	public static final Action SAVE_ACTION = new Action("saveAction");
 	public static final Action CANCEL_ACTION = new Action("cancelAction");
-	
-	protected IUserSettigsService settingsService;
-	protected ISettingsJson userSettings;
+
+	private IUIService service;
+	private IUserSettigsService userSettingsService;
 	protected MessageSource messageSource;
 	protected String user;
 	
@@ -45,11 +43,11 @@ public abstract class UISettingsWindow extends Window implements I18n {
 
 	private Map<Action, Set<Listener>> listeners;
 	
-	public UISettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
-		this.settingsService = settingsService;
-		this.user = settingsService.getCurrentUser();
-		this.messageSource = messageSource;
-		this.userSettings = settingsService.getUserSettings();
+	public ItemCreatingWindow(IUIService service) {
+		this.service = service;
+		this.messageSource = service.getMessageSource();
+		this.userSettingsService = service.getUserSettingsService();
+		
 		initEventActions();
 		
 		createBody();
@@ -61,17 +59,6 @@ public abstract class UISettingsWindow extends Window implements I18n {
 		listeners = new HashMap<>();
 		listeners.put(SAVE_ACTION, new HashSet<>());
 		listeners.put(CANCEL_ACTION, new HashSet<>());
-	}
-	
-	public ISettingsJson getUiSettings() {
-		if (Objects.isNull(userSettings)) {
-			userSettings = settingsService.getUserSettings();
-		}
-		return userSettings;
-	}
-
-	public void setUiSettings(ISettingsJson uiSettings) {
-		this.userSettings = uiSettings;
 	}
 
 	public void createBody() {
@@ -108,7 +95,7 @@ public abstract class UISettingsWindow extends Window implements I18n {
 		saveButton = new Button(getI18nText(I18N_SAVEBUTTON_CAP, messageSource));
 		saveButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		saveButton.addClickListener(listener -> {
-			save(this.userSettings);
+			save(/* TODO */);
 			refreshUiElements();
 		});
 		
@@ -120,9 +107,9 @@ public abstract class UISettingsWindow extends Window implements I18n {
 	 */
 	public abstract void refreshUiElements();
 	
-	public void save(ISettingsJson userSettings) {
+	public void save() {
 		refreshSettings();
-		settingsService.save(user, userSettings);
+		/* TODO */
 		onSave();
 		this.close();
 	}
