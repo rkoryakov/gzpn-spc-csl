@@ -24,7 +24,6 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import ru.gzpn.spc.csl.model.HProject;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.jsontypes.ACLJson;
@@ -48,7 +47,7 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 	private DataProvider<String, String> selectGroupProvider = createSelectGroupProvider();
 	private ConfigurableFilterDataProvider<String, Void, String> selectGroupFilter;
 	private Button editButton;
-	private Button viewButton;
+	private Button saveButton;
 	private DataProvider<GroupTemplate, String> groupForProject = createDataProvider();
 	private ConfigurableFilterDataProvider<GroupTemplate, Void, String> groupProjectIDFilter;
 	private ICProject currentICProject;
@@ -69,20 +68,24 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 		selectGroup = createSelectGroup(selectGroupProvider);
 		addGroupButton = createAddGroupButton();
 		editButton = createEditButton();
-		viewButton = createViewButton();
+		saveButton = createViewButton();
 		joinedComponent = new JoinedLayout<>(selectGroup, addGroupButton);
 		headerHorizont = new HorizontalLayout();
 		joinedComponent.setVisible(false);
 		joinedComponent.setEnabled(false);
-		viewButton.setVisible(false);
-		viewButton.setEnabled(false);
+		saveButton.setVisible(false);
+		saveButton.setEnabled(false);
 		headerHorizont.setSizeFull();
 		
-		headerHorizont.addComponents(joinedComponent, editButton, viewButton);
+		headerHorizont.addComponents(joinedComponent, editButton, saveButton);
 		headerHorizont.setComponentAlignment(editButton, Alignment.MIDDLE_RIGHT);
-		headerHorizont.setComponentAlignment(viewButton, Alignment.MIDDLE_RIGHT);
+		headerHorizont.setComponentAlignment(saveButton, Alignment.MIDDLE_RIGHT);
 		gridGroupAddProject = createGroupAddProject();
 		addComponents(headerHorizont, gridGroupAddProject);
+	}
+	
+	public Button getSaveButton() {
+		return this.saveButton;
 	}
 	
 	private DataProvider<String, String> createSelectGroupProvider() {
@@ -184,7 +187,7 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
  				acljson.getReadOnlyRoles().add(selectGroup.getValue());
  				//acljson.setReadOnlyRoles(groupSet);
  				currentIHProject.setAcl(acljson);
- 				projectService.getHPRepository().save((HProject)currentIHProject);
+ 				projectService.saveHProject(currentIHProject);
  				//identityService.createMembership(currentIHProject.getId().toString(), selectGroup.getValue());
  				groupForProject.refreshAll();
  				String notificationTextAdd = getI18nText(I18N_NOTIFICATION_USERADDGROUP, paramsForAdd, messageSource);
@@ -204,8 +207,8 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 		edit.addClickListener(event ->{
 			joinedComponent.setVisible(true);
 			joinedComponent.setEnabled(true);
-			viewButton.setVisible(true);
-			viewButton.setEnabled(true);
+			saveButton.setVisible(true);
+			saveButton.setEnabled(true);
 			edit.setVisible(false);
 			edit.setEnabled(false);
 			gridGroupAddProject.getColumn("del").setHidden(false);

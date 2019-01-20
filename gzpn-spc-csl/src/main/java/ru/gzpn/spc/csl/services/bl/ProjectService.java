@@ -1,6 +1,7 @@
 package ru.gzpn.spc.csl.services.bl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.gzpn.spc.csl.model.HProject;
+import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
 import ru.gzpn.spc.csl.model.utils.Entities;
@@ -39,6 +42,16 @@ public class ProjectService implements IProjectService {
 		return cpRepository;
 	}
 	
+	@Override
+	public void saveHProject(IHProject project) {
+		Optional<HProject> pr = hpRepository.findById(project.getId());
+		if (pr.isPresent()) {
+			HProject hp = pr.get();
+			hp.setAcl(project.getAcl());
+			hpRepository.save(hp);
+		}
+		
+	}
 	/**
 	 * Items count of the given entity grouped by the given field
 	 * 

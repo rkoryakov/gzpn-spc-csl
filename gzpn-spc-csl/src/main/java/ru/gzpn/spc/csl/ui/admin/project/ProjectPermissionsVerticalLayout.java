@@ -48,6 +48,7 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 		hpDataProvider = new HProjectDataProvider(projectService);
 
 		projectAddGroup = new ProjectAddGroupVerticalLayout(messageSource, identityService, projectService);
+		projectAddGroup.getSaveButton().addClickListener(clickEvent -> hpDataProvider.refreshAll());
 		panel = new HorizontalSplitPanel();
 		headerHorizontal = new HorizontalLayout();
 		resultPage = new VerticalLayout();
