@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.User;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 
@@ -432,15 +433,12 @@ class UserAddGroupVerticalLayout extends VerticalLayout implements I18n {
 	private DataProvider<String, String> createSelectGroupProvider() {
 		return DataProvider.fromFilteringCallbacks(query -> {
 			List<String> groupList = identityService.createGroupQuery().list().stream().
-					filter(group -> group.getId().startsWith(query.getFilter().orElse("")) 
-									|| group.getName().startsWith(query.getFilter().orElse(""))
-						).map(Group :: getId).collect(Collectors.toList());
+					filter(group -> StringUtils.startsWithIgnoreCase(group.getId(), query.getFilter().orElse("")))
+						.map(Group :: getId).collect(Collectors.toList());
 			return groupList.stream();
-			
 		}, query -> identityService.createGroupQuery().list().stream().
-					filter(group -> group.getId().startsWith(query.getFilter().orElse(""))
-								|| group.getName().startsWith(query.getFilter().orElse(""))
-					).collect(Collectors.toList()).size());
+					filter(group -> StringUtils.startsWithIgnoreCase(group.getId(), query.getFilter().orElse("")))
+						.collect(Collectors.toList()).size());
 	}
 
 	private DataProvider<GroupTemplate, String> createDataProvider() {

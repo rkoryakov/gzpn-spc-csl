@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.gzpn.spc.csl.model.CProject;
 import ru.gzpn.spc.csl.model.HProject;
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
@@ -52,6 +54,17 @@ public class ProjectService implements IProjectService {
 		}
 		
 	}
+	
+	@Override
+	public void saveCProject(ICProject project) {
+		Optional<CProject> pr = cpRepository.findById(project.getId());
+		if (pr.isPresent()) {
+			CProject cp = pr.get();
+			cp.setAcl(project.getAcl());
+			cpRepository.save(cp);
+		}
+	}
+	
 	/**
 	 * Items count of the given entity grouped by the given field
 	 * 
@@ -166,4 +179,5 @@ public class ProjectService implements IProjectService {
 		T result = suplier.get();
 		return result;
 	}
+
 }

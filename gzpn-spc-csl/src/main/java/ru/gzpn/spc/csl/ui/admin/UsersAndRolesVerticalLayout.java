@@ -115,11 +115,9 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout implements I18n 
 
 	public DataProvider<UserTemplate, String> createUserDataProvider(){
 		return DataProvider.fromFilteringCallbacks(query -> {
-			List<User> userList = identityService.createUserQuery().list()
-					.stream()
-						.filter(user -> filterUser(user, query.getFilter().orElse("")))
+			List<User> userList = identityService.createUserQuery().list().stream()
+					.filter(user -> filterUser(user, query.getFilter().orElse("")))
 							.collect(Collectors.toList());
-			
 			return userList.stream().map(m -> {
 				UserTemplate user = new UserTemplate();
 				user.setId(m.getId());
@@ -129,10 +127,9 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout implements I18n 
 				user.setPassword(m.getPassword());
 				return user;
 			});
-		}, query -> identityService.createUserQuery().list()
-					.stream()
-						.filter(user -> filterUser(user, query.getFilter().orElse("")))
-							.collect(Collectors.toList()).size());
+		}, query -> identityService.createUserQuery().list().stream()
+					.filter(user -> filterUser(user, query.getFilter().orElse("")))
+						.collect(Collectors.toList()).size());
 	}
 	
 	private boolean filterUser(User user, String filter) {
@@ -143,11 +140,9 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout implements I18n 
 
 	private DataProvider<GroupTemplate, String> createGroupDataProvider() {
 		return DataProvider.fromFilteringCallbacks(query -> {
-			List<Group> groupList = identityService.createGroupQuery().list()
-					.stream()
-						.filter(group -> filterGroup(group, query.getFilter().orElse("")))
+			List<Group> groupList = identityService.createGroupQuery().list().stream()
+					.filter(group -> filterGroup(group, query.getFilter().orElse("")))
 							.collect(Collectors.toList());
-			
 			return groupList.stream().map(m -> {
 				GroupTemplate group = new GroupTemplate();
 				group.setId(m.getId());
@@ -157,10 +152,9 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout implements I18n 
 				group.setDelete(buttonDeleteGroup(m));
 				return group;
 			});
-		}, query -> identityService.createGroupQuery().list()
-					.stream()
-						.filter(group -> filterGroup(group, query.getFilter().orElse("")))
-							.collect(Collectors.toList()).size());
+		}, query -> identityService.createGroupQuery().list().stream()
+					.filter(group -> filterGroup(group, query.getFilter().orElse("")))
+						.collect(Collectors.toList()).size());
 	}
 	
 	private boolean filterGroup(Group group, String filter) {

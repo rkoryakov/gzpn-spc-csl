@@ -2,6 +2,7 @@ package ru.gzpn.spc.csl.services.bl.interfaces;
 
 import java.util.stream.Stream;
 
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
@@ -18,4 +19,5 @@ public interface IProjectService {
 	public long getCount(String entity, String groupByField, String filterBy, String filterValue);
 	public long getCount(String entity, String groupByField);
 	void saveHProject(IHProject project);
+	void saveCProject(ICProject project);
 }
