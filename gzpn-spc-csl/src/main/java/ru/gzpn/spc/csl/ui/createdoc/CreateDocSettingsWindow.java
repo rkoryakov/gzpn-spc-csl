@@ -39,6 +39,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 	
 	public CreateDocSettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
 		super(settingsService, messageSource);
+		this.userSettings = settingsService.getUserSettings(user, new CreateDocSettingsJson());
 		this.center();
 		this.setCaption(getI18nText(I18N_WINDOW_CAPTION, messageSource));
 		this.setModal(true);
@@ -149,7 +150,8 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 	}
 
 	public void refreshUiTreeData() {
-		CreateDocSettingsJson settingsJson = (CreateDocSettingsJson)settingsService.getUserSettings();
+		CreateDocSettingsJson settingsJson = (CreateDocSettingsJson)settingsService
+									.getUserSettings(user, new CreateDocSettingsJson());
 		NodeWrapper rootNode = settingsJson.getLeftTreeGroup();
 		treeData = new TreeData<>();
 		treeData.addItem(null, rootNode);
