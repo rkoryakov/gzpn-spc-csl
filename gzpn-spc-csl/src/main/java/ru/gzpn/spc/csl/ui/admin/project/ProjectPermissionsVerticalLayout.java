@@ -38,7 +38,19 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 	private HProjectDataProvider hpDataProvider;
 	private IProjectService projectService;
 	private ProjectAddGroupVerticalLayout projectAddGroup;
-
+	public static final String I18N_CAPTION_CAPITAL = "adminView.project.combobox.capital";
+	public static final String I18N_CAPTION_HEAVYS = "adminView.project.combobox.heavy";
+	public static final String I18N_CAPTION_ID = "adminView.caption.id";
+	public static final String I18N_CAPTION_NAME = "adminView.caption.name";
+	public static final String I18N_CAPTION_CODE = "adminView.caption.code";
+	public static final String I18N_CAPTION_CREATEDATE = "adminView.caption.createdate";
+	public static final String I18N_CAPTION_CHANGEEDATE = "adminView.caption.changedate";
+	public static final String I18N_CAPTION_VERSION = "adminView.caption.version";
+	public static final String I18N_CAPTION_STAGE = "adminView.caption.stage";
+	public static final String I18N_CAPTION_PHASE = "adminView.caption.phase";
+	public static final String I18N_CAPTION_HEAVY = "adminView.caption.hp";
+	public static final String I18N_CAPTION_MILESTONE = "adminView.caption.milestone";
+	
 	public ProjectPermissionsVerticalLayout(IProjectService projectService, 
 											IdentityService identityService, 
 											MessageSource messageSource) {
@@ -105,9 +117,9 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 		comboBox.setSelectedItem(Entities.HPROJECT);
 		gridCapitalProjects.setVisible(false);
 		comboBox.setItemCaptionGenerator(item -> {
-			String result = "Крупные проекты";
+			String result = getI18nText(I18N_CAPTION_HEAVYS, messageSource);
 			if (item == Entities.CPROJECT) {
-				result = "Капитальные проекты";
+				result = getI18nText(I18N_CAPTION_CAPITAL, messageSource);
 			}
 			return result;
 		});
@@ -128,12 +140,12 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 	
 	private Grid<IHProjectPresenter> createGridHeavyProjects() {
 		Grid<IHProjectPresenter> grid = new Grid<>();
-		grid.addColumn(IHProjectPresenter::getId).setCaption("ID").setId(IHProjectPresenter.FIELD_ID).setSortable(true);
-		grid.addColumn(IHProjectPresenter::getName).setCaption("Name").setId(IHProjectPresenter.FIELD_NAME).setSortable(true);
-		grid.addColumn(IHProjectPresenter::getCode).setCaption("Code").setId(IHProjectPresenter.FIELD_CODE).setSortable(true);
-		grid.addColumn(IHProjectPresenter::getCreateDatePresenter).setCaption("Create Date").setId(IHProjectPresenter.FIELD_CREATE_DATE).setSortable(true);
-		grid.addColumn(IHProjectPresenter::getChangeDatePresenter).setCaption("Change Date").setId(IHProjectPresenter.FIELD_CHANGE_DATE).setSortable(true);
-		grid.addColumn(IHProjectPresenter::getVersion).setCaption("Version").setId(IHProjectPresenter.FIELD_VERSION).setSortable(true);
+		grid.addColumn(IHProjectPresenter::getId).setCaption(getI18nText(I18N_CAPTION_ID, messageSource)).setId(IHProjectPresenter.FIELD_ID).setSortable(true);
+		grid.addColumn(IHProjectPresenter::getName).setCaption(getI18nText(I18N_CAPTION_NAME, messageSource)).setId(IHProjectPresenter.FIELD_NAME).setSortable(true);
+		grid.addColumn(IHProjectPresenter::getCode).setCaption(getI18nText(I18N_CAPTION_CODE, messageSource)).setId(IHProjectPresenter.FIELD_CODE).setSortable(true);
+		grid.addColumn(IHProjectPresenter::getCreateDatePresenter).setCaption(getI18nText(I18N_CAPTION_CREATEDATE, messageSource)).setId(IHProjectPresenter.FIELD_CREATE_DATE).setSortable(true);
+		grid.addColumn(IHProjectPresenter::getChangeDatePresenter).setCaption(getI18nText(I18N_CAPTION_CHANGEEDATE, messageSource)).setId(IHProjectPresenter.FIELD_CHANGE_DATE).setSortable(true);
+		grid.addColumn(IHProjectPresenter::getVersion).setCaption(getI18nText(I18N_CAPTION_VERSION, messageSource)).setId(IHProjectPresenter.FIELD_VERSION).setSortable(true);
 		grid.setColumnReorderingAllowed(true);
 		grid.setSizeFull();
 		grid.setHeightMode(HeightMode.ROW);
@@ -154,16 +166,16 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 	
 	private Grid<ICProjectPresenter> createGridCapitalProjects() {
 		Grid<ICProjectPresenter> grid = new Grid<>();
-		grid.addColumn(ICProjectPresenter::getId).setCaption("ID").setId(ICProjectPresenter.FIELD_ID).setSortable(true);
-		grid.addColumn(ICProjectPresenter::getName).setCaption("Name").setId(ICProjectPresenter.FIELD_NAME).setSortable(true);
-		grid.addColumn(ICProjectPresenter::getCode).setCaption("Code").setId(ICProjectPresenter.FIELD_CODE).setSortable(true);
-		grid.addColumn(ICProjectPresenter::getStageCaption).setCaption("Stage").setId(ICProjectPresenter.FILED_STAGE).setSortable(true);
-		grid.addColumn(ICProjectPresenter::getPhaseCaption).setCaption("Phase").setId(ICProjectPresenter.FILED_PHASE).setSortable(true);
-		grid.addColumn(ICProjectPresenter::getHProjectCaption).setCaption("Heavy Project").setId(ICProjectPresenter.FILED_HPROJECT).setSortable(true);
-		grid.addColumn(ICProjectPresenter::getMilestoneCaption).setCaption("Milestone").setId(ICProjectPresenter.FILED_MILESTONE).setSortable(true);
-		grid.addColumn(ICProjectPresenter::getCreateDatePresenter).setCaption("Create Date").setId(ICProjectPresenter.FIELD_CREATE_DATE).setSortable(true);
-		grid.addColumn(ICProjectPresenter::getChangeDatePresenter).setCaption("Change Date").setId(ICProjectPresenter.FIELD_CHANGE_DATE).setSortable(true);
-		grid.addColumn(ICProjectPresenter::getVersion).setCaption("Version").setId(ICProjectPresenter.FIELD_VERSION).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getId).setCaption(getI18nText(I18N_CAPTION_ID, messageSource)).setId(ICProjectPresenter.FIELD_ID).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getName).setCaption(getI18nText(I18N_CAPTION_NAME, messageSource)).setId(ICProjectPresenter.FIELD_NAME).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getCode).setCaption(getI18nText(I18N_CAPTION_CODE, messageSource)).setId(ICProjectPresenter.FIELD_CODE).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getStageCaption).setCaption(getI18nText(I18N_CAPTION_STAGE, messageSource)).setId(ICProjectPresenter.FILED_STAGE).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getPhaseCaption).setCaption(getI18nText(I18N_CAPTION_PHASE, messageSource)).setId(ICProjectPresenter.FILED_PHASE).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getHProjectCaption).setCaption(getI18nText(I18N_CAPTION_HEAVY, messageSource)).setId(ICProjectPresenter.FILED_HPROJECT).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getMilestoneCaption).setCaption(getI18nText(I18N_CAPTION_MILESTONE, messageSource)).setId(ICProjectPresenter.FILED_MILESTONE).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getCreateDatePresenter).setCaption(getI18nText(I18N_CAPTION_CREATEDATE, messageSource)).setId(ICProjectPresenter.FIELD_CREATE_DATE).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getChangeDatePresenter).setCaption(getI18nText(I18N_CAPTION_CHANGEEDATE, messageSource)).setId(ICProjectPresenter.FIELD_CHANGE_DATE).setSortable(true);
+		grid.addColumn(ICProjectPresenter::getVersion).setCaption(getI18nText(I18N_CAPTION_VERSION, messageSource)).setId(ICProjectPresenter.FIELD_VERSION).setSortable(true);
 		grid.setColumnReorderingAllowed(true);
 		grid.setSizeFull();
 		grid.setHeightMode(HeightMode.ROW);

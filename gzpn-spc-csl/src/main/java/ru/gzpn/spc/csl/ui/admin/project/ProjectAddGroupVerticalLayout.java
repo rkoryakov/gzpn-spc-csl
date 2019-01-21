@@ -272,12 +272,13 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 	private Grid<GroupTemplate> createGroupAddProject() {
 		Grid<GroupTemplate> grid = new Grid<>();
 		grid.setSizeFull();
-		grid.addColumn(GroupTemplate::getId).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_IDROLES, messageSource));
-		grid.addColumn(GroupTemplate::getName).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_NAMEROLES, messageSource));
-		grid.addColumn(GroupTemplate::getType).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_TYPEROLES, messageSource));
+		grid.setDataProvider(groupForHProject);
+		grid.addColumn(GroupTemplate::getId).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_ID, messageSource));
+		grid.addColumn(GroupTemplate::getName).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_NAME, messageSource));
+		grid.addColumn(GroupTemplate::getType).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_TYPE, messageSource));
 		grid.addComponentColumn(GroupTemplate::getDelete).setHidden(true).setId("del").setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_DELETE, messageSource)).setWidth(95.0);
 		grid.setWidth(100, Unit.PERCENTAGE);
-		grid.setDataProvider(groupForHProject);
+		
 		return grid;
 	}
 }

@@ -63,9 +63,9 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout implements I18n 
 	public static final String I18N_CAPTION_FIRSTNAME = "adminView.caption.firstName";
 	public static final String I18N_CAPTION_LASTNAME = "adminView.caption.lastName";
 	public static final String I18N_CAPTION_EMAIL = "adminView.caption.email";
-	public static final String I18N_CAPTION_IDROLES = "adminView.caption.id";
-	public static final String I18N_CAPTION_NAMEROLES = "adminView.caption.nameRoles";
-	public static final String I18N_CAPTION_TYPEROLES = "adminView.caption.typeRoles";
+	public static final String I18N_CAPTION_ID = "adminView.caption.id";
+	public static final String I18N_CAPTION_NAME = "adminView.caption.name";
+	public static final String I18N_CAPTION_TYPE = "adminView.caption.type";
 	public static final String I18N_CAPTION_EDIT = "adminView.caption.edit";
 	public static final String I18N_CAPTION_DELETE = "adminView.caption.delete";
 	public static final String I18N_CAPTION_BUTTON_CREATE = "adminView.button.nameCreateButton";
@@ -250,9 +250,9 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout implements I18n 
 	private Grid<GroupTemplate> createGridGroup() {
 		groupFilter = groupDataProvider.withConfigurableFilter();
 		Grid<GroupTemplate> grid = new Grid<>();
-		grid.addColumn(GroupTemplate::getId).setCaption(getI18nText(I18N_CAPTION_IDROLES, messageSource));
-		grid.addColumn(GroupTemplate::getName).setCaption(getI18nText(I18N_CAPTION_NAMEROLES, messageSource));
-		grid.addColumn(GroupTemplate::getType).setCaption(getI18nText(I18N_CAPTION_TYPEROLES, messageSource));
+		grid.addColumn(GroupTemplate::getId).setCaption(getI18nText(I18N_CAPTION_ID, messageSource));
+		grid.addColumn(GroupTemplate::getName).setCaption(getI18nText(I18N_CAPTION_NAME, messageSource));
+		grid.addColumn(GroupTemplate::getType).setCaption(getI18nText(I18N_CAPTION_TYPE, messageSource));
 		grid.addComponentColumn(GroupTemplate::getEdit).setCaption(getI18nText(I18N_CAPTION_EDIT, messageSource)).setWidth(105.0);
 		grid.addComponentColumn(GroupTemplate::getDelete).setCaption(getI18nText(I18N_CAPTION_DELETE, messageSource)).setWidth(105.0);
 		grid.setDataProvider(groupFilter);
@@ -323,15 +323,15 @@ public class UsersAndRolesVerticalLayout extends VerticalLayout implements I18n 
 		Button saveButton = new Button(getI18nText(I18N_CAPTION_BUTTON_SAVE, messageSource));
 		saveButton.setEnabled(false);
 		if (currentGroup != null) {
-			idField = new TextField(getI18nText(I18N_CAPTION_IDROLES, messageSource), currentGroup.getId());
+			idField = new TextField(getI18nText(I18N_CAPTION_ID, messageSource), currentGroup.getId());
 			idField.setReadOnly(true);
-			nameField = new TextField(getI18nText(I18N_CAPTION_NAMEROLES, messageSource), currentGroup.getName());
-			typeField = new TextField(getI18nText(I18N_CAPTION_TYPEROLES, messageSource), currentGroup.getType());
+			nameField = new TextField(getI18nText(I18N_CAPTION_NAME, messageSource), currentGroup.getName());
+			typeField = new TextField(getI18nText(I18N_CAPTION_TYPE, messageSource), currentGroup.getType());
 		}
 		else {
-			idField = new TextField(getI18nText(I18N_CAPTION_IDROLES, messageSource), "");
-			nameField = new TextField(getI18nText(I18N_CAPTION_NAMEROLES, messageSource), "");
-			typeField = new TextField(getI18nText(I18N_CAPTION_TYPEROLES, messageSource), "");
+			idField = new TextField(getI18nText(I18N_CAPTION_ID, messageSource), "");
+			nameField = new TextField(getI18nText(I18N_CAPTION_NAME, messageSource), "");
+			typeField = new TextField(getI18nText(I18N_CAPTION_TYPE, messageSource), "");
 		}
 		groupFormBinder.forField(idField).asRequired(getI18nText(I18N_NECESSARY_GROUPID, messageSource)).bind(Group::getId, Group::setId);
 		groupFormBinder.forField(nameField).asRequired(getI18nText(I18N_NECESSARY_GROUPNAME, messageSource)).bind(Group::getName, Group::setName);
