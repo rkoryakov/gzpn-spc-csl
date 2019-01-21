@@ -7,7 +7,7 @@ public interface IHProject extends IACLBasedEntity {
 	
 	public static final String FIELD_NAME = ENTITYNAME_DOT + "name";
 	public static final String FIELD_CODE = ENTITYNAME_DOT + "code";
-	/* Overrode fields */
+	/* Overridden fields */
 	public static final String FIELD_ID = ENTITYNAME_DOT + IBaseEntity.FIELD_ID;
 	public static final String FIELD_CHANGE_DATE = ENTITYNAME_DOT + IBaseEntity.FIELD_CHANGE_DATE;
 	public static final String FIELD_CREATE_DATE = ENTITYNAME_DOT + IBaseEntity.FIELD_CREATE_DATE;

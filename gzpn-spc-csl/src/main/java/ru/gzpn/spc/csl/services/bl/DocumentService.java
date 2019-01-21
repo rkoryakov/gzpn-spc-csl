@@ -49,7 +49,8 @@ public class DocumentService implements IDocumentService {
 	
 	
 	@Override
-	public Comparator<IDocument> getSortComparator(List<QuerySortOrder> list) {
+	public Comparator<IDocumentPresenter> getSortComparator(List<QuerySortOrder> list) {
+
 		return (a, b) -> {
 			int result = 0;
 			for (QuerySortOrder qso : list) {
@@ -62,6 +63,12 @@ public class DocumentService implements IDocumentService {
 					break;
 				case IDocument.FIELD_TYPE:
 					result = a.getType().compareTo(b.getType());
+					break;
+				case IDocument.FIELD_WORK:
+					result = a.getWorkText().compareTo(b.getWorkText());
+					break;
+				case IDocument.FIELD_WORKSET:
+					result = a.getWorksetText().compareTo(b.getWorksetText());
 					break;
 				case IDocument.FIELD_ID:
 					result = a.getId().compareTo(b.getId());
@@ -151,6 +158,12 @@ public class DocumentService implements IDocumentService {
 					break;
 				case IDocument.FIELD_TYPE:
 					result = documentPresenter.getTypeText(source).toLowerCase().startsWith(commonTextFilter);
+					break;
+				case IDocument.FIELD_WORK:
+					result = documentPresenter.getWorkText().toLowerCase().startsWith(commonTextFilter);
+					break;
+				case IDocument.FIELD_WORKSET:
+					result = documentPresenter.getWorksetText().toLowerCase().startsWith(commonTextFilter);
 					break;
 				default:
 				}

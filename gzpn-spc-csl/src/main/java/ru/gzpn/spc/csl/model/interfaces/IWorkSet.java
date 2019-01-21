@@ -10,7 +10,7 @@ public interface IWorkSet extends IBaseEntity {
 	public static final String FIELD_PIR = ENTITYNAME_DOT + "pir";
 	public static final String FIELD_SMR = ENTITYNAME_DOT + "smr";
 	public static final String FIELD_PLAN_OBJECT = ENTITYNAME_DOT + "planObject";
-	/* Overrode fields */
+	/* Overridden fields */
 	public static final String FIELD_ID = ENTITYNAME_DOT + IBaseEntity.FIELD_ID;
 	public static final String FIELD_CHANGE_DATE = ENTITYNAME_DOT + IBaseEntity.FIELD_CHANGE_DATE;
 	public static final String FIELD_CREATE_DATE = ENTITYNAME_DOT + IBaseEntity.FIELD_CREATE_DATE;

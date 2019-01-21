@@ -1,5 +1,9 @@
 package ru.gzpn.spc.csl.model.enums;
 
+import java.util.Locale;
+
+import org.springframework.context.MessageSource;
+
 public enum PriceLevel {
 	LEVEL_200("ru.gzpn.spc.csl.model.enums.PriceLevel.level_2000"),
 	CURRENT("ru.gzpn.spc.csl.model.enums.PriceLevel.current"),
@@ -13,5 +17,9 @@ public enum PriceLevel {
 
 	public String getI18n() {
 		return i18n;
+	}
+	
+	public String getText(MessageSource source, Locale locale) {
+		return source.getMessage(i18n, null, locale);
 	}
 }

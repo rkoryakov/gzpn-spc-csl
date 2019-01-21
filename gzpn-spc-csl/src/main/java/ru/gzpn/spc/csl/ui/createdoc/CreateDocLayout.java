@@ -425,9 +425,10 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		userLayoutSettings.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC, messageSource));
 		userLayoutSettings.addClickListener(event -> {
 			CreateDocSettingsWindow settingsWindow = new CreateDocSettingsWindow(settingsService, messageSource);
-			settingsWindow.addOnSaveListener(closeEvent -> 
-				refreshUiElements()
-			);
+			settingsWindow.addOnSaveListener(closeEvent -> {
+				refreshUiElements();
+				rightLayout.refreshUiElements();
+			});
 			getUI().getUI().addWindow(settingsWindow);
 		});
 		return userLayoutSettings;

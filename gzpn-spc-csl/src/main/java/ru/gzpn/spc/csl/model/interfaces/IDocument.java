@@ -12,7 +12,7 @@ public interface IDocument extends IBaseEntity {
 	public static final String FIELD_TYPE = ENTITYNAME_DOT + "type";
 	public static final String FIELD_WORKSET = ENTITYNAME_DOT + "workset";
 	public static final String FIELD_WORK = ENTITYNAME_DOT + "work";
-	/* Overrode fields */
+	/* Overridden fields */
 	public static final String FIELD_ID = ENTITYNAME_DOT + IBaseEntity.FIELD_ID;
 	public static final String FIELD_CHANGE_DATE = ENTITYNAME_DOT + IBaseEntity.FIELD_CHANGE_DATE;
 	public static final String FIELD_CREATE_DATE = ENTITYNAME_DOT + IBaseEntity.FIELD_CREATE_DATE;

@@ -11,7 +11,7 @@ public interface ICProject extends IACLBasedEntity {
 	public static final String FILED_STAGE = "stage";
 	public static final String FILED_PHASE = "phase";
 	public static final String FILED_MILESTONE = "milestone";
-	/* Overrode fields */
+	/* Overridden fields */
 	public static final String FIELD_ID = ENTITYNAME_DOT + IBaseEntity.FIELD_ID;
 	public static final String FIELD_CHANGE_DATE = ENTITYNAME_DOT + IBaseEntity.FIELD_CHANGE_DATE;
 	public static final String FIELD_CREATE_DATE = ENTITYNAME_DOT + IBaseEntity.FIELD_CREATE_DATE;
