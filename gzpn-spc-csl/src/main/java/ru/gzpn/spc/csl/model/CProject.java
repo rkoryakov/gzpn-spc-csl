@@ -49,7 +49,7 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 	@JoinColumn(name="cp_id", referencedColumnName="id")
 	private List<IPlanObject> planObjects;
 
-	@OneToOne(targetEntity = Milestone.class)
+	@OneToOne(targetEntity = Milestone.class, mappedBy = "project")
 	@JoinColumn(name="id", referencedColumnName="cp_id")
 	private IMilestone milestone;
 	

@@ -2,6 +2,8 @@ package ru.gzpn.spc.csl.services.bl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -20,26 +22,33 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.CProject;
+import ru.gzpn.spc.csl.model.Contract;
 import ru.gzpn.spc.csl.model.Document;
 import ru.gzpn.spc.csl.model.HProject;
 import ru.gzpn.spc.csl.model.LocalEstimate;
+import ru.gzpn.spc.csl.model.Milestone;
 import ru.gzpn.spc.csl.model.Phase;
 import ru.gzpn.spc.csl.model.PlanObject;
 import ru.gzpn.spc.csl.model.Stage;
 import ru.gzpn.spc.csl.model.Work;
 import ru.gzpn.spc.csl.model.WorkSet;
 import ru.gzpn.spc.csl.model.enums.DocType;
+import ru.gzpn.spc.csl.model.enums.TaxType;
 import ru.gzpn.spc.csl.model.enums.WorkType;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.IContract;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
+import ru.gzpn.spc.csl.model.interfaces.IMilestone;
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWork;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
+import ru.gzpn.spc.csl.model.repositories.ContractRepository;
 import ru.gzpn.spc.csl.model.repositories.DocumentRepository;
 import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
+import ru.gzpn.spc.csl.model.repositories.MilestoneRepository;
 import ru.gzpn.spc.csl.model.repositories.PhaseRepository;
 import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
 import ru.gzpn.spc.csl.model.repositories.StageRepository;
@@ -70,7 +79,10 @@ public class CProjectServiceTest {
 	WorkSetRepository workSetRepository;
 	@Autowired 
 	DocumentRepository documentRepository;
-	
+	@Autowired 
+	ContractRepository contractRepository;
+	@Autowired
+	MilestoneRepository milestoneRepository;
 	
 	@Test
 	@Transactional
@@ -78,7 +90,8 @@ public class CProjectServiceTest {
 	public void fillData() {
 		fillPhases();
 		fillStages();
-		
+		fillContracts();
+		List<Milestone> milestones = milestoneRepository.findAll();
 		// HProjects
 		for (int i = 0; i < 10; i ++) {
 			if (service.getHPRepository().findByCode("000000" + i).size() == 0) {
@@ -130,7 +143,7 @@ public class CProjectServiceTest {
 						for (int l = 0; l < 5; l ++) {
 							int num = l + i * 5 * j * k * 5 + 1;
 							IWorkSet workset = new WorkSet();
-							workset.setName("Коплект " + i + "" + j + "" + k + "" + l);
+							workset.setName("Комплект " + i + "" + j + "" + k + "" + l);
 							workset.setCode("12000 " + i + "" + j + "" + k + "" + l);
 							workset.setPir(works.get(0));
 							workset.setSmr(works.get(3));
@@ -165,12 +178,16 @@ public class CProjectServiceTest {
 						planObj.setWorkList(works.stream().map(e->(IWork)e).collect(Collectors.toList()));
 						
 					}
-					cProject.setPlanObjects(planObjects);
 					
+					cProject.setPlanObjects(planObjects);
+					IMilestone milestone = milestones.get(i*5 + j);
+				
 					cProject = cpRepository.save(cProject);
+					milestone.setProject(cProject);
+					milestoneRepository.save((Milestone)milestone);
+					
 					cprojects.add(cProject);
 				}
-				
 				
 				hProject.setCapitalProjects(cprojects);
 				service.getHPRepository().save(hProject);
@@ -178,6 +195,44 @@ public class CProjectServiceTest {
 		}
 	}
 	
+	@Transactional
+	private void fillContracts() {
+		for (int i = 0; i < 10; i ++) {
+			IContract contract = new Contract();
+			contract.setName("Договор " + i);
+			contract.setCode("100374" + i);
+			contract.setCustomerINN("12345679" + i);
+			contract.setCustomerName("Заказчик " + i);
+			contract.setCustormerBank("Банк Заказчика " + i);
+			contract.setExecutorBank("Банк исполнителя " + i);
+			contract.setExecutorINN("03403731" + i);
+			contract.setExecutorName("Исполнитель " + i);
+			contract.setSigningDate(LocalDate.of(2018, i + 1, (i + 1)*2));
+			contract.setMilestones(fillMilestones(i, contract));
+			contractRepository.save((Contract)contract);
+		}
+	}
+	
+	@Transactional
+	private List<IMilestone> fillMilestones(int from, IContract contract) {
+		List<IMilestone> result = new ArrayList<>();
+		for (int i = from; i < from + 5; i ++) {
+			IMilestone milestone = new Milestone();
+			milestone.setCode("883" + from + "76436" + i);
+			milestone.setName("Этап договора " + i);
+			milestone.setStartDate(LocalDate.of(2018, i - from + 1, (i - from + 1)*2));
+			milestone.setEndDate(LocalDate.of(2019, i - from + 1, (i - from + 1)*2));
+			milestone.setMilNum(i);
+			milestone.setPpNum( i - from + 1);
+			milestone.setSum(new BigDecimal(i + "2940" + i + "00"));
+			milestone.setTaxType(TaxType.INCLUDING_18_PERC);
+			milestone.setContract(contract);
+			result.add(milestoneRepository.save((Milestone)milestone));
+		}
+		
+		return result;
+	}
+
 	@Transactional
 	private void fillPhases() {
 		
