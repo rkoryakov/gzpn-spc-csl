@@ -109,12 +109,12 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		this.projectService = createDocService.getProjectService();
 		this.settingsService = createDocService.getUserSettingsService();
 		this.messageSource = createDocService.getMessageSource();
-		this.worksetService = createDocService.getWorkService();
+		this.worksetService = createDocService.getWorkSetService();
 		this.createDocService = createDocService;
 		
 		this.currentUser = settingsService.getCurrentUser();
 		
-		docSettingsJson = (CreateDocSettingsJson)settingsService.getUserSettings();
+		docSettingsJson = (CreateDocSettingsJson)settingsService.getUserSettings(currentUser, new CreateDocSettingsJson());
 		NodeWrapper treeSettings = docSettingsJson.getLeftTreeGroup();
 		
 		projectTreeDataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
@@ -174,7 +174,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	}
 	
 	public void refreshProjectTree() {
-		docSettingsJson = (CreateDocSettingsJson)settingsService.getUserSettings();
+		docSettingsJson = (CreateDocSettingsJson)settingsService.getUserSettings(this.currentUser, new CreateDocSettingsJson());
 		NodeWrapper treeSettings = docSettingsJson.getLeftTreeGroup();
 		projectTreeDataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
 		projectTree.setDataProvider(projectTreeDataProvider);
@@ -203,7 +203,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 
 	public void refreshWorksetGrid() {
 		worksetDataProvider = new WorksetDataProvider(worksetService);
-		CreateDocSettingsJson userSettings = (CreateDocSettingsJson)settingsService.getUserSettings();
+		CreateDocSettingsJson userSettings = (CreateDocSettingsJson)settingsService.getUserSettings(currentUser, new CreateDocSettingsJson());
 		List<ColumnSettings> columnSettings = userSettings.getLeftResultColumns();
 		
 		columnSettings.sort((cs1, cs2) -> 
@@ -467,7 +467,7 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 	public static final String I18N_DOCUMENT_COLUMN_CHANGEDATE = "createdoc.WorkSetDocumentation.documentGrid.columns.changedate";
 	
 	private static final double DOCUMENT_GRID_ROWS = 10;
-	
+	private String currentUser;
 	private IUserSettigsService settingsService;
 	private MessageSource messageSource;
 	private DocumentService documentService;
@@ -489,6 +489,7 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 		this.documentService = service.getDocumentService();
 		this.settingsService = service.getUserSettingsService();
 		this.messageSource = service.getMessageSource();
+		this.currentUser = settingsService.getCurrentUser();
 		refreshUiElements();
 	}
 	
@@ -589,7 +590,7 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 	private void refreshDocumentGrid() {
 		documentsGrid.removeAllColumns();
 		documentsDataProvider = new DocumentsDataProvider(documentService);
-		CreateDocSettingsJson userSettings = (CreateDocSettingsJson)settingsService.getUserSettings();
+		CreateDocSettingsJson userSettings = (CreateDocSettingsJson)settingsService.getUserSettings(currentUser, new CreateDocSettingsJson());
 		List<ColumnSettings> columnSettings = userSettings.getRightResultColumns();
 		
 		columnSettings.sort((cs1, cs2) -> 

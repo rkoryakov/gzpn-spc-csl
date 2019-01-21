@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.CProject;
+import ru.gzpn.spc.csl.model.Document;
 import ru.gzpn.spc.csl.model.HProject;
 import ru.gzpn.spc.csl.model.LocalEstimate;
 import ru.gzpn.spc.csl.model.Phase;
@@ -27,13 +28,17 @@ import ru.gzpn.spc.csl.model.PlanObject;
 import ru.gzpn.spc.csl.model.Stage;
 import ru.gzpn.spc.csl.model.Work;
 import ru.gzpn.spc.csl.model.WorkSet;
+import ru.gzpn.spc.csl.model.enums.DocType;
 import ru.gzpn.spc.csl.model.enums.WorkType;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.IDocument;
+import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWork;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
+import ru.gzpn.spc.csl.model.repositories.DocumentRepository;
 import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
 import ru.gzpn.spc.csl.model.repositories.PhaseRepository;
 import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
@@ -63,6 +68,9 @@ public class CProjectServiceTest {
 	LocalEstimateRepository localEstimateRepository;
 	@Autowired
 	WorkSetRepository workSetRepository;
+	@Autowired 
+	DocumentRepository documentRepository;
+	
 	
 	@Test
 	@Transactional
@@ -75,7 +83,7 @@ public class CProjectServiceTest {
 		for (int i = 0; i < 10; i ++) {
 			if (service.getHPRepository().findByCode("000000" + i).size() == 0) {
 				HProject hProject = new HProject();
-				hProject.setName("Heavy Project " + i);
+				hProject.setName("Крупный проект " + i);
 				hProject.setCode("000000" + i);
 				hProject = service.getHPRepository().save(hProject);
 				List<ICProject> cprojects = new ArrayList<>();
@@ -83,7 +91,7 @@ public class CProjectServiceTest {
 				// CProjects
 				for (int j = 0; j < 5; j ++) {
 					CProject cProject = new CProject();
-					cProject.setName("Capital Project " + i + "_" + j);
+					cProject.setName("Капитальный проект " + i + "_" + j);
 					cProject.setCode("00020302-" + i + "_" + j);
 					IPhase phase = phaseRepository.findAll().get((int)(6*Math.random()));
 					cProject.setPhase(phase);
@@ -94,26 +102,26 @@ public class CProjectServiceTest {
 					// PlanObjects
 					List<IPlanObject> planObjects = new ArrayList<>();
 					for (int k = 0; k < 5; k ++) {
-						PlanObject p = new PlanObject("00000" + i + "" + j + "" + k, "Plan Object " + (i * j + k + 1), "AC");
-						planObjects.add(p);
-						p = planObjRepository.save(p);
+						PlanObject planObj = new PlanObject("00000" + i + "" + j + "" + k, "Plan Object " + (i * j + k + 1), "AC");
+						planObjects.add(planObj);
+						planObj = planObjRepository.save(planObj);
 						// Works
 						List<Work> works = new ArrayList<>();
 						for (int m = 0; m < 3; m ++) {
 							Work work = new Work();
 							works.add(work);
-							work.setName("Work " + i + "" + j + "" + k + "" + m);
+							work.setName("Работа " + i + "" + j + "" + k + "" + m);
 							work.setCode("10000" + i + "" + j + "" + k + "" + m);
 							work.setType(WorkType.PIR);
-							work.setPlanObj(p);
+							work.setPlanObj(planObj);
 						}
 						for (int m = 3; m < 6; m ++) {
 							Work work = new Work();
 							works.add(work);
-							work.setName("Work " + i + "" + j + "" + k + "" + m);
+							work.setName("Работа " + i + "" + j + "" + k + "" + m);
 							work.setCode("10000" + i + "" + j + "" + k + "" + m);
 							work.setType(WorkType.SMR);
-							work.setPlanObj(p);
+							work.setPlanObj(planObj);
 						}
 						workRepository.saveAll(works);
 						
@@ -122,20 +130,39 @@ public class CProjectServiceTest {
 						for (int l = 0; l < 5; l ++) {
 							int num = l + i * 5 * j * k * 5 + 1;
 							IWorkSet workset = new WorkSet();
-							workset.setName("Work Set " + i + "" + j + "" + k + "" + l);
+							workset.setName("Коплект " + i + "" + j + "" + k + "" + l);
 							workset.setCode("12000 " + i + "" + j + "" + k + "" + l);
 							workset.setPir(works.get(0));
 							workset.setSmr(works.get(3));
-							workset.setPlanObject(p);
-							// LocalEstimate
-							LocalEstimate estimate = new LocalEstimate("00000" + i + "" + j + "" + k + "" + l, "Estimate " + num);
-							estimate.setStage(stage);
-							estimate = localEstimateRepository.save(estimate);
-				
+							workset.setPlanObject(planObj);
+							
 							workset = workSetRepository.save((WorkSet)workset);
 							worksetList.add((IWorkSet)workset);
+							
+							// Documents
+							for (int o = 0; o < 8; o ++) {
+								IDocument document = new Document();
+								document.setCode("00000" + i + "" + j + "" + k + "" + l + "" + o + "");
+								document.setName("Документ " + i + "" + j + "" + k + "" + l + "" + o + "");
+								document.setWork(works.get((int)(works.size()*Math.random())));
+								document.setWorkset(workset);
+								document.setType((Math.random() > 0.5) ? DocType.LOCAL_ESTIMATE : DocType.SET_OF_DRAWINGS);
+								
+								// LocalEstimate
+								List<ILocalEstimate> estimates = new ArrayList<>();
+								for (int p = 0; p < 6; p ++) {
+									LocalEstimate estimate = new LocalEstimate("00000" + i + "" + j + "" + k + "" + l + "" + o + "" + p, "Локальная смета " + num);
+									estimate.setStage(stage);
+									estimate = localEstimateRepository.save(estimate);
+									estimates.add(estimate);
+								}
+								
+								document.setLocalEstimates(estimates);
+								documentRepository.save((Document)document);
+							}
 						}
-						p.setWorkList(works.stream().map(e->(IWork)e).collect(Collectors.toList()));
+						
+						planObj.setWorkList(works.stream().map(e->(IWork)e).collect(Collectors.toList()));
 						
 					}
 					cProject.setPlanObjects(planObjects);
@@ -154,23 +181,23 @@ public class CProjectServiceTest {
 	@Transactional
 	private void fillPhases() {
 		
-		Phase phase1 = new Phase("Phase 1");
+		Phase phase1 = new Phase("Фаза 1");
 		phase1 = phaseRepository.save(phase1);
 		
-		Phase phase1_1 = new Phase("Phase 1.1", phase1);
+		Phase phase1_1 = new Phase("Фаза 1.1", phase1);
 		phase1_1 = phaseRepository.save(phase1_1);
 		List<IPhase> children = new ArrayList<>();
 		children.add(phase1_1);
 		phase1.setChildren(children);
 		phase1 = phaseRepository.save(phase1);
 		
-		Phase phase2 = new Phase("Phase 2");
+		Phase phase2 = new Phase("Фаза 2");
 		phase2 = phaseRepository.save(phase2);
 		
-		Phase phase2_1 = new Phase("Phase 2.1", phase2);
+		Phase phase2_1 = new Phase("Фаза 2.1", phase2);
 		phase2_1 = phaseRepository.save(phase2_1);
 		
-		Phase phase2_2 = new Phase("Phase 2.2", phase2);
+		Phase phase2_2 = new Phase("Фаза 2.2", phase2);
 		children = new ArrayList<>();
 		children.add(phase2_1);
 		phase2_2 = phaseRepository.save(phase2_2);
@@ -178,7 +205,7 @@ public class CProjectServiceTest {
 		phase2.setChildren(children);	
 		phase2 = phaseRepository.save(phase2);
 		
-		Phase phase2_2_1 = new Phase("Phase 2.2.1", phase2_2);
+		Phase phase2_2_1 = new Phase("Фаза 2.2.1", phase2_2);
 		children = new ArrayList<>();
 		phase2_2_1 = phaseRepository.save(phase2_2_1);
 		children.add(phase2_2_1);
@@ -201,9 +228,9 @@ public class CProjectServiceTest {
 	
 	@Transactional
 	private void fillStages() {
-		Stage stage1 = new Stage("Stage 1");
-		Stage stage2 = new Stage("Stage 2");
-		Stage stage3 = new Stage("Stage 3");
+		Stage stage1 = new Stage("Стадия 1");
+		Stage stage2 = new Stage("Стадия 2");
+		Stage stage3 = new Stage("Стадия 3");
 		stageRepository.save(stage1);
 		stageRepository.save(stage2);
 		stageRepository.save(stage3);

@@ -34,7 +34,6 @@ public class DocumentService implements IDocumentService {
 	
 	@Override
 	public List<IDocument> getDocuments(IWorkSet workset) {
-
 		return documentRepository.findDocumentsByWorkset(workset);
 	}
 	
@@ -47,6 +46,7 @@ public class DocumentService implements IDocumentService {
 	public MessageSource getMessageSource() {
 		return source;
 	}
+	
 	
 	@Override
 	public Comparator<IDocument> getSortComparator(List<QuerySortOrder> list) {

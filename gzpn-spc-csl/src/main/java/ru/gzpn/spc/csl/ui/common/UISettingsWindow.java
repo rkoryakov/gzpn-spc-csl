@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.settings;
+package ru.gzpn.spc.csl.ui.common;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,7 +19,6 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
-import ru.gzpn.spc.csl.ui.common.I18n;
 
 public abstract class UISettingsWindow extends Window implements I18n {
 

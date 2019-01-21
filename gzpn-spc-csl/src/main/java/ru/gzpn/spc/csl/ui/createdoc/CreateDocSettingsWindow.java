@@ -22,7 +22,7 @@ import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.DraggableTree;
-import ru.gzpn.spc.csl.ui.settings.UISettingsWindow;
+import ru.gzpn.spc.csl.ui.common.UISettingsWindow;
 
 public class CreateDocSettingsWindow extends UISettingsWindow {
 
@@ -43,7 +43,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		this.setCaption(getI18nText(I18N_WINDOW_CAPTION, messageSource));
 		this.setModal(true);
 		this.setWidth(70, Unit.PERCENTAGE);
-		this.setHeight(60, Unit.PERCENTAGE);
+		this.setHeight(50, Unit.PERCENTAGE);
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		projectTree.setItemCaptionGenerator(NodeWrapper::getNodeSettingsCaption);
 		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
 		projectTree.setSizeFull();
-		projectTree.setHeight(40, Unit.PERCENTAGE);
+		projectTree.setHeight(300, Unit.PIXELS);
 		refreshUiTreeData();
 		
 		TreeGridDragSource<NodeWrapper> dragSource = new TreeGridDragSource<>(projectTree.getCompositionRoot());

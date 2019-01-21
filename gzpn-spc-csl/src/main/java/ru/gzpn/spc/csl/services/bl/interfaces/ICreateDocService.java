@@ -7,6 +7,6 @@ import ru.gzpn.spc.csl.services.bl.DocumentService;
  */
 public interface ICreateDocService extends IUIService {
 	public IProjectService getProjectService();
-	public IWorkSetService getWorkService();
+	public IWorkSetService getWorkSetService();
 	public DocumentService getDocumentService();
 }

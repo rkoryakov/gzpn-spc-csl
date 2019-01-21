@@ -34,7 +34,7 @@ public class CreateDocService implements ICreateDocService {
 	}
 
 	@Override
-	public IWorkSetService getWorkService() {
+	public IWorkSetService getWorkSetService() {
 		return workSetService;
 	}
 

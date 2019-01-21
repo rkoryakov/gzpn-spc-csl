@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.settings;
+package ru.gzpn.spc.csl.ui.common;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,17 +18,16 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
-import ru.gzpn.spc.csl.ui.common.I18n;
 
 public abstract class ItemCreatingWindow extends Window implements I18n {
 	private static final long serialVersionUID = 1L;
 	
-	public static final String I18N_CANCELBUTTON_CAP = "ItemCreatingWindow.cancelButton.cap";
-	public static final String I18N_SAVEBUTTON_CAP = "ItemCreatingWindow.saveButton.cap";
+	public static final String I18N_CANCELBUTTON_CAP = "ItemCreatingWindow.closeButton.cap";
+	public static final String I18N_ADDBUTTON_CAP = "ItemCreatingWindow.addButton.cap";
 	
 	// event actions
-	public static final Action SAVE_ACTION = new Action("saveAction");
-	public static final Action CANCEL_ACTION = new Action("cancelAction");
+	public static final Action ADD_ITEM_ACTION = new Action("addItemAction");
+	public static final Action CLOSE_ACTION = new Action("closelAction");
 
 	private IUIService service;
 	private IUserSettigsService userSettingsService;
@@ -38,8 +37,8 @@ public abstract class ItemCreatingWindow extends Window implements I18n {
 	protected VerticalLayout bodyLayout;
 	protected HorizontalLayout footerLayout;
 
-	protected Button cancelButton;
-	protected Button saveButton;
+	protected Button closeButton;
+	protected Button addButton;
 
 	private Map<Action, Set<Listener>> listeners;
 	
@@ -49,7 +48,7 @@ public abstract class ItemCreatingWindow extends Window implements I18n {
 		this.userSettingsService = service.getUserSettingsService();
 		
 		initEventActions();
-		
+
 		createBody();
 		createFooter();
 		refreshUiElements();
@@ -57,8 +56,8 @@ public abstract class ItemCreatingWindow extends Window implements I18n {
 	
 	protected void initEventActions() {
 		listeners = new HashMap<>();
-		listeners.put(SAVE_ACTION, new HashSet<>());
-		listeners.put(CANCEL_ACTION, new HashSet<>());
+		listeners.put(ADD_ITEM_ACTION, new HashSet<>());
+		listeners.put(CLOSE_ACTION, new HashSet<>());
 	}
 
 	public void createBody() {
@@ -76,30 +75,30 @@ public abstract class ItemCreatingWindow extends Window implements I18n {
 	public HorizontalLayout createFooterLayout() {
 		footerLayout = new HorizontalLayout();
 		footerLayout.setDefaultComponentAlignment(Alignment.TOP_LEFT);
-		footerLayout.addComponent(createCancelButton());
-		footerLayout.addComponent(createSaveButton());
+		footerLayout.addComponent(createCloseButton());
+		footerLayout.addComponent(createAddButton());
 		
 		return footerLayout;
 	}
 
-	public Component createCancelButton() {
-		cancelButton = new Button(getI18nText(I18N_CANCELBUTTON_CAP, messageSource));
-		cancelButton.addClickListener(listener -> 
-			cancel()
+	public Component createCloseButton() {
+		closeButton = new Button(getI18nText(I18N_CANCELBUTTON_CAP, messageSource));
+		closeButton.addClickListener(listener -> 
+			close()
 		);
 		
-		return cancelButton;
+		return closeButton;
 	}
 	
-	public Component createSaveButton() {
-		saveButton = new Button(getI18nText(I18N_SAVEBUTTON_CAP, messageSource));
-		saveButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
-		saveButton.addClickListener(listener -> {
-			save(/* TODO */);
+	public Component createAddButton() {
+		addButton = new Button(getI18nText(I18N_ADDBUTTON_CAP, messageSource));
+		addButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
+		addButton.addClickListener(listener -> {
+			addItem(/* TODO */);
 			refreshUiElements();
 		});
 		
-		return saveButton;
+		return addButton;
 	}
 
 	/**  
@@ -107,30 +106,23 @@ public abstract class ItemCreatingWindow extends Window implements I18n {
 	 */
 	public abstract void refreshUiElements();
 	
-	public void save() {
-		refreshSettings();
+	public void addItem() {
 		/* TODO */
-		onSave();
-		this.close();
-	}
-	
-	/**
-	 * Fill the {@code UserSettingsJson userSettings} with actual data
-	 * from UI elements
-	 */
-	public abstract void refreshSettings();
-
-	public void cancel() {
-		onCancel();
+		onAdd();
 		this.close();
 	}
 
-	public void onCancel() {
-		handleAction(CANCEL_ACTION);
+	public void close() {
+		onClose();
+		this.close();
+	}
+
+	public void onClose() {
+		handleAction(CLOSE_ACTION);
 	}
 	
-	public void onSave() {
-		handleAction(SAVE_ACTION);
+	public void onAdd() {
+		handleAction(ADD_ITEM_ACTION);
 	}
 	
 	public void handleAction(Action action) {
@@ -139,12 +131,12 @@ public abstract class ItemCreatingWindow extends Window implements I18n {
 		}
 	}
 	
-	public void addOnSaveListener(Listener listener) {
-		listeners.get(SAVE_ACTION).add(listener);
+	public void addOnAddListener(Listener listener) {
+		listeners.get(ADD_ITEM_ACTION).add(listener);
 	}
 	
-	public void addOnCancelListener(Listener listener) {
-		listeners.get(CANCEL_ACTION).add(listener);
+	public void addOnCloseListener(Listener listener) {
+		listeners.get(CLOSE_ACTION).add(listener);
 	}
 	
 	@Override
