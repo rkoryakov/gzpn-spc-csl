@@ -513,7 +513,6 @@ class UserAddGroupVerticalLayout extends VerticalLayout implements I18n {
 				String notificationTextErr = getI18nText(I18N_NOTIFICATION_USERADDGROUPERR, paramsForAdd, messageSource);
 				Notification.show(notificationTextErr, Type.ERROR_MESSAGE);
 			}
-			selectGroup.setValue("");
 		});
 		return createButton;
 	}

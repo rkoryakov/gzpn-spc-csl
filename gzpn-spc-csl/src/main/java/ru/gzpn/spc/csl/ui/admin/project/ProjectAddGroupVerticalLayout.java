@@ -58,9 +58,10 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 	private CProjectDataProvider cpDataProvider;
 	private HProjectDataProvider hpDataProvider;
 	
-	public static final String I18N_NOTIFICATION_DELETEDFROMUSER = "adminView.notification.group.deletedFromUser";
-	public static final String I18N_NOTIFICATION_USERADDGROUP = "adminView.notification.user.addGroup";
-	public static final String I18N_NOTIFICATION_USERADDGROUPERR = "adminView.notification.user.addGroupErr";
+	public static final String I18N_NOTIFICATION_ADDGROUPMESSAGE = "adminView.project.notification.addGroupMes";
+	public static final String I18N_NOTIFICATION_ADDGROUPERROR = "adminView.project.notification.addGroupErr";
+	public static final String I18N_NOTIFICATION_DELGROUPMESSAGE = "adminView.project.notification.delGroupMes";
+	public static final String I18N_NOTIFICATION_DELGROUPERROR = "adminView.project.notification.delGroupErr";
 	
 	public ProjectAddGroupVerticalLayout(MessageSource messageSource, IdentityService identityService, IProjectService projectService, 
 										 CProjectDataProvider cpDataProvider, HProjectDataProvider hpDataProvider) {
@@ -162,21 +163,30 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 		ClickListener okDeleteClick = event -> {
 			String[] paramsForDelete = new String[] {group.getId(), projectID};
 			try {
- 				ACLJson acljson = currentIHProject.getAcl();
- 				acljson.getRoles().remove(group.getId());
- 				currentIHProject.setAcl(acljson);
- 				projectService.saveHProject(currentIHProject);
- 				groupForHProject.refreshAll();
- 				String notificationDeleted = getI18nText(I18N_NOTIFICATION_DELETEDFROMUSER, paramsForDelete, messageSource);
+				if(currentICProject == null) {
+					ACLJson acljson = currentIHProject.getAcl();
+	 				acljson.getRoles().remove(group.getId());
+	 				currentIHProject.setAcl(acljson);
+	 				projectService.saveHProject(currentIHProject);
+	 				groupForHProject.refreshAll();
+	 				hpDataProvider.refreshAll();
+				}
+				else if(currentIHProject == null) {
+					ACLJson acljson = currentICProject.getAcl();
+	 				acljson.getRoles().remove(group.getId());
+	 				currentICProject.setAcl(acljson);
+	 				projectService.saveCProject(currentICProject);
+	 				groupForCProject.refreshAll();
+	 				cpDataProvider.refreshAll();
+				}
+ 				String notificationDeleted = getI18nText(I18N_NOTIFICATION_DELGROUPMESSAGE, paramsForDelete, messageSource);
  				Notification.show(notificationDeleted, Type.WARNING_MESSAGE);
  			}
  			catch(Exception e) {
- 				String notificationTextErr = getI18nText(I18N_NOTIFICATION_USERADDGROUPERR, paramsForDelete, messageSource);
+ 				String notificationTextErr = getI18nText(I18N_NOTIFICATION_DELGROUPERROR, paramsForDelete, messageSource);
  				Notification.show(notificationTextErr, Type.ERROR_MESSAGE);
  			}
-			groupForHProject.refreshAll();
- 			selectGroup.setValue("");
- 			hpDataProvider.refreshAll();
+			selectGroup.setValue("");
 		};
 		deleteButton.addClickListener(event -> {
 			ConfirmDialogWindow box = new ConfirmDialogWindow(getI18nText(UsersAndRolesVerticalLayout.I18N_CONFIRMDIALOG_INFO_DELETEGROUP, messageSource), 
@@ -191,12 +201,16 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 
 	public void setCurrentICProject(ICProjectPresenter currentICProject) {
 		this.currentICProject = currentICProject.getCProject();
+		this.currentIHProject = null;
 		groupForCProject.refreshAll();
+		gridGroupAddProject.setDataProvider(groupForCProject);
 	}
 
 	public void setCurrentIHProject(IHProjectPresenter currentIHProject) {
 		this.currentIHProject = currentIHProject.getHProject();
+		this.currentICProject = null;
 		groupForHProject.refreshAll();
+		gridGroupAddProject.setDataProvider(groupForHProject);
 	}
 
 	private ComboBox<String> createSelectGroup(DataProvider<String, String> selectGroupProvider) {
@@ -207,11 +221,13 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 		groupSelect.addSelectionListener(event -> {
 			selectGroupProvider.refreshAll();
 			selectGroupFilter = selectGroupProvider.withConfigurableFilter();
+			addGroupButton.setEnabled(StringUtils.isNotEmpty(selectGroup.getValue()));
 		});
 		groupSelect.addValueChangeListener(event -> {
 			selectGroupProvider.refreshAll();
 			selectGroupFilter.setFilter(groupSelect.getValue());
 			selectGroupFilter = selectGroupProvider.withConfigurableFilter();
+			addGroupButton.setEnabled(StringUtils.isNotEmpty(selectGroup.getValue()));
 		});
 		return groupSelect;
 	}
@@ -220,22 +236,34 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 		Button createButton = new Button();
 		createButton.setIcon(VaadinIcons.PLUS);
  		createButton.addClickListener(event -> {
- 			String[] paramsForAdd = new String[] {selectGroup.getValue(), currentIHProject.getId().toString()};
- 			try {
- 				ACLJson acljson = currentIHProject.getAcl();
- 				acljson.getRoles().add(selectGroup.getValue());
- 				currentIHProject.setAcl(acljson);
- 				projectService.saveHProject(currentIHProject);
- 				groupForHProject.refreshAll();
- 				String notificationTextAdd = getI18nText(I18N_NOTIFICATION_USERADDGROUP, paramsForAdd, messageSource);
- 				Notification.show(notificationTextAdd, Type.WARNING_MESSAGE);
- 			}
- 			catch(Exception e) {
- 				String notificationTextErr = getI18nText(I18N_NOTIFICATION_USERADDGROUPERR, paramsForAdd, messageSource);
- 				Notification.show(notificationTextErr, Type.ERROR_MESSAGE);
- 			}
- 				selectGroup.setValue("");
- 				hpDataProvider.refreshAll();
+	 		String[] paramsForAdd = new String[] {selectGroup.getValue(), ""};
+	 		try {
+	 			if(currentICProject == null) {		
+	 				paramsForAdd = new String[] {selectGroup.getValue(), currentIHProject.getId().toString()};
+	 				ACLJson acljson = currentIHProject.getAcl();
+	 	 			acljson.getRoles().add(selectGroup.getValue());
+	 	 			currentIHProject.setAcl(acljson);
+	 	 			projectService.saveHProject(currentIHProject);
+	 	 			groupForHProject.refreshAll();
+	 	 			hpDataProvider.refreshAll();
+				}
+				else if(currentIHProject == null) {
+					paramsForAdd = new String[] {selectGroup.getValue(), currentICProject.getId().toString()};
+					ACLJson acljson = currentICProject.getAcl();
+		 			acljson.getRoles().add(selectGroup.getValue());
+		 			currentICProject.setAcl(acljson);
+		 			projectService.saveCProject(currentICProject);
+		 			groupForCProject.refreshAll();
+		 			cpDataProvider.refreshAll();
+				}
+	 			String notificationTextAdd = getI18nText(I18N_NOTIFICATION_ADDGROUPMESSAGE, paramsForAdd, messageSource);
+	 			Notification.show(notificationTextAdd, Type.WARNING_MESSAGE);
+	 		}
+	 		catch(Exception e) {
+	 			String notificationTextErr = getI18nText(I18N_NOTIFICATION_ADDGROUPERROR, paramsForAdd, messageSource);
+	 			Notification.show(notificationTextErr, Type.ERROR_MESSAGE);
+	 		}
+	 		selectGroup.setValue("");
  		});
 		return createButton;
 	}
@@ -246,6 +274,7 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 		edit.addClickListener(event ->{
 			joinedComponent.setVisible(true);
 			joinedComponent.setEnabled(true);
+			addGroupButton.setEnabled(false);
 			saveButton.setVisible(true);
 			saveButton.setEnabled(true);
 			edit.setVisible(false);
@@ -260,6 +289,7 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 		view.addClickListener(event ->{
 			joinedComponent.setVisible(false);
 			joinedComponent.setEnabled(false);
+			addGroupButton.setEnabled(false);
 			view.setVisible(false);
 			view.setEnabled(false);
 			editButton.setVisible(true);
@@ -272,13 +302,11 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 	private Grid<GroupTemplate> createGroupAddProject() {
 		Grid<GroupTemplate> grid = new Grid<>();
 		grid.setSizeFull();
-		grid.setDataProvider(groupForHProject);
 		grid.addColumn(GroupTemplate::getId).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_ID, messageSource));
 		grid.addColumn(GroupTemplate::getName).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_NAME, messageSource));
 		grid.addColumn(GroupTemplate::getType).setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_TYPE, messageSource));
 		grid.addComponentColumn(GroupTemplate::getDelete).setHidden(true).setId("del").setCaption(getI18nText(UsersAndRolesVerticalLayout.I18N_CAPTION_DELETE, messageSource)).setWidth(95.0);
 		grid.setWidth(100, Unit.PERCENTAGE);
-		
 		return grid;
 	}
 }
