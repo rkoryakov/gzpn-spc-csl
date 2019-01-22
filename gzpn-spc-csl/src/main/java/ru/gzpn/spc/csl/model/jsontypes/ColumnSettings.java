@@ -55,6 +55,7 @@ public class ColumnSettings implements Serializable {
 		this.orderIndex = orderIndex;
 	}
 	
+	@JsonIgnoreProperties
 	public Boolean isShown() {
 		return isShown;
 	}
@@ -65,5 +66,38 @@ public class ColumnSettings implements Serializable {
 
 	public void setOrderIndex(Integer orderIndex) {
 		this.orderIndex = orderIndex;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((entityFieldName == null) ? 0 : entityFieldName.hashCode());
+		result = prime * result + ((entityName == null) ? 0 : entityName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ColumnSettings other = (ColumnSettings) obj;
+		if (entityFieldName == null) {
+			if (other.entityFieldName != null)
+				return false;
+		} else if (!entityFieldName.equals(other.entityFieldName)) {
+			return false;
+		}
+		if (entityName == null) {
+			if (other.entityName != null)
+				return false;
+		} else if (!entityName.equals(other.entityName)) {
+			return false;
+		}
+		return true;
 	}
 }
