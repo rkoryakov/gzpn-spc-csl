@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
@@ -82,6 +83,10 @@ public class WorkSetService implements IWorkSetService {
 				break;
 			case PLANOBJECT:
 				result = repository.findByPlanObjectId(node.getId()/*, pageable*/);
+				break;
+			case WORKSET:
+				result = repository.getItemsGroupedByFieldValue(node.getEntityName(), 
+							node.getGroupField(), node.getGroupFiledValue(), IWorkSet.class /*, pageable*/).collect(Collectors.toList());
 				break;
 			default:
 				break;

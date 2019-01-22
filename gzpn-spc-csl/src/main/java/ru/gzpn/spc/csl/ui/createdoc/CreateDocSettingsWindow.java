@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.MessageSource;
 
 import com.vaadin.data.TreeData;
-import com.vaadin.data.ValueProvider;
 import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.grid.DropMode;
@@ -25,6 +24,8 @@ import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.GridDragSource;
+import com.vaadin.ui.components.grid.GridDropTarget;
 import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.components.grid.TreeGridDropTarget;
 
@@ -164,7 +165,18 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		layout.setMargin(false);
 		layout.setSpacing(false);
 		columnsGrid = new Grid<>();
+		GridDragSource<ColumnSettingsPresenter> dragSource = new GridDragSource<>(columnsGrid);
+		GridDropTarget<NodeWrapper> dropTarget = new GridDropTarget<>(projectTree.getCompositionRoot(), DropMode.ON_TOP);
+		
+		dragSource.addGridDragStartListener(dragEvent -> {
+			List<ColumnSettingsPresenter> items = dragEvent.getDraggedItems();
+			this.draggedItems = items.stream().map(item -> 
+				new NodeWrapper(item.getEntityName(), item.getEntityFieldName().substring(item.getEntityName().length() + 1)))
+					.collect(Collectors.toList());
+		});
+		
 		columnsGrid.setSizeFull();
+		columnsGrid.setHeightByRows(8);
 		refreshColumnsGrid();
 		layout.addComponent(columnsGrid);
 		
@@ -176,25 +188,23 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		CreateDocSettingsJson settingsJson = (CreateDocSettingsJson)settingsService
 				.getUserSettings(user, new CreateDocSettingsJson());
 		List<ColumnSettings> columns = settingsJson.getLeftResultColumns();
+
+		addGridColumn("id", columnsGrid.addColumn(ColumnSettingsPresenter::getEntityFieldName), I18N_DOCSETTINGS_COLUMN_ID);
+		addGridColumn("entity", columnsGrid.addColumn(ColumnSettingsPresenter::getEntityName), I18N_DOCSETTINGS_COLUMN_ENTITY);
+		//addGridColumn("addToGroup", columnsGrid.addComponentColumn(ColumnSettingsPresenter::getAddToGroup), I18N_DOCSETTINGS_COLUMN_ADDTOGROUP);
+		addGridColumn("visibility", columnsGrid.addComponentColumn(ColumnSettingsPresenter::getVisibilityCheckBox), I18N_DOCSETTINGS_COLUMN_VISIBLE);
+		addGridColumn("headers", columnsGrid.addComponentColumn(ColumnSettingsPresenter::getMergedHeadComboBox), I18N_DOCSETTINGS_COLUMN_MERGEDHEAD);
 		
 		columnsGrid.setItems(columns.stream().map(item -> {
-			ColumnSettingsPresenter resultItem = new ColumnSettingsPresenter();
+			ColumnSettingsPresenter resultItem = new ColumnSettingsPresenter(item);
 			resultItem.setAddToGroup(createGridColumnAddToGroupButton(item));
 			resultItem.setVisibilityCheckBox(cretateGridColumnVisibleCheckBox(item));
 			resultItem.setMergedHeadComboBox(cretateGridColumnMergedHeadComboBox(item));
 			return resultItem;
 		}).collect(Collectors.toList()));
-		
-		addGridColumn("id", ColumnSettingsPresenter::getEntityFieldName, I18N_DOCSETTINGS_COLUMN_ID);
-		addGridColumn("entity", ColumnSettingsPresenter::getEntityName, I18N_DOCSETTINGS_COLUMN_ENTITY);
-		addGridColumn("addToGroup", ColumnSettingsPresenter::getAddToGroup, I18N_DOCSETTINGS_COLUMN_ADDTOGROUP);
-		addGridColumn("visibility", ColumnSettingsPresenter::getVisibilityCheckBox, I18N_DOCSETTINGS_COLUMN_VISIBLE);
-		addGridColumn("headers", ColumnSettingsPresenter::getMergedHeadComboBox, I18N_DOCSETTINGS_COLUMN_MERGEDHEAD);
 	}
 	
-	public <T> void addGridColumn(String id, ValueProvider<ColumnSettingsPresenter, T> provider, String i18nCaption) {
-		Column<ColumnSettingsPresenter, T> column = columnsGrid.addColumn(provider);
-		
+	public <T> void addGridColumn(String id, Column<ColumnSettingsPresenter, T> column, String i18nCaption) {
 		column.setSortProperty(id);
 		column.setSortable(true);
 		column.setCaption(getI18nText(i18nCaption, messageSource));
@@ -284,6 +294,15 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		Button addToGroup;
 		CheckBox visibilityCheckBox;
 		ComboBox<String> mergedHeadComboBox;
+		
+		public ColumnSettingsPresenter(ColumnSettings columnSettings) {
+			this.setWidth(columnSettings.getWidth());
+			this.setEntityFieldName(columnSettings.getEntityFieldName());
+			this.setEntityName(columnSettings.getEntityName());
+			this.setOrderIndex(columnSettings.getOrderIndex());
+			this.setShown(columnSettings.isShown());
+		}
+		
 		
 		public Button getAddToGroup() {
 			return addToGroup;

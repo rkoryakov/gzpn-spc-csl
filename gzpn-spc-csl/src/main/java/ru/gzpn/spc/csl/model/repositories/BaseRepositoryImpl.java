@@ -130,6 +130,32 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 	}
 	
 	@Override
+	public <T> Stream<T> getItemsGroupedByFieldValue(String entity, String fieldName, Object fieldValue, Class<T> entityClass) {
+		StringBuilder jpql = new StringBuilder();
+		Stream<T> result = null;
+		TypedQuery<T> query = null;
+		
+		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
+
+			formatter.format("SELECT e "
+								+ "FROM %1$s e WHERE e.%2$s = :fieldValue",
+								entity, fieldName);
+		}
+			
+		query = entityManager.createQuery(jpql.toString(), entityClass);
+			
+		if (fieldValue != null) {
+			query.setParameter("fieldValue", fieldValue);
+		}
+		List<T> resultList = query.getResultList();
+		//resultList.forEach(e -> {e.generateHashCode();});
+		result = resultList.stream();
+		
+
+		return result;
+	}
+	
+	@Override
 	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String sourceEntity, String targetEntity, 
 										String sourceFieldName, Object sourceFieldValue, String targetGroupFieldName) {
 		StringBuilder jpql = new StringBuilder();

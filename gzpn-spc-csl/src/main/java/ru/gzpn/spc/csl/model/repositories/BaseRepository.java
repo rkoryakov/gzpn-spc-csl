@@ -27,5 +27,6 @@ public interface BaseRepository<T extends BaseEntity> extends JpaRepository<T, L
 			String sourceFieldName,  Object sourceFieldValue, String targetGroupFieldName, Long parentId, String parentEntity);
 	
 	long countOfGroupedItems(String entity, String groupField, String filterBy, String filterValue);
+	public <T> Stream<T> getItemsGroupedByFieldValue(String entity, String fieldName, Object fieldValue, Class<T> entityClass);
 	
 }
