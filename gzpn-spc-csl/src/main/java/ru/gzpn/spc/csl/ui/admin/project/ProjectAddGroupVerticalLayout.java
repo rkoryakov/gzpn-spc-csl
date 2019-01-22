@@ -2,6 +2,7 @@ package ru.gzpn.spc.csl.ui.admin.project;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,6 +61,7 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 	
 	public static final String I18N_NOTIFICATION_ADDGROUPMESSAGE = "adminView.project.notification.addGroupMes";
 	public static final String I18N_NOTIFICATION_ADDGROUPERROR = "adminView.project.notification.addGroupErr";
+	public static final String I18N_NOTIFICATION_ADDGROUPREPEAT = "adminView.project.notification.addGroupRepeat";
 	public static final String I18N_NOTIFICATION_DELGROUPMESSAGE = "adminView.project.notification.delGroupMes";
 	public static final String I18N_NOTIFICATION_DELGROUPERROR = "adminView.project.notification.delGroupErr";
 	
@@ -108,7 +110,7 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 	private DataProvider<GroupTemplate, String> createHProjectDataProvider() {
 		return DataProvider.fromFilteringCallbacks(query -> {
 			Stream<GroupTemplate> gs = Stream.empty();
-			if(Objects.nonNull(currentIHProject.getAcl())) {
+			if(Objects.nonNull(currentIHProject.getAcl()) && Objects.nonNull(currentIHProject)) {
 			 gs = currentIHProject.getAcl().getRoles()
 						.stream().flatMap(item -> identityService.createGroupQuery().groupId(item).list().stream())
 							.map(item -> {
@@ -124,7 +126,7 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 		}
 		, query -> {
 			int result = 0;
-			if(Objects.nonNull(currentIHProject.getAcl())) {
+			if(Objects.nonNull(currentIHProject.getAcl()) && Objects.nonNull(currentIHProject)) {
 				result = currentIHProject.getAcl().getRoles().size();
 			}
 			return result;
@@ -134,7 +136,7 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 	private DataProvider<GroupTemplate, String> createCProjectDataProvider() {
 		return DataProvider.fromFilteringCallbacks(query -> {
 			Stream<GroupTemplate> gs = Stream.empty();
-			if(Objects.nonNull(currentICProject.getAcl())) {
+			if(Objects.nonNull(currentICProject.getAcl()) && Objects.nonNull(currentICProject)) {
 			 gs = currentICProject.getAcl().getRoles()
 						.stream().flatMap(item -> identityService.createGroupQuery().groupId(item).list().stream())
 							.map(item -> {
@@ -150,7 +152,7 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 		}
 		, query -> {
 			int result = 0;
-			if(Objects.nonNull(currentICProject.getAcl())) {
+			if(Objects.nonNull(currentICProject.getAcl()) && Objects.nonNull(currentICProject)) {
 				result = currentICProject.getAcl().getRoles().size();
 			}
 			return result;
@@ -236,12 +238,21 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 		Button createButton = new Button();
 		createButton.setIcon(VaadinIcons.PLUS);
  		createButton.addClickListener(event -> {
-	 		String[] paramsForAdd = new String[] {selectGroup.getValue(), ""};
+	 		String[] paramsForAdd = new String[] {selectGroup.getValue()};
 	 		try {
-	 			if(currentICProject == null) {		
+	 			String notificationTextAdd;
+	 			if(currentICProject == null) {	
 	 				paramsForAdd = new String[] {selectGroup.getValue(), currentIHProject.getId().toString()};
 	 				ACLJson acljson = currentIHProject.getAcl();
-	 	 			acljson.getRoles().add(selectGroup.getValue());
+	 				Optional<String> result = acljson.getRoles().stream().filter(selectGroup.getValue()::equals).findFirst();
+	 				if(result.isPresent()) {
+	 					notificationTextAdd = getI18nText(I18N_NOTIFICATION_ADDGROUPREPEAT, paramsForAdd, messageSource);
+	 				}
+	 				else {
+	 					acljson.getRoles().add(selectGroup.getValue());
+	 					notificationTextAdd = getI18nText(I18N_NOTIFICATION_ADDGROUPMESSAGE, paramsForAdd, messageSource);
+	 				}
+	 				Notification.show(notificationTextAdd, Type.WARNING_MESSAGE);
 	 	 			currentIHProject.setAcl(acljson);
 	 	 			projectService.saveHProject(currentIHProject);
 	 	 			groupForHProject.refreshAll();
@@ -250,14 +261,20 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 				else if(currentIHProject == null) {
 					paramsForAdd = new String[] {selectGroup.getValue(), currentICProject.getId().toString()};
 					ACLJson acljson = currentICProject.getAcl();
-		 			acljson.getRoles().add(selectGroup.getValue());
+					Optional<String> result = acljson.getRoles().stream().filter(selectGroup.getValue()::equals).findFirst();
+	 				if(result.isPresent()) {
+	 					notificationTextAdd = getI18nText(I18N_NOTIFICATION_ADDGROUPREPEAT, paramsForAdd, messageSource);
+	 				}
+	 				else {
+	 					acljson.getRoles().add(selectGroup.getValue());
+	 					notificationTextAdd = getI18nText(I18N_NOTIFICATION_ADDGROUPMESSAGE, paramsForAdd, messageSource);	
+	 				}
+	 				Notification.show(notificationTextAdd, Type.WARNING_MESSAGE);
 		 			currentICProject.setAcl(acljson);
 		 			projectService.saveCProject(currentICProject);
 		 			groupForCProject.refreshAll();
 		 			cpDataProvider.refreshAll();
 				}
-	 			String notificationTextAdd = getI18nText(I18N_NOTIFICATION_ADDGROUPMESSAGE, paramsForAdd, messageSource);
-	 			Notification.show(notificationTextAdd, Type.WARNING_MESSAGE);
 	 		}
 	 		catch(Exception e) {
 	 			String notificationTextErr = getI18nText(I18N_NOTIFICATION_ADDGROUPERROR, paramsForAdd, messageSource);
