@@ -78,7 +78,7 @@ public class CProjectPresenter extends CProject implements ICProjectPresenter {
 	public String getHProjectCaption() {
 		String result = "---";
 		if (Objects.nonNull(getHproject())) {
-			result = getHproject().getCode();
+			result = getHproject().getName();
 		}
 		return result;
 	}

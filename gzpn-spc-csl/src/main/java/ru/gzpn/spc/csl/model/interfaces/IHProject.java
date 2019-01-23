@@ -15,8 +15,10 @@ public interface IHProject extends IACLBasedEntity {
 	
 	public String getName();
 	public void setName(String name);
+	
 	public String getCode();
 	public void setCode(String code);
+	
 	public List<ICProject> getCapitalProjects();
 	public void setCapitalProjects(List<ICProject> capitalProjects);
 }
