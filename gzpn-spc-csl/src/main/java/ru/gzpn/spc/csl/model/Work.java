@@ -79,82 +79,102 @@ public class Work extends BaseEntity implements IWork, Serializable {
 		this.type = workType;
 	}
 
+	@Override
 	public ILocalEstimate getLocalEstimate() {
 		return localEstimate;
 	}
 
+	@Override
 	public void setLocalEstimate(ILocalEstimate localEstimate) {
 		this.localEstimate = localEstimate;
 	}
 
+	@Override
 	public String getCode() {
 		return code;
 	}
 
+	@Override
 	public void setCode(String code) {
 		this.code = code;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	@Override
 	public WorkType getType() {
 		return type;
 	}
 
+	@Override
 	public void setType(WorkType type) {
 		this.type = type;
 	}
 
+	@Override
 	public IPlanObject getPlanObj() {
 		return planObj;
 	}
 
+	@Override
 	public void setPlanObj(IPlanObject planObj) {
 		this.planObj = planObj;
 	}
 
+	@Override
 	public List<IDocument> getDocuments() {
 		return documents;
 	}
 
+	@Override
 	public void setDocuments(List<IDocument> documents) {
 		this.documents = documents;
 	}
 
+	@Override
 	public IMilestone getMilestone() {
 		return milestone;
 	}
 
+	@Override
 	public void setMilestone(IMilestone milestone) {
 		this.milestone = milestone;
 	}
 
+	@Override
 	public IWorkSet getWorkSet() {
 		return workSet;
 	}
-
+	
+	@Override
 	public void setWorkSet(IWorkSet workSet) {
 		this.workSet = workSet;
 	}
 
+	@Override
 	public LocalDate getBeginDate() {
 		return beginDate;
 	}
 
+	@Override
 	public void setBeginDate(LocalDate beginDate) {
 		this.beginDate = beginDate;
 	}
 
+	@Override
 	public LocalDate getEndDate() {
 		return endDate;
 	}
 
+	@Override
 	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}

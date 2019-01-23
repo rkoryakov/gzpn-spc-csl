@@ -43,7 +43,7 @@ public class GroupTemplate implements Group {
 	}
 
 	public Button getEdit() {
-		edit.setSizeFull();
+		edit.setStyleName(ValoTheme.BUTTON_BORDERLESS);
 		edit.setIcon(VaadinIcons.EDIT);
 		return edit;
 	}

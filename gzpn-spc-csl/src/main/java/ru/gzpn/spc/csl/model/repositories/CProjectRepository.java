@@ -6,5 +6,4 @@ import ru.gzpn.spc.csl.model.CProject;
 
 @Repository
 public interface CProjectRepository extends BaseRepository<CProject> {
-	
 }

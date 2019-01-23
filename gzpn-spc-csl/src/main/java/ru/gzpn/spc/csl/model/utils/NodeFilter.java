@@ -1,5 +1,6 @@
-package ru.gzpn.spc.csl.ui.common;
+package ru.gzpn.spc.csl.model.utils;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -14,9 +15,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
-import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
 
-public class NodeFilter {
+@SuppressWarnings("serial")
+public class NodeFilter implements Serializable {
 	public static final Logger logger = LogManager.getLogger(NodeFilter.class);
 	private String commonFilter;
 	
@@ -121,7 +122,9 @@ public class NodeFilter {
 					isShown = applyCommonFilterOnEntity(item);
 				}
 			} else if (StringUtils.isNotEmpty(commonFilter)) {
-				isShown = item.getGroupFiledValue().toString().startsWith(commonFilter);
+				isShown = item.getGroupFiledValue().toString()
+							.toLowerCase()
+							.startsWith(commonFilter.toLowerCase());
 			}
 			return isShown;
 		};

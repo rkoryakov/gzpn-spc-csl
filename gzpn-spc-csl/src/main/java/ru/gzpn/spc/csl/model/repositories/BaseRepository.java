@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
-import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 
 @NoRepositoryBean
 public interface BaseRepository<T extends BaseEntity> extends JpaRepository<T, Long> {
@@ -27,5 +27,6 @@ public interface BaseRepository<T extends BaseEntity> extends JpaRepository<T, L
 			String sourceFieldName,  Object sourceFieldValue, String targetGroupFieldName, Long parentId, String parentEntity);
 	
 	long countOfGroupedItems(String entity, String groupField, String filterBy, String filterValue);
+	public <T> Stream<T> getItemsGroupedByFieldValue(String entity, String fieldName, Object fieldValue, Class<T> entityClass);
 	
 }

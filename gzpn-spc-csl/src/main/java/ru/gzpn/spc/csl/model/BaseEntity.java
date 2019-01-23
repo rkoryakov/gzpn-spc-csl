@@ -25,14 +25,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import ru.gzpn.spc.csl.model.interfaces.IBaseEntity;
+import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
+
 
 @MappedSuperclass
 public abstract class BaseEntity {
-	public static final String FIELD_ID = "id";
-	public static final String FIELD_VERSION = "version";
-	public static final String FIELD_CREATE_DATE = "createDate";
-	public static final String FIELD_CHANGE_DATE = "changeDate";
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spc_csl_gen")
 	@SequenceGenerator(name = "spc_csl_gen", initialValue = 1, allocationSize = 1, schema = "spc_csl_schema")
@@ -83,8 +81,33 @@ public abstract class BaseEntity {
 		this.changeDate = changeDate;
 	}
 
+	
+	@Override
+	public int hashCode() {
+		return (int)(id ^ (id >>> 32));
+	}
+	
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		BaseEntity other = (BaseEntity) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		
+		return true;
+	}
+
 	/* NOT USED */
-	public static Set<String> getEntityFields(Class<? extends BaseEntity> c) {
+	public static Set<String> getEntityFields(Class<? extends IBaseEntity> c) {
 		return Arrays.asList(c.getDeclaredFields()).stream()
 					.filter(item -> !Modifier.isStatic(item.getModifiers()) 
 								&& !Modifier.isFinal(item.getModifiers()))
@@ -116,9 +139,11 @@ public abstract class BaseEntity {
 	}
 	
 	public static void main(String[] args) {
-		WorkSet workSet = new WorkSet();
+		IWorkSet workSet = new WorkSet();
 		workSet.setId(1L);
-		Long s = 1L;
-		System.out.println("getFildValueGetter: " + getEntityFields(workSet.getClass()));
+		Long l = -4L;
+		//l = l ^ (l >>> 32);
+		
+		System.out.printf("1: %1$64s", Long.toBinaryString(l));
 	}
 }

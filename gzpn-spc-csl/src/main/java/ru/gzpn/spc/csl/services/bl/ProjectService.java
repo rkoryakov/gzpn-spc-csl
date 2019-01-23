@@ -1,6 +1,7 @@
 package ru.gzpn.spc.csl.services.bl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -10,44 +11,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.gzpn.spc.csl.model.CProject;
+import ru.gzpn.spc.csl.model.HProject;
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
-import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
-import ru.gzpn.spc.csl.model.repositories.PhaseRepository;
-import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
-import ru.gzpn.spc.csl.model.repositories.StageRepository;
-import ru.gzpn.spc.csl.model.repositories.WorkRepository;
-import ru.gzpn.spc.csl.model.repositories.WorkSetRepository;
 import ru.gzpn.spc.csl.model.utils.Entities;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph;
-import ru.gzpn.spc.csl.ui.createdoc.NodeWrapper;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 
 @Service
 @Transactional
-public class DataProjectService {
-	public static final Logger logger = LoggerFactory.getLogger(DataProjectService.class);
+public class ProjectService implements IProjectService {
+	public static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 	@Autowired
 	private HProjectRepository hpRepository;
 	@Autowired
 	private CProjectRepository cpRepository;
-	@Autowired
-	private PhaseRepository phaseRepository;
-	@Autowired
-	private StageRepository stageRepository;
-	@Autowired
-	private PlanObjectRepository planObjectRepository;
-	@Autowired
-	private WorkRepository workRepository;
-	@Autowired
-	private LocalEstimateRepository localEstimateRepository;
-	@Autowired
-	private WorkSetRepository workSetRepository;
 	
-	
-	public WorkSetRepository getWorkSetRepository() {
-		return workSetRepository;
+	public HProjectRepository getBaseRepository() {
+		// we can use any implementation of the BaseRepository - we use HProjectRepository
+		return getHPRepository();
 	}
-
+	
 	public HProjectRepository getHPRepository() {
 		return hpRepository;
 	}
@@ -56,27 +44,27 @@ public class DataProjectService {
 		return cpRepository;
 	}
 	
-	public PhaseRepository getPhaseRepository() {
-		return phaseRepository;
+	@Override
+	public void saveHProject(IHProject project) {
+		Optional<HProject> pr = hpRepository.findById(project.getId());
+		if (pr.isPresent()) {
+			HProject hp = pr.get();
+			hp.setAcl(project.getAcl());
+			hpRepository.save(hp);
+		}
+		
 	}
 	
-	public StageRepository getStageRepository() {
-		return stageRepository;
+	@Override
+	public void saveCProject(ICProject project) {
+		Optional<CProject> pr = cpRepository.findById(project.getId());
+		if (pr.isPresent()) {
+			CProject cp = pr.get();
+			cp.setAcl(project.getAcl());
+			cpRepository.save(cp);
+		}
 	}
 	
-	public PlanObjectRepository getPlanObjectRepository() {
-		return planObjectRepository;
-	}
-	
-	
-	public WorkRepository getWorkRepository() {
-		return workRepository;
-	}
-
-	public LocalEstimateRepository getLocalEstimateRepository() {
-		return localEstimateRepository;
-	}
-
 	/**
 	 * Items count of the given entity grouped by the given field
 	 * 
@@ -107,7 +95,7 @@ public class DataProjectService {
 	public Stream<NodeWrapper> getItemsGroupedByField(NodeWrapper node) {
 		return getItemsGroupedByField(node.getEntityName(), node.getGroupField())
 				.peek(e -> {
-					e.setParent(node);
+					//e.setParent(node);
 					e.setChild(node.getChild());
 					/* set hashCode for UI Vaadin */
 					e.generateHashCode();
@@ -187,13 +175,9 @@ public class DataProjectService {
 		return getBaseRepository().getItemsGroupedByFieldValue(entity, fieldName, fieldValue, groupFieldName);
 	}
 	
-	public HProjectRepository getBaseRepository() {
-		// we can use any implementation of the BaseRepository - we use HProjectRepository
-		return getHPRepository();
-	}
-	
 	public <T> T executeByField(Supplier<T> suplier, String field) {
 		T result = suplier.get();
 		return result;
 	}
+
 }

@@ -13,24 +13,26 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.vaadin.data.provider.HierarchicalQuery;
 
-import ru.gzpn.spc.csl.services.bl.DataProjectService;
-import ru.gzpn.spc.csl.services.bl.DataUserSettigsService;
-import ru.gzpn.spc.csl.ui.common.NodeFilter;
+import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
+import ru.gzpn.spc.csl.model.utils.NodeFilter;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
+import ru.gzpn.spc.csl.services.bl.ProjectService;
+import ru.gzpn.spc.csl.services.bl.UserSettigsService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ProjectTreeDataProviderTest {
 	
 	@Autowired
-	DataProjectService projectService;
+	ProjectService projectService;
 	@Autowired
-	DataUserSettigsService userSettigsService;
+	UserSettigsService userSettigsService;
 
 	ProjectTreeDataProvider provider;
 	
 	@Before
 	public void initProviderForLeftTreeSettings() {
-		NodeWrapper settings = userSettigsService.getCreateDocSettings().getLeftHierarchySettings();
+		NodeWrapper settings = ((CreateDocSettingsJson)userSettigsService.getUserSettings()).getLeftTreeGroup();
 		provider = new ProjectTreeDataProvider(projectService, settings);
 	}
 	

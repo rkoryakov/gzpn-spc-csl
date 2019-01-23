@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.vaadin.annotations.Push;
@@ -16,6 +17,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
@@ -46,6 +48,9 @@ import ru.gzpn.spc.csl.ui.views.EstimateRegisterView;
 public class MainUI extends UI {
 	public static final Logger logger = LoggerFactory.getLogger(MainUI.class);
 
+	public static final String REQUEST_PARAM_TASKID = "taskId";
+	public static final String REQUEST_PARAM_VIEWID = "viewId";
+	
 	@Autowired
 	private SpringViewProvider viewProvider;
 	@Autowired
@@ -53,26 +58,25 @@ public class MainUI extends UI {
 	@Autowired
 	MessageSource messageSource;
 
-	private String taskId;
-
 	private Panel viewContainer;
 	private VerticalLayout mainLayout;
 	private AbsoluteLayout head;
 	private MenuBar menuBar;
 	private Navigator navigator;
 
+	private String viewId;
+	private String taskId;
+	
 	@Override
 	protected void init(VaadinRequest request) {
-		getSession().addRequestHandler((vsession, vrequest, vresponse) -> {
-			this.taskId = vrequest.getParameter("taskId");
-			logger.debug("taskId {}", taskId);
-			return false;
-		});
-
+		viewId = VaadinService.getCurrentRequest().getParameter(REQUEST_PARAM_VIEWID);
+		taskId = VaadinService.getCurrentRequest().getParameter(REQUEST_PARAM_TASKID);
+		
 		head = createHead();
 		mainLayout = createMainLayout();
 		viewContainer = new Panel();
 		navigator = new Navigator(this, viewContainer);
+		
 		menuBar = createMenu();
 		setContent(mainLayout);
 
@@ -86,28 +90,33 @@ public class MainUI extends UI {
 		navigator.addProvider(viewProvider);
 		navigator.setErrorView(errorView);
 		viewProvider.setAccessDeniedViewClass(AccessDeniedView.class);
+		
 		navigateByRole();
 	}
 
 	private void navigateByRole() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Set<String> authorities = authentication.getAuthorities().stream().map(a -> a.getAuthority())
+		Set<String> authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
 				.collect(Collectors.toSet());
-
-		if (authorities.contains(Roles.CREATOR_ROLE.toString())) {
+		
+		if (CreateDocView.NAME.equals(viewId)) {
 			navigator.navigateTo(CreateDocView.NAME);
-		} else if (authorities.contains(Roles.ADMIN_ROLE.toString())) {
-			navigator.navigateTo(AdminView.NAME);
-		} else if (authorities.contains(Roles.APPROVER_NTC_ROLE.toString())) {
-			navigator.navigateTo("");
-		} else if (authorities.contains(Roles.CONTRACT_ES_ROLE.toString())) {
-			navigator.navigateTo("");
-		} else if (authorities.contains(Roles.CONTRACT_EX_ROLE.toString())) {
-			navigator.navigateTo("");
-		} else if (authorities.contains(Roles.EXPERT_ES_ROLE.toString())) {
-			navigator.navigateTo("");
-		} else if (authorities.contains(Roles.USER_ROLE.toString())) {
-			navigator.navigateTo(CreateDocView.NAME);
+		} else {
+			if (authorities.contains(Roles.CREATOR_ROLE.toString())) {
+				navigator.navigateTo(CreateDocView.NAME);
+			} else if (authorities.contains(Roles.ADMIN_ROLE.toString())) {
+				navigator.navigateTo(AdminView.NAME);
+			} else if (authorities.contains(Roles.APPROVER_NTC_ROLE.toString())) {
+				navigator.navigateTo("");
+			} else if (authorities.contains(Roles.CONTRACT_ES_ROLE.toString())) {
+				navigator.navigateTo("");
+			} else if (authorities.contains(Roles.CONTRACT_EX_ROLE.toString())) {
+				navigator.navigateTo("");
+			} else if (authorities.contains(Roles.EXPERT_ES_ROLE.toString())) {
+				navigator.navigateTo("");
+			} else if (authorities.contains(Roles.USER_ROLE.toString())) {
+				navigator.navigateTo(CreateDocView.NAME);
+			}
 		}
 	}
 

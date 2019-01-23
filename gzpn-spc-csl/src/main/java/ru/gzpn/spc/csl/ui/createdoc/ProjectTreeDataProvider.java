@@ -15,19 +15,20 @@ import com.vaadin.data.provider.HierarchicalQuery;
 import com.vaadin.data.provider.SortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
-import ru.gzpn.spc.csl.services.bl.DataProjectService;
-import ru.gzpn.spc.csl.ui.common.NodeFilter;
+import ru.gzpn.spc.csl.model.utils.NodeFilter;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 
 public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProvider<NodeWrapper, NodeFilter> {
 	private static final long serialVersionUID = 7274680832695288557L;
 	
 	public static final Logger logger = LoggerFactory.getLogger(ProjectTreeDataProvider.class);
-	private DataProjectService projectService;
+	private IProjectService projectService;
 	private NodeWrapper hierarchySettings;
 	private NodeFilter initialFilter;
 	private List<SortOrder<String>> initialSortOrders;
 	
-	public ProjectTreeDataProvider(DataProjectService projectService, NodeWrapper settings) {
+	public ProjectTreeDataProvider(IProjectService projectService, NodeWrapper settings) {
 		this.projectService = projectService;
 		this.hierarchySettings = settings;
 		initialFilter = new NodeFilter("");
