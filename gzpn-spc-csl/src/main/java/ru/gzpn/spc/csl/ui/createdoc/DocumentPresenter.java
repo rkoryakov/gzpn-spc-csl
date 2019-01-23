@@ -1,5 +1,7 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.context.MessageSource;
 
 import ru.gzpn.spc.csl.model.Document;
@@ -49,5 +51,15 @@ public class DocumentPresenter extends Document implements IDocumentPresenter, I
 	public String getWorksetText() {
 		// TODO Auto-generated method stub
 		return getWorkset().getName();
+	}
+	
+	@Override
+	public String getCreateDateText() {
+		return DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss").format(getCreateDate());
+	}
+	
+	@Override
+	public String getChangeDateText() {
+		return DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss").format(getChangeDate());
 	}
 }

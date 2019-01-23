@@ -357,10 +357,10 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 			addWorksetGridColumn(settings, IWorkSetPresenter::getVersion, I18N_WORKSET_COLUMN_VERSION);
 			break;
 		case IWorkSet.FIELD_CREATE_DATE:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getCreateDate, I18N_WORKSET_COLUMN_CREATEDATE);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getCreateDateText, I18N_WORKSET_COLUMN_CREATEDATE);
 			break;
 		case IWorkSet.FIELD_CHANGE_DATE:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getChangeDate, I18N_WORKSET_COLUMN_CHANGEDATE);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getChangeDateText, I18N_WORKSET_COLUMN_CHANGEDATE);
 			break;
 			default:
 		}
@@ -655,10 +655,10 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 			addDocumnentGridColumn(settings, IDocumentPresenter::getVersion, I18N_DOCUMENT_COLUMN_VERSION);
 			break;
 		case IDocument.FIELD_CREATE_DATE:
-			addDocumnentGridColumn(settings, IDocumentPresenter::getCreateDate, I18N_DOCUMENT_COLUMN_CREATEDATE);
+			addDocumnentGridColumn(settings, IDocumentPresenter::getCreateDateText, I18N_DOCUMENT_COLUMN_CREATEDATE);
 			break;
 		case IDocument.FIELD_CHANGE_DATE:
-			addDocumnentGridColumn(settings, IDocumentPresenter::getChangeDate, I18N_DOCUMENT_COLUMN_CHANGEDATE);
+			addDocumnentGridColumn(settings, IDocumentPresenter::getChangeDateText, I18N_DOCUMENT_COLUMN_CHANGEDATE);
 			break;
 			default:
 		}

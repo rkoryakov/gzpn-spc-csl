@@ -45,7 +45,7 @@ public class ProjectService implements IProjectService {
 	}
 	
 	@Override
-	public void saveHProject(IHProject project) {
+	public void saveHProjectAcls(IHProject project) {
 		Optional<HProject> pr = hpRepository.findById(project.getId());
 		if (pr.isPresent()) {
 			HProject hp = pr.get();
@@ -56,7 +56,7 @@ public class ProjectService implements IProjectService {
 	}
 	
 	@Override
-	public void saveCProject(ICProject project) {
+	public void saveCProjectAcls(ICProject project) {
 		Optional<CProject> pr = cpRepository.findById(project.getId());
 		if (pr.isPresent()) {
 			CProject cp = pr.get();

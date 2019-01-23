@@ -81,23 +81,28 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		VerticalLayout bodyLayout = new VerticalLayout();
 		
 		tabSheet = new TabSheet();
-		VerticalLayout headersLayout = new VerticalLayout();
-		VerticalLayout columnsLayout = new VerticalLayout();
+		//VerticalLayout headersSettings = new VerticalLayout();
+		VerticalLayout columnsSettings = new VerticalLayout();
 		splitPanel = new HorizontalSplitPanel();
-		splitPanel.setFirstComponent(createLeftLayout());
-		splitPanel.setSecondComponent(createRightLayout());
+		splitPanel.setFirstComponent(createLeftColumnsSettings());
+		splitPanel.setSecondComponent(createRightColumnsSettings());
 		splitPanel.setSplitPosition(30);
-		columnsLayout.addComponent(splitPanel);
+		columnsSettings.addComponent(splitPanel);
 		
-		tabSheet.addTab(columnsLayout, getI18nText(I18N_COLUMNSTAB_CAPTION, messageSource));
-		tabSheet.addTab(headersLayout, getI18nText(I18N_HEADERSTAB_CAPTION, messageSource));
+		tabSheet.addTab(columnsSettings, getI18nText(I18N_COLUMNSTAB_CAPTION, messageSource));
+		tabSheet.addTab(createHeadersSettingsLayout(), getI18nText(I18N_HEADERSTAB_CAPTION, messageSource));
 		
 		bodyLayout.addComponent(tabSheet);
 		
 		return bodyLayout;
 	}
 
-	public Component createLeftLayout() {
+	private Component createHeadersSettingsLayout() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Component createLeftColumnsSettings() {
 		leftLayout = new VerticalLayout();
 		leftLayout.setMargin(false);
 		leftLayout.setSpacing(false);
@@ -174,7 +179,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		}
 	}
 	
-	public Component createRightLayout() {
+	public Component createRightColumnsSettings() {
 		VerticalLayout columnsLayout = new VerticalLayout();
 		
 		columnsLayout.setSizeFull();

@@ -1,5 +1,7 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
+import java.time.format.DateTimeFormatter;
+
 import ru.gzpn.spc.csl.model.WorkSet;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.ui.common.I18n;
@@ -41,5 +43,15 @@ public class WorkSetPresenter extends WorkSet implements IWorkSetPresenter, I18n
 	@Override
 	public String getSmrText() {
 		return getSmr().getCode();
+	}
+	
+	@Override
+	public String getCreateDateText() {
+		return DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss").format(getCreateDate());
+	}
+	
+	@Override
+	public String getChangeDateText() {
+		return DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss").format(getChangeDate());
 	}
 }

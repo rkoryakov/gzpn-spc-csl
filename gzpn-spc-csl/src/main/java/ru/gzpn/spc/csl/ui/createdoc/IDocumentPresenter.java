@@ -10,4 +10,6 @@ public interface IDocumentPresenter extends IDocument {
 	String getWorksetText();
 	void setDocument(IDocument document);
 	IDocument getDocument();
+	String getCreateDateText();
+	String getChangeDateText();
 }

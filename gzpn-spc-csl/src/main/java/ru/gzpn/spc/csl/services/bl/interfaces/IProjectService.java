@@ -18,6 +18,6 @@ public interface IProjectService {
 	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String entity, String fieldName, Object fieldValue, String groupFieldName);
 	public long getCount(String entity, String groupByField, String filterBy, String filterValue);
 	public long getCount(String entity, String groupByField);
-	void saveHProject(IHProject project);
-	void saveCProject(ICProject project);
+	void saveHProjectAcls(IHProject project);
+	void saveCProjectAcls(ICProject project);
 }

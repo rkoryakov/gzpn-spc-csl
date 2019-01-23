@@ -8,4 +8,6 @@ public interface IWorkSetPresenter extends IWorkSet {
 	
 	public String getPirText();
 	public String getSmrText();
+	String getChangeDateText();
+	String getCreateDateText();
 }
