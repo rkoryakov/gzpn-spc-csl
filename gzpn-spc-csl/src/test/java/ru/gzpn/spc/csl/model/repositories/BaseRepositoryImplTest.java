@@ -17,7 +17,7 @@ import ru.gzpn.spc.csl.model.LocalEstimate;
 import ru.gzpn.spc.csl.model.Phase;
 import ru.gzpn.spc.csl.model.Stage;
 import ru.gzpn.spc.csl.model.Work;
-import ru.gzpn.spc.csl.model.utils.Entities;
+import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.services.bl.ProjectService;
 
 @RunWith(SpringRunner.class)

@@ -100,4 +100,12 @@ public class ColumnSettings implements Serializable {
 		}
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "ColumnSettings [width=" + width + ", entityName=" + entityName + ", entityFieldName=" + entityFieldName
+				+ ", orderIndex=" + orderIndex + ", isShown=" + isShown + "]";
+	}
+	
+	
 }

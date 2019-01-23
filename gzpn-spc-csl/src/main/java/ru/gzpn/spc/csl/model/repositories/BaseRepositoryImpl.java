@@ -19,7 +19,7 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
-import ru.gzpn.spc.csl.model.utils.Entities;
+import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph;
 import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph.Rib.LinkedFields;
@@ -122,7 +122,6 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 				query.setParameter("fieldValue", fieldValue);
 			}
 			List<NodeWrapper> resultList = query.getResultList();
-			//resultList.forEach(e -> {e.generateHashCode();});
 			result = resultList.stream();
 		}
 
@@ -137,9 +136,7 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 		
 		try (Formatter formatter = new Formatter(jpql, Locale.ROOT)) {
 
-			formatter.format("SELECT e "
-								+ "FROM %1$s e WHERE e.%2$s = :fieldValue",
-								entity, fieldName);
+			formatter.format("SELECT e FROM %1$s e WHERE e.%2$s = :fieldValue", entity, fieldName);
 		}
 			
 		query = entityManager.createQuery(jpql.toString(), entityClass);
@@ -148,10 +145,8 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 			query.setParameter("fieldValue", fieldValue);
 		}
 		List<T> resultList = query.getResultList();
-		//resultList.forEach(e -> {e.generateHashCode();});
 		result = resultList.stream();
 		
-
 		return result;
 	}
 	
@@ -169,7 +164,6 @@ public class BaseRepositoryImpl<T extends BaseEntity> extends SimpleJpaRepositor
 			TypedQuery<NodeWrapper> query = entityManager.createQuery(jpql.toString(), NodeWrapper.class);
 			List<NodeWrapper> resultList = query.setParameter("sourceFieldValue", sourceFieldValue).getResultList();
 			logger.debug("resultList '{}'", resultList.size());
-			//resultList.forEach(e -> {e.generateHashCode(); logger.debug("repository node {}", e);});
 			result = resultList.stream();
 		}
 		

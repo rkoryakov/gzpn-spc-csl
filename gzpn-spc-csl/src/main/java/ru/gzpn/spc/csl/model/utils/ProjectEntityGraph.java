@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph.Rib.LinkedFields;
 
 /**

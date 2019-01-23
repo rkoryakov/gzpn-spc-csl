@@ -1,4 +1,8 @@
-package ru.gzpn.spc.csl.model.utils;
+package ru.gzpn.spc.csl.model.enums;
+
+import java.util.Locale;
+
+import org.springframework.context.MessageSource;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
 import ru.gzpn.spc.csl.model.CProject;
@@ -38,14 +42,25 @@ public enum Entities {
 	
 	USERSETTINGS("UserSettings"),
 	LOCALESTIMATEHISTORY("LocalEstimateHistory");
+	
 	private String name;
+	private String i18n;
 	
 	Entities(String name) {
 		this.name = name;
+		this.i18n = "Entities." + name;
 	}
 	
 	public String getName() {
 		return this.name;
+	}
+	
+	public String getI18n() {
+		return i18n;
+	}
+	
+	public String getText(MessageSource source, Locale locale) {
+		return source.getMessage(i18n, null, locale);
 	}
 	
 	@SuppressWarnings("unchecked")

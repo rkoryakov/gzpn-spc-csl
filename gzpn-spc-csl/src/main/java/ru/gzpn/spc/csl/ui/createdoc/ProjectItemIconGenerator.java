@@ -4,7 +4,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.IconGenerator;
 
-import ru.gzpn.spc.csl.model.utils.Entities;
+import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 
 public class ProjectItemIconGenerator implements IconGenerator<NodeWrapper> {

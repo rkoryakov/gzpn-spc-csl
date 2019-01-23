@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph.Rib.LinkedFields;
 
 public class ProjectEntityGraphTest {

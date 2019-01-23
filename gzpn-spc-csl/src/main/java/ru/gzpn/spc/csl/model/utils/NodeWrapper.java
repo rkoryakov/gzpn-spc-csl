@@ -2,9 +2,11 @@ package ru.gzpn.spc.csl.model.utils;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -13,6 +15,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.vaadin.data.provider.SortOrder;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
+import ru.gzpn.spc.csl.model.enums.Entities;
+import ru.gzpn.spc.csl.model.interfaces.IBaseEntity;
 
 /**
  * Holds the information about the current entity(node) and grouping fields.
@@ -125,8 +129,21 @@ public class NodeWrapper implements Serializable {
 	 * Represent Entity name + field name
 	 */
 	@JsonIgnore
-	public String getNodeSettingsCaption() {
-		return getEntityName() + " - " + getGroupField();
+	public String getNodeSettingsCaption(MessageSource messageSource, Locale locale) {
+		Entities entity = Entities.valueOf(entityName.toUpperCase());
+		String entityCaption = entity.getText(messageSource, locale);
+		String fieldCaption = "";
+		
+		switch (groupFiled) {
+		case IBaseEntity.FIELD_ID:
+		case IBaseEntity.FIELD_VERSION:
+		case IBaseEntity.FIELD_CHANGE_DATE:
+		case IBaseEntity.FIELD_CREATE_DATE:
+			fieldCaption = messageSource.getMessage("Entities.BaseEntity." + groupFiled, null, groupFiled, locale);
+		}
+		
+		fieldCaption = messageSource.getMessage("Entities." + entityName  + "." + groupFiled, null, groupFiled, locale);
+		return entityCaption + " - " + fieldCaption;
 	}
 	
 	public String getEntityName() {

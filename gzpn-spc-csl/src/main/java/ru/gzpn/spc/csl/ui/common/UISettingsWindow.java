@@ -12,8 +12,8 @@ import com.vaadin.event.Action;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -36,7 +36,7 @@ public abstract class UISettingsWindow extends Window implements I18n {
 	protected MessageSource messageSource;
 	protected String user;
 	
-	protected VerticalLayout bodyLayout;
+	protected ComponentContainer bodyLayout;
 	protected HorizontalLayout footerLayout;
 
 	protected Button cancelButton;
@@ -78,7 +78,7 @@ public abstract class UISettingsWindow extends Window implements I18n {
 		this.setContent(bodyLayout);
 	}
 
-	public abstract VerticalLayout createBodyLayout();
+	public abstract ComponentContainer createBodyLayout();
 
 	public void createFooter() {
 		HorizontalLayout footer = createFooterLayout();

@@ -51,25 +51,25 @@ import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
 
 public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	private static final long serialVersionUID = -883906550551450076L;
-	private static final Logger logger = LoggerFactory.getLogger(CreateDocLayout.class);
+	public static final Logger logger = LoggerFactory.getLogger(CreateDocLayout.class);
 	
-	static final String I18N_SEARCHFIELD_PLACEHOLDER = "createdoc.CreateDocLayout.worksetFilterField.placeholder";
-	static final String I18N_SEARCHSETTINGS_DESC = "createdoc.CreateDocLayout.worksetFilterSettingsButton.desc";
-	static final String I18N_USERLAYOUTSETTINGS_DESC = "createdoc.CreateDocLayout.userLayoutSettings.desc";
-	static final String I18N_ADDWORKSETBUTTON_DESC = "createdoc.CreateDocLayout.addWorksetButton.desc";
-	static final String I18N_DELWORKSETBUTTON_DESC = "createdoc.CreateDocLayout.delWorksetButton.desc";
-	static final String I18N_DOWNLOADWORKSETBUTTON_DESC = "createdoc.CreateDocLayout.downloadWorksetButton.desc";
-	static final String I18N_TREE_CAPTION = "createdoc.CreateDocLayout.projectTreeCaption";
+	public static final String I18N_SEARCHFIELD_PLACEHOLDER = "createdoc.CreateDocLayout.worksetFilterField.placeholder";
+	public static final String I18N_SEARCHSETTINGS_DESC = "createdoc.CreateDocLayout.worksetFilterSettingsButton.desc";
+	public static final String I18N_USERLAYOUTSETTINGS_DESC = "createdoc.CreateDocLayout.userLayoutSettings.desc";
+	public static final String I18N_ADDWORKSETBUTTON_DESC = "createdoc.CreateDocLayout.addWorksetButton.desc";
+	public static final String I18N_DELWORKSETBUTTON_DESC = "createdoc.CreateDocLayout.delWorksetButton.desc";
+	public static final String I18N_DOWNLOADWORKSETBUTTON_DESC = "createdoc.CreateDocLayout.downloadWorksetButton.desc";
+	public static final String I18N_TREE_CAPTION = "createdoc.CreateDocLayout.projectTreeCaption";
 	/* worksetGrid column captions*/
-	private static final String I18N_WORKSET_COLUMN_NAME = "createdoc.CreateDocLayout.worksetGrid.columns.name";
-	private static final String I18N_WORKSET_COLUMN_CODE = "createdoc.CreateDocLayout.worksetGrid.columns.code";
-	private static final String I18N_WORKSET_COLUMN_PIR = "createdoc.CreateDocLayout.worksetGrid.columns.pir";
-	private static final String I18N_WORKSET_COLUMN_SMR = "createdoc.CreateDocLayout.worksetGrid.columns.smr";
-	private static final String I18N_WORKSET_COLUMN_PLANOBJ = "createdoc.CreateDocLayout.worksetGrid.columns.planobj";
-	private static final String I18N_WORKSET_COLUMN_ID = "createdoc.CreateDocLayout.worksetGrid.columns.id";
-	private static final String I18N_WORKSET_COLUMN_VERSION = "createdoc.CreateDocLayout.worksetGrid.columns.ver";
-	private static final String I18N_WORKSET_COLUMN_CREATEDATE = "createdoc.CreateDocLayout.worksetGrid.columns.createdate";
-	private static final String I18N_WORKSET_COLUMN_CHANGEDATE = "createdoc.CreateDocLayout.worksetGrid.columns.changedate";
+	public static final String I18N_WORKSET_COLUMN_NAME = "createdoc.CreateDocLayout.worksetGrid.columns.name";
+	public static final String I18N_WORKSET_COLUMN_CODE = "createdoc.CreateDocLayout.worksetGrid.columns.code";
+	public static final String I18N_WORKSET_COLUMN_PIR = "createdoc.CreateDocLayout.worksetGrid.columns.pir";
+	public static final String I18N_WORKSET_COLUMN_SMR = "createdoc.CreateDocLayout.worksetGrid.columns.smr";
+	public static final String I18N_WORKSET_COLUMN_PLANOBJ = "createdoc.CreateDocLayout.worksetGrid.columns.planobj";
+	public static final String I18N_WORKSET_COLUMN_ID = "createdoc.CreateDocLayout.worksetGrid.columns.id";
+	public static final String I18N_WORKSET_COLUMN_VERSION = "createdoc.CreateDocLayout.worksetGrid.columns.ver";
+	public static final String I18N_WORKSET_COLUMN_CREATEDATE = "createdoc.CreateDocLayout.worksetGrid.columns.createdate";
+	public static final String I18N_WORKSET_COLUMN_CHANGEDATE = "createdoc.CreateDocLayout.worksetGrid.columns.changedate";
 	
 	private static final int WORKSET_GRID_ROWS = 15;
 	private static final int WORKSET_GRID_ROW_HEIGHT = 38;
@@ -104,6 +104,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	private Button downloadWorksetButton;
 	private Panel projectTreePanel;
 	private Registration preojectTreeItemSelectRegistration;
+	private IWorkSetPresenter selectedWorkSet;
 	
 	public CreateDocLayout(ICreateDocService createDocService) {
 		this.projectService = createDocService.getProjectService();
@@ -176,8 +177,21 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	public void refreshProjectTree() {
 		docSettingsJson = (CreateDocSettingsJson)settingsService.getUserSettings(this.currentUser, new CreateDocSettingsJson());
 		NodeWrapper treeSettings = docSettingsJson.getLeftTreeGroup();
+		
 		projectTreeDataProvider = new ProjectTreeDataProvider(projectService, treeSettings);
 		projectTree.setDataProvider(projectTreeDataProvider);
+		// expand the tree and select the previously selected item
+		if (worksetDataProvider.getParentNode() != null) {
+			NodeWrapper parentNode = worksetDataProvider.getParentNode();
+			projectTree.select(parentNode);
+			
+			while (parentNode.hasParent()) {
+				projectTree.expand(parentNode);
+				parentNode = parentNode.getParent();
+			}
+			projectTree.expand(parentNode);
+		}
+		
 		projectTreePanel.setCaption(getI18nText(I18N_TREE_CAPTION, messageSource));
 		projectTree.setItemCaptionGenerator(NodeWrapper::getNodeCaption);
 		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
@@ -202,7 +216,10 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	}
 
 	public void refreshWorksetGrid() {
+		NodeWrapper parentNode = worksetDataProvider.getParentNode();
 		worksetDataProvider = new WorksetDataProvider(worksetService);
+		worksetDataProvider.setParentNode(parentNode);
+		
 		CreateDocSettingsJson userSettings = (CreateDocSettingsJson)settingsService.getUserSettings(currentUser, new CreateDocSettingsJson());
 		List<ColumnSettings> columnSettings = userSettings.getLeftResultColumns();
 		
@@ -221,12 +238,18 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		worksetGrid.addSelectionListener(selectEvent -> {
 			if (Objects.nonNull(this.rightLayout)) {
 				Optional<IWorkSetPresenter> item = selectEvent.getFirstSelectedItem();
-				if (item.isPresent()) {
+				if (item.isPresent()) {	
+					this.selectedWorkSet = item.get();
 					rightLayout.getDocumentsDataProvider().setParentWorkSet(item.get().getWorkset());
 					rightLayout.getDocumentsDataProvider().refreshAll();
 				}
 			}
 		});
+		
+		/* select the previously selected workset */
+		if (selectedWorkSet != null) {
+			worksetGrid.select(selectedWorkSet);
+		}
 		
 		// test column headers
 		userSettings.getLeftColumnHeaders();
@@ -427,7 +450,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 			CreateDocSettingsWindow settingsWindow = new CreateDocSettingsWindow(settingsService, messageSource);
 			settingsWindow.addOnSaveListener(closeEvent -> {
 				refreshUiElements();
-				rightLayout.refreshUiElements();
+				//rightLayout.refreshUiElements();
 			});
 			getUI().getUI().addWindow(settingsWindow);
 		});
@@ -619,9 +642,9 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 		case IDocument.FIELD_TYPE:
 			addDocumnentGridColumn(settings, field -> field.getTypeText(this.messageSource), I18N_DOCUMENT_COLUMN_TYPE);
 			break;
-		case IDocument.FIELD_WORK:
-			addDocumnentGridColumn(settings, IDocumentPresenter::getWorkText, I18N_DOCUMENT_COLUMN_WORK);
-			break;
+//		case IDocument.FIELD_WORK:
+//			addDocumnentGridColumn(settings, IDocumentPresenter::getWorkText, I18N_DOCUMENT_COLUMN_WORK);
+//			break;
 		case IDocument.FIELD_WORKSET:
 			addDocumnentGridColumn(settings, IDocumentPresenter::getWorksetText, I18N_DOCUMENT_COLUMN_WORKSET);
 			break;

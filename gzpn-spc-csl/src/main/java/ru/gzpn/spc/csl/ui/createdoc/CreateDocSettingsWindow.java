@@ -19,22 +19,27 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.GridDragSource;
 import com.vaadin.ui.components.grid.GridDropTarget;
 import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.components.grid.TreeGridDropTarget;
 
+import ru.gzpn.spc.csl.model.enums.Entities;
+import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.DraggableTree;
+import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.common.UISettingsWindow;
 
 public class CreateDocSettingsWindow extends UISettingsWindow {
@@ -42,6 +47,8 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 	public static final Logger logger = LogManager.getLogger(CreateDocSettingsWindow.class);
 	public static final String I18N_TREE_CAPTION = "createDocSettingsWindow.projectTree.caption";
 	public static final String I18N_WINDOW_CAPTION = "createDocSettingsWindow.caption";
+	public static final String I18N_COLUMNSTAB_CAPTION = "createDocSettingsWindow.tabSheet.columns.cap";
+	public static final String I18N_HEADERSTAB_CAPTION = "createDocSettingsWindow.tabSheet.headers.cap";
 	
 	public static final String I18N_DOCSETTINGS_COLUMN_ID = "createdoc.CreateDocSettingsWindow.columnsGrid.columns.id";
 	public static final String I18N_DOCSETTINGS_COLUMN_ENTITY = "createdoc.CreateDocSettingsWindow.columnsGrid.columns.entity";
@@ -56,6 +63,8 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 	private TreeDataProvider<NodeWrapper> treeDataProvider;
 	private TreeData<NodeWrapper> treeData;
 	private Grid<ColumnSettingsPresenter> columnsGrid;
+	private List<ColumnSettingsPresenter> columnsGridData;
+	private TabSheet tabSheet;
 	
 	public CreateDocSettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
 		super(settingsService, messageSource);
@@ -64,18 +73,28 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		this.setCaption(getI18nText(I18N_WINDOW_CAPTION, messageSource));
 		this.setModal(true);
 		this.setWidth(70, Unit.PERCENTAGE);
-		this.setHeight(50, Unit.PERCENTAGE);
+		this.setHeight(60, Unit.PERCENTAGE);
 	}
 
 	@Override
-	public VerticalLayout createBodyLayout() {
-		VerticalLayout layout = new VerticalLayout();
+	public ComponentContainer createBodyLayout() {
+		VerticalLayout bodyLayout = new VerticalLayout();
+		
+		tabSheet = new TabSheet();
+		VerticalLayout headersLayout = new VerticalLayout();
+		VerticalLayout columnsLayout = new VerticalLayout();
 		splitPanel = new HorizontalSplitPanel();
 		splitPanel.setFirstComponent(createLeftLayout());
 		splitPanel.setSecondComponent(createRightLayout());
 		splitPanel.setSplitPosition(30);
-		layout.addComponent(splitPanel);
-		return layout;
+		columnsLayout.addComponent(splitPanel);
+		
+		tabSheet.addTab(columnsLayout, getI18nText(I18N_COLUMNSTAB_CAPTION, messageSource));
+		tabSheet.addTab(headersLayout, getI18nText(I18N_HEADERSTAB_CAPTION, messageSource));
+		
+		bodyLayout.addComponent(tabSheet);
+		
+		return bodyLayout;
 	}
 
 	public Component createLeftLayout() {
@@ -91,7 +110,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		projectTree = new DraggableTree<>();
 		Panel panel = new Panel(getI18nText(I18N_TREE_CAPTION, messageSource));
 		
-		projectTree.setItemCaptionGenerator(NodeWrapper::getNodeSettingsCaption);
+		projectTree.setItemCaptionGenerator(item -> item.getNodeSettingsCaption(messageSource, getLocale()));
 		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
 		projectTree.setSizeFull();
 		projectTree.setHeight(300, Unit.PIXELS);
@@ -133,10 +152,6 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 			listNodes.remove(draggedNode);
 			
 			// when we drag a node from top to bottom
-			if (pasteIndex - fromIndex > 0) {
-				pasteIndex = pasteIndex + 1;
-			}
-			
 			pasteIndex = (pasteIndex < 0 || pasteIndex > listNodes.size()) ? listNodes.size() : pasteIndex;
 			
 			listNodes.add(pasteIndex, draggedNode);
@@ -160,10 +175,21 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 	}
 	
 	public Component createRightLayout() {
-		VerticalLayout layout = new VerticalLayout();
-		layout.setSizeFull();
-		layout.setMargin(false);
-		layout.setSpacing(false);
+		VerticalLayout columnsLayout = new VerticalLayout();
+		
+		columnsLayout.setSizeFull();
+		columnsLayout.setMargin(false);
+		columnsLayout.setSpacing(false);
+		
+		refreshColumnsGrid();
+		columnsLayout.addComponent(columnsGrid);
+		columnsGrid.setSizeFull();
+		columnsGrid.setHeightByRows(8);
+		
+		return columnsLayout;
+	}
+
+	public void refreshColumnsGrid() {
 		columnsGrid = new Grid<>();
 		GridDragSource<ColumnSettingsPresenter> dragSource = new GridDragSource<>(columnsGrid);
 		GridDropTarget<NodeWrapper> dropTarget = new GridDropTarget<>(projectTree.getCompositionRoot(), DropMode.ON_TOP);
@@ -175,41 +201,67 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 					.collect(Collectors.toList());
 		});
 		
-		columnsGrid.setSizeFull();
-		columnsGrid.setHeightByRows(8);
-		refreshColumnsGrid();
-		layout.addComponent(columnsGrid);
-		
-		return layout;
-	}
-
-	public void refreshColumnsGrid() {
-		columnsGrid.removeAllColumns();
 		CreateDocSettingsJson settingsJson = (CreateDocSettingsJson)settingsService
 				.getUserSettings(user, new CreateDocSettingsJson());
 		List<ColumnSettings> columns = settingsJson.getLeftResultColumns();
 
-		addGridColumn("id", columnsGrid.addColumn(ColumnSettingsPresenter::getEntityFieldName), I18N_DOCSETTINGS_COLUMN_ID);
-		addGridColumn("entity", columnsGrid.addColumn(ColumnSettingsPresenter::getEntityName), I18N_DOCSETTINGS_COLUMN_ENTITY);
-		//addGridColumn("addToGroup", columnsGrid.addComponentColumn(ColumnSettingsPresenter::getAddToGroup), I18N_DOCSETTINGS_COLUMN_ADDTOGROUP);
-		addGridColumn("visibility", columnsGrid.addComponentColumn(ColumnSettingsPresenter::getVisibilityCheckBox), I18N_DOCSETTINGS_COLUMN_VISIBLE);
-		addGridColumn("headers", columnsGrid.addComponentColumn(ColumnSettingsPresenter::getMergedHeadComboBox), I18N_DOCSETTINGS_COLUMN_MERGEDHEAD);
+		setColumnAttribures("id", columnsGrid.addColumn(presenter -> presenter.getEntityFieldNameText(messageSource)), I18N_DOCSETTINGS_COLUMN_ID);
+		setColumnAttribures("entity", columnsGrid.addColumn(presenter -> presenter.getEntityNameText(messageSource)), I18N_DOCSETTINGS_COLUMN_ENTITY);
+		setColumnAttribures("visibility", columnsGrid.addComponentColumn(ColumnSettingsPresenter::getVisibilityCheckBox), I18N_DOCSETTINGS_COLUMN_VISIBLE);
+		setColumnAttribures("headers", columnsGrid.addComponentColumn(ColumnSettingsPresenter::getMergedHeadComboBox), I18N_DOCSETTINGS_COLUMN_MERGEDHEAD);
 		
-		columnsGrid.setItems(columns.stream().map(item -> {
-			ColumnSettingsPresenter resultItem = new ColumnSettingsPresenter(item);
-			resultItem.setAddToGroup(createGridColumnAddToGroupButton(item));
-			resultItem.setVisibilityCheckBox(cretateGridColumnVisibleCheckBox(item));
+		this.columnsGridData = columns.stream().map(item -> {
+			ColumnSettingsPresenter resultItem = new ColumnSettingsPresenter(item, settingsService);
+			resultItem.setVisibilityCheckBox(cretateGridColumnVisibleCheckBox(resultItem));
 			resultItem.setMergedHeadComboBox(cretateGridColumnMergedHeadComboBox(item));
 			return resultItem;
-		}).collect(Collectors.toList()));
+		}).collect(Collectors.toList());
+		
+		columnsGrid.setItems(this.columnsGridData);
 	}
 	
-	public <T> void addGridColumn(String id, Column<ColumnSettingsPresenter, T> column, String i18nCaption) {
+	public <T> void setColumnAttribures(String id, Column<ColumnSettingsPresenter, T> column, String i18nCaption) {
 		column.setSortProperty(id);
 		column.setSortable(true);
 		column.setCaption(getI18nText(i18nCaption, messageSource));
 		
 		column.setId(id);
+	}
+	
+	public CheckBox cretateGridColumnVisibleCheckBox(ColumnSettings item) {
+		CheckBox checkBox = new CheckBox();
+		checkBox.setValue(item.isShown());
+		
+		checkBox.addValueChangeListener(changeEvent -> {
+			int index = columnsGridData.indexOf(item);
+			columnsGridData.get(index).setShown(changeEvent.getValue());
+			columnsGrid.setItems(columnsGridData);
+			logger.debug("changeEvent {}", columnsGridData.get(index));
+		});
+		return checkBox;
+	}
+	
+	public ComboBox<String> cretateGridColumnMergedHeadComboBox(ColumnSettings item) {
+		ComboBox<String> mergedHeadComboBox = new ComboBox<>();
+		ColumnHeaderGroup mergedHeadGroup = null;
+		CreateDocSettingsJson settingsJson = (CreateDocSettingsJson)settingsService
+				.getUserSettings(settingsService.getCurrentUser(), new CreateDocSettingsJson());
+		List<ColumnHeaderGroup> headers = settingsJson.getLeftColumnHeaders();
+		ListIterator<ColumnHeaderGroup> it = headers.listIterator();
+		mergedHeadComboBox.setItems(headers.stream().map(element -> element.getCaption()));
+		
+		while (it.hasNext()) {
+			ColumnHeaderGroup headGroup = it.next();
+			if (headGroup.hasChildrenGroups()) {
+				it = headGroup.getChildren().listIterator();
+			} else if (headGroup.hasColumns()
+					&& headGroup.getColumns().stream().anyMatch(element -> element.equals(item))) {
+					mergedHeadComboBox.setSelectedItem(headGroup.getCaption());
+					mergedHeadGroup = headGroup;
+			}
+		}
+		
+		return mergedHeadComboBox;
 	}
 	
 	public Button createGridColumnAddToGroupButton(ColumnSettings settings) {
@@ -218,38 +270,10 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		return addToGroup;
 	}
 	
-	public CheckBox cretateGridColumnVisibleCheckBox(ColumnSettings settings) {
-		CheckBox checkBox = new CheckBox();
-		checkBox.setValue(settings.isShown());
-		checkBox.addValueChangeListener(changeEvent -> changeEvent.getSource());
-		return checkBox;
-	}
-	
-	public ComboBox<String> cretateGridColumnMergedHeadComboBox(ColumnSettings settings) {
-		ComboBox<String> mergedHeadComboBox = new ComboBox<>();
-		ColumnHeaderGroup mergedHeadGroup = null;
-		CreateDocSettingsJson settingsJson = (CreateDocSettingsJson)settingsService
-				.getUserSettings(user, new CreateDocSettingsJson());
-		List<ColumnHeaderGroup> headers = settingsJson.getLeftColumnHeaders();
-		ListIterator<ColumnHeaderGroup> it = headers.listIterator();
-		
-		while (it.hasNext()) {
-			ColumnHeaderGroup headGroup = it.next();
-			if (headGroup.hasChildrenGroups()) {
-				it = headGroup.getChildren().listIterator();
-			} else if (headGroup.hasColumns()
-					&& headGroup.getColumns().stream().anyMatch(item -> item.equals(settings))) {
-					mergedHeadComboBox.setValue(headGroup.getCaption());
-					mergedHeadGroup = headGroup;
-			}
-		}
-		
-		return mergedHeadComboBox;
-	}
-	
 	@Override
 	public void refreshUiElements() {
 		refreshUiTreeData();
+		refreshColumnsGrid();
 	}
 
 	public void refreshUiTreeData() {
@@ -287,29 +311,80 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		}
 		
 		((CreateDocSettingsJson)this.userSettings).setLeftTreeGroup(result);
+		((CreateDocSettingsJson)this.userSettings)
+			.setLeftResultColumns(this.columnsGridData.stream()
+						.map(item -> {
+							ColumnSettings newItem  = new ColumnSettings();
+							newItem.setEntityFieldName(item.getEntityFieldName());
+							newItem.setEntityName(item.getEntityName());
+							newItem.setOrderIndex(item.getOrderIndex());
+							newItem.setShown(item.isShown());
+							newItem.setWidth(item.getWidth());
+						
+							return newItem;
+						}).collect(Collectors.toList()));
 	}
 	
+
 	@SuppressWarnings("serial")
-	public static class ColumnSettingsPresenter extends ColumnSettings {
-		Button addToGroup;
+	public static class ColumnSettingsPresenter extends ColumnSettings implements I18n {
 		CheckBox visibilityCheckBox;
 		ComboBox<String> mergedHeadComboBox;
+		IUserSettigsService settingsService;
 		
-		public ColumnSettingsPresenter(ColumnSettings columnSettings) {
+		public ColumnSettingsPresenter(ColumnSettings columnSettings, IUserSettigsService settingsService) {
 			this.setWidth(columnSettings.getWidth());
 			this.setEntityFieldName(columnSettings.getEntityFieldName());
 			this.setEntityName(columnSettings.getEntityName());
 			this.setOrderIndex(columnSettings.getOrderIndex());
 			this.setShown(columnSettings.isShown());
+			this.settingsService = settingsService;
+			//this.visibilityCheckBox = cretateGridColumnVisibleCheckBox(sourceList);
+			//this.mergedHeadComboBox = cretateGridColumnMergedHeadComboBox();
 		}
 		
 		
-		public Button getAddToGroup() {
-			return addToGroup;
+		
+		public String getEntityNameText(MessageSource messageSource) {
+			Entities entity = Entities.valueOf(getEntityName().toUpperCase());
+			return entity.getText(messageSource, getLocale());
 		}
-		public void setAddToGroup(Button addToGroup) {
-			this.addToGroup = addToGroup;
+
+		public String getEntityFieldNameText(MessageSource messageSource) {
+			String result = "";
+			switch (getEntityFieldName()) {
+			case IWorkSet.FIELD_ID:
+				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_ID, messageSource);
+				break;
+			case IWorkSet.FIELD_NAME:
+				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_NAME, messageSource);
+				break;
+			case IWorkSet.FIELD_PIR:
+				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_PIR, messageSource);
+				break;
+			case IWorkSet.FIELD_PLAN_OBJECT:
+				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_PLANOBJ, messageSource);
+				break;
+			case IWorkSet.FIELD_SMR:
+				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_SMR, messageSource);
+				break;
+			case IWorkSet.FIELD_VERSION:
+				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_VERSION, messageSource);
+				break;
+			case IWorkSet.FIELD_CHANGE_DATE:
+				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_CHANGEDATE, messageSource);
+				break;
+			case IWorkSet.FIELD_CODE:
+				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_CODE, messageSource);
+				break;
+			case IWorkSet.FIELD_CREATE_DATE:
+				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_CREATEDATE, messageSource);
+				break;
+			}
+			
+			return result;
 		}
+
 		public CheckBox getVisibilityCheckBox() {
 			return visibilityCheckBox;
 		}
@@ -322,5 +397,6 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		public void setMergedHeadComboBox(ComboBox<String> mergedHeadComboBox) {
 			this.mergedHeadComboBox = mergedHeadComboBox;
 		}
+		
 	}
 }
