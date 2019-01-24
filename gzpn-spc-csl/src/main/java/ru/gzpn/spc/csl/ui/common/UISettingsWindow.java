@@ -30,8 +30,11 @@ public abstract class UISettingsWindow extends Window implements I18n {
 	public static final String I18N_SETTINGS_COLUMN_ID = "settings.columnsGrid.columns.id";
 	public static final String I18N_SETTINGS_COLUMN_ENTITY = "settings.columnsGrid.columns.entity";
 	public static final String I18N_SETTINGS_COLUMN_VISIBLE = "settings.columnsGrid.columns.visible";
-	public static final String I18N_SETTINGS_COLUMN_MERGEDHEAD = "settings.columnsGrid.columns.mergedHeadColumns";
+	public static final String I18N_SETTINGS_COLUMN_MERGEDHEAD = "settings.columnsGrid.columns.header";
 	
+	public static final String I18N_SETTINGS_HEADERS_COLUMN_HEAD = "settings.headersGrid.columns.header";
+	public static final String I18N_SETTINGS_HEADERS_COLUMN_ID = "settings.headersGrid.columns.id";
+	public static final String I18N_SETTINGS_HEADERS_COLUMN_VISIBLE = "settings.headersGrid.columns.visible";
 	// event actions
 	public static final Action SAVE_ACTION = new Action("saveAction");
 	public static final Action CANCEL_ACTION = new Action("cancelAction");
