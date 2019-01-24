@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface IContract extends IBaseEntity {
-	public static final String ENTITYNAME_DOT = "contract.";
+	public static final String ENTITYNAME_DOT = "Contract.";
 	
 	public static final String FIELD_NAME = ENTITYNAME_DOT + "name";
 	public static final String FIELD_CODE = ENTITYNAME_DOT + "code";

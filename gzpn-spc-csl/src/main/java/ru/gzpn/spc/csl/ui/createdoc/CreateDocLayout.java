@@ -34,6 +34,7 @@ import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.model.enums.Entities;
+import ru.gzpn.spc.csl.model.interfaces.IBaseEntity;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
@@ -362,10 +363,10 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 			addWorksetGridColumn(settings, IWorkSetPresenter::getVersion, IWorkSet.FIELD_VERSION);
 			break;
 		case IWorkSet.FIELD_CREATE_DATE:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getCreateDateText, IWorkSet.FIELD_CREATE_DATE);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getCreateDateText, IBaseEntity.BASE_FIELD_CREATE_DATE);
 			break;
 		case IWorkSet.FIELD_CHANGE_DATE:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getChangeDateText, IWorkSet.FIELD_CHANGE_DATE);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getChangeDateText, IBaseEntity.BASE_FIELD_CHANGE_DATE);
 			break;
 			default:
 		}
@@ -650,10 +651,10 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 			addDocumnentGridColumn(settings, IDocumentPresenter::getVersion, IDocument.FIELD_VERSION);
 			break;
 		case IDocument.FIELD_CREATE_DATE:
-			addDocumnentGridColumn(settings, IDocumentPresenter::getCreateDateText, IDocument.FIELD_CREATE_DATE);
+			addDocumnentGridColumn(settings, IDocumentPresenter::getCreateDateText, IBaseEntity.BASE_FIELD_CREATE_DATE);
 			break;
 		case IDocument.FIELD_CHANGE_DATE:
-			addDocumnentGridColumn(settings, IDocumentPresenter::getChangeDateText, IDocument.FIELD_CHANGE_DATE);
+			addDocumnentGridColumn(settings, IDocumentPresenter::getChangeDateText, IBaseEntity.BASE_FIELD_CHANGE_DATE);
 			break;
 			default:
 		}

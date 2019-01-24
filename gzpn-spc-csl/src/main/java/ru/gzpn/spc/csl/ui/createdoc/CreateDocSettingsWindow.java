@@ -74,7 +74,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		VerticalLayout bodyLayout = new VerticalLayout();
 		
 		tabSheet = new TabSheet();
-		//VerticalLayout headersSettings = new VerticalLayout();
+
 		VerticalLayout columnsSettings = new VerticalLayout();
 		splitPanel = new HorizontalSplitPanel();
 		splitPanel.setFirstComponent(createLeftColumnsSettings());
@@ -83,15 +83,14 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		columnsSettings.addComponent(splitPanel);
 		
 		tabSheet.addTab(columnsSettings, getI18nText(I18N_COLUMNSTAB_CAPTION, messageSource));
-		tabSheet.addTab(createHeadersSettingsLayout(), getI18nText(I18N_HEADERSTAB_CAPTION, messageSource));
+		tabSheet.addTab(createColumnHeadersSettingsLayout(), getI18nText(I18N_HEADERSTAB_CAPTION, messageSource));
 		
 		bodyLayout.addComponent(tabSheet);
 		
 		return bodyLayout;
 	}
 
-	private Component createHeadersSettingsLayout() {
-		// TODO Auto-generated method stub
+	private Component createColumnHeadersSettingsLayout() {
 		return null;
 	}
 
