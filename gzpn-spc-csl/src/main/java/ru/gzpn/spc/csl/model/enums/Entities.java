@@ -43,12 +43,13 @@ public enum Entities {
 	USERSETTINGS("UserSettings"),
 	LOCALESTIMATEHISTORY("LocalEstimateHistory");
 	
+	private static final String ENTITIES_PREFIX = "Entities.";
 	private String name;
 	private String i18n;
 	
 	Entities(String name) {
 		this.name = name;
-		this.i18n = "Entities." + name;
+		this.i18n = ENTITIES_PREFIX + name;
 	}
 	
 	public String getName() {
@@ -59,8 +60,12 @@ public enum Entities {
 		return i18n;
 	}
 	
-	public String getText(MessageSource source, Locale locale) {
+	public String getEntityText(MessageSource source, Locale locale) {
 		return source.getMessage(i18n, null, locale);
+	}
+	
+	public static String getEntityFieldText(String field, MessageSource source, Locale locale) {
+		return source.getMessage(ENTITIES_PREFIX + field, null, field, locale);
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -32,7 +32,6 @@ import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.components.grid.TreeGridDropTarget;
 
 import ru.gzpn.spc.csl.model.enums.Entities;
-import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
@@ -49,12 +48,6 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 	public static final String I18N_WINDOW_CAPTION = "createDocSettingsWindow.caption";
 	public static final String I18N_COLUMNSTAB_CAPTION = "createDocSettingsWindow.tabSheet.columns.cap";
 	public static final String I18N_HEADERSTAB_CAPTION = "createDocSettingsWindow.tabSheet.headers.cap";
-	
-	public static final String I18N_DOCSETTINGS_COLUMN_ID = "createdoc.CreateDocSettingsWindow.columnsGrid.columns.id";
-	public static final String I18N_DOCSETTINGS_COLUMN_ENTITY = "createdoc.CreateDocSettingsWindow.columnsGrid.columns.entity";
-	public static final String I18N_DOCSETTINGS_COLUMN_ADDTOGROUP = "createdoc.CreateDocSettingsWindow.columnsGrid.columns.addToGroup";
-	public static final String I18N_DOCSETTINGS_COLUMN_VISIBLE = "createdoc.CreateDocSettingsWindow.columnsGrid.columns.visible";
-	public static final String I18N_DOCSETTINGS_COLUMN_MERGEDHEAD = "createdoc.CreateDocSettingsWindow.columnsGrid.columns.mergedHeadColumns";
 	
 	private VerticalLayout leftLayout;
 	private HorizontalSplitPanel splitPanel;
@@ -210,10 +203,10 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 				.getUserSettings(user, new CreateDocSettingsJson());
 		List<ColumnSettings> columns = settingsJson.getLeftResultColumns();
 
-		setColumnAttribures("id", columnsGrid.addColumn(presenter -> presenter.getEntityFieldNameText(messageSource)), I18N_DOCSETTINGS_COLUMN_ID);
-		setColumnAttribures("entity", columnsGrid.addColumn(presenter -> presenter.getEntityNameText(messageSource)), I18N_DOCSETTINGS_COLUMN_ENTITY);
-		setColumnAttribures("visibility", columnsGrid.addComponentColumn(ColumnSettingsPresenter::getVisibilityCheckBox), I18N_DOCSETTINGS_COLUMN_VISIBLE);
-		setColumnAttribures("headers", columnsGrid.addComponentColumn(ColumnSettingsPresenter::getMergedHeadComboBox), I18N_DOCSETTINGS_COLUMN_MERGEDHEAD);
+		setColumnAttribures("id", columnsGrid.addColumn(presenter -> presenter.getEntityFieldNameText(messageSource)), I18N_SETTINGS_COLUMN_ID);
+		setColumnAttribures("entity", columnsGrid.addColumn(presenter -> presenter.getEntityNameText(messageSource)), I18N_SETTINGS_COLUMN_ENTITY);
+		setColumnAttribures("visibility", columnsGrid.addComponentColumn(ColumnSettingsPresenter::getVisibilityCheckBox), I18N_SETTINGS_COLUMN_VISIBLE);
+		setColumnAttribures("headers", columnsGrid.addComponentColumn(ColumnSettingsPresenter::getMergedHeadComboBox), I18N_SETTINGS_COLUMN_MERGEDHEAD);
 		
 		this.columnsGridData = columns.stream().map(item -> {
 			ColumnSettingsPresenter resultItem = new ColumnSettingsPresenter(item, settingsService);
@@ -344,50 +337,15 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 			this.setOrderIndex(columnSettings.getOrderIndex());
 			this.setShown(columnSettings.isShown());
 			this.settingsService = settingsService;
-			//this.visibilityCheckBox = cretateGridColumnVisibleCheckBox(sourceList);
-			//this.mergedHeadComboBox = cretateGridColumnMergedHeadComboBox();
 		}
 		
-		
-		
-		public String getEntityNameText(MessageSource messageSource) {
-			Entities entity = Entities.valueOf(getEntityName().toUpperCase());
-			return entity.getText(messageSource, getLocale());
+		public Object getEntityFieldNameText(MessageSource messageSource) {
+			return Entities.getEntityFieldText(this.getEntityFieldName(), messageSource, getLocale());
 		}
 
-		public String getEntityFieldNameText(MessageSource messageSource) {
-			String result = "";
-			switch (getEntityFieldName()) {
-			case IWorkSet.FIELD_ID:
-				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_ID, messageSource);
-				break;
-			case IWorkSet.FIELD_NAME:
-				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_NAME, messageSource);
-				break;
-			case IWorkSet.FIELD_PIR:
-				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_PIR, messageSource);
-				break;
-			case IWorkSet.FIELD_PLAN_OBJECT:
-				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_PLANOBJ, messageSource);
-				break;
-			case IWorkSet.FIELD_SMR:
-				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_SMR, messageSource);
-				break;
-			case IWorkSet.FIELD_VERSION:
-				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_VERSION, messageSource);
-				break;
-			case IWorkSet.FIELD_CHANGE_DATE:
-				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_CHANGEDATE, messageSource);
-				break;
-			case IWorkSet.FIELD_CODE:
-				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_CODE, messageSource);
-				break;
-			case IWorkSet.FIELD_CREATE_DATE:
-				result = getI18nText(CreateDocLayout.I18N_WORKSET_COLUMN_CREATEDATE, messageSource);
-				break;
-			}
-			
-			return result;
+		public String getEntityNameText(MessageSource messageSource) {
+			Entities entity = Entities.valueOf(this.getEntityName().toUpperCase());
+			return entity.getEntityText(messageSource, getLocale());
 		}
 
 		public CheckBox getVisibilityCheckBox() {

@@ -7,7 +7,7 @@ import java.util.List;
 import ru.gzpn.spc.csl.model.enums.TaxType;
 
 public interface IMilestone {
-	public static final String ENTITYNAME_DOT = "milestone.";
+	public static final String ENTITYNAME_DOT = "Milestone.";
 	
 	public static final String FIELD_NAME = ENTITYNAME_DOT + "name";
 	public static final String FIELD_CODE = ENTITYNAME_DOT + "code";

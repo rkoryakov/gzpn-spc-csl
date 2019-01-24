@@ -69,66 +69,82 @@ public class PlanObject extends BaseEntity implements IPlanObject, Serializable 
 		this.mark = mark;
 	}
 	
+	@Override
 	public List<IWork> getWorkList() {
 		return works;
 	}
 
+	@Override
 	public void setWorkList(List<IWork> workList) {
 		this.works = workList;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 	
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	@Override
 	public void setChildren(List<IPlanObject> children) {
 		this.children = children;
 	}
 
+	@Override
 	public IPlanObject getParent() {
 		return parent;
 	}
 
+	@Override
 	public List<IPlanObject> getChildren() {
 		return children;
 	}
 
+	@Override
 	public ICProject getCproject() {
 		return cproject;
 	}
 
+	@Override
 	public void setCproject(ICProject cproject) {
 		this.cproject = cproject;
 	}
 
+	@Override
 	public void setParent(PlanObject parent) {
 		this.parent = parent;
 	}
 
+	@Override
 	public String getCode() {
 		return code;
 	}
 
+	@Override
 	public void setCode(String code) {
 		this.code = code;
 	}
 
+	@Override
 	public String getMark() {
 		return mark;
 	}
 
+	@Override
 	public void setMark(String mark) {
 		this.mark = mark;
 	}
 
+	@Override
 	public List<IWorkSet> getWorkset() {
 		return workset;
 	}
 
+	@Override
 	public void setWorkset(List<IWorkSet> workset) {
 		this.workset = workset;
 	}

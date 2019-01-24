@@ -23,6 +23,7 @@ import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
 import ru.gzpn.spc.csl.model.enums.Entities;
+import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
@@ -73,20 +74,20 @@ public class WorkSetService implements IWorkSetService {
 				break;
 			case STAGE:
 				if (node.getParent().getEntityEnum() == Entities.CPROJECT) {
-					result = repository.findWorkSetByCProjectId(node.getParent().getId()/*, pageable*/);
+					result = repository.findWorkSetByCProjectId(node.getParent().getId());
 				} else {
-					result = repository.findWorkSetByStageId(node.getId()/*, pageable*/);
+					result = repository.findWorkSetByStageId(node.getId());
 				}
 				break;
 			case CPROJECT:
-				result = repository.findWorkSetByCProjectId(node.getId()/*, pageable*/);
+				result = repository.findWorkSetByCProjectId(node.getId());
 				break;
 			case PLANOBJECT:
-				result = repository.findByPlanObjectId(node.getId()/*, pageable*/);
+				result = repository.findByPlanObjectId(node.getId());
 				break;
 			case WORKSET:
 				result = repository.getItemsGroupedByFieldValue(node.getEntityName(), 
-							node.getGroupField(), node.getGroupFiledValue(), IWorkSet.class /*, pageable*/).collect(Collectors.toList());
+							node.getGroupField(), node.getGroupFiledValue(), IWorkSet.class).collect(Collectors.toList());
 				break;
 			default:
 				break;
@@ -114,8 +115,8 @@ public class WorkSetService implements IWorkSetService {
 				case IWorkSet.FIELD_SMR:
 					result = a.getSmr().getCode().compareTo(b.getSmr().getCode());
 					break;
-				case IWorkSet.FIELD_PLAN_OBJECT:
-					result = a.getPlanObject().getName().compareTo(b.getPlanObject().getName());
+				case IPlanObject.FIELD_MARK:
+					result = a.getPlanObject().getMark().compareTo(b.getPlanObject().getMark());
 					break;
 				case IWorkSet.FIELD_ID:
 					result = a.getId().compareTo(b.getId());
@@ -209,8 +210,8 @@ public class WorkSetService implements IWorkSetService {
 			case IWorkSet.FIELD_SMR:
 				result = workset.getSmr().getCode().toLowerCase().startsWith(commonTextFilter);
 				break;
-			case IWorkSet.FIELD_PLAN_OBJECT:
-				result = workset.getPlanObject().getCode().toLowerCase().startsWith(commonTextFilter);
+			case IPlanObject.FIELD_MARK:
+				result = workset.getPlanObject().getMark().toLowerCase().startsWith(commonTextFilter);
 				break;
 			case IWorkSet.FIELD_ID:
 				result = workset.getId().toString().startsWith(commonTextFilter);

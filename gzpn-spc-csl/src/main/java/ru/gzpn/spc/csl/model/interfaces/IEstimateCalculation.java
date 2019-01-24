@@ -3,7 +3,7 @@ package ru.gzpn.spc.csl.model.interfaces;
 import java.util.List;
 
 public interface IEstimateCalculation extends IBaseEntity {
-	public static final String ENTITYNAME_DOT = "estimatecalculation.";
+	public static final String ENTITYNAME_DOT = "EstimateCalculation.";
 	
 	public static final String FIELD_NAME = ENTITYNAME_DOT + "name";
 	public static final String FIELD_CODE = ENTITYNAME_DOT + "code";

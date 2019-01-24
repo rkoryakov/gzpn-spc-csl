@@ -33,7 +33,10 @@ import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
+import ru.gzpn.spc.csl.model.enums.Entities;
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
+import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
@@ -60,16 +63,6 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	public static final String I18N_DELWORKSETBUTTON_DESC = "createdoc.CreateDocLayout.delWorksetButton.desc";
 	public static final String I18N_DOWNLOADWORKSETBUTTON_DESC = "createdoc.CreateDocLayout.downloadWorksetButton.desc";
 	public static final String I18N_TREE_CAPTION = "createdoc.CreateDocLayout.projectTreeCaption";
-	/* worksetGrid column captions*/
-	public static final String I18N_WORKSET_COLUMN_NAME = "createdoc.CreateDocLayout.worksetGrid.columns.name";
-	public static final String I18N_WORKSET_COLUMN_CODE = "createdoc.CreateDocLayout.worksetGrid.columns.code";
-	public static final String I18N_WORKSET_COLUMN_PIR = "createdoc.CreateDocLayout.worksetGrid.columns.pir";
-	public static final String I18N_WORKSET_COLUMN_SMR = "createdoc.CreateDocLayout.worksetGrid.columns.smr";
-	public static final String I18N_WORKSET_COLUMN_PLANOBJ = "createdoc.CreateDocLayout.worksetGrid.columns.planobj";
-	public static final String I18N_WORKSET_COLUMN_ID = "createdoc.CreateDocLayout.worksetGrid.columns.id";
-	public static final String I18N_WORKSET_COLUMN_VERSION = "createdoc.CreateDocLayout.worksetGrid.columns.ver";
-	public static final String I18N_WORKSET_COLUMN_CREATEDATE = "createdoc.CreateDocLayout.worksetGrid.columns.createdate";
-	public static final String I18N_WORKSET_COLUMN_CHANGEDATE = "createdoc.CreateDocLayout.worksetGrid.columns.changedate";
 	
 	private static final int WORKSET_GRID_ROWS = 15;
 	private static final int WORKSET_GRID_ROW_HEIGHT = 38;
@@ -334,43 +327,56 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	}
 
 	public void addWorksetGridColumn(ColumnSettings settings) {
-		switch (settings.getEntityFieldName()) {		
+		switch (settings.getEntityFieldName()) {
 		case IWorkSet.FIELD_NAME:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getName, I18N_WORKSET_COLUMN_NAME);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getName, IWorkSet.FIELD_NAME);
 			break;
 		case IWorkSet.FIELD_CODE:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getCode, I18N_WORKSET_COLUMN_CODE);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getCode, IWorkSet.FIELD_CODE);
 			break;
 		case IWorkSet.FIELD_PIR:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getPirText, I18N_WORKSET_COLUMN_PIR);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getPirText, IWorkSet.FIELD_PIR);
 			break;
 		case IWorkSet.FIELD_SMR:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getSmrText, I18N_WORKSET_COLUMN_SMR);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getSmrText, IWorkSet.FIELD_SMR);
 			break;
-		case IWorkSet.FIELD_PLAN_OBJECT:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getPlanObject, I18N_WORKSET_COLUMN_PLANOBJ);
+		case IPlanObject.FIELD_MARK:
+			addWorksetGridColumn(settings, IWorkSetPresenter::getPlanObjectMarkText, IPlanObject.FIELD_MARK);
+			break;
+		case IPlanObject.FIELD_NAME:
+			addWorksetGridColumn(settings, IWorkSetPresenter::getPlanObjectNameText, IPlanObject.FIELD_NAME);
+			break;
+		case IPlanObject.FIELD_CODE:
+			addWorksetGridColumn(settings, IWorkSetPresenter::getPlanObjectCodeText, IPlanObject.FIELD_CODE);
+			break;
+		case ICProject.FIELD_NAME:
+			addWorksetGridColumn(settings, IWorkSetPresenter::getCProjectNameText, ICProject.FIELD_NAME);
+			break;
+		case ICProject.FIELD_CODE:
+			addWorksetGridColumn(settings, IWorkSetPresenter::getCProjectCodeText, ICProject.FIELD_CODE);
 			break;
 		case IWorkSet.FIELD_ID:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getId, I18N_WORKSET_COLUMN_ID);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getId, IWorkSet.FIELD_ID);
 			break;
 		case IWorkSet.FIELD_VERSION:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getVersion, I18N_WORKSET_COLUMN_VERSION);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getVersion, IWorkSet.FIELD_VERSION);
 			break;
 		case IWorkSet.FIELD_CREATE_DATE:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getCreateDateText, I18N_WORKSET_COLUMN_CREATEDATE);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getCreateDateText, IWorkSet.FIELD_CREATE_DATE);
 			break;
 		case IWorkSet.FIELD_CHANGE_DATE:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getChangeDateText, I18N_WORKSET_COLUMN_CHANGEDATE);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getChangeDateText, IWorkSet.FIELD_CHANGE_DATE);
 			break;
 			default:
 		}
 	}
 	
-	public <T> void addWorksetGridColumn(ColumnSettings settings, ValueProvider<IWorkSetPresenter, T> provider, String i18nCaption) {
+	public <T> void addWorksetGridColumn(ColumnSettings settings, ValueProvider<IWorkSetPresenter, T> provider, String field) {
+		
 		Column<IWorkSetPresenter, T> column = worksetGrid.addColumn(provider);
 		column.setSortProperty(settings.getEntityFieldName());
 		column.setSortable(true);
-		column.setCaption(getI18nText(i18nCaption, messageSource));
+		column.setCaption(Entities.getEntityFieldText(field, messageSource, getLocale()));
 		Double width = settings.getWidth();
 		
 		if (Objects.nonNull(width) && Double.isFinite(width) && width > 1) {
@@ -478,17 +484,6 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 	public static final String I18N_ADDDOCUMENTBUTTON_DESC = "createdoc.WorkSetDocumentation.addDocumentButton.desc";
 	public static final String I18N_DELDOCUMENTBUTTON_DESC = "createdoc.WorkSetDocumentation.delDocumentButton.desc";
 	public static final String I18N_DOWNLOADDOCUMENTSBUTTON_DESC = "createdoc.WorkSetDocumentation.downloadDocumentsButton.desc";
-	
-	public static final String I18N_DOCUMENT_COLUMN_NAME = "createdoc.WorkSetDocumentation.documentGrid.columns.name";
-	public static final String I18N_DOCUMENT_COLUMN_CODE = "createdoc.WorkSetDocumentation.documentGrid.columns.code";
-	
-	public static final String I18N_DOCUMENT_COLUMN_TYPE = "createdoc.WorkSetDocumentation.documentGrid.columns.type";
-	public static final String I18N_DOCUMENT_COLUMN_WORK = "createdoc.WorkSetDocumentation.documentGrid.columns.work";
-	public static final String I18N_DOCUMENT_COLUMN_WORKSET = "createdoc.WorkSetDocumentation.documentGrid.columns.workset";
-	public static final String I18N_DOCUMENT_COLUMN_ID = "createdoc.WorkSetDocumentation.documentGrid.columns.id";
-	public static final String I18N_DOCUMENT_COLUMN_VERSION = "createdoc.WorkSetDocumentation.documentGrid.columns.version";
-	public static final String I18N_DOCUMENT_COLUMN_CREATEDATE = "createdoc.WorkSetDocumentation.documentGrid.columns.createdate";
-	public static final String I18N_DOCUMENT_COLUMN_CHANGEDATE = "createdoc.WorkSetDocumentation.documentGrid.columns.changedate";
 	
 	private static final double DOCUMENT_GRID_ROWS = 10;
 	private String currentUser;
@@ -634,41 +629,41 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 	public void addDocumentGridColumn(ColumnSettings settings) {
 		switch (settings.getEntityFieldName()) {		
 		case IDocument.FIELD_NAME:
-			addDocumnentGridColumn(settings, IDocumentPresenter::getName, I18N_DOCUMENT_COLUMN_NAME);
+			addDocumnentGridColumn(settings, IDocumentPresenter::getName, IDocument.FIELD_NAME);
 			break;
 		case IDocument.FIELD_CODE:
-			addDocumnentGridColumn(settings, IDocumentPresenter::getCode, I18N_DOCUMENT_COLUMN_CODE);
+			addDocumnentGridColumn(settings, IDocumentPresenter::getCode, IDocument.FIELD_CODE);
 			break;
 		case IDocument.FIELD_TYPE:
-			addDocumnentGridColumn(settings, field -> field.getTypeText(this.messageSource), I18N_DOCUMENT_COLUMN_TYPE);
+			addDocumnentGridColumn(settings, field -> field.getTypeText(this.messageSource), IDocument.FIELD_TYPE);
 			break;
 //		case IDocument.FIELD_WORK:
 //			addDocumnentGridColumn(settings, IDocumentPresenter::getWorkText, I18N_DOCUMENT_COLUMN_WORK);
 //			break;
 		case IDocument.FIELD_WORKSET:
-			addDocumnentGridColumn(settings, IDocumentPresenter::getWorksetText, I18N_DOCUMENT_COLUMN_WORKSET);
+			addDocumnentGridColumn(settings, IDocumentPresenter::getWorksetText, IDocument.FIELD_WORKSET);
 			break;
 		case IDocument.FIELD_ID:
-			addDocumnentGridColumn(settings, IDocumentPresenter::getId, I18N_DOCUMENT_COLUMN_ID);
+			addDocumnentGridColumn(settings, IDocumentPresenter::getId, IDocument.FIELD_ID);
 			break;
 		case IDocument.FIELD_VERSION:
-			addDocumnentGridColumn(settings, IDocumentPresenter::getVersion, I18N_DOCUMENT_COLUMN_VERSION);
+			addDocumnentGridColumn(settings, IDocumentPresenter::getVersion, IDocument.FIELD_VERSION);
 			break;
 		case IDocument.FIELD_CREATE_DATE:
-			addDocumnentGridColumn(settings, IDocumentPresenter::getCreateDateText, I18N_DOCUMENT_COLUMN_CREATEDATE);
+			addDocumnentGridColumn(settings, IDocumentPresenter::getCreateDateText, IDocument.FIELD_CREATE_DATE);
 			break;
 		case IDocument.FIELD_CHANGE_DATE:
-			addDocumnentGridColumn(settings, IDocumentPresenter::getChangeDateText, I18N_DOCUMENT_COLUMN_CHANGEDATE);
+			addDocumnentGridColumn(settings, IDocumentPresenter::getChangeDateText, IDocument.FIELD_CHANGE_DATE);
 			break;
 			default:
 		}
 	}
 	
-	public <T> void addDocumnentGridColumn(ColumnSettings settings, ValueProvider<IDocumentPresenter, T> provider, String i18nCaption) {
+	public <T> void addDocumnentGridColumn(ColumnSettings settings, ValueProvider<IDocumentPresenter, T> provider, String field) {
 		Column<IDocumentPresenter, T> column = documentsGrid.addColumn(provider);
 		column.setSortProperty(settings.getEntityFieldName());
 		column.setSortable(true);
-		column.setCaption(getI18nText(i18nCaption, messageSource));
+		column.setCaption(Entities.getEntityFieldText(field, messageSource, getLocale()));
 		Double width = settings.getWidth();
 		
 		if (Objects.nonNull(width) && Double.isFinite(width) && width > 1) {

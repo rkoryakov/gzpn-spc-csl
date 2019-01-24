@@ -7,7 +7,7 @@ import ru.gzpn.spc.csl.model.enums.WorkType;
 
 public interface IWork extends IBaseEntity {
 	
-	public static final String ENTITYNAME_DOT = "work.";
+	public static final String ENTITYNAME_DOT = "Work.";
 	
 	public static final String FIELD_NAME = ENTITYNAME_DOT + "name";
 	public static final String FIELD_CODE = ENTITYNAME_DOT + "code";

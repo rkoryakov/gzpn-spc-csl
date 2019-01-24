@@ -131,7 +131,7 @@ public class NodeWrapper implements Serializable {
 	@JsonIgnore
 	public String getNodeSettingsCaption(MessageSource messageSource, Locale locale) {
 		Entities entity = Entities.valueOf(entityName.toUpperCase());
-		String entityCaption = entity.getText(messageSource, locale);
+		String entityCaption = entity.getEntityText(messageSource, locale);
 		String fieldCaption = "";
 		
 		switch (groupFiled) {

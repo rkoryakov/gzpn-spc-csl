@@ -5,6 +5,18 @@ import java.util.List;
 import ru.gzpn.spc.csl.model.PlanObject;
 
 public interface IPlanObject extends IBaseEntity {
+	public static final String ENTITYNAME_DOT = "PlanObject.";
+	
+	public static final String FIELD_NAME = ENTITYNAME_DOT + "name";
+	public static final String FIELD_CODE = ENTITYNAME_DOT + "code";
+	public static final String FIELD_MARK = ENTITYNAME_DOT + "mark";
+	public static final String FIELD_CPROJECT = "cproject";
+	/* Overridden fields */
+	public static final String FIELD_ID = ENTITYNAME_DOT + IBaseEntity.FIELD_ID;
+	public static final String FIELD_CHANGE_DATE = ENTITYNAME_DOT + IBaseEntity.FIELD_CHANGE_DATE;
+	public static final String FIELD_CREATE_DATE = ENTITYNAME_DOT + IBaseEntity.FIELD_CREATE_DATE;
+	public static final String FIELD_VERSION = ENTITYNAME_DOT + IBaseEntity.FIELD_VERSION;
+	
 	
 	public String getCode();
 	public void setCode(String code);

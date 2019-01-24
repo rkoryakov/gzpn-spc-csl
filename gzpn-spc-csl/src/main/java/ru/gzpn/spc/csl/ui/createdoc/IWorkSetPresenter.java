@@ -8,6 +8,13 @@ public interface IWorkSetPresenter extends IWorkSet {
 	
 	public String getPirText();
 	public String getSmrText();
-	String getChangeDateText();
-	String getCreateDateText();
+	public String getChangeDateText();
+	public String getCreateDateText();
+	public String getPlanObjectMarkText();
+	public String getPlanObjectCodeText();
+	public String getPlanObjectNameText();
+	public String getCProjectNameText();
+	public String getCProjectCodeText();
+	
+	
 }

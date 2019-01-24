@@ -54,4 +54,34 @@ public class WorkSetPresenter extends WorkSet implements IWorkSetPresenter, I18n
 	public String getChangeDateText() {
 		return DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss").format(getChangeDate());
 	}
+
+	@Override
+	public String getPlanObjectMarkText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getPlanObjectCodeText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getPlanObjectNameText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCProjectNameText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCProjectCodeText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
