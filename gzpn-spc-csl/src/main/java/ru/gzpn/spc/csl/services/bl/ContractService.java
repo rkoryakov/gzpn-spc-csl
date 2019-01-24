@@ -92,7 +92,7 @@ public class ContractService implements IContractService {
 	public static final class ContractFilter {
 		private String commonTextFilter;
 		
-		private ContractFilter() {
+		public ContractFilter() {
 
 		}
 

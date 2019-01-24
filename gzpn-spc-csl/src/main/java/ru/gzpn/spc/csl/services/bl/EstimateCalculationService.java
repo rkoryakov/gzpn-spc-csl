@@ -75,7 +75,7 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 	public static final class EstimateCalculationFilter {
 		private String commonTextFilter;
 		
-		private EstimateCalculationFilter() {
+		public EstimateCalculationFilter() {
 
 		}
 
@@ -118,7 +118,7 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 					result = estimateCalculationPresenter.getCode().toLowerCase().startsWith(commonTextFilter);
 					break;
 				case IEstimateCalculation.FILED_HANDLER:
-					result = estimateCalculationPresenter.getHandler().toString().startsWith(commonTextFilter);
+					result = estimateCalculationPresenter.getHandler().toLowerCase().startsWith(commonTextFilter);
 					break;
 				case IEstimateCalculation.FILED_CPROJECT:
 					result = estimateCalculationPresenter.getCProjectCaption().toLowerCase().startsWith(commonTextFilter);

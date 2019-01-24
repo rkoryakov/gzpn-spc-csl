@@ -163,11 +163,11 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 	private Button buttonDeleteGroupMemberProject(String projectID, Group group) {
 		Button deleteButton = new Button();
 		ClickListener okDeleteClick = event -> {
-			String[] paramsForDelete = new String[] {group.getId(), projectID};
+			String[] paramsForDelete = new String[] {group.getName(), projectID};
 			try {
 				if(currentICProject == null) {
 					ACLJson acljson = currentIHProject.getAcl();
-	 				acljson.getRoles().remove(group.getId());
+	 				acljson.getRoles().remove(group.getName());
 	 				currentIHProject.setAcl(acljson);
 	 				projectService.saveHProjectAcls(currentIHProject);
 	 				groupForHProject.refreshAll();
@@ -175,7 +175,7 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 				}
 				else if(currentIHProject == null) {
 					ACLJson acljson = currentICProject.getAcl();
-	 				acljson.getRoles().remove(group.getId());
+	 				acljson.getRoles().remove(group.getName());
 	 				currentICProject.setAcl(acljson);
 	 				projectService.saveCProjectAcls(currentICProject);
 	 				groupForCProject.refreshAll();
