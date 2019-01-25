@@ -14,6 +14,7 @@ import javax.persistence.Table;
 
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
+import ru.gzpn.spc.csl.model.interfaces.IEstimateRegister;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IObjectEstimate;
 
@@ -43,6 +44,11 @@ public class EstimateCalculation extends BaseEntity implements IEstimateCalculat
 	@OneToMany(targetEntity = ObjectEstimate.class)
 	@JoinColumn(name = "est_calc_id", referencedColumnName = "id")
 	private List<IObjectEstimate> objectEstimates;
+	
+	@OneToMany(targetEntity = EstimateRegister.class)
+	@JoinColumn(name = "est_reg_id", referencedColumnName = "id")
+	private List<IEstimateRegister> estimateRegisters;
+	
 	
 	public String getCode() {
 		return code;
@@ -90,5 +96,13 @@ public class EstimateCalculation extends BaseEntity implements IEstimateCalculat
 
 	public void setObjectEstimates(List<IObjectEstimate> objectEstimates) {
 		this.objectEstimates = objectEstimates;
+	}
+
+	public List<IEstimateRegister> getEstimateRegisters() {
+		return estimateRegisters;
+	}
+
+	public void setEstimateRegisters(List<IEstimateRegister> estimateRegisters) {
+		this.estimateRegisters = estimateRegisters;
 	}
 }
