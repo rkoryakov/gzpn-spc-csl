@@ -241,4 +241,9 @@ public class CreateDocSettingsJson implements ISettingsJson, Serializable {
 		this.leftSplitPosition = leftSplitPosition;
 	}
 
+	
+	public boolean hasRightColumnHeaders() {
+		return rightColumnHeaders != null && !rightColumnHeaders.isEmpty();
+	}
+
 }

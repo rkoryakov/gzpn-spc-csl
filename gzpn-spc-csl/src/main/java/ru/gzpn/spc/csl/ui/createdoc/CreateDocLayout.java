@@ -257,6 +257,16 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS - worksetGrid.getHeaderRowCount() + 1);
 	}
 
+//	public void refreshColumnHeaderGroups(List<ColumnHeaderGroup> groups) {
+//		final String headStyle = "v-grid-header-align-left";
+//		createColumnHeaders(groups);
+//		
+//	}
+//	
+//	private List<ColumnHeaderGroup> createColumnHeaders(List<ColumnHeaderGroup> groups) {
+//		
+//	}
+	
 	public void refreshColumnHeaderGroups(List<ColumnHeaderGroup> groups) {
 		final String headStyle = "v-grid-header-align-left";
 		Deque<List<ColumnHeaderGroup>> childGroups = new LinkedList<>();
@@ -681,7 +691,7 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 	}
 	
 	public void addDocumentHeaderColumns(CreateDocSettingsJson userSettings) {
-		if (userSettings.hasLeftColumnHeaders()) {
+		if (userSettings.hasRightColumnHeaders()) {
 			refreshColumnHeaderGroups(userSettings.getRightColumnHeaders());
 		}
 		documentsGrid.setHeightByRows(DOCUMENT_GRID_ROWS - documentsGrid.getHeaderRowCount() + 1);

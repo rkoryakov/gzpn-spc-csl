@@ -11,6 +11,10 @@ public interface I18n {
 		return messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
 	}
 
+	public default String getI18nText(String key, MessageSource messageSource, String defaultValue) {
+		return messageSource.getMessage(key, null, defaultValue, LocaleContextHolder.getLocale());
+	}
+	
 	public default String getI18nText(String key, Object[] args, MessageSource messageSource) {
 		return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
 	}

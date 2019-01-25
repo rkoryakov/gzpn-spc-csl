@@ -89,8 +89,6 @@ public class ColumnHeaderGroup implements Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
 		ColumnHeaderGroup other = (ColumnHeaderGroup) obj;
 		if (caption == null) {
 			if (other.caption != null)
