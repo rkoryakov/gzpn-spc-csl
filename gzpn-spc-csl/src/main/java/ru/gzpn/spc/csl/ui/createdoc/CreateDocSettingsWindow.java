@@ -130,7 +130,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 			List<ColumnHeaderGroup> headers = settingsJson.getLeftColumnHeaders();
 			Set<ColumnHeaderGroup> flatHeaders = toFlatSet(headers);
 
-			ColumnHeaderGroup newHeaderGroup = new ColumnHeaderGroup("Item " + (headersGridData.size() + 1));
+			ColumnHeaderGroup newHeaderGroup = new ColumnHeaderGroup("Заголовок " + (headersGridData.size() + 1));
 			ColumnHeaderPresenter newGridRow = new ColumnHeaderPresenter(newHeaderGroup, settingsService);
 			newGridRow.setVisibilityCheckBox(cretateGridColumnHeaderVisibleCheckBox(newGridRow));
 			newGridRow.setMergedHeadComboBox(cretateGridColumnHeaderMergedHeadComboBox(newHeaderGroup, headers, flatHeaders));
@@ -436,10 +436,16 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 	}
 	
 	public void refreshHeaders() {
+		//this.headersGridData.forEach(item -> {});
+		List<ColumnHeaderGroup> headers = headersGridData.stream()
+				.map(item -> (ColumnHeaderGroup)item)
+					.peek(item -> {item.setChildren(null); item.setColumns(null);})
+						.collect(Collectors.toList());
+		
 		for (ColumnHeaderPresenter chp : this.headersGridData) {
 			if (chp.getMergedHeadComboBox().getSelectedItem().isPresent()) {
 				String caption = chp.getMergedHeadComboBox().getSelectedItem().get();
-				ColumnHeaderPresenter parent = getHeaderByCaption(caption);
+				ColumnHeaderGroup  parent = getHeaderByCaption(caption, headers);
 				List<ColumnHeaderGroup> children = parent.getChildren();
 				
 				if (children == null) {
@@ -453,9 +459,11 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 			}
 		}
 		
+		
 		for (ColumnSettingsPresenter csp : this.columnsGridData) {
 			if (csp.getMergedHeadComboBox().getSelectedItem().isPresent()) {
-				ColumnHeaderPresenter header = getHeaderByCaption(csp.getMergedHeadComboBox().getSelectedItem().get());
+				String caption = csp.getMergedHeadComboBox().getSelectedItem().get();
+				ColumnHeaderGroup header = getHeaderByCaption(caption, headers);
 				List<ColumnSettings> columns = header.getColumns();
 				if (columns == null) {
 					columns = new ArrayList<>();
@@ -489,12 +497,15 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		return result;
 	}
 	
-	private ColumnHeaderPresenter getHeaderByCaption(String caption) {
-		ColumnHeaderPresenter result = null;
-		for (ColumnHeaderPresenter chp : this.headersGridData) {
-			if (chp.getCaption().equals(caption)) {
-				result = chp;
-				break;
+	private ColumnHeaderGroup getHeaderByCaption(String caption, List<ColumnHeaderGroup> headers) {
+		ColumnHeaderGroup result = null;
+		for (ColumnHeaderGroup chg : headers) {
+			if (chg.hasChildrenGroups()) {
+				result = getHeaderByCaption(caption, chg.getChildren());
+			}
+			
+			if (result == null && chg.getCaption().equals(caption)) {
+				result = chg;
 			}
 		}
 		return result;
