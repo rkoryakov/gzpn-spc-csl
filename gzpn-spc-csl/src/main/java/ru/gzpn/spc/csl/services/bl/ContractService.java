@@ -18,7 +18,7 @@ import ru.gzpn.spc.csl.model.interfaces.IContract;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.repositories.ContractRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractService;
-import ru.gzpn.spc.csl.ui.estimatereg.IContractPresenter;
+import ru.gzpn.spc.csl.ui.contractreg.IContractPresenter;
 
 @Service
 @Transactional

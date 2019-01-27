@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.estimatereg;
+package ru.gzpn.spc.csl.ui.contractreg;
 
 import java.util.List;
 import java.util.Locale;

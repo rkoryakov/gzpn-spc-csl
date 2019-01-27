@@ -1,7 +1,10 @@
 package ru.gzpn.spc.csl.ui.views;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewBeforeLeaveEvent;
@@ -11,14 +14,28 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 
+import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateRegisterService;
+import ru.gzpn.spc.csl.ui.estimatereg.EstimateRegisterComponent;
+
 @SpringView(name = EstimateRegisterView.NAME)
 @UIScope
 public class EstimateRegisterView extends VerticalLayout implements View {
 	public static final String NAME = "estimateRegisterView";
 	public static final Logger logger = LoggerFactory.getLogger(EstimateRegisterView.class);
-
+	
+	@Autowired
+	private IEstimateRegisterService estimateRegisterService;
+	
 	public EstimateRegisterView() {
+		setMargin(false);
+		setSpacing(false);
 		logger.debug("[EstimateRegisterView] is called");
+	}
+	
+	@PostConstruct
+	void init() {
+		EstimateRegisterComponent layout = new EstimateRegisterComponent(estimateRegisterService);
+		addComponent(layout);
 	}
 
 	@Override

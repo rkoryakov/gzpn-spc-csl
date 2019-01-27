@@ -29,8 +29,8 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		public static final Action OPEN_ITEM_ACTION = new Action("openItemAction");
 
 
-		private IUIService service;
-		private IUserSettigsService userSettingsService;
+		protected IUIService service;
+		protected IUserSettigsService userSettingsService;
 		protected MessageSource messageSource;
 		protected String user;
 		
@@ -46,9 +46,9 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			this.service = service;
 			this.messageSource = service.getMessageSource();
 			this.userSettingsService = service.getUserSettingsService();
+			this.user = userSettingsService.getCurrentUser();
 			
 			initEventActions();
-
 			createBody();
 			createFooter();
 			refreshUiElements();
@@ -74,14 +74,17 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 
 		public HorizontalLayout createFooterLayout() {
 			footerLayout = new HorizontalLayout();
-			footerLayout.setDefaultComponentAlignment(Alignment.TOP_LEFT);
+			footerLayout.setSizeFull();
+			bodyLayout.setMargin(true);
+			bodyLayout.setSpacing(true);
+			footerLayout.setDefaultComponentAlignment(Alignment.MIDDLE_RIGHT);
 			footerLayout.addComponent(createCreateButton());
 			footerLayout.addComponent(createOpenButton());
 			return footerLayout;
 		}
 
-		private Component createCreateButton() {
-			createItemButton = new Button(getI18nText(I18N_OPENITEMBUTTON_CAP, messageSource));
+		public Component createCreateButton() {
+			createItemButton = new Button(getI18nText(I18N_CREATEITEMBUTTON_CAP, messageSource));
 			createItemButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 			createItemButton.addClickListener(listener -> {
 				createItem(/* TODO */);
@@ -91,7 +94,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		}
 
 		public Component createOpenButton() {
-			openItemButton = new Button(getI18nText(I18N_CREATEITEMBUTTON_CAP, messageSource));
+			openItemButton = new Button(getI18nText(I18N_OPENITEMBUTTON_CAP, messageSource));
 			openItemButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 			openItemButton.addClickListener(listener -> {
 				openItem(/* TODO */);
@@ -105,7 +108,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		 */
 		public abstract void refreshUiElements();
 		
-		private void createItem() {
+		public void createItem() {
 			onCreate();
 		}
 
@@ -113,7 +116,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			onOpen();
 		}
 
-		private void onCreate() {
+		public void onCreate() {
 			handleAction(CREATE_ITEM_ACTION);
 		}
 		
