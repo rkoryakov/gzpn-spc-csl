@@ -29,7 +29,7 @@ public class EstimateRegisterComponent extends RegisterComponent {
 	
 	private Grid<IEstimateCalculationPresenter> estimateGrid;
 	private EstimateCalculationDataProvider estimateCalculationDataProvider;
-	private static final int ESTIMATE_GRID_ROWS = 15;
+	private static final int ESTIMATE_GRID_ROWS = 13;
 	
 	public EstimateRegisterComponent(IEstimateRegisterService service) {
 		super(service);

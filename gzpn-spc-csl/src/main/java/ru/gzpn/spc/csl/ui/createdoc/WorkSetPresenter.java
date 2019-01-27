@@ -57,31 +57,52 @@ public class WorkSetPresenter extends WorkSet implements IWorkSetPresenter, I18n
 
 	@Override
 	public String getPlanObjectMarkText() {
-		// TODO Auto-generated method stub
-		return null;
+		String result = "";
+		if (getPlanObject() != null) {
+			result = getPlanObject().getMark();
+		}
+		return result;
 	}
 
 	@Override
 	public String getPlanObjectCodeText() {
-		// TODO Auto-generated method stub
-		return null;
+		String result = "";
+		if (getPlanObject() != null) {
+			result = getPlanObject().getCode();
+		}
+		return result;
 	}
 
 	@Override
 	public String getPlanObjectNameText() {
-		// TODO Auto-generated method stub
-		return null;
+		String result = "";
+		if (getPlanObject() != null) {
+			result = getPlanObject().getName();
+		}
+		return result;
 	}
 
 	@Override
 	public String getCProjectNameText() {
-		// TODO Auto-generated method stub
-		return null;
+		String result = "";
+		if (getPlanObject() != null) {
+			if (getPlanObject().getCproject() != null) {
+				result = getPlanObject().getCproject().getName();
+			}
+			
+		}
+		return result;
 	}
 
 	@Override
 	public String getCProjectCodeText() {
-		// TODO Auto-generated method stub
-		return null;
+		String result = "";
+		if (getPlanObject() != null) {
+			if (getPlanObject().getCproject() != null) {
+				result = getPlanObject().getCproject().getCode();
+			}
+			
+		}
+		return result;
 	}
 }

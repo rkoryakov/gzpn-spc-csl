@@ -220,11 +220,12 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		columnSettings.sort((cs1, cs2) -> 
 			Integer.compare(cs1.getOrderIndex(), cs2.getOrderIndex())
 		);
+		
 		worksetGrid.removeAllColumns();
 		columnSettings.forEach(this::addWorksetGridColumn);
 		worksetGrid.setSizeFull();
-		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS);
 		worksetGrid.setColumnReorderingAllowed(true);
+		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS);
 		worksetDataProvider.setShownColumns(columnSettings);
 		worksetGrid.setDataProvider(worksetDataProvider);
 		
@@ -465,9 +466,8 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		userLayoutSettings.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC, messageSource));
 		userLayoutSettings.addClickListener(event -> {
 			CreateDocSettingsWindow settingsWindow = new CreateDocSettingsWindow(settingsService, messageSource);
-			settingsWindow.addOnSaveListener(closeEvent -> {
+			settingsWindow.addOnSaveAndCloseListener(closeEvent -> {
 				refreshUiElements();
-				//rightLayout.refreshUiElements();
 			});
 			getUI().getUI().addWindow(settingsWindow);
 		});

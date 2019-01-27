@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -7,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.GridDragSource;
 import com.vaadin.ui.components.grid.GridDropTarget;
@@ -137,8 +140,8 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 			newGridRow.setRemoveButton(cretateGridColumnHeaderRemoveButton(newGridRow));
 			
 			this.headersGridData.add(newGridRow);
-			//save(userSettings);
-			
+			save();
+	
 			this.headersGrid.setItems(headersGridData);
 		});
 		return layout;
@@ -159,11 +162,18 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		
 		List<ColumnHeaderGroup> headers = settingsJson.getLeftColumnHeaders();
 		Set<ColumnHeaderGroup> flatHeaders = toFlatSet(headers);
-
-		setColumnAttribures("id", headersGrid.addColumn(presenter -> presenter.getCaption()), I18N_SETTINGS_HEADERS_COLUMN_ID);
+		
+		setColumnAttribures("id", headersGrid.addColumn(ColumnHeaderPresenter::getCaption).setEditorComponent(new TextField(), ColumnHeaderPresenter::setCaption).setEditable(true), I18N_SETTINGS_HEADERS_COLUMN_ID);
 		setColumnAttribures("visibility", headersGrid.addComponentColumn(ColumnHeaderPresenter::getVisibilityCheckBox), I18N_SETTINGS_HEADERS_COLUMN_VISIBLE);
 		setColumnAttribures("headers", headersGrid.addComponentColumn(ColumnHeaderPresenter::getMergedHeadComboBox), I18N_SETTINGS_HEADERS_COLUMN_HEAD);
 		setColumnAttribures("remove", headersGrid.addComponentColumn(ColumnHeaderPresenter::getRemoveButton), "");
+		
+		headersGrid.getEditor().addSaveListener(saveEvent -> {
+			save();
+			headersGrid.setItems(this.headersGridData);
+		});
+		
+		headersGrid.getEditor().setEnabled(true);
 		
 		this.headersGridData = flatHeaders.stream().map(item -> {
 			ColumnHeaderPresenter resultItem = new ColumnHeaderPresenter(item, settingsService);
@@ -337,7 +347,12 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 	private Button cretateGridColumnHeaderRemoveButton(ColumnHeaderPresenter item) {
 		Button removeButton = new Button(VaadinIcons.TRASH);
 		removeButton.setStyleName(ValoTheme.BUTTON_BORDERLESS);
-		removeButton.addClickListener(clickEvent -> clickEvent.getSource());
+		removeButton.addClickListener(clickEvent -> {
+			int index = this.headersGridData.indexOf(item);
+			this.headersGridData.remove(index);
+			save();
+			headersGrid.setItems(this.headersGridData);
+		});
 		return removeButton;
 	}
 	
@@ -350,7 +365,6 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		if (header != null) {
 			mergedHeadComboBox.setSelectedItem(header.getCaption());
 		}
-		
 		
 		return mergedHeadComboBox;
 	}
@@ -423,59 +437,70 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		
 		((CreateDocSettingsJson)this.userSettings).setLeftTreeGroup(result);
 		
-		((CreateDocSettingsJson)this.userSettings)
-			.setLeftResultColumns(this.columnsGridData.stream()
-						.map(this::createColumnSettingsByPresenter).collect(Collectors.toList()));
-
-		refreshHeaders();
 		
-		((CreateDocSettingsJson)this.userSettings)
-			.setLeftColumnHeaders(this.headersGridData.stream()
-					.filter(item -> !item.mergedHeadComboBox.getSelectedItem().isPresent())
-						.map(this::creteHeaderGroupByPresenterHeader).collect(Collectors.toList()));
-	}
-	
-	public void refreshHeaders() {
-		//this.headersGridData.forEach(item -> {});
+
 		List<ColumnHeaderGroup> headers = headersGridData.stream()
 				.map(item -> (ColumnHeaderGroup)item)
 					.peek(item -> {item.setChildren(null); item.setColumns(null);})
 						.collect(Collectors.toList());
 		
+		refreshHeaders(headers);
+		refreshColumnsSettings(headers);
+		
+		((CreateDocSettingsJson)this.userSettings)
+			.setLeftColumnHeaders(this.headersGridData.stream()
+					.filter(item -> !item.mergedHeadComboBox.getSelectedItem().isPresent())
+						.map(this::creteHeaderGroupByPresenterHeader).collect(Collectors.toList()));
+		
+		((CreateDocSettingsJson)this.userSettings)
+		.setLeftResultColumns(this.columnsGridData.stream()
+					.map(this::createColumnSettingsByPresenter).collect(Collectors.toList()));
+	}
+	
+	public void refreshHeaders(List<ColumnHeaderGroup> headers) {
+		
 		for (ColumnHeaderPresenter chp : this.headersGridData) {
 			if (chp.getMergedHeadComboBox().getSelectedItem().isPresent()) {
 				String caption = chp.getMergedHeadComboBox().getSelectedItem().get();
-				ColumnHeaderGroup  parent = getHeaderByCaption(caption, headers);
-				List<ColumnHeaderGroup> children = parent.getChildren();
+				Optional<ColumnHeaderGroup>  parent = getHeaderByCaption(caption, headers);
+				if (parent.isPresent()) {
+					List<ColumnHeaderGroup> children = parent.get().getChildren();
 				
-				if (children == null) {
-					children = new ArrayList<>();
+					if (children == null) {
+						children = new ArrayList<>();
+					}
+					ColumnHeaderGroup ch = creteHeaderGroupByPresenterHeader(chp);
+					if (!children.contains(ch)) {
+						children.add(ch);
+					}
+					parent.get().setChildren(children);
 				}
-				ColumnHeaderGroup ch = creteHeaderGroupByPresenterHeader(chp);
-				if (!children.contains(ch)) {
-					children.add(ch);
-				}
-				parent.setChildren(children);	
 			}
 		}
 		
+	}
+	
+	private void refreshColumnsSettings(List<ColumnHeaderGroup> headers) {
 		
 		for (ColumnSettingsPresenter csp : this.columnsGridData) {
 			if (csp.getMergedHeadComboBox().getSelectedItem().isPresent()) {
 				String caption = csp.getMergedHeadComboBox().getSelectedItem().get();
-				ColumnHeaderGroup header = getHeaderByCaption(caption, headers);
-				List<ColumnSettings> columns = header.getColumns();
-				if (columns == null) {
-					columns = new ArrayList<>();
+				Optional<ColumnHeaderGroup> header = getHeaderByCaption(caption, headers);
+				if (header.isPresent()) {
+					List<ColumnSettings> columns = header.get().getColumns();
+					if (columns == null) {
+						columns = new ArrayList<>();
+					}
+					csp.setOrderIndex(caption.hashCode());
+					ColumnSettings cs = createColumnSettingsByPresenter(csp);
+					
+					if (!columns.contains(cs)) {
+						columns.add(cs);
+					}
+					header.get().setColumns(columns);
 				}
-				ColumnSettings cs = createColumnSettingsByPresenter(csp);
-				if (!columns.contains(cs)) {
-					columns.add(cs);
-				}
-				header.setColumns(columns);
 			}
 		}
-		
 	}
 	
 	private ColumnHeaderGroup creteHeaderGroupByPresenterHeader(ColumnHeaderPresenter header) {
@@ -497,15 +522,15 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		return result;
 	}
 	
-	private ColumnHeaderGroup getHeaderByCaption(String caption, List<ColumnHeaderGroup> headers) {
-		ColumnHeaderGroup result = null;
+	private Optional<ColumnHeaderGroup> getHeaderByCaption(String caption, List<ColumnHeaderGroup> headers) {
+		Optional<ColumnHeaderGroup> result = Optional.empty();
 		for (ColumnHeaderGroup chg : headers) {
 			if (chg.hasChildrenGroups()) {
 				result = getHeaderByCaption(caption, chg.getChildren());
 			}
 			
-			if (result == null && chg.getCaption().equals(caption)) {
-				result = chg;
+			if (!result.isPresent() && chg.getCaption().equals(caption)) {
+				result = Optional.of(chg);
 			}
 		}
 		return result;
@@ -526,7 +551,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 			this.settingsService = settingsService;
 		}
 		
-		public Object getEntityFieldNameText(MessageSource messageSource) {
+		public String getEntityFieldNameText(MessageSource messageSource) {
 			return Entities.getEntityFieldText(this.getEntityFieldName(), messageSource, getLocale());
 		}
 

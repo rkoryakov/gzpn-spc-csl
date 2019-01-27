@@ -37,7 +37,8 @@ public abstract class UISettingsWindow extends Window implements I18n {
 	public static final String I18N_SETTINGS_HEADERS_COLUMN_VISIBLE = "settings.headersGrid.columns.visible";
 	// event actions
 	public static final Action SAVE_ACTION = new Action("saveAction");
-	public static final Action CANCEL_ACTION = new Action("cancelAction");
+	public static final Action CLOSE_ACTION = new Action("closeAction");
+	public static final Action SAVE_AND_CLOSE_ACTION = new Action("save&closeAction");
 	
 	protected IUserSettigsService settingsService;
 	protected ISettingsJson userSettings;
@@ -67,7 +68,8 @@ public abstract class UISettingsWindow extends Window implements I18n {
 	protected void initEventActions() {
 		listeners = new HashMap<>();
 		listeners.put(SAVE_ACTION, new HashSet<>());
-		listeners.put(CANCEL_ACTION, new HashSet<>());
+		listeners.put(CLOSE_ACTION, new HashSet<>());
+		listeners.put(SAVE_AND_CLOSE_ACTION, new HashSet<>());
 	}
 	
 	public ISettingsJson getUiSettings() {
@@ -97,7 +99,7 @@ public abstract class UISettingsWindow extends Window implements I18n {
 		footerLayout = new HorizontalLayout();
 		footerLayout.setDefaultComponentAlignment(Alignment.TOP_LEFT);
 		footerLayout.addComponent(createCancelButton());
-		footerLayout.addComponent(createSaveButton());
+		footerLayout.addComponent(createSaveCloseButton());
 		
 		return footerLayout;
 	}
@@ -105,21 +107,27 @@ public abstract class UISettingsWindow extends Window implements I18n {
 	public Component createCancelButton() {
 		cancelButton = new Button(getI18nText(I18N_CANCELBUTTON_CAP, messageSource));
 		cancelButton.addClickListener(listener -> 
-			cancel()
+			close()
 		);
 		
 		return cancelButton;
 	}
 	
-	public Component createSaveButton() {
+	public Component createSaveCloseButton() {
 		saveButton = new Button(getI18nText(I18N_SAVEBUTTON_CAP, messageSource));
 		saveButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		saveButton.addClickListener(listener -> {
-			save(this.userSettings);
+			saveAndClose();
 			refreshUiElements();
 		});
 		
 		return saveButton;
+	}
+
+	public void saveAndClose() {
+		save();
+		closeSettings();
+		onSaveAndClose();
 	}
 
 	/**  
@@ -127,11 +135,11 @@ public abstract class UISettingsWindow extends Window implements I18n {
 	 */
 	public abstract void refreshUiElements();
 	
-	public void save(ISettingsJson userSettings) {
+	public void save() {
 		refreshSettings();
 		settingsService.save(user, userSettings);
+		refreshUiElements();
 		onSave();
-		this.close();
 	}
 	
 	/**
@@ -140,17 +148,21 @@ public abstract class UISettingsWindow extends Window implements I18n {
 	 */
 	public abstract void refreshSettings();
 
-	public void cancel() {
-		onCancel();
+	public void closeSettings() {
+		onClose();
 		this.close();
 	}
 
-	public void onCancel() {
-		handleAction(CANCEL_ACTION);
+	public void onClose() {
+		handleAction(CLOSE_ACTION);
 	}
 	
 	public void onSave() {
 		handleAction(SAVE_ACTION);
+	}
+	
+	public void onSaveAndClose() {
+		handleAction(SAVE_AND_CLOSE_ACTION);
 	}
 	
 	public void handleAction(Action action) {
@@ -163,8 +175,12 @@ public abstract class UISettingsWindow extends Window implements I18n {
 		listeners.get(SAVE_ACTION).add(listener);
 	}
 	
-	public void addOnCancelListener(Listener listener) {
-		listeners.get(CANCEL_ACTION).add(listener);
+	public void addOnCloseListener(Listener listener) {
+		listeners.get(CLOSE_ACTION).add(listener);
+	}
+	
+	public void addOnSaveAndCloseListener(Listener listener) {
+		listeners.get(SAVE_AND_CLOSE_ACTION).add(listener);
 	}
 	
 	@Override
