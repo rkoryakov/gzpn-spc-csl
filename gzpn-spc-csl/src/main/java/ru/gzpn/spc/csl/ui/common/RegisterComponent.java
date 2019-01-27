@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.estimatereg;
+package ru.gzpn.spc.csl.ui.common;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,15 +17,15 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
-import ru.gzpn.spc.csl.ui.common.I18n;
 
-public abstract class EstimateRegisterComponent extends VerticalLayout implements I18n {
+public abstract class RegisterComponent extends VerticalLayout implements I18n {
 
 		private static final long serialVersionUID = 1L;
-		
-		public static final String I18N_OPENITEMBUTTON_CAP = "EstimateRegisterComponent.addItemButton.cap";
-		
+
+		public static final String I18N_CREATEITEMBUTTON_CAP = "RegisterComponent.createItemButton.cap";
+		public static final String I18N_OPENITEMBUTTON_CAP = "RegisterComponent.openItemButton.cap";
 		// event actions
+		public static final Action CREATE_ITEM_ACTION = new Action("createItemAction");
 		public static final Action OPEN_ITEM_ACTION = new Action("openItemAction");
 
 
@@ -37,12 +37,12 @@ public abstract class EstimateRegisterComponent extends VerticalLayout implement
 		protected VerticalLayout bodyLayout;
 		protected HorizontalLayout footerLayout;
 
-		protected Button addItemButton;
-
+		protected Button createItemButton;
+		protected Button openItemButton;
 
 		private Map<Action, Set<Listener>> listeners;
 		
-		public EstimateRegisterComponent(IUIService service) {
+		public RegisterComponent(IUIService service) {
 			this.service = service;
 			this.messageSource = service.getMessageSource();
 			this.userSettingsService = service.getUserSettingsService();
@@ -56,6 +56,7 @@ public abstract class EstimateRegisterComponent extends VerticalLayout implement
 		
 		protected void initEventActions() {
 			listeners = new HashMap<>();
+			listeners.put(CREATE_ITEM_ACTION, new HashSet<>());
 			listeners.put(OPEN_ITEM_ACTION, new HashSet<>());
 		}
 
@@ -74,22 +75,29 @@ public abstract class EstimateRegisterComponent extends VerticalLayout implement
 		public HorizontalLayout createFooterLayout() {
 			footerLayout = new HorizontalLayout();
 			footerLayout.setDefaultComponentAlignment(Alignment.TOP_LEFT);
-			
+			footerLayout.addComponent(createCreateButton());
 			footerLayout.addComponent(createOpenButton());
-			
 			return footerLayout;
 		}
 
-		
+		private Component createCreateButton() {
+			createItemButton = new Button(getI18nText(I18N_OPENITEMBUTTON_CAP, messageSource));
+			createItemButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
+			createItemButton.addClickListener(listener -> {
+				createItem(/* TODO */);
+				refreshUiElements();
+			});
+			return createItemButton;
+		}
+
 		public Component createOpenButton() {
-			addItemButton = new Button(getI18nText(I18N_OPENITEMBUTTON_CAP, messageSource));
-			addItemButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
-			addItemButton.addClickListener(listener -> {
+			openItemButton = new Button(getI18nText(I18N_CREATEITEMBUTTON_CAP, messageSource));
+			openItemButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
+			openItemButton.addClickListener(listener -> {
 				openItem(/* TODO */);
 				refreshUiElements();
 			});
-			
-			return addItemButton;
+			return openItemButton;
 		}
 
 		/**  
@@ -97,13 +105,19 @@ public abstract class EstimateRegisterComponent extends VerticalLayout implement
 		 */
 		public abstract void refreshUiElements();
 		
-		public void openItem() {
-			/* TODO */
-			onAdd();
+		private void createItem() {
+			onCreate();
 		}
 
+		public void openItem() {
+			onOpen();
+		}
+
+		private void onCreate() {
+			handleAction(CREATE_ITEM_ACTION);
+		}
 		
-		public void onAdd() {
+		public void onOpen() {
 			handleAction(OPEN_ITEM_ACTION);
 		}
 		
@@ -113,15 +127,16 @@ public abstract class EstimateRegisterComponent extends VerticalLayout implement
 			}
 		}
 		
+		public void addOnCreateListener(Listener listener) {
+			listeners.get(CREATE_ITEM_ACTION).add(listener);
+		}
+		
 		public void addOnOpenListener(Listener listener) {
 			listeners.get(OPEN_ITEM_ACTION).add(listener);
 		}
-		
 		
 		@Override
 		public boolean equals(Object obj) {
 			return (obj != null && this == obj);
 		}
-
-
 }
