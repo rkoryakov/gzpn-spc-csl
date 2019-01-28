@@ -36,13 +36,13 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		public static final Action CREATE_ITEM_ACTION = new Action("createItemAction");
 		public static final Action OPEN_ITEM_ACTION = new Action("openItemAction");
 
-		private static final String I18N_SEARCHSETTINGS_DESC = null;
+		private static final String I18N_SEARCHSETTINGS_DESC = "";
 
-		private static final String I18N_SEARCHFIELD_PLACEHOLDER = null;
+		private static final String I18N_SEARCHFIELD_PLACEHOLDER = "";
 
-		private static final String I18N_DOWNLOADWORKSETBUTTON_DESC = null;
+		private static final String I18N_DOWNLOADWORKSETBUTTON_DESC = "";
 
-		private static final String I18N_USERLAYOUTSETTINGS_DESC = null;
+		private static final String I18N_USERLAYOUTSETTINGS_DESC = "";
 
 
 		protected IUIService service;
@@ -114,9 +114,9 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			registerFilterField.setWidth(200.0f, Unit.PIXELS);
 			registerFilterSettingsButton = new Button();
 			registerFilterSettingsButton.setIcon(VaadinIcons.FILTER);
-			registerFilterSettingsButton.setDescription(getI18nText(I18N_SEARCHSETTINGS_DESC, messageSource));
+			registerFilterSettingsButton.setDescription(getI18nText(I18N_SEARCHSETTINGS_DESC, messageSource, I18N_SEARCHSETTINGS_DESC));
 			JoinedLayout<TextField, Button> searchComp = new JoinedLayout<>(registerFilterField, registerFilterSettingsButton);
-			registerFilterField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER, messageSource));
+			registerFilterField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER, messageSource, I18N_SEARCHFIELD_PLACEHOLDER));
 			
 			registerFilterField.addValueChangeListener(e -> {
 				registerDataProvider.getFilter().setCommonTextFilter(e.getValue());
@@ -127,7 +127,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		
 		public Component createExcelButton() {
 			downloadWorksetButton = new Button(VaadinIcons.TABLE);
-			downloadWorksetButton.setDescription(getI18nText(I18N_DOWNLOADWORKSETBUTTON_DESC, messageSource));
+			downloadWorksetButton.setDescription(getI18nText(I18N_DOWNLOADWORKSETBUTTON_DESC, messageSource, I18N_DOWNLOADWORKSETBUTTON_DESC));
 			StreamResource excelStreamResource = new StreamResource(
 					(StreamResource.StreamSource) () -> Exporter.exportAsExcel(registerGrid), getReportName());
 			FileDownloader excelFileDownloader = new FileDownloader(excelStreamResource);
@@ -143,7 +143,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		public Component createSettingsButton() {
 			userLayoutSettingsButton = new Button();
 			userLayoutSettingsButton.setIcon(VaadinIcons.COG_O);
-			userLayoutSettingsButton.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC, messageSource));
+			userLayoutSettingsButton.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC, messageSource, I18N_USERLAYOUTSETTINGS_DESC));
 			userLayoutSettingsButton.addClickListener(event -> {
 				CreateDocSettingsWindow settingsWindow = new CreateDocSettingsWindow(userSettingsService, messageSource);
 				settingsWindow.addOnSaveAndCloseListener(closeEvent -> {
@@ -178,7 +178,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		}
 
 		public Component createCreateButton() {
-			createItemButton = new Button(getI18nText(I18N_CREATEITEMBUTTON_CAP, messageSource));
+			createItemButton = new Button(getI18nText(I18N_CREATEITEMBUTTON_CAP, messageSource, I18N_CREATEITEMBUTTON_CAP));
 			createItemButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 			createItemButton.addClickListener(listener -> {
 				createItem(/* TODO */);
@@ -188,7 +188,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		}
 
 		public Component createOpenButton() {
-			openItemButton = new Button(getI18nText(I18N_OPENITEMBUTTON_CAP, messageSource));
+			openItemButton = new Button(getI18nText(I18N_OPENITEMBUTTON_CAP, messageSource, I18N_OPENITEMBUTTON_CAP));
 			openItemButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 			openItemButton.addClickListener(listener -> {
 				openItem(/* TODO */);
