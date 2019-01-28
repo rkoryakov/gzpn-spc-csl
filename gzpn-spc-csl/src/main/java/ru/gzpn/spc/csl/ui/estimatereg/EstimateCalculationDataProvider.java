@@ -20,6 +20,7 @@ public class EstimateCalculationDataProvider extends AbstractRegisterDataProvide
 	private IEstimateCalculationService estimateCalculationService;
 	private List<ColumnSettings> shownColumns;
 	private Locale locale;
+	private IRegisterFilter filter;
 	
 	public EstimateCalculationDataProvider(IEstimateCalculationService estimateCalculationService) {
 		this.estimateCalculationService = estimateCalculationService;
@@ -54,6 +55,9 @@ public class EstimateCalculationDataProvider extends AbstractRegisterDataProvide
 
 	@Override
 	public IRegisterFilter getFilter() {
-		return new EstimateCalculationFilter();
+		if (filter == null) {
+			filter = new EstimateCalculationFilter();
+		}
+		return filter;
 	}
 }
