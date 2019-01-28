@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.MessageSource;
 
 import com.vaadin.event.Action;
@@ -28,7 +30,7 @@ import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
 import ru.gzpn.spc.csl.ui.createdoc.CreateDocSettingsWindow;
 
 public abstract class RegisterComponent extends VerticalLayout implements I18n {
-
+		public static final Logger logger = LogManager.getLogger(RegisterComponent.class);
 		private static final long serialVersionUID = 1L;
 
 		public static final String I18N_CREATEITEMBUTTON_CAP = "RegisterComponent.createItemButton.cap";
@@ -81,8 +83,9 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 
 		public abstract AbstractRegisterDataProvider getDataProvider();
 
-		public abstract Grid getRegisterGrid() ;
+		public abstract Grid getRegisterGrid();
 		
+
 		
 		protected void initEventActions() {
 			listeners = new HashMap<>();
@@ -112,7 +115,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		
 		public Component createRegisterFilter() {
 			registerFilterField = new TextField();
-			registerFilterField.setWidth(200.0f, Unit.PIXELS);
+			registerFilterField.setWidth(300.0f, Unit.PIXELS);
 			registerFilterSettingsButton = new Button();
 			registerFilterSettingsButton.setIcon(VaadinIcons.FILTER);
 			registerFilterSettingsButton.setDescription(getI18nText(I18N_SEARCHSETTINGS_DESC, messageSource, I18N_SEARCHSETTINGS_DESC));
@@ -121,6 +124,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			
 			registerFilterField.addValueChangeListener(e -> {
 				getDataProvider().getFilter().setCommonTextFilter(e.getValue());
+				logger.debug("[RegisterComponent filter value ] {}", e.getValue());
 				getDataProvider().refreshAll();
 			});
 			return searchComp;
@@ -170,12 +174,15 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 
 		public HorizontalLayout createFooterLayout() {
 			footerLayout = new HorizontalLayout();
+			HorizontalLayout horizontalLayout = new HorizontalLayout();
 			footerLayout.setSizeFull();
 			bodyLayout.setMargin(true);
 			bodyLayout.setSpacing(true);
 			footerLayout.setDefaultComponentAlignment(Alignment.MIDDLE_RIGHT);
-			footerLayout.addComponent(createCreateButton());
-			footerLayout.addComponent(createOpenButton());
+			horizontalLayout.addComponent(createCreateButton());
+			horizontalLayout.addComponent(createOpenButton());
+			footerLayout.addComponent(horizontalLayout);
+			
 			return footerLayout;
 		}
 

@@ -34,7 +34,7 @@ public class ContractRegisterComponent extends RegisterComponent {
 	
 	public ContractRegisterComponent(IContractRegisterService service) {
 		super(service);
-		contractDataProvider = new ContractDataProvider(service.getContractService());
+		//contractDataProvider = new ContractDataProvider(service.getContractService());
 		setSizeFull();
 	}
 
@@ -50,7 +50,10 @@ public class ContractRegisterComponent extends RegisterComponent {
 	
 	@Override
 	public AbstractRegisterDataProvider getDataProvider() {
-		return new ContractDataProvider(((IContractRegisterService)service).getContractService());
+		if (contractDataProvider == null) {
+			contractDataProvider = new ContractDataProvider(((IContractRegisterService)service).getContractService());
+		}
+		return contractDataProvider; 
 	}
 
 	@Override
@@ -174,7 +177,7 @@ public class ContractRegisterComponent extends RegisterComponent {
 		case IContract.FIELD_EXECUTORNAME:
 			addContractGridColumn(settings, IContractPresenter::getExecutorName, IContract.FIELD_EXECUTORNAME);
 			break;
-		case IContract.FIELD_CREATE_DATE:
+		case IContract.FIELD_SIGNINGDATE:
 			addContractGridColumn(settings, IContractPresenter::getCreateDatePresenter, IContract.FIELD_CREATE_DATE);
 			break;
 			default:

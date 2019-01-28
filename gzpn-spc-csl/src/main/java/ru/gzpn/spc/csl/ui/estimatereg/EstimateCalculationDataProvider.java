@@ -12,6 +12,7 @@ import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.services.bl.EstimateCalculationService.EstimateCalculationFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
 import ru.gzpn.spc.csl.ui.common.AbstractRegisterDataProvider;
+import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
 
 @SuppressWarnings("serial")
 public class EstimateCalculationDataProvider extends AbstractRegisterDataProvider<IEstimateCalculationPresenter, Void> {
@@ -22,7 +23,6 @@ public class EstimateCalculationDataProvider extends AbstractRegisterDataProvide
 	
 	public EstimateCalculationDataProvider(IEstimateCalculationService estimateCalculationService) {
 		this.estimateCalculationService = estimateCalculationService;
-		this.filter = new EstimateCalculationFilter();
 		this.locale = LocaleContextHolder.getLocale();
 	}
 	
@@ -50,5 +50,10 @@ public class EstimateCalculationDataProvider extends AbstractRegisterDataProvide
 	@Override
 	public void setShownColumns(List<ColumnSettings> shownColumns) {
 		this.shownColumns = shownColumns;
+	}
+
+	@Override
+	public IRegisterFilter getFilter() {
+		return new EstimateCalculationFilter();
 	}
 }

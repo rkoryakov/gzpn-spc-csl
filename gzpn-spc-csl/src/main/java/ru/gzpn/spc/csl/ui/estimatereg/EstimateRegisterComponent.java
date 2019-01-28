@@ -52,7 +52,11 @@ public class EstimateRegisterComponent extends RegisterComponent {
 
 	@Override
 	public AbstractRegisterDataProvider getDataProvider() {
-		return new EstimateCalculationDataProvider(((IEstimateRegisterService)service).getEstimateCalculationService());
+		if (estimateCalculationDataProvider == null) {
+				estimateCalculationDataProvider = new EstimateCalculationDataProvider(((IEstimateRegisterService)service).getEstimateCalculationService());
+		}
+		
+		return estimateCalculationDataProvider;
 	}
 
 	@Override
