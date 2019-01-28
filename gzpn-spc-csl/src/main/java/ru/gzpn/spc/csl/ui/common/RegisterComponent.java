@@ -41,7 +41,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 
 		private static final String I18N_SEARCHSETTINGS_DESC = "";
 
-		private static final String I18N_SEARCHFIELD_PLACEHOLDER = "";
+		private static final String I18N_SEARCHFIELD_PLACEHOLDER = "RegisterComponent.filter.placeholder";
 
 		private static final String I18N_DOWNLOADWORKSETBUTTON_DESC = "";
 
@@ -120,7 +120,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			registerFilterSettingsButton.setIcon(VaadinIcons.FILTER);
 			registerFilterSettingsButton.setDescription(getI18nText(I18N_SEARCHSETTINGS_DESC, messageSource, I18N_SEARCHSETTINGS_DESC));
 			JoinedLayout<TextField, Button> searchComp = new JoinedLayout<>(registerFilterField, registerFilterSettingsButton);
-			registerFilterField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER, messageSource, I18N_SEARCHFIELD_PLACEHOLDER));
+			registerFilterField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER, messageSource));
 			
 			registerFilterField.addValueChangeListener(e -> {
 				getDataProvider().getFilter().setCommonTextFilter(e.getValue());
