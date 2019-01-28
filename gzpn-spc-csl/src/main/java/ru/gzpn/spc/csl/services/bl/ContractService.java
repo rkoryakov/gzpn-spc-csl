@@ -18,6 +18,7 @@ import ru.gzpn.spc.csl.model.interfaces.IContract;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.repositories.ContractRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractService;
+import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
 import ru.gzpn.spc.csl.ui.contractreg.IContractPresenter;
 
 @Service
@@ -89,7 +90,7 @@ public class ContractService implements IContractService {
 	}
 	
 	
-	public static final class ContractFilter {
+	public static final class ContractFilter implements IRegisterFilter {
 		private String commonTextFilter;
 		
 		public ContractFilter() {
@@ -104,13 +105,13 @@ public class ContractService implements IContractService {
 			this.commonTextFilter = commonTextFilter.toLowerCase();
 		}
 
-		public Predicate<IContract> getFilterPredicate(List<ColumnSettings> shownColumns) {
+		public <T> Predicate<T> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// only common filter is working now
 			return p -> {
 				boolean result = false;
 				if (StringUtils.isNoneBlank(commonTextFilter) && Objects.nonNull(shownColumns)) {
 					for (ColumnSettings column : shownColumns) {
-						if (applyColumnFilter(p, column)) {
+						if (applyColumnFilter((IContract) p, column)) {
 							result = true;
 							break;
 						}

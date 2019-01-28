@@ -6,18 +6,17 @@ import java.util.stream.Stream;
 
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
 
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.services.bl.ContractService.ContractFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractService;
+import ru.gzpn.spc.csl.ui.common.AbstractRegisterDataProvider;
 
 @SuppressWarnings("serial")
-public class ContractDataProvider extends AbstractBackEndDataProvider<IContractPresenter, Void> {
+public class ContractDataProvider extends AbstractRegisterDataProvider<IContractPresenter, Void> {
 	
 	private IContractService contractService;
-	private ContractFilter filter;
 	private List<ColumnSettings> shownColumns;
 	private Locale locale;
 	
@@ -40,14 +39,6 @@ public class ContractDataProvider extends AbstractBackEndDataProvider<IContractP
 		return (int)contractService.getContracts().stream().map(
 				item -> (IContractPresenter) new ContractPresenter(item)
 					).filter(getFilter().getFilterPredicate(shownColumns)).count();
-	}
-
-	public ContractFilter getFilter() {
-		return filter;
-	}
-
-	public void setFilter(ContractFilter filter) {
-		this.filter = filter;
 	}
 
 	public List<ColumnSettings> getShownColumns() {
