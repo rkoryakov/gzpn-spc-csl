@@ -163,10 +163,10 @@ public class ContractService implements IContractService {
 					result = contractPresenter.getVersion().toString().toLowerCase().startsWith(commonTextFilter);
 					break;
 				case IContract.FIELD_CREATE_DATE:
-					result = contractPresenter.getCreateDate().toString().startsWith(commonTextFilter);
+					result = contractPresenter.getCreateDatePresenter().toLowerCase().startsWith(commonTextFilter);
 					break;
 				case IContract.FIELD_CHANGE_DATE:
-					result = contractPresenter.getChangeDate().toString().startsWith(commonTextFilter);
+					result = contractPresenter.getChangeDatePresenter().toLowerCase().startsWith(commonTextFilter);
 					break;
 				default:
 				}

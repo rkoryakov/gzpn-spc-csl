@@ -131,10 +131,10 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 					result = estimateCalculationPresenter.getVersion().toString().toLowerCase().startsWith(commonTextFilter);
 					break;
 				case IEstimateCalculation.FIELD_CREATE_DATE:
-					result = estimateCalculationPresenter.getCreateDate().toString().startsWith(commonTextFilter);
+					result = estimateCalculationPresenter.getCreateDatePresenter().toLowerCase().startsWith(commonTextFilter);
 					break;
 				case IEstimateCalculation.FIELD_CHANGE_DATE:
-					result = estimateCalculationPresenter.getChangeDate().toString().startsWith(commonTextFilter);
+					result = estimateCalculationPresenter.getChangeDatePresenter().toLowerCase().startsWith(commonTextFilter);
 					break;
 				default:
 				}

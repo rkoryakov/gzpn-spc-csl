@@ -103,7 +103,7 @@ public class EstimatesRegSettingsJson implements ISettingsJson {
 		result.add(new ColumnSettings(entityName, IEstimateCalculation.FILED_HANDLER, null, true, 3));
 		result.add(new ColumnSettings(entityName, IEstimateCalculation.FILED_CPROJECT, null, true, 4));
 		
-		result.add(new ColumnSettings(entityName, IEstimateCalculation.FIELD_CREATE_DATE, null, false, 6));
+		result.add(new ColumnSettings(entityName, IEstimateCalculation.FIELD_CREATE_DATE, null, true, 6));
 		result.add(new ColumnSettings(entityName, IEstimateCalculation.FIELD_CHANGE_DATE, null, false, 7));
 		result.add(new ColumnSettings(entityName, IEstimateCalculation.FIELD_VERSION, null, false, 8));
 		

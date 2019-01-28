@@ -184,7 +184,7 @@ public class EstimateRegisterComponent extends RegisterComponent {
 			addEstimateGridColumn(settings, IEstimateCalculationPresenter::getHandler, IEstimateCalculation.FILED_HANDLER);
 			break;
 		case IEstimateCalculation.FIELD_CREATE_DATE:
-			addEstimateGridColumn(settings, IEstimateCalculationPresenter::getChangeDate, IEstimateCalculation.FIELD_CREATE_DATE);
+			addEstimateGridColumn(settings, IEstimateCalculationPresenter::getCreateDate, IEstimateCalculation.FIELD_CREATE_DATE);
 			break;
 			default:
 		}
