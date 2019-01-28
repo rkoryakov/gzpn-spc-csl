@@ -70,8 +70,6 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		private Button userLayoutSettingsButton;
 
 		
-
-		
 		public RegisterComponent(IUIService service) {
 			this.service = service;
 			this.messageSource = service.getMessageSource();
@@ -96,17 +94,21 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		}
 
 		public void createHeadFutures() {
-			headFuturesLayout = new HorizontalLayout();
+			VerticalLayout verticalLayout = new VerticalLayout();
+			
 			AbsoluteLayout layout = new AbsoluteLayout();
 			layout.setStyleName("gzpn-head");
 			layout.setHeight(50.0f, Unit.PIXELS);
 			layout.setWidth(100.f, Unit.PERCENTAGE);
+			headFuturesLayout = new HorizontalLayout();
 			headFuturesLayout.addComponent(createRegisterFilter());
 			//headFuturesLayout.addComponent(createWorksetButtons());
 			headFuturesLayout.addComponent(createExcelButton());
 			layout.addComponent(createSettingsButton(), "top:5px; left:5px");
 			layout.addComponent(headFuturesLayout, "top:5px; right:5px");
-			this.addComponent(headFuturesLayout);	
+			
+			verticalLayout.addComponent(layout);
+			this.addComponent(verticalLayout);	
 		}
 		
 		public Component createRegisterFilter() {
