@@ -23,18 +23,17 @@ import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.EstimatesRegSettingsJson;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateRegisterService;
+import ru.gzpn.spc.csl.ui.common.AbstractRegisterDataProvider;
 import ru.gzpn.spc.csl.ui.common.RegisterComponent;
 
 public class EstimateRegisterComponent extends RegisterComponent {
 	
 	private Grid<IEstimateCalculationPresenter> estimateGrid;
 	private EstimateCalculationDataProvider estimateCalculationDataProvider;
-	private static final int ESTIMATE_GRID_ROWS = 13;
+	private static final int ESTIMATE_GRID_ROWS = 11;
 	
 	public EstimateRegisterComponent(IEstimateRegisterService service) {
 		super(service);
-		
-		estimateCalculationDataProvider = new EstimateCalculationDataProvider(service.getEstimateCalculationService());
 		
 		setSizeFull();
 		this.createItemButton.setEnabled(false);
@@ -51,6 +50,16 @@ public class EstimateRegisterComponent extends RegisterComponent {
 		return bodyLayout;
 	}
 
+	@Override
+	public AbstractRegisterDataProvider getDataProvider() {
+		return new EstimateCalculationDataProvider(((IEstimateRegisterService)service).getEstimateCalculationService());
+	}
+
+	@Override
+	public Grid getRegisterGrid() {
+		return estimateGrid;
+	}
+	
 	private Component createEstimateGrid() {
 		estimateGrid = new Grid<>();
 		refreshEstimateGrid();
@@ -202,4 +211,6 @@ public class EstimateRegisterComponent extends RegisterComponent {
 	public void refreshUiElements() {
 		refreshEstimateGrid();
 	}
+
+
 }

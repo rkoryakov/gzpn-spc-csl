@@ -11,6 +11,7 @@ import com.vaadin.event.Action;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -58,15 +59,8 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		protected Button openItemButton;
 		protected Button registerFilterSettingsButton;
 		protected Button downloadWorksetButton;
-		
 		protected TextField registerFilterField;
-		
 		private Map<Action, Set<Listener>> listeners;
-
-		protected AbstractRegisterDataProvider registerDataProvider;
-
-		private Grid registerGrid;
-
 		private Button userLayoutSettingsButton;
 
 		
@@ -76,6 +70,8 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			this.userSettingsService = service.getUserSettingsService();
 			this.user = userSettingsService.getCurrentUser();
 			
+			setSpacing(false);
+			
 			initEventActions();
 			createHeadFutures();
 			createBody();
@@ -83,9 +79,10 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			refreshUiElements();
 		}
 
-		public void setDataProvider(AbstractRegisterDataProvider provider) {
-			this.registerDataProvider = provider;
-		}
+		public abstract AbstractRegisterDataProvider getDataProvider();
+
+		public abstract Grid getRegisterGrid() ;
+		
 		
 		protected void initEventActions() {
 			listeners = new HashMap<>();
@@ -95,8 +92,10 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 
 		public void createHeadFutures() {
 			VerticalLayout verticalLayout = new VerticalLayout();
-			
+			verticalLayout.setMargin(new MarginInfo(false, true));
+			verticalLayout.setSpacing(false);
 			AbsoluteLayout layout = new AbsoluteLayout();
+			
 			layout.setStyleName("gzpn-head");
 			layout.setHeight(50.0f, Unit.PIXELS);
 			layout.setWidth(100.f, Unit.PERCENTAGE);
@@ -121,8 +120,8 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			registerFilterField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER, messageSource, I18N_SEARCHFIELD_PLACEHOLDER));
 			
 			registerFilterField.addValueChangeListener(e -> {
-				registerDataProvider.getFilter().setCommonTextFilter(e.getValue());
-				registerDataProvider.refreshAll();
+				getDataProvider().getFilter().setCommonTextFilter(e.getValue());
+				getDataProvider().refreshAll();
 			});
 			return searchComp;
 		}
@@ -131,7 +130,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			downloadWorksetButton = new Button(VaadinIcons.TABLE);
 			downloadWorksetButton.setDescription(getI18nText(I18N_DOWNLOADWORKSETBUTTON_DESC, messageSource, I18N_DOWNLOADWORKSETBUTTON_DESC));
 			StreamResource excelStreamResource = new StreamResource(
-					(StreamResource.StreamSource) () -> Exporter.exportAsExcel(registerGrid), getReportName());
+					(StreamResource.StreamSource) () -> Exporter.exportAsExcel(getRegisterGrid()), getReportName());
 			FileDownloader excelFileDownloader = new FileDownloader(excelStreamResource);
 			excelFileDownloader.extend(downloadWorksetButton);
 			
@@ -158,6 +157,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		
 		public void createBody() {
 			this.bodyLayout = createBodyLayout();
+			this.bodyLayout.setMargin(new MarginInfo(false, true));
 			this.addComponent(bodyLayout);
 		}
 
