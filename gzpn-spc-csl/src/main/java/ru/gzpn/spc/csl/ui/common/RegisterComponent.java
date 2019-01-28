@@ -135,7 +135,21 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			downloadWorksetButton.setDescription(getI18nText(I18N_DOWNLOADWORKSETBUTTON_DESC, messageSource, I18N_DOWNLOADWORKSETBUTTON_DESC));
 			StreamResource excelStreamResource = new StreamResource(
 					(StreamResource.StreamSource) () -> Exporter.exportAsExcel(getRegisterGrid()), getReportName());
+			
 			FileDownloader excelFileDownloader = new FileDownloader(excelStreamResource);
+//			 {
+//                private static final long serialVersionUID = 1L;
+//
+//                @Override
+//                public boolean handleConnectorRequest(VaadinRequest request, VaadinResponse response, String path) throws IOException {
+//                    if (Page.getCurrent().getWebBrowser().isIE()) {
+//                        Page.getCurrent().open(excelStreamResource, "Name", false);
+//                        return true;
+//                    } else {
+//                        return super.handleConnectorRequest(request, response, path);
+//                    }
+//                }
+//            };
 			excelFileDownloader.extend(downloadWorksetButton);
 			
 			return downloadWorksetButton;
