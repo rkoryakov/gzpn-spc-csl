@@ -23,13 +23,14 @@ import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.ContractsRegSettingsJson;
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractRegisterService;
+import ru.gzpn.spc.csl.ui.common.AbstractRegisterDataProvider;
 import ru.gzpn.spc.csl.ui.common.RegisterComponent;
 
 public class ContractRegisterComponent extends RegisterComponent {
 
 	private Grid<IContractPresenter> contractGrid;
 	private ContractDataProvider contractDataProvider;
-	private static final int CONTRACT_GRID_ROWS = 13;
+	private static final int CONTRACT_GRID_ROWS = 11;
 	
 	public ContractRegisterComponent(IContractRegisterService service) {
 		super(service);
@@ -46,6 +47,16 @@ public class ContractRegisterComponent extends RegisterComponent {
 		bodyLayout.addComponent(createContractGrid());
 		return bodyLayout;
 	}
+	
+	@Override
+	public AbstractRegisterDataProvider getDataProvider() {
+		return new ContractDataProvider(((IContractRegisterService)service).getContractService());
+	}
+
+	@Override
+	public Grid getRegisterGrid() {
+		return contractGrid;
+	}
 
 	private Component createContractGrid() {
 		contractGrid = new Grid<>();
@@ -54,7 +65,7 @@ public class ContractRegisterComponent extends RegisterComponent {
 	}
 	
 	public void refreshContractGrid() {
-		contractDataProvider = new ContractDataProvider(((IContractRegisterService) service).getContractService());
+		contractDataProvider = new ContractDataProvider(((IContractRegisterService)service).getContractService());
 		
 		ContractsRegSettingsJson userSettings = (ContractsRegSettingsJson)service.getUserSettingsService().getContracrRegSettings(this.user, new ContractsRegSettingsJson());
 		List<ColumnSettings> columnSettings = userSettings.getRightResultColumns();
