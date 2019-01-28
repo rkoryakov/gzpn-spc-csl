@@ -21,7 +21,7 @@ import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
-import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.EstimatesRegSettingsJson;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateRegisterService;
 import ru.gzpn.spc.csl.ui.common.RegisterComponent;
 
@@ -60,8 +60,8 @@ public class EstimateRegisterComponent extends RegisterComponent {
 	public void refreshEstimateGrid() {
 		estimateCalculationDataProvider = new EstimateCalculationDataProvider(((IEstimateRegisterService) service).getEstimateCalculationService());
 		
-		CreateDocSettingsJson userSettings = (CreateDocSettingsJson)service.getUserSettingsService().getUserSettings(this.user, new CreateDocSettingsJson());
-		List<ColumnSettings> columnSettings = userSettings.getLeftResultColumns();
+		EstimatesRegSettingsJson userSettings = (EstimatesRegSettingsJson)service.getUserSettingsService().getEstimatesRegSettings(this.user, new EstimatesRegSettingsJson());
+		List<ColumnSettings> columnSettings = userSettings.getRightResultColumns();
 		
 		columnSettings.sort((cs1, cs2) -> 
 			Integer.compare(cs1.getOrderIndex(), cs2.getOrderIndex())
@@ -75,13 +75,13 @@ public class EstimateRegisterComponent extends RegisterComponent {
 		estimateGrid.setDataProvider(estimateCalculationDataProvider);
 		
 		// test column headers
-		userSettings.getLeftColumnHeaders();
+		userSettings.getRightResultColumns();
 		createEstimateHeaderColumns(userSettings);
 	}
 	
-	public void createEstimateHeaderColumns(CreateDocSettingsJson userSettings) {
-		if (userSettings.hasLeftColumnHeaders()) {
-			refreshColumnHeaderGroups(userSettings.getLeftColumnHeaders());
+	public void createEstimateHeaderColumns(EstimatesRegSettingsJson userSettings) {
+		if (userSettings.hasRightColumnHeaders()) {
+			refreshColumnHeaderGroups(userSettings.getRightColumnHeaders());
 		}
 		estimateGrid.setHeightByRows(ESTIMATE_GRID_ROWS - estimateGrid.getHeaderRowCount() + 1);
 	}

@@ -18,6 +18,7 @@ import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.repositories.EstimateCalculationRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
+import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
 import ru.gzpn.spc.csl.ui.estimatereg.IEstimateCalculationPresenter;
 
 @Service
@@ -72,7 +73,7 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 		};
 	}
 	
-	public static final class EstimateCalculationFilter {
+	public static final class EstimateCalculationFilter implements IRegisterFilter {
 		private String commonTextFilter;
 		
 		public EstimateCalculationFilter() {
@@ -87,13 +88,13 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 			this.commonTextFilter = commonTextFilter.toLowerCase();
 		}
 
-		public Predicate<IEstimateCalculation> getFilterPredicate(List<ColumnSettings> shownColumns) {
+		public <T> Predicate<T> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// only common filter is working now
 			return p -> {
 				boolean result = false;
 				if (StringUtils.isNoneBlank(commonTextFilter) && Objects.nonNull(shownColumns)) {
 					for (ColumnSettings column : shownColumns) {
-						if (applyColumnFilter(p, column)) {
+						if (applyColumnFilter((IEstimateCalculation)p, column)) {
 							result = true;
 							break;
 						}

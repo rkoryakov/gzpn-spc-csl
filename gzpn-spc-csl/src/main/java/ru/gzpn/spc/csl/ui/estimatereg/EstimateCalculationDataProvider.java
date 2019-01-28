@@ -6,18 +6,17 @@ import java.util.stream.Stream;
 
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
 
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.services.bl.EstimateCalculationService.EstimateCalculationFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
+import ru.gzpn.spc.csl.ui.common.AbstractRegisterDataProvider;
 
 @SuppressWarnings("serial")
-public class EstimateCalculationDataProvider extends AbstractBackEndDataProvider<IEstimateCalculationPresenter, Void> {
+public class EstimateCalculationDataProvider extends AbstractRegisterDataProvider<IEstimateCalculationPresenter, Void> {
 
 	private IEstimateCalculationService estimateCalculationService;
-	private EstimateCalculationFilter filter;
 	private List<ColumnSettings> shownColumns;
 	private Locale locale;
 	
@@ -42,18 +41,13 @@ public class EstimateCalculationDataProvider extends AbstractBackEndDataProvider
 						).filter(getFilter().getFilterPredicate(shownColumns)).count();
 	}
 	
-	public EstimateCalculationFilter getFilter() {
-		return filter;
-	}
 
-	public void setFilter(EstimateCalculationFilter filter) {
-		this.filter = filter;
-	}
-
+	@Override
 	public List<ColumnSettings> getShownColumns() {
 		return shownColumns;
 	}
 
+	@Override
 	public void setShownColumns(List<ColumnSettings> shownColumns) {
 		this.shownColumns = shownColumns;
 	}

@@ -8,15 +8,23 @@ import java.util.Set;
 import org.springframework.context.MessageSource;
 
 import com.vaadin.event.Action;
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.StreamResource;
+import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
+import ru.gzpn.spc.csl.ui.createdoc.CreateDocSettingsWindow;
 
 public abstract class RegisterComponent extends VerticalLayout implements I18n {
 
@@ -28,19 +36,41 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		public static final Action CREATE_ITEM_ACTION = new Action("createItemAction");
 		public static final Action OPEN_ITEM_ACTION = new Action("openItemAction");
 
+		private static final String I18N_SEARCHSETTINGS_DESC = null;
+
+		private static final String I18N_SEARCHFIELD_PLACEHOLDER = null;
+
+		private static final String I18N_DOWNLOADWORKSETBUTTON_DESC = null;
+
+		private static final String I18N_USERLAYOUTSETTINGS_DESC = null;
+
 
 		protected IUIService service;
 		protected IUserSettigsService userSettingsService;
 		protected MessageSource messageSource;
 		protected String user;
 		
+		protected HorizontalLayout headFuturesLayout;
 		protected VerticalLayout bodyLayout;
 		protected HorizontalLayout footerLayout;
 
 		protected Button createItemButton;
 		protected Button openItemButton;
-
+		protected Button registerFilterSettingsButton;
+		protected Button downloadWorksetButton;
+		
+		protected TextField registerFilterField;
+		
 		private Map<Action, Set<Listener>> listeners;
+
+		protected AbstractRegisterDataProvider registerDataProvider;
+
+		private Grid registerGrid;
+
+		private Button userLayoutSettingsButton;
+
+		
+
 		
 		public RegisterComponent(IUIService service) {
 			this.service = service;
@@ -49,9 +79,14 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			this.user = userSettingsService.getCurrentUser();
 			
 			initEventActions();
+			createHeadFutures();
 			createBody();
 			createFooter();
 			refreshUiElements();
+		}
+
+		public void setDataProvider(AbstractRegisterDataProvider provider) {
+			this.registerDataProvider = provider;
 		}
 		
 		protected void initEventActions() {
@@ -60,6 +95,65 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			listeners.put(OPEN_ITEM_ACTION, new HashSet<>());
 		}
 
+		public void createHeadFutures() {
+			headFuturesLayout = new HorizontalLayout();
+			AbsoluteLayout layout = new AbsoluteLayout();
+			layout.setStyleName("gzpn-head");
+			layout.setHeight(50.0f, Unit.PIXELS);
+			layout.setWidth(100.f, Unit.PERCENTAGE);
+			headFuturesLayout.addComponent(createRegisterFilter());
+			//headFuturesLayout.addComponent(createWorksetButtons());
+			headFuturesLayout.addComponent(createExcelButton());
+			layout.addComponent(createSettingsButton(), "top:5px; left:5px");
+			layout.addComponent(headFuturesLayout, "top:5px; right:5px");
+			this.addComponent(headFuturesLayout);	
+		}
+		
+		public Component createRegisterFilter() {
+			registerFilterField = new TextField();
+			registerFilterField.setWidth(200.0f, Unit.PIXELS);
+			registerFilterSettingsButton = new Button();
+			registerFilterSettingsButton.setIcon(VaadinIcons.FILTER);
+			registerFilterSettingsButton.setDescription(getI18nText(I18N_SEARCHSETTINGS_DESC, messageSource));
+			JoinedLayout<TextField, Button> searchComp = new JoinedLayout<>(registerFilterField, registerFilterSettingsButton);
+			registerFilterField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER, messageSource));
+			
+			registerFilterField.addValueChangeListener(e -> {
+				registerDataProvider.getFilter().setCommonTextFilter(e.getValue());
+				registerDataProvider.refreshAll();
+			});
+			return searchComp;
+		}
+		
+		public Component createExcelButton() {
+			downloadWorksetButton = new Button(VaadinIcons.TABLE);
+			downloadWorksetButton.setDescription(getI18nText(I18N_DOWNLOADWORKSETBUTTON_DESC, messageSource));
+			StreamResource excelStreamResource = new StreamResource(
+					(StreamResource.StreamSource) () -> Exporter.exportAsExcel(registerGrid), getReportName());
+			FileDownloader excelFileDownloader = new FileDownloader(excelStreamResource);
+			excelFileDownloader.extend(downloadWorksetButton);
+			
+			return downloadWorksetButton;
+		}
+		
+		protected String getReportName() {
+			return "report.xls";
+		}
+
+		public Component createSettingsButton() {
+			userLayoutSettingsButton = new Button();
+			userLayoutSettingsButton.setIcon(VaadinIcons.COG_O);
+			userLayoutSettingsButton.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC, messageSource));
+			userLayoutSettingsButton.addClickListener(event -> {
+				CreateDocSettingsWindow settingsWindow = new CreateDocSettingsWindow(userSettingsService, messageSource);
+				settingsWindow.addOnSaveAndCloseListener(closeEvent -> {
+					refreshUiElements();
+				});
+				getUI().getUI().addWindow(settingsWindow);
+			});
+			return userLayoutSettingsButton;
+		}
+		
 		public void createBody() {
 			this.bodyLayout = createBodyLayout();
 			this.addComponent(bodyLayout);

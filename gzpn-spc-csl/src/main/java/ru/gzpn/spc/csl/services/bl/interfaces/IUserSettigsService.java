@@ -4,10 +4,14 @@ import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
 
 public interface IUserSettigsService {
 	public ISettingsJson getUserSettings();
-	public ISettingsJson getUserSettings(String userId);
-	ISettingsJson getUserSettings(String userId, ISettingsJson defaultValue);
+	public ISettingsJson getCreateDocUserSettings(String userId);
+	ISettingsJson getCreateDocUserSettings(String userId, ISettingsJson defaultValue);
 	
 	public void save(String userId, ISettingsJson createDoc);
 	public String getCurrentUser();
+	ISettingsJson getContracrRegSettings(String userId, ISettingsJson defaultValue);
+	ISettingsJson getContracrRegSettings(String userId);
+	ISettingsJson getEstimatesRegSettings(String userId, ISettingsJson defaultValue);
+	ISettingsJson getEstimatesRegSettings(String userId);
 	
 }

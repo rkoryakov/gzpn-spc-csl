@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.UserSettings;
+import ru.gzpn.spc.csl.model.jsontypes.ContractsRegSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.EstimatesRegSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
 import ru.gzpn.spc.csl.model.repositories.UserSettingsRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
@@ -30,7 +32,7 @@ public class UserSettigsService implements IUserSettigsService {
 	@Override
 	public ISettingsJson getUserSettings() {
 		String user = getCurrentUser();
-		return getUserSettings(user);
+		return getCreateDocUserSettings(user);
 	}
 	
 	@Override
@@ -53,12 +55,12 @@ public class UserSettigsService implements IUserSettigsService {
 	}
 
 	@Override
-	public ISettingsJson getUserSettings(String userId) {
-		return getUserSettings(userId, null);
+	public ISettingsJson getCreateDocUserSettings(String userId) {
+		return getCreateDocUserSettings(userId, null);
 	}
 	
 	@Override
-	public ISettingsJson getUserSettings(String userId, ISettingsJson defaultValue) {
+	public ISettingsJson getCreateDocUserSettings(String userId, ISettingsJson defaultValue) {
 		UserSettings userSettings = repository.findByUserId(userId);
 		ISettingsJson result = null;
 		
@@ -75,6 +77,55 @@ public class UserSettigsService implements IUserSettigsService {
 		
 		return result;
 	}
+	
+	@Override
+	public ISettingsJson getEstimatesRegSettings(String userId) {
+		return getEstimatesRegSettings(userId, null);
+	}
+	
+	@Override
+	public ISettingsJson getEstimatesRegSettings(String userId, ISettingsJson defaultValue) {
+		UserSettings userSettings = repository.findByUserId(userId);
+		ISettingsJson result = null;
+		
+		if (userSettings != null) {
+			result = userSettings.getEstimatesRegSettingsJson();
+			// JSON field is empty
+			if (Objects.isNull(result)) {
+				result = defaultValue;
+			}
+		// no such user settings
+		} else {
+			result = defaultValue;
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public ISettingsJson getContracrRegSettings(String userId) {
+		return getContracrRegSettings(userId, null);
+	}
+	
+	@Override
+	public ISettingsJson getContracrRegSettings(String userId, ISettingsJson defaultValue) {
+		UserSettings userSettings = repository.findByUserId(userId);
+		ISettingsJson result = null;
+		
+		if (userSettings != null) {
+			result = userSettings.getContractsRegSettingsJson();
+			// JSON field is empty
+			if (Objects.isNull(result)) {
+				result = defaultValue;
+			}
+		// no such user settings
+		} else {
+			result = defaultValue;
+		}
+		
+		return result;
+	}
+	
 	
 	@Override
 	public void save(String userId, ISettingsJson settingsJson) {
@@ -94,8 +145,10 @@ public class UserSettigsService implements IUserSettigsService {
 	private void setUserSettings(UserSettings settings, ISettingsJson settingsJson) {
 		if (settingsJson instanceof CreateDocSettingsJson) {
 			settings.setCreateDocSettingsJson((CreateDocSettingsJson)settingsJson);
+		} else if (settingsJson instanceof ContractsRegSettingsJson) {
+			settings.setContractsRegSettingsJson((ContractsRegSettingsJson)settingsJson);
+		} else if (settingsJson instanceof EstimatesRegSettingsJson) {
+			settings.setEstimatesRegSettingsJson((EstimatesRegSettingsJson)settingsJson);
 		}
 	}
-	
-	
 }
