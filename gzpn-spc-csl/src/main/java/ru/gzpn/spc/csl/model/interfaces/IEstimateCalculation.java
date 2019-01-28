@@ -7,8 +7,8 @@ public interface IEstimateCalculation extends IBaseEntity {
 	
 	public static final String FIELD_NAME = ENTITYNAME_DOT + "name";
 	public static final String FIELD_CODE = ENTITYNAME_DOT + "code";
-	public static final String FILED_HANDLER = "handler";
-	public static final String FILED_CPROJECT = "cproject";
+	public static final String FILED_HANDLER = ENTITYNAME_DOT + "handler";
+	public static final String FILED_CPROJECT = ENTITYNAME_DOT + "cproject";
 	
 	/* Overridden fields */
 	public static final String FIELD_ID = ENTITYNAME_DOT + IBaseEntity.FIELD_ID;
