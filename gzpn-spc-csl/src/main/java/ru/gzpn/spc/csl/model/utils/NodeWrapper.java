@@ -56,26 +56,22 @@ public class NodeWrapper implements Serializable {
 	}
 	
 	public NodeWrapper(String entityName, String groupByFiled) {
-		this();
 		this.entityName = entityName;
 		this.groupFiled = groupByFiled;
 	}
 	
 	public NodeWrapper(String entityName) {
-		this();
 		this.entityName = entityName;
 		this.groupFiled = null;
 	}
 	
 	public NodeWrapper(String entityName, String groupByFiledName, Object groupFiledValue) {
-		this();
 		this.entityName = entityName;
 		this.groupFiled = groupByFiledName;
 		this.groupFiledValue = groupFiledValue;
 	}
 	
 	public NodeWrapper(String entityName, String groupByFiledName, Object groupFiledValue, Long id) {
-		this();
 		this.entityName = entityName;
 		this.groupFiled = groupByFiledName;
 		this.groupFiledValue = groupFiledValue;
@@ -83,7 +79,6 @@ public class NodeWrapper implements Serializable {
 	}
 	
 	public NodeWrapper(String entityName, BaseEntity item, Long id) {
-		this();
 		this.entityName = entityName;
 		this.setItem(item);
 		this.id = id;
@@ -131,7 +126,7 @@ public class NodeWrapper implements Serializable {
 	@JsonIgnore
 	public String getNodeSettingsCaption(MessageSource messageSource, Locale locale) {
 		Entities entity = Entities.valueOf(entityName.toUpperCase());
-		String entityCaption = entity.getEntityText(messageSource, locale);
+		String entityCaption = entity.getEntityText(messageSource);
 		String fieldCaption = "";
 		
 		switch (groupFiled) {

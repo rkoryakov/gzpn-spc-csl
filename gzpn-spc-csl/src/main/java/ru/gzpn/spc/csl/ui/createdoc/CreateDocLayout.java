@@ -388,7 +388,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		Column<IWorkSetPresenter, T> column = worksetGrid.addColumn(provider);
 		column.setSortProperty(settings.getEntityFieldName());
 		column.setSortable(true);
-		column.setCaption(Entities.getEntityFieldText(field, messageSource, getLocale()));
+		column.setCaption(Entities.getEntityFieldText(field, messageSource));
 		Double width = settings.getWidth();
 		
 		if (Objects.nonNull(width) && Double.isFinite(width) && width > 1) {
@@ -674,7 +674,7 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 		Column<IDocumentPresenter, T> column = documentsGrid.addColumn(provider);
 		column.setSortProperty(settings.getEntityFieldName());
 		column.setSortable(true);
-		column.setCaption(Entities.getEntityFieldText(field, messageSource, getLocale()));
+		column.setCaption(Entities.getEntityFieldText(field, messageSource));
 		Double width = settings.getWidth();
 		
 		if (Objects.nonNull(width) && Double.isFinite(width) && width > 1) {

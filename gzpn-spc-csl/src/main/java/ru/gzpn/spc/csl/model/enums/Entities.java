@@ -1,7 +1,5 @@
 package ru.gzpn.spc.csl.model.enums;
 
-import java.util.Locale;
-
 import org.springframework.context.MessageSource;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
@@ -22,8 +20,9 @@ import ru.gzpn.spc.csl.model.Stage;
 import ru.gzpn.spc.csl.model.UserSettings;
 import ru.gzpn.spc.csl.model.Work;
 import ru.gzpn.spc.csl.model.WorkSet;
+import ru.gzpn.spc.csl.ui.common.I18n;
 
-public enum Entities {
+public enum Entities implements I18n {
 	HPROJECT("HProject"),
 	CPROJECT("CProject"),
 	PHASE("Phase"),
@@ -60,12 +59,12 @@ public enum Entities {
 		return i18n;
 	}
 	
-	public String getEntityText(MessageSource source, Locale locale) {
-		return source.getMessage(i18n, null, locale);
+	public String getEntityText(MessageSource source) {
+		return source.getMessage(i18n, null, getLocale());
 	}
 	
-	public static String getEntityFieldText(String field, MessageSource source, Locale locale) {
-		return source.getMessage(ENTITIES_PREFIX + field, null, field, locale);
+	public static String getEntityFieldText(String field, MessageSource source) {
+		return source.getMessage(ENTITIES_PREFIX + field, null, field, HPROJECT.getLocale());
 	}
 	
 	@SuppressWarnings("unchecked")

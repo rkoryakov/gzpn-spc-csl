@@ -189,7 +189,7 @@ public class ContractRegisterComponent extends RegisterComponent {
 		Column<IContractPresenter, T> column = contractGrid.addColumn(provider);
 		column.setSortProperty(settings.getEntityFieldName());
 		column.setSortable(true);
-		column.setCaption(Entities.getEntityFieldText(field, messageSource, getLocale()));
+		column.setCaption(Entities.getEntityFieldText(field, messageSource));
 		Double width = settings.getWidth();
 		
 		if (Objects.nonNull(width) && Double.isFinite(width) && width > 1) {

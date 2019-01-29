@@ -552,12 +552,12 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		}
 		
 		public String getEntityFieldNameText(MessageSource messageSource) {
-			return Entities.getEntityFieldText(this.getEntityFieldName(), messageSource, getLocale());
+			return Entities.getEntityFieldText(this.getEntityFieldName(), messageSource);
 		}
 
 		public String getEntityNameText(MessageSource messageSource) {
 			Entities entity = Entities.valueOf(this.getEntityName().toUpperCase());
-			return entity.getEntityText(messageSource, getLocale());
+			return entity.getEntityText(messageSource);
 		}
 
 		public CheckBox getVisibilityCheckBox() {

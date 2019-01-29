@@ -195,7 +195,7 @@ public class EstimateRegisterComponent extends RegisterComponent {
 		Column<IEstimateCalculationPresenter, T> column = estimateGrid.addColumn(provider);
 		column.setSortProperty(settings.getEntityFieldName());
 		column.setSortable(true);
-		column.setCaption(Entities.getEntityFieldText(field, messageSource, getLocale()));
+		column.setCaption(Entities.getEntityFieldText(field, messageSource));
 		Double width = settings.getWidth();
 		
 		if (Objects.nonNull(width) && Double.isFinite(width) && width > 1) {
