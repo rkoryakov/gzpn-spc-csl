@@ -36,8 +36,8 @@ public interface IPlanObject extends IBaseEntity {
 	public ICProject getCproject();
 	public void setCproject(ICProject cproject);
 
-	public String getMark();
-	public void setMark(String mark);
+	public IMark getMark();
+	public void setMark(IMark mark);
 
 	public List<IWorkSet> getWorkset();
 	public void setWorkset(List<IWorkSet> workset);

@@ -9,25 +9,24 @@ import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.IMark;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWork;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 
 @Entity
-@NamedQueries({ 
-})
 @Table(schema = "spc_csl_schema", name = "plan_objects_tree",
 indexes = {
 		@Index(name = "spc_csl_idx_plncode", columnList = "code", unique = true),
 		@Index(name = "spc_csl_idx_plnname", columnList = "name"),
 		@Index(name = "spc_csl_idx_plncprj", columnList = "cp_id"),
-		@Index(name = "spc_csl_idx_plnpar", columnList = "parent_id")
+		@Index(name = "spc_csl_idx_plnpar", columnList = "parent_id"),
+		@Index(name = "spc_csl_idx_plnmk", columnList = "mark_id")
 	}
 )
 public class PlanObject extends BaseEntity implements IPlanObject, Serializable {
@@ -36,8 +35,10 @@ public class PlanObject extends BaseEntity implements IPlanObject, Serializable 
 	@Column(length = 64)
 	private String code;
 	private String name;
-	@Column(length = 4)
-	private String mark;
+	
+	@ManyToOne(targetEntity = Mark.class)
+	@JoinColumn(name = "mark_id", referencedColumnName = "id")
+	private IMark mark;
 	
 	@OneToMany(targetEntity = PlanObject.class)
 	@OrderColumn
@@ -63,7 +64,7 @@ public class PlanObject extends BaseEntity implements IPlanObject, Serializable 
 	public PlanObject() {
 	}
 	
-	public PlanObject(String code, String name, String mark) {
+	public PlanObject(String code, String name, IMark mark) {
 		this.code = code;
 		this.name = name;
 		this.mark = mark;
@@ -129,15 +130,6 @@ public class PlanObject extends BaseEntity implements IPlanObject, Serializable 
 		this.code = code;
 	}
 
-	@Override
-	public String getMark() {
-		return mark;
-	}
-
-	@Override
-	public void setMark(String mark) {
-		this.mark = mark;
-	}
 
 	@Override
 	public List<IWorkSet> getWorkset() {
@@ -150,9 +142,16 @@ public class PlanObject extends BaseEntity implements IPlanObject, Serializable 
 	}
 
 	@Override
+	public IMark getMark() {
+		return mark;
+	}
+	@Override
+	public void setMark(IMark mark) {
+		this.mark = mark;
+	}
+
+	@Override
 	public String toString() {
 		return "PlanObject [code=" + code + ", name=" + name + ", mark=" + mark + "]";
 	}
-	
-	
 }

@@ -58,8 +58,8 @@ public class WorkSetPresenter extends WorkSet implements IWorkSetPresenter, I18n
 	@Override
 	public String getPlanObjectMarkText() {
 		String result = "";
-		if (getPlanObject() != null) {
-			result = getPlanObject().getMark();
+		if (getPlanObject() != null && getPlanObject().getMark() != null) {
+			result = getPlanObject().getMark().getName();
 		}
 		return result;
 	}
