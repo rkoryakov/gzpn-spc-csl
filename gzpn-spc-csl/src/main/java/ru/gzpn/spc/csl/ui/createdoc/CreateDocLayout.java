@@ -352,9 +352,6 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		case IWorkSet.FIELD_SMR:
 			addWorksetGridColumn(settings, IWorkSetPresenter::getSmrText, IWorkSet.FIELD_SMR);
 			break;
-		case IPlanObject.FIELD_MARK:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getPlanObjectMarkText, IPlanObject.FIELD_MARK);
-			break;
 		case IPlanObject.FIELD_NAME:
 			addWorksetGridColumn(settings, IWorkSetPresenter::getPlanObjectNameText, IPlanObject.FIELD_NAME);
 			break;

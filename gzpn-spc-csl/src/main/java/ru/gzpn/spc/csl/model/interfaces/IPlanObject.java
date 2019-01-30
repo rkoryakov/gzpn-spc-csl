@@ -9,8 +9,7 @@ public interface IPlanObject extends IBaseEntity {
 	
 	public static final String FIELD_NAME = ENTITYNAME_DOT + "name";
 	public static final String FIELD_CODE = ENTITYNAME_DOT + "code";
-	public static final String FIELD_MARK = ENTITYNAME_DOT + "mark";
-	public static final String FIELD_CPROJECT = "cproject";
+	public static final String FIELD_CPROJECT = ENTITYNAME_DOT + "cproject";
 	/* Overridden fields */
 	public static final String FIELD_ID = ENTITYNAME_DOT + IBaseEntity.FIELD_ID;
 	public static final String FIELD_CHANGE_DATE = ENTITYNAME_DOT + IBaseEntity.FIELD_CHANGE_DATE;
