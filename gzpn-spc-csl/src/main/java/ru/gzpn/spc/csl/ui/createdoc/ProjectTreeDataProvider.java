@@ -67,11 +67,12 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 
 	@Override
 	public boolean hasChildren(NodeWrapper node) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Set<String> authorities = authentication.getAuthorities()
-				.stream().map(GrantedAuthority::getAuthority)
-					.collect(Collectors.toSet());
-		return node.hasChild() && applyPermissionsFilter(node, authorities);
+		return getChildCount(new HierarchicalQuery<NodeWrapper, NodeFilter>(null, node))  > 0;
+//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//		Set<String> authorities = authentication.getAuthorities()
+//				.stream().map(GrantedAuthority::getAuthority)
+//					.collect(Collectors.toSet());
+//		return node.hasChild() && applyPermissionsFilter(node, authorities);
 	}
 
 	@Override
@@ -163,6 +164,7 @@ public class ProjectTreeDataProvider extends AbstractBackEndHierarchicalDataProv
 			case USERSETTINGS:
 			case WORK:
 			case WORKSET:
+			case MARK:
 				isShown = true;
 				break;
 			default:

@@ -62,7 +62,7 @@ public enum Entities implements I18n {
 	}
 	
 	public String getEntityText(MessageSource source) {
-		return source.getMessage(i18n, null, getLocale());
+		return source.getMessage(i18n, null, i18n, getLocale());
 	}
 	
 	public static String getEntityFieldText(String field, MessageSource source) {

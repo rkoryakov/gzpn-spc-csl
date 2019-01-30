@@ -22,7 +22,7 @@ public class ProjectEntityGraph {
 												  	{0, 2, 3, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }, // 3 Phase					//Фаза
 												  	{0, 2, 4, 2, 0, 2, 2, 2, 4, 2, 8, 2, 8, 8, 2, 4, 2 }, // 4 Stage					//Стадия
 												  	{0, 2, 5, 2, 2, 0, 5, 5, 6, 7, 7, 2, 7, 7, 2, 2, 5 }, // 5 PlanObject				//Объекты генплана
-												  	{0, 5, 5, 5, 5, 5, 0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 }, // 6 Mark    // Марка
+												  	{0, 5, 5, 5, 5, 6, 0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 }, // 6 Mark    				// Марка
 												  	{0, 5, 5, 5, 7, 6, 5, 0, 7, 14,7, 8, 8, 8, 7, 8, 7 }, // 7 Work					//Работа
 												  	{0, 4, 4, 4, 7, 6, 4, 8, 0, 7, 8, 8, 8, 8, 7, 8, 10}, // 8 LocalEstimate			//Локальная смета 
 													{0,14,14,14,14,14,14,14,14, 0,14,14,14,14, 9,14, 14}, // 9 Contract 				//Договор
@@ -114,6 +114,9 @@ public class ProjectEntityGraph {
 		
 		mapRibs.put(new Rib(Entities.ESTIMATEHEAD, Entities.OBJECTESTIMATE), new LinkedFields("objectEstimates", "estimateHead"));
 		mapRibs.put(new Rib(Entities.OBJECTESTIMATE, Entities.ESTIMATEHEAD), new LinkedFields("estimateHead", "objectEstimates"));
+		
+		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.MARK), new LinkedFields("mark", "id"));
+		mapRibs.put(new Rib(Entities.MARK, Entities.PLANOBJECT), new LinkedFields("id", "mark"));
 		
 		// hierarchical entities
 		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.PLANOBJECT), new LinkedFields("id", "parent"));

@@ -11,9 +11,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import ru.gzpn.spc.csl.model.Document;
+import ru.gzpn.spc.csl.model.Mark;
 import ru.gzpn.spc.csl.model.PlanObject;
 import ru.gzpn.spc.csl.model.WorkSet;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
+import ru.gzpn.spc.csl.model.interfaces.IMark;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
@@ -121,7 +123,8 @@ public class CreateDocSettingsJson implements ISettingsJson, Serializable {
 		NodeWrapper root =  new NodeWrapper("HProject", "name");
 			root.addChild(new NodeWrapper("CProject", "name"))
 				.addChild(new NodeWrapper("Stage", "name"))
-					.addChild(new NodeWrapper("PlanObject", "name"));
+					.addChild(new NodeWrapper("Mark", "name"))
+						.addChild(new NodeWrapper("PlanObject", "name"));
 		return root;
 	}
 	
@@ -142,6 +145,7 @@ public class CreateDocSettingsJson implements ISettingsJson, Serializable {
 		List<ColumnSettings> result = new ArrayList<>();
 		String entityWorkSetName = WorkSet.class.getSimpleName();
 		String entityPlanObjName = PlanObject.class.getSimpleName();
+		String entityMarkName = Mark.class.getSimpleName();
 		
 		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_ID, null, false, 0));
 		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_NAME, null, true, 1));
@@ -149,7 +153,7 @@ public class CreateDocSettingsJson implements ISettingsJson, Serializable {
 		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_PIR, null, true, 3));
 		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_SMR, null, true, 4));
 		
-		result.add(new ColumnSettings(entityPlanObjName, IPlanObject.FIELD_MARK, null, false, 5));
+		result.add(new ColumnSettings(entityMarkName, IMark.FIELD_NAME, null, false, 5));
 		result.add(new ColumnSettings(entityPlanObjName, IPlanObject.FIELD_NAME, null, false, 6));
 		result.add(new ColumnSettings(entityPlanObjName, IPlanObject.FIELD_CODE, null, false, 7));
 		result.add(new ColumnSettings(entityPlanObjName, IPlanObject.FIELD_CPROJECT, null, false, 8));
