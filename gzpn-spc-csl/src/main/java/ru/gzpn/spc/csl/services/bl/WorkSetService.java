@@ -23,7 +23,6 @@ import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
 import ru.gzpn.spc.csl.model.enums.Entities;
-import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
@@ -114,9 +113,6 @@ public class WorkSetService implements IWorkSetService {
 					break;
 				case IWorkSet.FIELD_SMR:
 					result = a.getSmr().getCode().compareTo(b.getSmr().getCode());
-					break;
-				case IPlanObject.FIELD_MARK:
-					result = a.getPlanObject().getMark().getName().compareTo(b.getPlanObject().getMark().getName());
 					break;
 				case IWorkSet.FIELD_ID:
 					result = a.getId().compareTo(b.getId());
@@ -209,9 +205,6 @@ public class WorkSetService implements IWorkSetService {
 				break;
 			case IWorkSet.FIELD_SMR:
 				result = workset.getSmr().getCode().toLowerCase().startsWith(commonTextFilter);
-				break;
-			case IPlanObject.FIELD_MARK:
-				result = workset.getPlanObject().getMark().getName().toLowerCase().startsWith(commonTextFilter);
 				break;
 			case IWorkSet.FIELD_ID:
 				result = workset.getId().toString().startsWith(commonTextFilter);
