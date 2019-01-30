@@ -16,22 +16,23 @@ import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph.Rib.LinkedFields;
  */
 public class ProjectEntityGraph {
 	// the graph
-	private static final int [][] G = new int [][] {{0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 }, // the first column and row aren't being used
-												    {0 ,0 ,1 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 }, // 1 HProject				//Крупный проект
-												  	{0 ,2 ,0 ,2 ,2 ,2 ,5 ,4 ,13,4 ,2 ,4 ,4 ,2 ,4 ,5 }, // 2 CProject				//Капитальный проект
-												  	{0 ,2 ,3 ,0 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 }, // 3 Phase					//Фаза
-												  	{0 ,2 ,4 ,2 ,0 ,2 ,2 ,4 ,2 ,7 ,2 ,7 ,7 ,2 ,4 ,2 }, // 4 Stage					//Стадия
-												  	{0 ,2 ,5 ,2 ,2 ,0 ,5 ,6 ,6 ,6 ,2 ,6 ,6 ,2 ,2 ,5 }, // 5 PlanObject				//Объекты генплана
-												  	{0 ,5 ,5 ,5 ,7 ,6 ,0 ,6 ,13,6 ,7 ,7 ,7 ,6 ,7 ,6 }, // 6 Work					//Работа
-												  	{0 ,4 ,4 ,4 ,7 ,6 ,7 ,0 ,6 ,7 ,7 ,7 ,7 ,6 ,7 ,6 }, // 7 LocalEstimate			//Локальная смета 
-													{0 ,13,13,13,13,13,13,13,0 ,13,13,13,13,8 ,13,13}, // 8 Contract 				//Договор
-												  	{0 ,7 ,7 ,7 ,7 ,6 ,9 ,9 ,6 ,0 ,7 ,7 ,7 ,6 ,7 ,6 }, // 9 Document				//Документ
-												  	{0 ,2 ,10,2 ,2 ,2 ,7 ,10,2 ,7 ,0 ,7 ,7 ,2 ,10,2 }, // 10 EstimateCalculation	//Сметный расчет
-													{0 ,7 ,7 ,7 ,7 ,7 ,7 ,11,7 ,7 ,7 ,0 ,7 ,7 ,11,7 }, // 11 EstimateCost			//Сметная стоимость
-												  	{0 ,7 ,7 ,7 ,7 ,7 ,7 ,12,7 ,7 ,7 ,7 ,0 ,7 ,12,7 }, // 12 EstimateHead			//Главы
-												  	{0 ,2 ,13,2 ,2 ,2 ,13,6 ,13,6 ,2 ,6 ,6 ,0 ,2 ,6 }, // 13 Milestone				//Этап
-												  	{0 ,4 ,4 ,4 ,14,4 ,7 ,14,4 ,7 ,14,14,14,4 ,0 ,7 }, // 14 ObjectEstimate			//Объектная смета
-												  	{0 ,5 ,5 ,5 ,5 ,15,15,6 ,6 ,6 ,5 ,6 ,6 ,6 ,6 ,0 }  // 15 WorkSet 				//Комплекты
+	private static final int [][] G = new int [][] {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // the first column and row aren't being used
+												    {0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }, // 1 HProject				//Крупный проект
+												  	{0, 2, 0, 2, 2, 2, 5, 5, 4, 14,4, 2, 4, 4, 2, 4, 5 }, // 2 CProject				//Капитальный проект
+												  	{0, 2, 3, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }, // 3 Phase					//Фаза
+												  	{0, 2, 4, 2, 0, 2, 2, 2, 4, 2, 8, 2, 8, 8, 2, 4, 2 }, // 4 Stage					//Стадия
+												  	{0, 2, 5, 2, 2, 0, 5, 5, 6, 7, 7, 2, 7, 7, 2, 2, 5 }, // 5 PlanObject				//Объекты генплана
+												  	{0, 5, 5, 5, 5, 5, 0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 }, // 6 Mark    // Марка
+												  	{0, 5, 5, 5, 7, 6, 5, 0, 7, 14,7, 8, 8, 8, 7, 8, 7 }, // 7 Work					//Работа
+												  	{0, 4, 4, 4, 7, 6, 4, 8, 0, 7, 8, 8, 8, 8, 7, 8, 10}, // 8 LocalEstimate			//Локальная смета 
+													{0,14,14,14,14,14,14,14,14, 0,14,14,14,14, 9,14, 14}, // 9 Contract 				//Договор
+												  	{0, 8, 8, 8, 8,16,16,10,10, 7, 0, 8, 8, 8, 7, 8, 7 }, // 10 Document				//Документ
+												  	{0, 2,11, 2, 2, 2, 2, 8,11, 2, 8, 0, 8, 8, 2,11, 2 }, // 11 EstimateCalculation	//Сметный расчет
+													{0, 8, 8, 8, 8, 8, 8, 8,12, 8, 8, 8, 0, 8, 8,12, 8 }, // 12 EstimateCost			//Сметная стоимость
+												  	{0, 8, 8, 8, 8, 8, 8, 8,13, 8, 8, 8, 8, 0, 8,13, 8 }, // 13 EstimateHead			//Главы
+												  	{0, 2, 14,2, 2, 2, 2,14, 7,14, 7, 2, 7, 7, 0, 2, 7 }, // 14 Milestone				//Этап
+												  	{0, 4, 4, 4,15, 4, 4, 8,15, 4, 8,15,15,15, 4 ,0 ,8 }, // 15 ObjectEstimate			//Объектная смета
+												  	{0 ,5 ,5 ,5 ,5 ,16,5,16, 7, 7, 7, 5, 7, 7, 7, 7, 0 }  // 16 WorkSet 				//Комплекты
 													};
 
 	private static final EnumMap<Entities, Integer> mapNodes = new EnumMap<>(Entities.class);
@@ -43,16 +44,17 @@ public class ProjectEntityGraph {
 		mapNodes.put(Entities.PHASE, 3);
 		mapNodes.put(Entities.STAGE, 4);
 		mapNodes.put(Entities.PLANOBJECT, 5);
-		mapNodes.put(Entities.WORK, 6);
-		mapNodes.put(Entities.LOCALESTIMATE, 7);
-		mapNodes.put(Entities.CONTRACT, 8);
-		mapNodes.put(Entities.DOCUMENT, 9);
-		mapNodes.put(Entities.ESTIMATECALCULATION, 10);
-		mapNodes.put(Entities.ESTIMATECOST, 11);
-		mapNodes.put(Entities.ESTIMATEHEAD, 12);
-		mapNodes.put(Entities.MILESTONE, 13);
-		mapNodes.put(Entities.OBJECTESTIMATE, 14);
-		mapNodes.put(Entities.WORKSET, 15);
+		mapNodes.put(Entities.MARK, 6);
+		mapNodes.put(Entities.WORK, 7);
+		mapNodes.put(Entities.LOCALESTIMATE, 8);
+		mapNodes.put(Entities.CONTRACT, 9);
+		mapNodes.put(Entities.DOCUMENT, 10);
+		mapNodes.put(Entities.ESTIMATECALCULATION, 11);
+		mapNodes.put(Entities.ESTIMATECOST, 12);
+		mapNodes.put(Entities.ESTIMATEHEAD, 13);
+		mapNodes.put(Entities.MILESTONE, 14);
+		mapNodes.put(Entities.OBJECTESTIMATE, 15);
+		mapNodes.put(Entities.WORKSET, 16);
 		
 		mapRibs.put(new Rib(Entities.HPROJECT, Entities.CPROJECT), new LinkedFields("id", "hproject"));
 		mapRibs.put(new Rib(Entities.CPROJECT, Entities.HPROJECT), new LinkedFields("hproject", "id"));

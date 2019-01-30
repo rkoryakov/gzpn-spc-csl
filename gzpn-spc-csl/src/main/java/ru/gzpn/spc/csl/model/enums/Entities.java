@@ -1,6 +1,7 @@
 package ru.gzpn.spc.csl.model.enums;
 
 import org.springframework.context.MessageSource;
+import org.yaml.snakeyaml.error.Mark;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
 import ru.gzpn.spc.csl.model.CProject;
@@ -28,6 +29,7 @@ public enum Entities implements I18n {
 	PHASE("Phase"),
 	STAGE("Stage"),
 	PLANOBJECT("PlanObject"),
+	MARK("Mark"),
 	WORK("Work"),
 	LOCALESTIMATE("LocalEstimate"),
 	CONTRACT("Contract"),
@@ -111,6 +113,9 @@ public enum Entities implements I18n {
 			break;
 		case PLANOBJECT:
 			result = PlanObject.class;
+			break;
+		case MARK:
+			result = Mark.class;
 			break;
 		case STAGE:
 			result = Stage.class;

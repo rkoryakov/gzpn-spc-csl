@@ -116,7 +116,7 @@ public class WorkSetService implements IWorkSetService {
 					result = a.getSmr().getCode().compareTo(b.getSmr().getCode());
 					break;
 				case IPlanObject.FIELD_MARK:
-					result = a.getPlanObject().getMark().compareTo(b.getPlanObject().getMark());
+					result = a.getPlanObject().getMark().getName().compareTo(b.getPlanObject().getMark().getName());
 					break;
 				case IWorkSet.FIELD_ID:
 					result = a.getId().compareTo(b.getId());
@@ -211,7 +211,7 @@ public class WorkSetService implements IWorkSetService {
 				result = workset.getSmr().getCode().toLowerCase().startsWith(commonTextFilter);
 				break;
 			case IPlanObject.FIELD_MARK:
-				result = workset.getPlanObject().getMark().toLowerCase().startsWith(commonTextFilter);
+				result = workset.getPlanObject().getMark().getName().toLowerCase().startsWith(commonTextFilter);
 				break;
 			case IWorkSet.FIELD_ID:
 				result = workset.getId().toString().startsWith(commonTextFilter);

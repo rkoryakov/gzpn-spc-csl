@@ -64,10 +64,10 @@ public class PlanObject extends BaseEntity implements IPlanObject, Serializable 
 	public PlanObject() {
 	}
 	
-	public PlanObject(String code, String name, IMark mark) {
+	public PlanObject(String code, String name) {
 		this.code = code;
 		this.name = name;
-		this.mark = mark;
+		//this.mark = mark;
 	}
 	
 	@Override

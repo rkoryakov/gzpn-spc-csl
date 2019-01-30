@@ -31,7 +31,7 @@ public class BaseRepositoryImplTest {
 	public void simpleNativeSQLTest() {
 		EntityManager em = service.getBaseRepository().getEntityManager();
 		assertThat(em.createNativeQuery("SELECT * FROM spc_csl_schema.capital_projects as CP "
-				+ "WHERE CP.id > 1", CProject.class).getResultList())
+				+ "WHERE CP.acl -> 'roles' @> '[\"USER_ROLE\"]'", CProject.class).getResultList())
 		.size().isGreaterThan(1);
 	}
 	

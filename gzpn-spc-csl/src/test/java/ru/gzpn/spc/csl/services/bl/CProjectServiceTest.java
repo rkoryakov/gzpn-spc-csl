@@ -26,6 +26,7 @@ import ru.gzpn.spc.csl.model.Contract;
 import ru.gzpn.spc.csl.model.Document;
 import ru.gzpn.spc.csl.model.HProject;
 import ru.gzpn.spc.csl.model.LocalEstimate;
+import ru.gzpn.spc.csl.model.Mark;
 import ru.gzpn.spc.csl.model.Milestone;
 import ru.gzpn.spc.csl.model.Phase;
 import ru.gzpn.spc.csl.model.PlanObject;
@@ -40,6 +41,7 @@ import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IContract;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
+import ru.gzpn.spc.csl.model.interfaces.IMark;
 import ru.gzpn.spc.csl.model.interfaces.IMilestone;
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
@@ -91,6 +93,7 @@ public class CProjectServiceTest {
 		fillPhases();
 		fillStages();
 		fillContracts();
+		fillMarks();
 		List<Milestone> milestones = milestoneRepository.findAll();
 		// HProjects
 		for (int i = 0; i < 10; i ++) {
@@ -115,7 +118,7 @@ public class CProjectServiceTest {
 					// PlanObjects
 					List<IPlanObject> planObjects = new ArrayList<>();
 					for (int k = 0; k < 5; k ++) {
-						PlanObject planObj = new PlanObject("00000" + i + "" + j + "" + k, "Plan Object " + (i * j + k + 1), "AC");
+						PlanObject planObj = new PlanObject("00000" + i + "" + j + "" + k, "Plan Object " + (i * j + k + 1));
 						planObjects.add(planObj);
 						planObj = planObjRepository.save(planObj);
 						// Works
@@ -195,6 +198,13 @@ public class CProjectServiceTest {
 		}
 	}
 	
+	@Transactional
+	private void fillMarks() {
+		IMark mark = new Mark();
+		mark.setName("АС");
+		cpRepository.getEntityManager().persist(mark);
+	}
+
 	@Transactional
 	private void fillContracts() {
 		for (int i = 0; i < 10; i ++) {
