@@ -84,6 +84,26 @@ public class NodeWrapper implements Serializable {
 		this.id = id;
 	}
 	
+	/**
+	 * Recursive search for the parent node by its entityName filed.
+	 * 
+	 * @param fromNode search from exclusive
+	 * @param entityName 
+	 * @return
+	 */
+	public static NodeWrapper findParentByEntityName(NodeWrapper fromNode, String entityName) {
+		NodeWrapper result = null;
+		while (fromNode != null && fromNode.hasParent()) {
+			fromNode = fromNode.getParent();
+			if (fromNode.getEntityName().equals(entityName)) {
+				result = fromNode;
+				break;
+			}
+		}
+		
+		return result;
+	}
+	
 	public void generateHashCode() {
 		int result = 1;
 		

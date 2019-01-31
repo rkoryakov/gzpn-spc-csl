@@ -111,15 +111,15 @@ public class ProjectService implements IProjectService {
 		Stream<NodeWrapper> result = Stream.empty();
 
 		if (node.isGrouping() && node.hasGroupFieldValue() && node.hasChild()) {
-			if (hasIntermadiateNode(node)) {
-				result = getBaseRepository().getItemsGroupedByFieldValue(node.getEntityName(), node.getChild().getEntityName(), 
-							node.getGroupField(), node.getGroupFiledValue(), node.getChild().getGroupField(), 
-								node.getParent().getId(), node.getParent().getEntityName());
-			} else {
-				result = getBaseRepository().getItemsGroupedByFieldValue(node.getEntityName(), node.getChild().getEntityName(), 
+//			if (hasIntermadiateNode(node)) {
+//				result = getBaseRepository().getItemsGroupedByFieldValue(node.getEntityName(), node.getChild().getEntityName(), 
+//							node.getGroupField(), node.getGroupFiledValue(), node.getChild().getGroupField(), 
+//								node.getParent().getId(), node.getParent().getEntityName());
+//			} else {
+				result = getBaseRepository().getItemsGroupedByFieldValue(node/*.getEntityName(), node.getChild().getEntityName(), 
 							node.getGroupField(), node.getGroupFiledValue(), 
-								node.getChild().getGroupField());
-			}
+								node.getChild().getGroupField()*/);
+//			}
 			/* set parent and child */
 			result = result.peek(e -> {
 				e.setParent(node);

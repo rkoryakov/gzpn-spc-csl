@@ -14,6 +14,7 @@ import ru.gzpn.spc.csl.model.Document;
 import ru.gzpn.spc.csl.model.Mark;
 import ru.gzpn.spc.csl.model.PlanObject;
 import ru.gzpn.spc.csl.model.WorkSet;
+import ru.gzpn.spc.csl.model.interfaces.IBaseEntity;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IMark;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
@@ -124,7 +125,7 @@ public class CreateDocSettingsJson implements ISettingsJson, Serializable {
 			root.addChild(new NodeWrapper("CProject", "name"))
 				.addChild(new NodeWrapper("Stage", "name"))
 					.addChild(new NodeWrapper("Mark", "name"))
-						.addChild(new NodeWrapper("PlanObject", "name"));
+						.addChild(new NodeWrapper("PlanObject", "code"));
 		return root;
 	}
 	
@@ -147,20 +148,20 @@ public class CreateDocSettingsJson implements ISettingsJson, Serializable {
 		String entityPlanObjName = PlanObject.class.getSimpleName();
 		String entityMarkName = Mark.class.getSimpleName();
 		
-		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_ID, null, false, 0));
+		result.add(new ColumnSettings(entityWorkSetName, IBaseEntity.BASE_FIELD_ID, null, false, 0));
 		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_NAME, null, true, 1));
 		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_CODE, null, true, 2));
 		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_PIR, null, true, 3));
 		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_SMR, null, true, 4));
 		
-		result.add(new ColumnSettings(entityMarkName, IMark.FIELD_NAME, null, false, 5));
+		result.add(new ColumnSettings(entityMarkName, 	 IMark.FIELD_NAME, null, false, 5));
 		result.add(new ColumnSettings(entityPlanObjName, IPlanObject.FIELD_NAME, null, false, 6));
 		result.add(new ColumnSettings(entityPlanObjName, IPlanObject.FIELD_CODE, null, false, 7));
 		result.add(new ColumnSettings(entityPlanObjName, IPlanObject.FIELD_CPROJECT, null, false, 8));
 		
-		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_CREATE_DATE, null, false, 9));
-		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_CHANGE_DATE, null, false, 10));
-		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_VERSION, null, false, 11));
+		result.add(new ColumnSettings(entityWorkSetName, IBaseEntity.BASE_FIELD_CREATE_DATE, null, false, 9));
+		result.add(new ColumnSettings(entityWorkSetName, IBaseEntity.BASE_FIELD_CHANGE_DATE, null, false, 10));
+		result.add(new ColumnSettings(entityWorkSetName, IBaseEntity.BASE_FIELD_VERSION, null, false, 11));
 		
 		return result;
 	}
