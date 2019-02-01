@@ -15,7 +15,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateRegisterService;
-import ru.gzpn.spc.csl.ui.estimatereg.EstimateRegisterComponent;
+import ru.gzpn.spc.csl.ui.js.Flot;
 
 @SpringView(name = EstimateRegisterView.NAME)
 @UIScope
@@ -34,13 +34,16 @@ public class EstimateRegisterView extends VerticalLayout implements View {
 	
 	@PostConstruct
 	void init() {
-		EstimateRegisterComponent layout = new EstimateRegisterComponent(estimateRegisterService);
-		addComponent(layout);
+		Flot flot = new Flot();
+		flot.addSeries(100,200,300,400,500,600,700,800,90,10,20,30,40,50,60,70,800,600);
+		//EstimateRegisterComponent layout = new EstimateRegisterComponent(estimateRegisterService);
+		addComponent(flot);
 	}
 
 	@Override
 	public void enter(ViewChangeEvent event) {
 		logger.debug("[enter] is called");
+		
 		View.super.enter(event);
 	}
 
