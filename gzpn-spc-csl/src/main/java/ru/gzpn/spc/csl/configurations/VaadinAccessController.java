@@ -17,6 +17,7 @@ import ru.gzpn.spc.csl.ui.views.AdminView;
 import ru.gzpn.spc.csl.ui.views.ContractRegisterView;
 import ru.gzpn.spc.csl.ui.views.CreateDocView;
 import ru.gzpn.spc.csl.ui.views.EstimateRegisterView;
+import ru.gzpn.spc.csl.ui.views.ProcessManagerView;
 
 @Component
 public class VaadinAccessController implements ViewAccessControl {
@@ -44,6 +45,9 @@ public class VaadinAccessController implements ViewAccessControl {
 					result = authorities.contains(Roles.USER_ROLE.toString());
 					break;
 				case EstimateRegisterView.NAME:
+					result = authorities.contains(Roles.USER_ROLE.toString());
+					break;
+				case ProcessManagerView.NAME:
 					result = authorities.contains(Roles.USER_ROLE.toString());
 					break;
 				}

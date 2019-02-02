@@ -7,5 +7,5 @@ import com.vaadin.shared.ui.JavaScriptComponentState;
 
 @SuppressWarnings("serial")
 public class FlotState extends JavaScriptComponentState {
-	public List<List<List<Double>>> series = new ArrayList<List<List<Double>>>();
+	public List<List<Double>> series = new ArrayList<List<Double>>();
 }

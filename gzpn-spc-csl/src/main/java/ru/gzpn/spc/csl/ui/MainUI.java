@@ -40,6 +40,7 @@ import ru.gzpn.spc.csl.ui.views.ContractRegisterView;
 import ru.gzpn.spc.csl.ui.views.CreateDocView;
 import ru.gzpn.spc.csl.ui.views.ErrorView;
 import ru.gzpn.spc.csl.ui.views.EstimateRegisterView;
+import ru.gzpn.spc.csl.ui.views.ProcessManagerView;
 
 @SuppressWarnings("serial")
 @SpringUI
@@ -157,33 +158,46 @@ public class MainUI extends UI {
 		final Command cCreateDocument = item -> this.navigator.navigateTo(CreateDocView.NAME);
 		final Command cContractRegister = item -> this.navigator.navigateTo(ContractRegisterView.NAME);
 		final Command cEstimateRegister = item -> this.navigator.navigateTo(EstimateRegisterView.NAME);
+		final Command cProcessManager = item -> this.navigator.navigateTo(ProcessManagerView.NAME);
 
 		String sCreateDocument = getI18nText("main.ui.menu.createDocument");
 		String sContractRegister = getI18nText("main.ui.menu.cotractRegister");
 		String sEstimateRegister = getI18nText("main.ui.menu.estimateRegister");
-
+		String sProcessManager = getI18nText("main.ui.menu.processManager");
+		
 		MenuItem createDocumentItem = menu.addItem(sCreateDocument, VaadinIcons.FILE_ADD, cCreateDocument);
 		MenuItem contractRegisterItem = menu.addItem(sContractRegister, VaadinIcons.FILE_TREE_SMALL, cContractRegister);
 		MenuItem estimateRegisterItem = menu.addItem(sEstimateRegister, VaadinIcons.CALC_BOOK, cEstimateRegister);
-	
+		MenuItem processManagerItem = menu.addItem(sProcessManager, VaadinIcons.CONNECT_O, cProcessManager);
+		
 		createDocumentItem.setCheckable(true);
 		contractRegisterItem.setCheckable(true);
-		estimateRegisterItem.setCheckable(true);
-
+		estimateRegisterItem.setCheckable(true);		
+		processManagerItem.setCheckable(true);
+		
 		this.navigator.addViewChangeListener(listener -> {
 			switch (listener.getViewName()) {
 			case CreateDocView.NAME:
 				createDocumentItem.setChecked(true);
+				processManagerItem.setChecked(false);
 				contractRegisterItem.setChecked(false);
 				estimateRegisterItem.setChecked(false);
 				break;
 			case ContractRegisterView.NAME:
 				contractRegisterItem.setChecked(true);
+				processManagerItem.setChecked(false);
 				createDocumentItem.setChecked(false);
 				estimateRegisterItem.setChecked(false);
 				break;
 			case EstimateRegisterView.NAME:
 				estimateRegisterItem.setChecked(true);
+				processManagerItem.setChecked(false);
+				contractRegisterItem.setChecked(false);
+				createDocumentItem.setChecked(false);
+				break;
+			case ProcessManagerView.NAME:
+				processManagerItem.setChecked(true);
+				estimateRegisterItem.setChecked(false);
 				contractRegisterItem.setChecked(false);
 				createDocumentItem.setChecked(false);
 				break;
