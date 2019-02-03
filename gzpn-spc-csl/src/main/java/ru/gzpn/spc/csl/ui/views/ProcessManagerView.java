@@ -34,7 +34,19 @@ public class ProcessManagerView extends VerticalLayout implements View {
 	@PostConstruct
 	void init() {
 		Button button = new Button("test refresh");
-		button.addClickListener(clickEvent -> flot.addSeries(Math.random()*10, Math.random()*10));
+		button.addClickListener(clickEvent -> {
+			removeComponent(flot);
+			flot = new Flot();
+			for (int i = 0; i < 30; i ++) {
+				flot.addSeries(i, Math.random()*10);
+			}
+			addComponentAsFirst(flot);
+		});
+		
+		flot = new Flot();
+		for (int i = 0; i < 30; i ++) {
+			flot.addSeries(i, Math.random()*10);
+		}
 		
 		addComponents(flot, button);
 	}

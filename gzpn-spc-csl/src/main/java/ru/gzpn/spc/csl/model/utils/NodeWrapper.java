@@ -2,7 +2,6 @@ package ru.gzpn.spc.csl.model.utils;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +16,9 @@ import com.vaadin.data.provider.SortOrder;
 import ru.gzpn.spc.csl.model.BaseEntity;
 import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.interfaces.IBaseEntity;
+import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
+import ru.gzpn.spc.csl.ui.common.I18n;
 
 /**
  * Holds the information about the current entity(node) and grouping fields.
@@ -26,7 +28,7 @@ import ru.gzpn.spc.csl.model.interfaces.IBaseEntity;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
-public class NodeWrapper implements Serializable {
+public class NodeWrapper implements Serializable, I18n {
 	private static final long serialVersionUID = -6142105774113139782L;
 	public static final Logger logger = LoggerFactory.getLogger(NodeWrapper.class);
 
@@ -131,20 +133,45 @@ public class NodeWrapper implements Serializable {
 	 * Caption for rendering in UI tree
 	 */
 	@JsonIgnore
-	public String getNodeCaption() {
+	public String getNodeCaption(IProjectService service, MessageSource messageSource) {
+		Entities entity = Entities.valueOf(entityName.toUpperCase());
 		String result = "";
-		if (isGrouping()) {
-			result = getGroupFiledValue().toString();
+		
+		switch (entity) {
+		case PLANOBJECT:
+			result = getPlanObjectCaption(entity, service, messageSource);
+			break;
+		default:
+			if (isGrouping()) {
+				result = getGroupFiledValue().toString();
+			};
 		}
 		
 		return result;
+	}
+	
+	public String getPlanObjectCaption(Entities entity, IProjectService service, MessageSource messageSource) {
+		StringBuilder result = new StringBuilder();
+		
+		result.append(entity.getEntityText(messageSource));
+		result.append(" ");
+		if (this.id != null) {
+			IPlanObject planObject = service.getPlanObjectRepository().findById(id).get();
+			result.append(planObject.getCode());
+			result.append(" - ");
+			result.append(planObject.getName());
+		} else {
+			result.append(this.getGroupFiledValue());
+		}
+		
+		return result.toString();
 	}
 	
 	/**
 	 * Represent Entity name + field name
 	 */
 	@JsonIgnore
-	public String getNodeSettingsCaption(MessageSource messageSource, Locale locale) {
+	public String getNodeSettingsCaption(MessageSource messageSource) {
 		Entities entity = Entities.valueOf(entityName.toUpperCase());
 		String entityCaption = entity.getEntityText(messageSource);
 		String fieldCaption = "";
@@ -154,10 +181,12 @@ public class NodeWrapper implements Serializable {
 		case IBaseEntity.FIELD_VERSION:
 		case IBaseEntity.FIELD_CHANGE_DATE:
 		case IBaseEntity.FIELD_CREATE_DATE:
-			fieldCaption = messageSource.getMessage("Entities.BaseEntity." + groupFiled, null, groupFiled, locale);
+			fieldCaption = Entities.getEntityFieldText("BaseEntity", messageSource);
+			break;
+		default:
+			fieldCaption = Entities.getEntityFieldText(entityName  + "." + groupFiled, messageSource);
 		}
 		
-		fieldCaption = messageSource.getMessage("Entities." + entityName  + "." + groupFiled, null, groupFiled, locale);
 		return entityCaption + " - " + fieldCaption;
 	}
 	

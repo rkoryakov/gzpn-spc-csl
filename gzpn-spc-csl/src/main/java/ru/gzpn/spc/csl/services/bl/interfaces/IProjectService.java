@@ -6,6 +6,7 @@ import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
+import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 
 public interface IProjectService {
@@ -20,4 +21,5 @@ public interface IProjectService {
 	public long getCount(String entity, String groupByField);
 	void saveHProjectAcls(IHProject project);
 	void saveCProjectAcls(ICProject project);
+	PlanObjectRepository getPlanObjectRepository();
 }

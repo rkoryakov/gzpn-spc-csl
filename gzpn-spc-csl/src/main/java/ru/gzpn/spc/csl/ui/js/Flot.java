@@ -13,15 +13,6 @@ public class Flot extends AbstractJavaScriptComponent {
 	public Flot() {
 		setHeight("400px");
 		setWidth("600px");
-		
-		addSeries(2,5);
-		addSeries(3,6);
-		addSeries(4,7);
-		addSeries(5,8);
-		addSeries(6,9);
-		addSeries(7,6);
-		addSeries(8,3);
-		addSeries(9,10);
 	}
 	
 	public void addSeries(double... points) {

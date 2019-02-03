@@ -187,7 +187,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		}
 		
 		projectTreePanel.setCaption(getI18nText(I18N_TREE_CAPTION, messageSource));
-		projectTree.setItemCaptionGenerator(NodeWrapper::getNodeCaption);
+		projectTree.setItemCaptionGenerator(node -> node.getNodeCaption(this.projectService, this.messageSource));
 		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
 		projectTreePanel.setSizeFull();
 		projectTree.setHeight(WORKSET_GRID_ROW_HEIGHT * WORKSET_GRID_ROWS + HEAD_ROW_HEIGHT - WORKSET_GRID_ROW_HEIGHT, Unit.PIXELS);

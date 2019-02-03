@@ -212,7 +212,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 		projectTree = new DraggableTree<>();
 		Panel panel = new Panel(getI18nText(I18N_TREE_CAPTION, messageSource));
 		
-		projectTree.setItemCaptionGenerator(item -> item.getNodeSettingsCaption(messageSource, getLocale()));
+		projectTree.setItemCaptionGenerator(item -> item.getNodeSettingsCaption(messageSource));
 		projectTree.setItemIconGenerator(new ProjectItemIconGenerator());
 		projectTree.setSizeFull();
 		projectTree.setHeight(GRID_ROW_HEIGHT*(GRID_ROWS-1)+GRID_ROW_HEIGHT-1, Unit.PIXELS);

@@ -18,6 +18,7 @@ import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
+import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
@@ -30,18 +31,28 @@ public class ProjectService implements IProjectService {
 	private HProjectRepository hpRepository;
 	@Autowired
 	private CProjectRepository cpRepository;
+	@Autowired
+	private PlanObjectRepository planObjectRepository;
 	
+	@Override
 	public HProjectRepository getBaseRepository() {
 		// we can use any implementation of the BaseRepository - we use HProjectRepository
 		return getHPRepository();
 	}
 	
+	@Override
 	public HProjectRepository getHPRepository() {
 		return hpRepository;
 	}
 	
+	@Override
 	public CProjectRepository getCPRepository() {
 		return cpRepository;
+	}
+	
+	@Override
+	public PlanObjectRepository getPlanObjectRepository() {
+		return planObjectRepository;
 	}
 	
 	@Override
