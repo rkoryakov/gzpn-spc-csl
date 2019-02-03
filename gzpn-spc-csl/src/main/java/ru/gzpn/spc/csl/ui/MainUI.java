@@ -159,7 +159,7 @@ public class MainUI extends UI {
 		final Command cContractRegister = item -> this.navigator.navigateTo(ContractRegisterView.NAME);
 		final Command cEstimateRegister = item -> this.navigator.navigateTo(EstimateRegisterView.NAME);
 		final Command cProcessManager = item -> this.navigator.navigateTo(ProcessManagerView.NAME);
-
+		menu.setResponsive(true);
 		String sCreateDocument = getI18nText("main.ui.menu.createDocument");
 		String sContractRegister = getI18nText("main.ui.menu.cotractRegister");
 		String sEstimateRegister = getI18nText("main.ui.menu.estimateRegister");
@@ -168,7 +168,7 @@ public class MainUI extends UI {
 		MenuItem createDocumentItem = menu.addItem(sCreateDocument, VaadinIcons.FILE_ADD, cCreateDocument);
 		MenuItem contractRegisterItem = menu.addItem(sContractRegister, VaadinIcons.FILE_TREE_SMALL, cContractRegister);
 		MenuItem estimateRegisterItem = menu.addItem(sEstimateRegister, VaadinIcons.CALC_BOOK, cEstimateRegister);
-		MenuItem processManagerItem = menu.addItem(sProcessManager, VaadinIcons.CONNECT_O, cProcessManager);
+		MenuItem processManagerItem = menu.addItem(sProcessManager, VaadinIcons.AUTOMATION, cProcessManager);
 		
 		createDocumentItem.setCheckable(true);
 		contractRegisterItem.setCheckable(true);
