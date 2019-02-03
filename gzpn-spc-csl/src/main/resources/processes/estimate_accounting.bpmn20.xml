@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1n41rfz" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:process id="EstimateAccounting" isExecutable="true">
+    
     <bpmn:startEvent id="StartCreateDocumentEvent">
       <bpmn:outgoing>SequenceFlow_162n4wn</bpmn:outgoing>
     </bpmn:startEvent>
+    
     <bpmn:sequenceFlow id="SequenceFlow_162n4wn" sourceRef="StartCreateDocumentEvent" targetRef="CreateDocument" />
+    
     <bpmn:parallelGateway id="ExclusiveGateway_1goj4pw">
       <bpmn:incoming>SequenceFlow_00ojaap</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_05msbcl</bpmn:outgoing>
@@ -14,7 +17,6 @@
     <bpmn:userTask id="CreateDocument" name="Доб. документа с видом &#34;КЧ&#34;">
     	<bpmn:incoming>SequenceFlow_162n4wn</bpmn:incoming>
       	<bpmn:outgoing>SequenceFlow_00ojaap</bpmn:outgoing>
-      	
     	<bpmn:potentialOwner>
 			<bpmn:resourceAssignmentExpression>
 				<bpmn:formalExpression>sales</bpmn:formalExpression>
@@ -23,11 +25,13 @@
     </bpmn:userTask>
     
     <bpmn:sequenceFlow id="SequenceFlow_00ojaap" sourceRef="CreateDocument" targetRef="ExclusiveGateway_1goj4pw" />
+    
     <bpmn:userTask id="Task_0y61pje" name="Регистрация смет">
       <bpmn:incoming>SequenceFlow_05msbcl</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_18v4ytt</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0lqmx1l</bpmn:outgoing>
     </bpmn:userTask>
+    
     <bpmn:userTask id="Task_16rxtqb" name="Согл. сметного расчета в НТЦ">
       <bpmn:incoming>SequenceFlow_0lqmx1l</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1fgovy0</bpmn:outgoing>
