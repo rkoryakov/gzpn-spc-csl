@@ -18,12 +18,12 @@ public class ProjectEntityGraph {
 	// the graph
 	private static final int [][] G = new int [][] {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // the first column and row aren't being used
 												    {0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }, // 1 HProject				//Крупный проект
-												  	{0, 2, 0, 2, 2, 2, 5, 5, 4, 14,4, 2, 4, 4, 2, 4, 5 }, // 2 CProject				//Капитальный проект
+												  	{0, 2, 0, 2, 5, 2, 5, 5, 5, 14,5, 5, 5, 5, 2, 5, 5 }, // 2 CProject				//Капитальный проект
 												  	{0, 2, 3, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }, // 3 Phase					//Фаза
-												  	{0, 2, 4, 2, 0, 2, 2, 2, 4, 2, 8, 2, 8, 8, 2, 4, 2 }, // 4 Stage					//Стадия
-												  	{0, 2, 5, 2, 2, 0, 5, 5, 6, 7, 7, 2, 7, 7, 2, 2, 5 }, // 5 PlanObject				//Объекты генплана
+												  	{0, 5, 5, 5, 0, 4, 5, 5, 4, 5, 8, 5, 8, 8, 5, 4, 5 }, // 4 Stage					//Стадия
+												  	{0, 2, 5, 2, 5, 0, 5, 5, 4, 7, 7, 2, 7, 7, 2, 2, 5 }, // 5 PlanObject				//Объекты генплана
 												  	{0, 5, 5, 5, 5, 6, 0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 }, // 6 Mark    				// Марка
-												  	{0, 5, 5, 5, 7, 6, 5, 0, 7, 14,7, 8, 8, 8, 7, 8, 7 }, // 7 Work					//Работа
+												  	{0, 5, 5, 5, 5, 7, 5, 0, 7, 14,7, 8, 8, 8, 7, 8, 7 }, // 7 Work					//Работа
 												  	{0, 4, 4, 4, 7, 6, 4, 8, 0, 7, 8, 8, 8, 8, 7, 8, 10}, // 8 LocalEstimate			//Локальная смета 
 													{0,14,14,14,14,14,14,14,14, 0,14,14,14,14, 9,14, 14}, // 9 Contract 				//Договор
 												  	{0, 8, 8, 8, 8,16,16,10,10, 7, 0, 8, 8, 8, 7, 8, 7 }, // 10 Document				//Документ
@@ -61,8 +61,8 @@ public class ProjectEntityGraph {
 		
 		mapRibs.put(new Rib(Entities.CPROJECT, Entities.PHASE), new LinkedFields("phase", "id"));
 		mapRibs.put(new Rib(Entities.PHASE, Entities.CPROJECT), new LinkedFields("id", "phase"));
-		mapRibs.put(new Rib(Entities.CPROJECT, Entities.STAGE), new LinkedFields("stage", "id"));
-		mapRibs.put(new Rib(Entities.STAGE, Entities.CPROJECT), new LinkedFields("id", "stage"));
+//		mapRibs.put(new Rib(Entities.CPROJECT, Entities.STAGE), new LinkedFields("stage", "id"));
+//		mapRibs.put(new Rib(Entities.STAGE, Entities.CPROJECT), new LinkedFields("id", "stage"));
 		mapRibs.put(new Rib(Entities.CPROJECT, Entities.PLANOBJECT), new LinkedFields("id", "cproject"));
 		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.CPROJECT), new LinkedFields("cproject", "id"));
 		//new Ribs 16.12.2018 by Fisenko KI
@@ -78,6 +78,10 @@ public class ProjectEntityGraph {
 		
 		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.WORKSET), new LinkedFields("id", "planObject"));
 		mapRibs.put(new Rib(Entities.WORKSET, Entities.PLANOBJECT), new LinkedFields("planObject", "id"));
+		
+		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.STAGE), new LinkedFields("stage", "id"));
+		mapRibs.put(new Rib(Entities.STAGE, Entities.PLANOBJECT), new LinkedFields("id", "stage"));
+		
 		mapRibs.put(new Rib(Entities.PLANOBJECT, Entities.WORK), new LinkedFields("id", "planObj"));
 		mapRibs.put(new Rib(Entities.WORK, Entities.PLANOBJECT), new LinkedFields("planObj", "id"));
 		

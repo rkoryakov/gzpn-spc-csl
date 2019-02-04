@@ -12,6 +12,7 @@ import com.vaadin.data.provider.QuerySortOrder;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.WorkSetService.WorkSetFilter;
+import ru.gzpn.spc.csl.ui.createdoc.IWorkSetPresenter;
 
 public interface IWorkSetService {
 	public Order createSortOrder(String fieldName, Direction direction);
@@ -22,4 +23,5 @@ public interface IWorkSetService {
 	 */
 	public Stream<IWorkSet> getItemsByNode(NodeWrapper node, int offset, int limit);
 	public Comparator<IWorkSet> getSortComparator(List<QuerySortOrder> list);
+	public void save(IWorkSetPresenter bean);
 }

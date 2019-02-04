@@ -16,4 +16,5 @@ public interface IDocumentService {
 	long getDocumentsCount(IWorkSet workset);
 	Comparator<IDocumentPresenter> getSortComparator(List<QuerySortOrder> list);
 	MessageSource getMessageSource();
+	void seve(IDocumentPresenter bean);
 }

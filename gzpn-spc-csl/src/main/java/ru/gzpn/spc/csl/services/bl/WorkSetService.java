@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
+import ru.gzpn.spc.csl.model.WorkSet;
 import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
@@ -29,6 +31,7 @@ import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
 import ru.gzpn.spc.csl.model.repositories.WorkSetRepository;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
+import ru.gzpn.spc.csl.ui.createdoc.IWorkSetPresenter;
 
 @Service
 @Transactional
@@ -222,6 +225,21 @@ public class WorkSetService implements IWorkSetService {
 			}
 			
 			return result;
+		}
+	}
+
+	@Override
+	public void save(IWorkSetPresenter bean) {
+		Optional<WorkSet> workset = this.repository.findById(bean.getId());
+		if (workset.isPresent()) {
+			IWorkSet ws = workset.get();
+			ws.setCode(bean.getCode());
+			ws.setName(bean.getName());
+			ws.setPir(bean.getPir());
+			ws.setSmr(bean.getSmr());
+			ws.setPlanObject(bean.getPlanObject());
+			
+			this.repository.save((WorkSet)ws);
 		}
 	}
 }

@@ -25,7 +25,6 @@ public class CProjectDataProvider extends AbstractBackEndDataProvider<ICProjectP
 	private String[] columnIDs = new String[] {ICProjectPresenter.FIELD_NAME, 
 											   ICProjectPresenter.FIELD_CODE, 
 											   ICProjectPresenter.FIELD_ID,
-											   ICProjectPresenter.FILED_STAGE,
 											   ICProjectPresenter.FILED_PHASE, 
 											   ICProjectPresenter.FILED_HPROJECT, 
 											   ICProjectPresenter.FILED_MILESTONE,
@@ -71,9 +70,6 @@ public class CProjectDataProvider extends AbstractBackEndDataProvider<ICProjectP
 					break;
 				case ICProjectPresenter.FIELD_ID:
 					result = a.getId().compareTo(b.getId());
-					break;
-				case ICProjectPresenter.FILED_STAGE:
-					result = a.getStageCaption().compareTo(b.getStageCaption());
 					break;
 				case ICProjectPresenter.FILED_PHASE:
 					result = a.getPhaseCaption().compareTo(b.getPhaseCaption());
@@ -146,9 +142,6 @@ public class CProjectDataProvider extends AbstractBackEndDataProvider<ICProjectP
 				break;
 			case ICProjectPresenter.FIELD_ID:
 				result = cproject.getId().toString().startsWith(commonTextFilter);
-				break;
-			case ICProjectPresenter.FILED_STAGE:
-				result = cproject.getStageCaption().toLowerCase().startsWith(commonTextFilter);
 				break;
 			case ICProjectPresenter.FILED_PHASE:
 				result = cproject.getPhaseCaption().toLowerCase().startsWith(commonTextFilter);

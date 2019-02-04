@@ -15,7 +15,6 @@ public class CProjectPresenter extends CProject implements ICProjectPresenter {
 		this.setId(icProject.getId());
 		this.setName(icProject.getName());
 		this.setCode(icProject.getCode());
-		this.setStage(icProject.getStage());
 		this.setPhase(icProject.getPhase());
 		this.setHproject(icProject.getHproject());
 		this.setMilestone(icProject.getMilestone());
@@ -45,15 +44,6 @@ public class CProjectPresenter extends CProject implements ICProjectPresenter {
 	@Override
 	public String getChangeDatePresenter() {
 		return DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss").format(this.getChangeDate());
-	}
-	
-	@Override
-	public String getStageCaption() {
-		String result = "---";
-		if (Objects.nonNull(getStage())) {
-			result = getStage().getName();
-		}
-		return result;
 	}
 	
 	@Override

@@ -8,7 +8,6 @@ public interface ICProjectPresenter extends ICProject {
 	public void setCProject(ICProject cProject);
 	public String getCreateDatePresenter();
 	public String getChangeDatePresenter();
-	public String getStageCaption();
 	public String getPhaseCaption();
 	public String getMilestoneCaption();
 	public String getHProjectCaption();

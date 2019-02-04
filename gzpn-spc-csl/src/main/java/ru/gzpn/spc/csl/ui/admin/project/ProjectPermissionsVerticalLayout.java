@@ -169,7 +169,6 @@ public class ProjectPermissionsVerticalLayout extends VerticalLayout implements 
 		grid.addColumn(ICProjectPresenter::getId).setCaption(getI18nText(I18N_CAPTION_ID, messageSource)).setId(ICProjectPresenter.FIELD_ID).setSortable(true);
 		grid.addColumn(ICProjectPresenter::getName).setCaption(getI18nText(I18N_CAPTION_NAME, messageSource)).setId(ICProjectPresenter.FIELD_NAME).setSortable(true);
 		grid.addColumn(ICProjectPresenter::getCode).setCaption(getI18nText(I18N_CAPTION_CODE, messageSource)).setId(ICProjectPresenter.FIELD_CODE).setSortable(true);
-		grid.addColumn(ICProjectPresenter::getStageCaption).setCaption(getI18nText(I18N_CAPTION_STAGE, messageSource)).setId(ICProjectPresenter.FILED_STAGE).setSortable(true);
 		grid.addColumn(ICProjectPresenter::getPhaseCaption).setCaption(getI18nText(I18N_CAPTION_PHASE, messageSource)).setId(ICProjectPresenter.FILED_PHASE).setSortable(true);
 		grid.addColumn(ICProjectPresenter::getHProjectCaption).setCaption(getI18nText(I18N_CAPTION_HEAVY, messageSource)).setId(ICProjectPresenter.FILED_HPROJECT).setSortable(true);
 		grid.addColumn(ICProjectPresenter::getMilestoneCaption).setCaption(getI18nText(I18N_CAPTION_MILESTONE, messageSource)).setId(ICProjectPresenter.FILED_MILESTONE).setSortable(true);

@@ -17,14 +17,12 @@ import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.interfaces.IMilestone;
 import ru.gzpn.spc.csl.model.interfaces.IPhase;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
-import ru.gzpn.spc.csl.model.interfaces.IStage;
 
 @Entity
 @Table(schema = "spc_csl_schema", name = "capital_projects", 
 indexes = {
 			@Index(name = "spc_csl_idx_prjname", columnList = "name"),
 			@Index(name = "spc_csl_idx_prjid", columnList = "code", unique = true),
-			@Index(name = "spc_csl_idx_prjstg", columnList = "stage_id"),
 			@Index(name = "spc_csl_idx_prjphs", columnList = "phase_id")
 })
 public class CProject extends ACLBasedEntity implements ICProject, Serializable {
@@ -37,10 +35,6 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 	@JoinColumn(name = "hp_id", referencedColumnName = "id")
 	private IHProject hproject;
 	
-	@ManyToOne(targetEntity = Stage.class)
-	@JoinColumn(name = "stage_id", referencedColumnName = "id")
-	private IStage stage;
-
 	@ManyToOne(targetEntity = Phase.class)
 	@JoinColumn(name = "phase_id", referencedColumnName = "id")
 	private IPhase phase;
@@ -71,14 +65,6 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 
 	public void setCode(String code) {
 		this.code = code;
-	}
-
-	public IStage getStage() {
-		return stage;
-	}
-
-	public void setStage(IStage stage) {
-		this.stage = stage;
 	}
 
 	public IHProject getHproject() {

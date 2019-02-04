@@ -8,8 +8,12 @@ public interface IDocumentPresenter extends IDocument {
 	String getTypeText(MessageSource source);
 	String getWorkText();
 	String getWorksetText();
+	
+	void setTypeByText(String code);
+	
 	void setDocument(IDocument document);
 	IDocument getDocument();
+	
 	String getCreateDateText();
 	String getChangeDateText();
 }

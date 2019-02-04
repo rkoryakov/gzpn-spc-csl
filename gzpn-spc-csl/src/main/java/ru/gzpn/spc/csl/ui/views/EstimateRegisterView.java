@@ -28,7 +28,7 @@ public class EstimateRegisterView extends VerticalLayout implements View {
 	private IEstimateRegisterService estimateRegisterService;
 	
 	public EstimateRegisterView() {
-		setMargin(true);
+		setMargin(false);
 		setSpacing(false);
 	}
 	

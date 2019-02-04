@@ -20,19 +20,23 @@ import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.AbsoluteLayout;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
+import ru.gzpn.spc.csl.model.enums.DocType;
 import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.interfaces.IBaseEntity;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
@@ -43,8 +47,8 @@ import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
-import ru.gzpn.spc.csl.services.bl.DocumentService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ICreateDocService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
@@ -53,9 +57,9 @@ import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
 
-public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
+public class CreateDocComponent extends HorizontalSplitPanel implements I18n {
 	private static final long serialVersionUID = -883906550551450076L;
-	public static final Logger logger = LoggerFactory.getLogger(CreateDocLayout.class);
+	public static final Logger logger = LoggerFactory.getLogger(CreateDocComponent.class);
 	
 	public static final String I18N_SEARCHFIELD_PLACEHOLDER = "createdoc.CreateDocLayout.worksetFilterField.placeholder";
 	public static final String I18N_SEARCHSETTINGS_DESC = "createdoc.CreateDocLayout.worksetFilterSettingsButton.desc";
@@ -64,12 +68,15 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	public static final String I18N_DELWORKSETBUTTON_DESC = "createdoc.CreateDocLayout.delWorksetButton.desc";
 	public static final String I18N_DOWNLOADWORKSETBUTTON_DESC = "createdoc.CreateDocLayout.downloadWorksetButton.desc";
 	public static final String I18N_TREE_CAPTION = "createdoc.CreateDocLayout.projectTreeCaption";
+	public static final String I18N_SAVE_ITEM_CAP = "createdoc.CreateDocLayout.saveItem.cap";
+	public static final String I18N_CANCELSAVE_ITEM_CAP = "createdoc.CreateDocLayout.cancelItem.cap";
 	
 	private static final int WORKSET_GRID_ROWS = 15;
 	private static final int WORKSET_GRID_ROW_HEIGHT = 38;
 	private static final int MAIN_MIN_SPLIT_POSITION = 30;
 	private static final int LEFT_MIN_SPLIT_POSITION = 25;
 	private static final int HEAD_ROW_HEIGHT = 37;
+
 	
 	private String currentUser;
 	
@@ -100,7 +107,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	private Registration preojectTreeItemSelectRegistration;
 	private IWorkSetPresenter selectedWorkSet;
 	
-	public CreateDocLayout(ICreateDocService createDocService) {
+	public CreateDocComponent(ICreateDocService createDocService) {
 		this.projectService = createDocService.getProjectService();
 		this.settingsService = createDocService.getUserSettingsService();
 		this.messageSource = createDocService.getMessageSource();
@@ -162,6 +169,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	public Component createProjectTree() {
 		projectTreePanel = new Panel(getI18nText(I18N_TREE_CAPTION, messageSource));
 		projectTree = new DraggableTree<>();
+		
 		refreshProjectTree();
 		projectTreePanel.setContent(projectTree);
 		projectTreePanel.setSizeFull();
@@ -228,6 +236,16 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		worksetGrid.setHeightByRows(WORKSET_GRID_ROWS);
 		worksetDataProvider.setShownColumns(columnSettings);
 		worksetGrid.setDataProvider(worksetDataProvider);
+		worksetGrid.getEditor().setEnabled(true);
+		worksetGrid.getEditor().setSaveCaption(getI18nText(I18N_SAVE_ITEM_CAP, messageSource));
+		worksetGrid.getEditor().setCancelCaption(getI18nText(I18N_CANCELSAVE_ITEM_CAP, messageSource));
+		
+		worksetGrid.getEditor().addSaveListener(saveEvent -> {
+			saveWorkSetItem(saveEvent.getBean());
+		});
+		worksetGrid.getEditor().addCancelListener(cancelSaveEvent -> {
+			worksetGrid.getDataProvider().refreshItem(cancelSaveEvent.getBean());
+		});
 		
 		/* WorkSet Item Select */
 		worksetGrid.addSelectionListener(selectEvent -> {
@@ -251,6 +269,11 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		createWorksetHeaderColumns(userSettings);
 	}
 	
+	private void saveWorkSetItem(IWorkSetPresenter bean) {
+		this.worksetService.save(bean);
+		this.worksetGrid.getDataProvider().refreshItem(bean);
+	}
+
 	public void createWorksetHeaderColumns(CreateDocSettingsJson userSettings) {
 		if (userSettings.hasLeftColumnHeaders()) {
 			refreshColumnHeaderGroups(userSettings.getLeftColumnHeaders());
@@ -341,10 +364,12 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 	public void addWorksetGridColumn(ColumnSettings settings) {
 		switch (settings.getEntityFieldName()) {
 		case IWorkSet.FIELD_NAME:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getName, IWorkSet.FIELD_NAME);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getName, IWorkSet.FIELD_NAME)
+				.setEditorComponent(new TextField(), IWorkSetPresenter::setName).setEditable(true);
 			break;
 		case IWorkSet.FIELD_CODE:
-			addWorksetGridColumn(settings, IWorkSetPresenter::getCode, IWorkSet.FIELD_CODE);
+			addWorksetGridColumn(settings, IWorkSetPresenter::getCode, IWorkSet.FIELD_CODE)
+				.setEditorComponent(new TextField(), IWorkSetPresenter::setCode).setEditable(true);
 			break;
 		case IWorkSet.FIELD_PIR:
 			addWorksetGridColumn(settings, IWorkSetPresenter::getPirText, IWorkSet.FIELD_PIR);
@@ -380,7 +405,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		}
 	}
 	
-	public <T> void addWorksetGridColumn(ColumnSettings settings, ValueProvider<IWorkSetPresenter, T> provider, String field) {
+	public <T> Column<IWorkSetPresenter, T> addWorksetGridColumn(ColumnSettings settings, ValueProvider<IWorkSetPresenter, T> provider, String field) {
 		
 		Column<IWorkSetPresenter, T> column = worksetGrid.addColumn(provider);
 		column.setSortProperty(settings.getEntityFieldName());
@@ -399,6 +424,7 @@ public class CreateDocLayout extends HorizontalSplitPanel implements I18n {
 		}
 		
 		column.setId(settings.getEntityFieldName());
+		return column;
 	}
 	
 	public Component createLeftHeadFeautures() {
@@ -488,20 +514,23 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 
 	public static final String I18N_SEARCHFIELD_PLACEHOLDER = "createdoc.WorkSetDocumentation.documentFilterField.placeholder";
 	public static final String I18N_SEARCHSETTINGS_DESC = "createdoc.WorkSetDocumentation.documentFilterSettingsButton.desc";
-	public static final String I18N_USERLAYOUTSETTINGS_DESC = CreateDocLayout.I18N_USERLAYOUTSETTINGS_DESC;
+	public static final String I18N_USERLAYOUTSETTINGS_DESC = CreateDocComponent.I18N_USERLAYOUTSETTINGS_DESC;
 	public static final String I18N_ADDDOCUMENTBUTTON_DESC = "createdoc.WorkSetDocumentation.addDocumentButton.desc";
 	public static final String I18N_DELDOCUMENTBUTTON_DESC = "createdoc.WorkSetDocumentation.delDocumentButton.desc";
 	public static final String I18N_DOWNLOADDOCUMENTSBUTTON_DESC = "createdoc.WorkSetDocumentation.downloadDocumentsButton.desc";
+	public static final String I18N_SENDBUTTON_CAP = "createdoc.WorkSetDocumentation.sendButton.cap";
+	public static final String I18N_DESCRIPTIONFIELD_PLACEHOLDER = "createdoc.WorkSetDocumentation.descriptionField.placeholder";
 	
-	private static final double DOCUMENT_GRID_ROWS = 10;
+	public static final double DOCUMENT_GRID_ROWS = 10;
+
 	private String currentUser;
 	private IUserSettigsService settingsService;
 	private MessageSource messageSource;
-	private DocumentService documentService;
+	private IDocumentService documentService;
 	
 	private Grid<IDocumentPresenter> documentsGrid;	
 	private DocumentsDataProvider documentsDataProvider;
-	private CreateDocLayout parent;
+	private CreateDocComponent parent;
 
 	private TextField documentsFilterField;
 
@@ -511,6 +540,10 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 	private Button downloadDocumentsButton;
 
 	private Button userLayoutSettings;
+
+	private Button sendButton;
+
+	private TextArea descriptionField;
 	
 	public WorkSetDocumentation(ICreateDocService service) {
 		this.documentService = service.getDocumentService();
@@ -524,7 +557,7 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 		return documentsDataProvider;
 	}
 	
-	public void setParent(CreateDocLayout parent) {
+	public void setParent(CreateDocComponent parent) {
 		this.parent = parent;
 	}
 	
@@ -536,6 +569,42 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 		
 		addComponent(createRightHeadFeautures());
 		addComponent(createDocumentGrid());
+		addComponent(createFooterFeauteres());
+	}
+
+	public Component createFooterFeauteres() {
+		HorizontalLayout layout = new HorizontalLayout();
+		HorizontalLayout feauteres = new HorizontalLayout();
+		
+		layout.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
+		layout.addComponent(createDescriptionField());
+		layout.setExpandRatio(descriptionField, 2);
+		layout.addComponent(createSendButton());
+		layout.setExpandRatio(sendButton, 1);
+		
+		layout.setSizeFull();
+		layout.setMargin(true);
+		//layout.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
+		//layout.addComponent(feauteres);
+		
+		return layout;
+	}
+
+	public Component createSendButton() {
+		sendButton = new Button(getI18nText(I18N_SENDBUTTON_CAP, messageSource, I18N_SENDBUTTON_CAP));
+		sendButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
+		sendButton.addClickListener(clickEvent -> {
+			// TODO:
+		});
+		return sendButton;
+	}
+
+	public Component createDescriptionField() {
+		descriptionField = new TextArea();
+		descriptionField.setPlaceholder(getI18nText(I18N_DESCRIPTIONFIELD_PLACEHOLDER, messageSource));
+		descriptionField.setSizeFull();
+		descriptionField.setHeight(100, Unit.PIXELS);
+		return descriptionField;
 	}
 
 	public Component createRightHeadFeautures() {
@@ -629,21 +698,42 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 		documentsGrid.setColumnReorderingAllowed(true);
 		documentsDataProvider.setShownColumns(columnSettings);
 		documentsGrid.setDataProvider(documentsDataProvider);
-
+		documentsGrid.getEditor().setSaveCaption(getI18nText(CreateDocComponent.I18N_SAVE_ITEM_CAP, messageSource));
+		documentsGrid.getEditor().setCancelCaption(getI18nText(CreateDocComponent.I18N_CANCELSAVE_ITEM_CAP, messageSource));
+		
+		documentsGrid.getEditor().addSaveListener(saveEvent -> {
+			saveDocumentItem(saveEvent.getBean());
+		});
+		documentsGrid.getEditor().addCancelListener(cancelSaveEvent -> {
+			documentsGrid.getDataProvider().refreshItem(cancelSaveEvent.getBean());
+		});
+		
+		documentsGrid.getEditor().setEnabled(true);
+		
 		addDocumentHeaderColumns(userSettings);
 	}
 	
-	
+	private void saveDocumentItem(IDocumentPresenter bean) {
+		this.documentService.seve(bean);
+		this.documentsGrid.getDataProvider().refreshItem(bean);
+		
+	}
+
 	public void addDocumentGridColumn(ColumnSettings settings) {
 		switch (settings.getEntityFieldName()) {		
 		case IDocument.FIELD_NAME:
-			addDocumnentGridColumn(settings, IDocumentPresenter::getName, IDocument.FIELD_NAME);
+			addDocumnentGridColumn(settings, IDocumentPresenter::getName, IDocument.FIELD_NAME)
+				.setEditorComponent(new TextField(), IDocumentPresenter::setName).setEditable(true);
 			break;
 		case IDocument.FIELD_CODE:
-			addDocumnentGridColumn(settings, IDocumentPresenter::getCode, IDocument.FIELD_CODE);
+			addDocumnentGridColumn(settings, IDocumentPresenter::getCode, IDocument.FIELD_CODE)
+				.setEditorComponent(new TextField(), IDocumentPresenter::setCode).setEditable(true);
 			break;
 		case IDocument.FIELD_TYPE:
-			addDocumnentGridColumn(settings, field -> field.getTypeText(this.messageSource), IDocument.FIELD_TYPE);
+			addDocumnentGridColumn(settings, field -> field.getTypeText(this.messageSource), IDocument.FIELD_TYPE)
+				.setEditorComponent(new ComboBox<String>("", DocType.getAll(messageSource, getLocale())), IDocumentPresenter::setTypeByText).setEditable(true);
+//						.stream().map(item -> item.toString()).collect(Collectors.toList())), 
+//							IDocumentPresenter::setTypeByCode).setEditable(true);
 			break;
 //		case IDocument.FIELD_WORK:
 //			addDocumnentGridColumn(settings, IDocumentPresenter::getWorkText, I18N_DOCUMENT_COLUMN_WORK);
@@ -667,7 +757,7 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 		}
 	}
 	
-	public <T> void addDocumnentGridColumn(ColumnSettings settings, ValueProvider<IDocumentPresenter, T> provider, String field) {
+	public <T> Column<IDocumentPresenter, T> addDocumnentGridColumn(ColumnSettings settings, ValueProvider<IDocumentPresenter, T> provider, String field) {
 		Column<IDocumentPresenter, T> column = documentsGrid.addColumn(provider);
 		column.setSortProperty(settings.getEntityFieldName());
 		column.setSortable(true);
@@ -685,6 +775,8 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 		}
 		
 		column.setId(settings.getEntityFieldName());
+		
+		return column;
 	}
 	
 	public void addDocumentHeaderColumns(CreateDocSettingsJson userSettings) {

@@ -3,6 +3,7 @@ package ru.gzpn.spc.csl.services.bl;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
+import ru.gzpn.spc.csl.model.Document;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
@@ -170,6 +172,19 @@ public class DocumentService implements IDocumentService {
 			}
 
 			return result;
+		}
+	}
+
+	@Override
+	public void seve(IDocumentPresenter bean) {
+		Optional<Document> doc = this.documentRepository.findById(bean.getId());
+		if (doc.isPresent()) {
+			IDocument document = doc.get();
+			document.setCode(bean.getCode());
+			document.setName(bean.getName());
+			document.setType(bean.getType());
+			
+			this.documentRepository.save((Document)document);
 		}
 	}
 }

@@ -250,7 +250,7 @@ public class CreateDocSettingsWindow extends UISettingsWindow {
 			}
 			
 			int pasteIndex = listNodes.indexOf(to);
-			int fromIndex = listNodes.indexOf(draggedNode);
+			//int fromIndex = listNodes.indexOf(draggedNode);
 			listNodes.remove(draggedNode);
 			
 			// when we drag a node from top to bottom

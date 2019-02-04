@@ -8,7 +8,6 @@ public interface ICProject extends IACLBasedEntity {
 	public static final String FIELD_NAME = ENTITYNAME_DOT + "name";
 	public static final String FIELD_CODE = ENTITYNAME_DOT + "code";
 	public static final String FILED_HPROJECT = "hproject";
-	public static final String FILED_STAGE = "stage";
 	public static final String FILED_PHASE = "phase";
 	public static final String FILED_MILESTONE = "milestone";
 	/* Overridden fields */
@@ -22,9 +21,6 @@ public interface ICProject extends IACLBasedEntity {
 	
 	public String getCode();
 	public void setCode(String code);
-	
-	public IStage getStage();
-	public void setStage(IStage stage);
 	
 	public IHProject getHproject();
 	public void setHproject(IHProject hproject);

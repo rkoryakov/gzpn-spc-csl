@@ -13,7 +13,6 @@ import com.vaadin.event.Action;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -73,7 +72,8 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			this.user = userSettingsService.getCurrentUser();
 			
 			setSpacing(false);
-			
+			setMargin(false);
+
 			initEventActions();
 			createHeadFutures();
 			createBody();
@@ -95,7 +95,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 
 		public void createHeadFutures() {
 			VerticalLayout verticalLayout = new VerticalLayout();
-			verticalLayout.setMargin(new MarginInfo(false, true));
+			verticalLayout.setMargin(false);
 			verticalLayout.setSpacing(false);
 			AbsoluteLayout layout = new AbsoluteLayout();
 			
@@ -175,7 +175,8 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		
 		public void createBody() {
 			this.bodyLayout = createBodyLayout();
-			this.bodyLayout.setMargin(new MarginInfo(false, true));
+			this.bodyLayout.setSpacing(false);
+			this.bodyLayout.setMargin(false);
 			this.addComponent(bodyLayout);
 		}
 
@@ -190,8 +191,8 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			footerLayout = new HorizontalLayout();
 			HorizontalLayout horizontalLayout = new HorizontalLayout();
 			footerLayout.setSizeFull();
-			bodyLayout.setMargin(true);
-			bodyLayout.setSpacing(true);
+			footerLayout.setMargin(true);
+			footerLayout.setSpacing(true);
 			footerLayout.setDefaultComponentAlignment(Alignment.MIDDLE_RIGHT);
 			horizontalLayout.addComponent(createCreateButton());
 			horizontalLayout.addComponent(createOpenButton());
