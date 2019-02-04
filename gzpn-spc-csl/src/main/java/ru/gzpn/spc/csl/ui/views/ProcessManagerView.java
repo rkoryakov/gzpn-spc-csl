@@ -1,5 +1,8 @@
 package ru.gzpn.spc.csl.ui.views;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
@@ -38,14 +41,14 @@ public class ProcessManagerView extends VerticalLayout implements View {
 			removeComponent(flot);
 			flot = new Flot();
 			for (int i = 0; i < 30; i ++) {
-				flot.addSeries(i, Math.random()*10);
+				flot.addSeries(Instant.now().minus(Duration.ofDays(i)).getEpochSecond()*1000, Math.random()*10);
 			}
 			addComponentAsFirst(flot);
 		});
 		
 		flot = new Flot();
 		for (int i = 0; i < 30; i ++) {
-			flot.addSeries(i, Math.random()*10);
+			flot.addSeries(Instant.now().minus(Duration.ofDays(i)).getEpochSecond()*1000, Math.random()*10);
 		}
 		
 		addComponents(flot, button);
