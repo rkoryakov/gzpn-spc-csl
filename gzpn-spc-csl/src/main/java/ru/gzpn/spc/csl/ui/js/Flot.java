@@ -6,8 +6,8 @@ import java.util.List;
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.ui.AbstractJavaScriptComponent;
 
-@JavaScript({"https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js",
-	"jquery.flot.min.js", "jquery.flot.animator.min.js", "flot_connector.js"})
+@JavaScript({"jquery.min.js",
+	"jquery.flot.min.js", "jquery.flot.time.min.js", "jquery.flot.growraf.js", "flot_connector.js"})
 public class Flot extends AbstractJavaScriptComponent {
 	
 	public Flot() {
