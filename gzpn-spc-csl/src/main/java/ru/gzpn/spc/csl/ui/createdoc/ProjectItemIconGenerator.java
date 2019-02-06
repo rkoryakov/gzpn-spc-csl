@@ -35,6 +35,8 @@ public class ProjectItemIconGenerator implements IconGenerator<NodeWrapper> {
 			case WORKSET:
 				result = VaadinIcons.RECORDS;
 				break;
+			case MARK:
+				result = VaadinIcons.BOOKMARK_O;
 			default:
 				break;
 			}

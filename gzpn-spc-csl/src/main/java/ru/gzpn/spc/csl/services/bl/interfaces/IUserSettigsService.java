@@ -8,10 +8,11 @@ public interface IUserSettigsService {
 	ISettingsJson getCreateDocUserSettings(String userId, ISettingsJson defaultValue);
 	
 	public void save(String userId, ISettingsJson createDoc);
+	
 	public String getCurrentUser();
 	ISettingsJson getContracrRegSettings(String userId, ISettingsJson defaultValue);
 	ISettingsJson getContracrRegSettings(String userId);
+	
 	ISettingsJson getEstimatesRegSettings(String userId, ISettingsJson defaultValue);
 	ISettingsJson getEstimatesRegSettings(String userId);
-	
 }

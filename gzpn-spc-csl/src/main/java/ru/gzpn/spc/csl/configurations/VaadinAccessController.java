@@ -18,6 +18,7 @@ import ru.gzpn.spc.csl.ui.views.ContractRegisterView;
 import ru.gzpn.spc.csl.ui.views.CreateDocView;
 import ru.gzpn.spc.csl.ui.views.EstimateRegisterView;
 import ru.gzpn.spc.csl.ui.views.ProcessManagerView;
+import ru.gzpn.spc.csl.ui.views.SummaryEstimateCardView;
 
 @Component
 public class VaadinAccessController implements ViewAccessControl {
@@ -33,22 +34,28 @@ public class VaadinAccessController implements ViewAccessControl {
 					.collect(Collectors.toSet());
 
 			logger.debug("beanName {}, name: {}, authorities {}", beanName, authentication.getName(), authorities);
+			if (authorities.contains(Roles.ADMIN_ROLE.toString())) {
+				result = true;
+			} else 
 			if (beanName != null) {
 				switch (beanName) {
 				case AdminView.NAME:
 					result = authorities.contains(Roles.ADMIN_ROLE.toString());
 					break;
 				case CreateDocView.NAME:
-					result = authorities.contains(Roles.USER_ROLE.toString());
+					result = authorities.contains(Roles.CREATOR_ROLE.toString());
 					break;
 				case ContractRegisterView.NAME:
-					result = authorities.contains(Roles.USER_ROLE.toString());
+					result = authorities.contains(Roles.CONTRACT_ES_ROLE.toString());
 					break;
 				case EstimateRegisterView.NAME:
-					result = authorities.contains(Roles.USER_ROLE.toString());
+					result = authorities.contains(Roles.EXPERT_ES_ROLE.toString());
 					break;
 				case ProcessManagerView.NAME:
-					result = authorities.contains(Roles.USER_ROLE.toString());
+					result = true;
+					break;
+				case SummaryEstimateCardView.NAME:
+					result = authorities.contains(Roles.EXPERT_ES_ROLE.toString());
 					break;
 				}
 			}

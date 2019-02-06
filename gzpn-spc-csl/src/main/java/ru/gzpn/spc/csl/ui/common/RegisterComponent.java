@@ -81,11 +81,9 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			refreshUiElements();
 		}
 
-		public abstract AbstractRegisterDataProvider getDataProvider();
+		public abstract <T, F> AbstractRegisterDataProvider<T, F> getDataProvider();
 
-		public abstract Grid getRegisterGrid();
-		
-
+		public abstract <T> Grid<T> getRegisterGrid();
 		
 		protected void initEventActions() {
 			listeners = new HashMap<>();
@@ -104,7 +102,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			layout.setWidth(100.f, Unit.PERCENTAGE);
 			headFuturesLayout = new HorizontalLayout();
 			headFuturesLayout.addComponent(createRegisterFilter());
-			//headFuturesLayout.addComponent(createWorksetButtons());
+
 			headFuturesLayout.addComponent(createExcelButton());
 			layout.addComponent(createSettingsButton(), "top:5px; left:5px");
 			layout.addComponent(headFuturesLayout, "top:5px; right:5px");
@@ -124,7 +122,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			
 			registerFilterField.addValueChangeListener(e -> {
 				getDataProvider().getFilter().setCommonTextFilter(e.getValue());
-				logger.debug("[RegisterComponent filter value ] {}", e.getValue());
+				
 				getDataProvider().refreshAll();
 			});
 			return searchComp;
@@ -137,19 +135,6 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 					(StreamResource.StreamSource) () -> Exporter.exportAsExcel(getRegisterGrid()), getReportName());
 			
 			FileDownloader excelFileDownloader = new FileDownloader(excelStreamResource);
-//			 {
-//                private static final long serialVersionUID = 1L;
-//
-//                @Override
-//                public boolean handleConnectorRequest(VaadinRequest request, VaadinResponse response, String path) throws IOException {
-//                    if (Page.getCurrent().getWebBrowser().isIE()) {
-//                        Page.getCurrent().open(excelStreamResource, "Name", false);
-//                        return true;
-//                    } else {
-//                        return super.handleConnectorRequest(request, response, path);
-//                    }
-//                }
-//            };
 			excelFileDownloader.extend(downloadWorksetButton);
 			
 			return downloadWorksetButton;

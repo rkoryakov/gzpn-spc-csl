@@ -112,7 +112,6 @@ public class CProjectServiceTest {
 					IPhase phase = phaseRepository.findAll().get((int)(6*Math.random()));
 					cProject.setPhase(phase);
 					Stage stage = stageRepository.findAll().get((int)(3*Math.random()));
-					cProject.setStage(stage);
 					cProject = cpRepository.save(cProject);
 					
 					// PlanObjects
