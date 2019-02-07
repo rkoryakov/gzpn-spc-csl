@@ -19,7 +19,7 @@ import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 @Entity
 @Table(name = "documents", schema = "spc_csl_schema", 
 indexes = {
-	@Index(name = "spc_csl_idx_doccode", columnList = "code", unique = true),
+	@Index(name = "spc_csl_idx_doccode", columnList = "code"),
 	@Index(name = "spc_csl_idx_docname", columnList = "name"), 
 	@Index(name = "spc_csl_idx_doctype", columnList = "type"),
 	@Index(name = "spc_csl_idx_doctowk", columnList = "wk_id"),

@@ -10,6 +10,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
 
+import ru.gzpn.spc.csl.model.Document;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.services.bl.DocumentService.DocumentFilter;
@@ -52,6 +53,14 @@ public class DocumentsDataProvider extends AbstractBackEndDataProvider<IDocument
 		}
 		return result;
 	}
+	
+	public void createEmptyItem() {
+		Document document = new Document();
+		document.setWorkset(parentWorkSet);
+		
+		documentService.save(document);
+	}
+	
 	
 	public DocumentFilter getFilter() {
 		return filter;

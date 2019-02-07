@@ -22,4 +22,5 @@ public interface I18n {
 	public default Locale getLocale() {
 		return LocaleContextHolder.getLocale();
 	}
+	
 }

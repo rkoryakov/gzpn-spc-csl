@@ -26,6 +26,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Panel;
@@ -217,7 +218,11 @@ public class CreateDocComponent extends HorizontalSplitPanel implements I18n {
 		return worksetGrid;
 	}
 
-	public void refreshWorksetGrid() {
+	public Grid<IWorkSetPresenter> getWorkSetGrid(){
+		return this.worksetGrid;
+	}
+	
+ 	public void refreshWorksetGrid() {
 		NodeWrapper parentNode = worksetDataProvider.getParentNode();
 		worksetDataProvider = new WorksetDataProvider(worksetService);
 		worksetDataProvider.setParentNode(parentNode);
@@ -574,7 +579,6 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 
 	public Component createFooterFeauteres() {
 		HorizontalLayout layout = new HorizontalLayout();
-		HorizontalLayout feauteres = new HorizontalLayout();
 		
 		layout.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
 		layout.addComponent(createDescriptionField());
@@ -584,8 +588,6 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 		
 		layout.setSizeFull();
 		layout.setMargin(true);
-		//layout.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
-		//layout.addComponent(feauteres);
 		
 		return layout;
 	}
@@ -614,7 +616,7 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 		layout.setHeight(50.0f, Unit.PIXELS);
 		layout.setWidth(100.f, Unit.PERCENTAGE);
 		horizontalLayout.addComponent(createDocumentsFilter());
-		horizontalLayout.addComponent(createWorksetButtons());
+		horizontalLayout.addComponent(createDocumentsButtons());
 		horizontalLayout.addComponent(createExcelButton());
 		layout.addComponent(createSettingsButton(), "top:5px; left:5px");
 		layout.addComponent(horizontalLayout, "top:5px; right:5px");
@@ -637,14 +639,29 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 		return searchComp;
 	}
 
-	public Component createWorksetButtons() {
+	public Component createDocumentsButtons() {
 		JoinedLayout<Button, Button> buttons = new JoinedLayout<>();
 		addDocumentButton = new Button(VaadinIcons.PLUS);
+		addDocumentButton.addClickListener(clickEvent -> {
+			DocumentsDataProvider provider = (DocumentsDataProvider)documentsGrid.getDataProvider();
+			provider.createEmptyItem();
+			provider.refreshAll();
+		});
+		
 		delDocumentButton = new Button(VaadinIcons.MINUS);
+		delDocumentButton.addClickListener(clickEvent -> {
+			documentsGrid.getSelectedItems().forEach(item -> {
+					documentService.remove(item);
+			});
+			
+			documentsGrid.deselectAll();
+			((DocumentsDataProvider)documentsGrid.getDataProvider()).refreshAll();
+		});
+		
 		addDocumentButton.setDescription(getI18nText(I18N_ADDDOCUMENTBUTTON_DESC, messageSource));
 		delDocumentButton.setDescription(getI18nText(I18N_DELDOCUMENTBUTTON_DESC, messageSource));
-		addDocumentButton.setEnabled(false);
-		delDocumentButton.setEnabled(false);
+		addDocumentButton.setEnabled(true);
+		delDocumentButton.setEnabled(true);
 		
 		buttons.addComponent(addDocumentButton);
 		buttons.addComponent(delDocumentButton);
@@ -709,12 +726,12 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 		});
 		
 		documentsGrid.getEditor().setEnabled(true);
-		
+		documentsGrid.setSelectionMode(SelectionMode.MULTI);
 		addDocumentHeaderColumns(userSettings);
 	}
 	
 	private void saveDocumentItem(IDocumentPresenter bean) {
-		this.documentService.seve(bean);
+		this.documentService.save(bean);
 		this.documentsGrid.getDataProvider().refreshItem(bean);
 		
 	}
@@ -730,14 +747,9 @@ class WorkSetDocumentation extends VerticalLayout implements I18n {
 				.setEditorComponent(new TextField(), IDocumentPresenter::setCode).setEditable(true);
 			break;
 		case IDocument.FIELD_TYPE:
-			addDocumnentGridColumn(settings, field -> field.getTypeText(this.messageSource), IDocument.FIELD_TYPE)
-				.setEditorComponent(new ComboBox<String>("", DocType.getAll(messageSource, getLocale())), IDocumentPresenter::setTypeByText).setEditable(true);
-//						.stream().map(item -> item.toString()).collect(Collectors.toList())), 
-//							IDocumentPresenter::setTypeByCode).setEditable(true);
+			addDocumnentGridColumn(settings, IDocumentPresenter::getType, IDocument.FIELD_TYPE)
+				.setEditorComponent(new ComboBox<DocType>("", DocType.getAll()), IDocumentPresenter::setType).setEditable(true);
 			break;
-//		case IDocument.FIELD_WORK:
-//			addDocumnentGridColumn(settings, IDocumentPresenter::getWorkText, I18N_DOCUMENT_COLUMN_WORK);
-//			break;
 		case IDocument.FIELD_WORKSET:
 			addDocumnentGridColumn(settings, IDocumentPresenter::getWorksetText, IDocument.FIELD_WORKSET);
 			break;

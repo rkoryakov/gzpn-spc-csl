@@ -2,10 +2,7 @@ package ru.gzpn.spc.csl.ui.createdoc;
 
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.context.MessageSource;
-
 import ru.gzpn.spc.csl.model.Document;
-import ru.gzpn.spc.csl.model.enums.DocType;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.ui.common.I18n;
 
@@ -39,11 +36,6 @@ public class DocumentPresenter extends Document implements IDocumentPresenter, I
 	}
 
 	@Override
-	public String getTypeText(MessageSource source) {
-		return this.getType().getText(source, getLocale());
-	}
-
-	@Override
 	public String getWorkText() {
 		return getWork().getName();
 	}
@@ -64,8 +56,4 @@ public class DocumentPresenter extends Document implements IDocumentPresenter, I
 		return DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss").format(getChangeDate());
 	}
 
-	@Override
-	public void setTypeByText(String text) {
-		this.setType(DocType.getByText(text));
-	}
 }

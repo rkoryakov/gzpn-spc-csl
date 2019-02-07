@@ -159,7 +159,7 @@ public class DocumentService implements IDocumentService {
 					result = documentPresenter.getCode().toLowerCase().startsWith(commonTextFilter);
 					break;
 				case IDocument.FIELD_TYPE:
-					result = documentPresenter.getTypeText(source).toLowerCase().startsWith(commonTextFilter);
+					result = documentPresenter.getType().getText().toLowerCase().startsWith(commonTextFilter);
 					break;
 				case IDocument.FIELD_WORK:
 					result = documentPresenter.getWorkText().toLowerCase().startsWith(commonTextFilter);
@@ -176,17 +176,27 @@ public class DocumentService implements IDocumentService {
 	}
 
 	@Override
-	public void seve(IDocumentPresenter bean) {
-		Optional<Document> doc = this.documentRepository.findById(bean.getId());
-		if (doc.isPresent()) {
-			IDocument document = doc.get();
-			document.setCode(bean.getCode());
-			document.setName(bean.getName());
-			document.setType(bean.getType());
+	public void save(IDocument bean) {
+		
+		if (bean.getId() != null) {
+			Optional<Document> doc = this.documentRepository.findById(bean.getId());
+			if (doc.isPresent()) {
+				IDocument document = doc.get();
+				document.setCode(bean.getCode());
+				document.setName(bean.getName());
+				document.setType(bean.getType());
 			
-			this.documentRepository.save((Document)document);
+				this.documentRepository.save((Document)document);
+			}
+		} else {
+			this.documentRepository.save((Document)bean);
+		}
+	}
+	
+	@Override
+	public void remove(IDocument bean) {
+		if (bean.getId() != null) {
+			this.documentRepository.deleteById(bean.getId());
 		}
 	}
 }
-
-

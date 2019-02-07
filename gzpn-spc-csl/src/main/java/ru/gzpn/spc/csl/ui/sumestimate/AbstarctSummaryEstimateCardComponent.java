@@ -192,8 +192,8 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 	 */
 	public abstract void refreshUiElements();
 	
-	public void calculateMaxPrice() {
-		OnCalculateMaxPrice();
+	public void calculateInitialMaxPrice() {
+		OnCalculateInitialMaxPrice();
 	}
 
 	public void sendForApproval() {
@@ -204,7 +204,7 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 		onClose();
 	}
 	
-	public void OnCalculateMaxPrice() {
+	public void OnCalculateInitialMaxPrice() {
 		handleAction(MAX_PRICE_ACTION);
 	}
 	

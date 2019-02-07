@@ -16,5 +16,10 @@ public interface IDocumentService {
 	long getDocumentsCount(IWorkSet workset);
 	Comparator<IDocumentPresenter> getSortComparator(List<QuerySortOrder> list);
 	MessageSource getMessageSource();
-	void seve(IDocumentPresenter bean);
+	/**
+	 * Save existing bean. If the bean doesn't exist then create it
+	 * @param bean
+	 */
+	void save(IDocument bean);
+	void remove(IDocument bean);
 }

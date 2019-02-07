@@ -2,10 +2,10 @@ package ru.gzpn.spc.csl.model.enums;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
-import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
 public enum DocType {
 	LOCAL_ESTIMATE("ru.gzpn.spc.csl.model.enums.DocType.local_estimate"),
@@ -13,6 +13,11 @@ public enum DocType {
 	
 	private String i18n;
 	private String i18Value;
+	
+	private static final ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+	static {
+		messageSource.setBasename("i18n/captions");
+	}
 	
 	private DocType(String i18n) {
 		this.i18n = i18n;
@@ -22,23 +27,25 @@ public enum DocType {
 		return i18n;
 	}
 	
-	public static DocType getByText(String type) {
-		DocType result = LOCAL_ESTIMATE;
-		if (type.equals("Комплект черчежей")) {
-			result = SET_OF_DRAWINGS;
-		}
-		
-		return result;
-	}
-	
-	public String getText(MessageSource source, Locale locale) {
-		i18Value = source.getMessage(i18n, null, locale);
+	public String getText() {
+		i18Value = messageSource.getMessage(i18n, null, LocaleContextHolder.getLocale());
 		return i18Value;
 	}
 	
-	public static List<String> getAll(MessageSource source, Locale locale) {
+	public static List<String> getAllTexts() {
 		return Arrays.asList(values())
-					.stream().map(item -> source.getMessage(item.getI18n(), null, locale))
+					.stream().map(item -> messageSource.getMessage(item.getI18n(), null, LocaleContextHolder.getLocale()))
 						.collect(Collectors.toList());
+	}
+	
+	public static List<DocType> getAll() {
+		return Arrays.asList(values())
+					.stream().map(item -> (DocType)item)
+						.collect(Collectors.toList());
+	}
+	
+	@Override
+	public String toString() {
+		return getText();
 	}
 }
