@@ -99,114 +99,142 @@ public class LocalEstimate extends BaseEntity implements ILocalEstimate, Seriali
 		this.works = works;
 	}
 
+	@Override
 	public String getCode() {
 		return code;
 	}
-
+	
+	@Override
 	public void setCode(String code) {
 		this.code = code;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	@Override
 	public List<IWork> getWorks() {
 		return works;
 	}
 
+	@Override
 	public void setWorks(List<IWork> works) {
 		this.works = works;
 	}
 
+	@Override
 	public IDocument getDocument() {
 		return document;
 	}
 
+	@Override
 	public void setDocument(IDocument document) {
 		this.document = document;
 	}
 
+	@Override
 	public String getChangedBy() {
 		return changedBy;
 	}
 
+	@Override
 	public void setChangedBy(String changedBy) {
 		this.changedBy = changedBy;
 	}
 
+	@Override
 	public String getDrawing() {
 		return drawing;
 	}
 
+	@Override
 	public void setDrawing(String drawing) {
 		this.drawing = drawing;
 	}
 
+	@Override
 	public LocalEstimateStatus getStatus() {
 		return status;
 	}
 
+	@Override
 	public void setStatus(LocalEstimateStatus status) {
 		this.status = status;
 	}
 
+	@Override
 	public String getComment() {
 		return comment;
 	}
 
+	@Override
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
 
+	@Override
 	public IStage getStage() {
 		return stage;
 	}
 
+	@Override
 	public void setStage(IStage stage) {
 		this.stage = stage;
 	}
 
+	@Override
 	public IEstimateCalculation getEstimateCalculation() {
 		return estimateCalculation;
 	}
-
+	
+	@Override
 	public void setEstimateCalculation(IEstimateCalculation estimateCalculation) {
 		this.estimateCalculation = estimateCalculation;
 	}
 
+	@Override
 	public IObjectEstimate getObjectEstimate() {
 		return objectEstimate;
 	}
 
+	@Override
 	public void setObjectEstimate(IObjectEstimate objectEstimate) {
 		this.objectEstimate = objectEstimate;
 	}
 
+	@Override
 	public List<ILocalEstimateHistory> getHistory() {
 		return history;
 	}
 
+	@Override
 	public void setHistory(List<ILocalEstimateHistory> history) {
 		this.history = history;
 	}
 
+	@Override
 	public IEstimateHead getEstimateHead() {
 		return estimateHead;
 	}
 
+	@Override
 	public void setEstimateHead(IEstimateHead estimateHead) {
 		this.estimateHead = estimateHead;
 	}
 
+	@Override
 	public List<IEstimateCost> getEstimateCosts() {
 		return estimateCosts;
 	}
 
+	@Override
 	public void setEstimateCosts(List<IEstimateCost> estimateCosts) {
 		this.estimateCosts = estimateCosts;
 	}
