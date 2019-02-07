@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.js;
+package ru.gzpn.spc.csl.ui.js.flot;
 
 import java.util.ArrayList;
 import java.util.List;

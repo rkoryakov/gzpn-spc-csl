@@ -1,9 +1,7 @@
-window.ru_gzpn_spc_csl_ui_js_Flot = function() {
+window.ru_gzpn_spc_csl_ui_js_flot_Flot = function() {
   var element = $(this.getElement());
-  element.height = 300;
-  element.width = 400;
   
-  d = this.getState().series;
+  var d = this.getState().series;
 
   this.onStateChange = function() {
     $.plot(element, [{
@@ -33,12 +31,12 @@ window.ru_gzpn_spc_csl_ui_js_Flot = function() {
     	xaxis: {
     
     		mode: "time",
-			timeformat: "%Y/%m/%d",
+			timeformat: "%m/%d",
 			//tickLength: 4,
-			tickFormatter: function (val, axis) {
-				var d = new Date(val);
-				return d.getUTCDate() + "/" + (d.getUTCMonth() + 1);
-			}
+//			tickFormatter: function (val, axis) {
+//				var d = new Date(val);
+//				return d.getUTCDate() + "/" + (d.getUTCMonth() + 1);
+//			}
     	},
     	
     	grid: {

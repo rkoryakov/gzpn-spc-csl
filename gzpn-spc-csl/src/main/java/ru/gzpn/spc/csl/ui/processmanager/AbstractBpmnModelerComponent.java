@@ -9,15 +9,15 @@ import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.I18n;
 
 @SuppressWarnings("serial")
-public abstract class AbstractAnalyticsComponent extends VerticalLayout implements I18n {
-	
+public abstract class AbstractBpmnModelerComponent extends VerticalLayout implements I18n {
+
 	private IUIService service;
 	private MessageSource messageSource;
 	private IUserSettigsService userSettingsService;
 	private String user;
 	private VerticalLayout bodyLayout;
 
-	public AbstractAnalyticsComponent(IUIService service) {
+	public AbstractBpmnModelerComponent(IUIService service) {
 		this.service = service;
 		this.messageSource = service.getMessageSource();
 		this.userSettingsService = service.getUserSettingsService();
@@ -34,12 +34,10 @@ public abstract class AbstractAnalyticsComponent extends VerticalLayout implemen
 	}
 
 	private void refreshUiElements() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	private void createFooter() {
-		// TODO Auto-generated method stub
 		
 	}
 

@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.js;
+package ru.gzpn.spc.csl.ui.js.flot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +11,6 @@ import com.vaadin.ui.AbstractJavaScriptComponent;
 public class Flot extends AbstractJavaScriptComponent {
 	
 	public Flot() {
-		setHeight("400px");
-		setWidth("600px");
 	}
 	
 	public void addSeries(double... points) {
