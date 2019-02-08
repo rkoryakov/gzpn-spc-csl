@@ -10,8 +10,9 @@ import com.vaadin.ui.AbstractJavaScriptComponent;
 	"jquery.flot.min.js", "jquery.flot.time.min.js", "jquery.flot.growraf.js", "flot_connector.js"})
 public class Flot extends AbstractJavaScriptComponent {
 	
-	public Flot() {
-		setSizeFull();
+	public Flot(String width, String height) {
+		setWidth(width);
+		setHeight(height);
 	}
 	
 	public void addSeries(double... points) {

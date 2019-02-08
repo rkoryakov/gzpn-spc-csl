@@ -2,15 +2,17 @@ window.ru_gzpn_spc_csl_ui_js_flot_Flot = function() {
   var element = $(this.getElement());
   
   var d = this.getState().series;
-
+  var l = this.getState().label;
+  var c = this.getState().color;
+  
   this.onStateChange = function() {
     $.plot(element, [{
     	data: d,
-    	color: "#0079C2",
+    	color: c,
     	highlightColor: "#fff",
     	points: { show: true },
     	lines: {show: true, fill: true},
-		label: "Labe 1",
+		label: l,
 		clickable: true,
 		selection: {
 			mode: "x"

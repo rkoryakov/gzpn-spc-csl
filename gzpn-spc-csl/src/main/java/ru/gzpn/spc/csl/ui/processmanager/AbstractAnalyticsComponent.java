@@ -11,7 +11,7 @@ import ru.gzpn.spc.csl.ui.common.I18n;
 @SuppressWarnings("serial")
 public abstract class AbstractAnalyticsComponent extends VerticalLayout implements I18n {
 	
-	private IUIService service;
+	protected IUIService service;
 	private MessageSource messageSource;
 	private IUserSettigsService userSettingsService;
 	private String user;

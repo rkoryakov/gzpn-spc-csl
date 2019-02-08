@@ -24,7 +24,7 @@ public class BpmnModelerComponent extends AbstractBpmnModelerComponent {
 	@Override
 	public VerticalLayout createBodyLayout() {
 		VerticalLayout body = new VerticalLayout();
-		body.setHeight("500px");
+		body.setHeight("700px");
 		body.setWidth("100%");
 		body.setMargin(false);
 		body.setSpacing(false);
@@ -38,7 +38,7 @@ public class BpmnModelerComponent extends AbstractBpmnModelerComponent {
 		
 		InputStream is = service.getProcessService().getProcessEngine()
 			.getRepositoryService()
-				.getResourceAsStream("772501", "/Users/macbookmacbook/git/gzpn-spc-csl/gzpn-spc-csl/bin/main/processes/estimate_accounting.bpmn20.xml");
+				.getProcessModel("EstimateAccounting:4:6397504");//getResourceAsStream("772501", "/Users/macbookmacbook/git/gzpn-spc-csl/gzpn-spc-csl/bin/main/processes/estimate_accounting.bpmn20.xml");
 		
 		byte streamData[];
 		try {
