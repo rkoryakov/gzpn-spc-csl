@@ -11,6 +11,7 @@ import com.vaadin.ui.AbstractJavaScriptComponent;
 public class Flot extends AbstractJavaScriptComponent {
 	
 	public Flot() {
+		setSizeFull();
 	}
 	
 	public void addSeries(double... points) {

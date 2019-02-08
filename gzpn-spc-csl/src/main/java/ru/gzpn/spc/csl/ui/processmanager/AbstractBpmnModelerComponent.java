@@ -4,6 +4,7 @@ import org.springframework.context.MessageSource;
 
 import com.vaadin.ui.VerticalLayout;
 
+import ru.gzpn.spc.csl.services.bl.interfaces.IProcessManagerService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.I18n;
@@ -11,17 +12,18 @@ import ru.gzpn.spc.csl.ui.common.I18n;
 @SuppressWarnings("serial")
 public abstract class AbstractBpmnModelerComponent extends VerticalLayout implements I18n {
 
-	private IUIService service;
-	private MessageSource messageSource;
-	private IUserSettigsService userSettingsService;
-	private String user;
-	private VerticalLayout bodyLayout;
-
+	protected IProcessManagerService service;
+	protected MessageSource messageSource;
+	protected IUserSettigsService userSettingsService;
+	protected String user;
+	protected VerticalLayout bodyLayout;
+	
 	public AbstractBpmnModelerComponent(IUIService service) {
-		this.service = service;
+		this.service = (IProcessManagerService)service;
 		this.messageSource = service.getMessageSource();
 		this.userSettingsService = service.getUserSettingsService();
 		this.user = userSettingsService.getCurrentUser();
+		
 		
 		setSpacing(false);
 		setMargin(false);
@@ -33,11 +35,11 @@ public abstract class AbstractBpmnModelerComponent extends VerticalLayout implem
 		refreshUiElements();
 	}
 
-	private void refreshUiElements() {
+	protected void refreshUiElements() {
 		
 	}
 
-	private void createFooter() {
+	protected void createFooter() {
 		
 	}
 

@@ -4,6 +4,7 @@ import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewBeforeLeaveEvent;
@@ -14,6 +15,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 
+import ru.gzpn.spc.csl.services.bl.interfaces.IProcessManagerService;
 import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.processmanager.AnalyticsComponent;
 import ru.gzpn.spc.csl.ui.processmanager.BpmnModelerComponent;
@@ -23,8 +25,13 @@ import ru.gzpn.spc.csl.ui.processmanager.BpmnModelerComponent;
 @UIScope
 public class ProcessManagerView extends VerticalLayout implements View, I18n {
 	public static final String NAME = "processManagerView";
-	
 	public static final Logger logger = LoggerFactory.getLogger(ProcessManagerView.class);
+
+	public static final String I18N_MODELER_TAB_CAP = "ProcessManagerView.bpmnModelerTab.cap";
+	private static final String I18N_PLOTSTAB_CAP = "ProcessManagerView.plotsTab.cap";
+	
+	@Autowired
+	private IProcessManagerService processManagerService;
 	
 	private TabSheet sheet = new TabSheet();
 
@@ -40,19 +47,21 @@ public class ProcessManagerView extends VerticalLayout implements View, I18n {
 	
 	@PostConstruct
 	void init() {
-		sheet.addTab(createBpmnModelerTab(), getI18nText(key, messageSource)_);
-		sheet.addTab(createPlotsTab());
+		String modelerTabCap = getI18nText(I18N_MODELER_TAB_CAP, processManagerService.getMessageSource());
+		String plotsTabCap = getI18nText(I18N_PLOTSTAB_CAP, processManagerService.getMessageSource());
+		sheet.addTab(createBpmnModelerTab(), modelerTabCap);
+		sheet.addTab(createPlotsTab(), plotsTabCap);
 		
 		addComponents(sheet);
 	}
 
 	private Component createPlotsTab() {
-		analyticsComponent = new AnalyticsComponent(null);
+		analyticsComponent = new AnalyticsComponent(processManagerService);
 		return analyticsComponent;
 	}
 
 	private Component createBpmnModelerTab() {
-		bpmnModelerComponent = new BpmnModelerComponent(null);
+		bpmnModelerComponent = new BpmnModelerComponent(processManagerService);
 		return bpmnModelerComponent;
 	}
 

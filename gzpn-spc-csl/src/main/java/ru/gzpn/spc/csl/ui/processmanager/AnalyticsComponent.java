@@ -23,7 +23,8 @@ public class AnalyticsComponent extends AbstractAnalyticsComponent {
 		VerticalLayout body = new VerticalLayout();
 		body.setSpacing(false);
 		body.setMargin(false);
-		
+		body.setHeight("300px");
+		body.setWidth("400px");
 		body.addComponent(createLastMonthPlot());
 
 		return body;
