@@ -1,10 +1,11 @@
-package ru.gzpn.spc.csl.ui.estimatereg;
+package ru.gzpn.spc.csl.model.presenters;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import ru.gzpn.spc.csl.model.EstimateCalculation;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
 
 @SuppressWarnings("serial")
 public class EstimateCalculationPresenter extends EstimateCalculation implements IEstimateCalculationPresenter {

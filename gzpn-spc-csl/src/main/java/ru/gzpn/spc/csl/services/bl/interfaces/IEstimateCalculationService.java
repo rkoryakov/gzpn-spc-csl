@@ -6,7 +6,7 @@ import java.util.List;
 import com.vaadin.data.provider.QuerySortOrder;
 
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
-import ru.gzpn.spc.csl.ui.estimatereg.IEstimateCalculationPresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
 
 public interface IEstimateCalculationService {
 

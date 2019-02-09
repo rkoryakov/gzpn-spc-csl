@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.estimatereg;
+package ru.gzpn.spc.csl.model.dataproviders;
 
 import java.util.List;
 import java.util.Locale;
@@ -9,13 +9,14 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import com.vaadin.data.provider.Query;
 
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.model.presenters.EstimateCalculationPresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
 import ru.gzpn.spc.csl.services.bl.EstimateCalculationService.EstimateCalculationFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
-import ru.gzpn.spc.csl.ui.common.AbstractRegisterDataProvider;
 import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
 
 @SuppressWarnings("serial")
-public class EstimateCalculationDataProvider extends AbstractRegisterDataProvider<IEstimateCalculationPresenter, Void> {
+public class EstimateCalculationDataProvider extends AbstractRegistryDataProvider<IEstimateCalculationPresenter, Void> {
 
 	private IEstimateCalculationService estimateCalculationService;
 	private List<ColumnSettings> shownColumns;

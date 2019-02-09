@@ -1,9 +1,10 @@
-package ru.gzpn.spc.csl.ui.approval;
+package ru.gzpn.spc.csl.model.presenters;
 
 import java.time.format.DateTimeFormatter;
 
 import ru.gzpn.spc.csl.model.LocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
+import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
 
 @SuppressWarnings("serial")
 public class LocalEstimatePresenter extends LocalEstimate implements ILocalEstimatePresenter {

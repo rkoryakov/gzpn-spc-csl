@@ -16,9 +16,9 @@ import com.vaadin.shared.data.sort.SortDirection;
 
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
 import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
-import ru.gzpn.spc.csl.ui.approval.ILocalEstimatePresenter;
 import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
 
 

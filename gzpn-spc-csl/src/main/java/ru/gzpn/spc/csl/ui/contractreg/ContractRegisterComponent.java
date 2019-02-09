@@ -17,13 +17,15 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 
+import ru.gzpn.spc.csl.model.dataproviders.AbstractRegistryDataProvider;
+import ru.gzpn.spc.csl.model.dataproviders.ContractDataProvider;
 import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.interfaces.IContract;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.ContractsRegSettingsJson;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IContractPresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractRegisterService;
-import ru.gzpn.spc.csl.ui.common.AbstractRegisterDataProvider;
 import ru.gzpn.spc.csl.ui.common.RegisterComponent;
 
 public class ContractRegisterComponent extends RegisterComponent {
@@ -49,7 +51,7 @@ public class ContractRegisterComponent extends RegisterComponent {
 	}
 	
 	@Override
-	public AbstractRegisterDataProvider getDataProvider() {
+	public AbstractRegistryDataProvider getDataProvider() {
 		if (contractDataProvider == null) {
 			contractDataProvider = new ContractDataProvider(((IContractRegisterService)service).getContractService());
 		}

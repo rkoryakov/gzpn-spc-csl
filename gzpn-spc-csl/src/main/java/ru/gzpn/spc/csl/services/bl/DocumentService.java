@@ -19,10 +19,10 @@ import ru.gzpn.spc.csl.model.Document;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IDocumentPresenter;
 import ru.gzpn.spc.csl.model.repositories.DocumentRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;
 import ru.gzpn.spc.csl.ui.common.I18n;
-import ru.gzpn.spc.csl.ui.createdoc.IDocumentPresenter;
 
 @Service
 @Transactional

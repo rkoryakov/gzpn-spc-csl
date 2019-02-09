@@ -3,6 +3,7 @@ package ru.gzpn.spc.csl.ui.processmanager;
 import java.time.Duration;
 import java.time.Instant;
 
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -43,6 +44,7 @@ public class AnalyticsComponent extends AbstractAnalyticsComponent {
 
 	public Component createLastWeekEstimatesCalcPlotLayout() {
 		VerticalLayout layout = new VerticalLayout();
+		layout.setMargin(new MarginInfo(true, true, false, true));
 		Label caption = new Label(getI18nText(I18N_LASTWEEK_APPROVE_ESTIMATES_CALC_CAP, service.getMessageSource()));
 		layout.addComponent(caption);
 		HorizontalLayout horizontalLayout = new HorizontalLayout();		
@@ -57,6 +59,7 @@ public class AnalyticsComponent extends AbstractAnalyticsComponent {
 
 	public Component createLastMonthEstimatesCalcPlotLayout() {
 		VerticalLayout layout = new VerticalLayout();
+		layout.setMargin(new MarginInfo(false, true));
 		Label caption = new Label(getI18nText(I18N_LASTMONTH_APPROVE_ESTIMATES_CALC_CAP, service.getMessageSource()));
 		layout.addComponent(caption);
 		HorizontalLayout horizontalLayout = new HorizontalLayout();		

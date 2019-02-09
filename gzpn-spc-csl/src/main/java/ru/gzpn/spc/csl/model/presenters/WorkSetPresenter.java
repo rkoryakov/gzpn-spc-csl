@@ -1,9 +1,10 @@
-package ru.gzpn.spc.csl.ui.createdoc;
+package ru.gzpn.spc.csl.model.presenters;
 
 import java.time.format.DateTimeFormatter;
 
 import ru.gzpn.spc.csl.model.WorkSet;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IWorkSetPresenter;
 import ru.gzpn.spc.csl.ui.common.I18n;
 
 @SuppressWarnings("serial")

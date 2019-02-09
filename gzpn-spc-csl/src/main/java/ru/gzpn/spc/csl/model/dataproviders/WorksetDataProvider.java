@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.createdoc;
+package ru.gzpn.spc.csl.model.dataproviders;
 
 import java.util.List;
 import java.util.Objects;
@@ -11,6 +11,8 @@ import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
 
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.model.presenters.WorkSetPresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IWorkSetPresenter;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.WorkSetService.WorkSetFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
@@ -25,7 +27,7 @@ public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSetPre
 	private NodeWrapper parentNode;
 	private List<ColumnSettings> shownColumns;
 	
-	WorksetDataProvider(IWorkSetService service) {
+	public WorksetDataProvider(IWorkSetService service) {
 		this.service = service;
 		this.filter = service.createWorkSetFilter();
 		this.parentNode = null;

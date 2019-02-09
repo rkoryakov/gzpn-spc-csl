@@ -23,6 +23,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import ru.gzpn.spc.csl.model.dataproviders.AbstractRegistryDataProvider;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
@@ -81,7 +82,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			refreshUiElements();
 		}
 
-		public abstract <T, F> AbstractRegisterDataProvider<T, F> getDataProvider();
+		public abstract <T, F> AbstractRegistryDataProvider<T, F> getDataProvider();
 
 		public abstract <T> Grid<T> getRegisterGrid();
 		

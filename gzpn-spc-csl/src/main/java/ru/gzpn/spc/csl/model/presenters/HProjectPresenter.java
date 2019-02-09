@@ -1,16 +1,17 @@
-package ru.gzpn.spc.csl.ui.admin.project;
+package ru.gzpn.spc.csl.model.presenters;
 
 import java.time.format.DateTimeFormatter;
 
 import ru.gzpn.spc.csl.model.HProject;
 import ru.gzpn.spc.csl.model.interfaces.IHProject;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IHProjectPresenter;
 
 @SuppressWarnings("serial")
 public class HProjectPresenter extends HProject implements IHProjectPresenter {
 	
 	private IHProject hProject;
 	
-	HProjectPresenter(IHProject ihProject){
+	public HProjectPresenter(IHProject ihProject){
 		this.setId(ihProject.getId());
 		this.setName(ihProject.getName());
 		this.setCode(ihProject.getCode());

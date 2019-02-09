@@ -6,7 +6,7 @@ import java.util.List;
 import com.vaadin.data.provider.QuerySortOrder;
 
 import ru.gzpn.spc.csl.model.interfaces.IContract;
-import ru.gzpn.spc.csl.ui.contractreg.IContractPresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IContractPresenter;
 
 public interface IContractService {
 

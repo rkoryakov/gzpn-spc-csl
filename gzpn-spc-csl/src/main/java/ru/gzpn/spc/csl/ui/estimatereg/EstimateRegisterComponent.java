@@ -17,13 +17,15 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 
+import ru.gzpn.spc.csl.model.dataproviders.AbstractRegistryDataProvider;
+import ru.gzpn.spc.csl.model.dataproviders.EstimateCalculationDataProvider;
 import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.EstimatesRegSettingsJson;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateRegisterService;
-import ru.gzpn.spc.csl.ui.common.AbstractRegisterDataProvider;
 import ru.gzpn.spc.csl.ui.common.RegisterComponent;
 
 public class EstimateRegisterComponent extends RegisterComponent {
@@ -51,7 +53,7 @@ public class EstimateRegisterComponent extends RegisterComponent {
 	}
 
 	@Override
-	public AbstractRegisterDataProvider getDataProvider() {
+	public AbstractRegistryDataProvider getDataProvider() {
 		if (estimateCalculationDataProvider == null) {
 				estimateCalculationDataProvider = new EstimateCalculationDataProvider(((IEstimateRegisterService)service).getEstimateCalculationService());
 		}

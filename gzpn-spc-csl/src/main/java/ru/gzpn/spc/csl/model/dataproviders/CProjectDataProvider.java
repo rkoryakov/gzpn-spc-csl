@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.admin.project;
+package ru.gzpn.spc.csl.model.dataproviders;
 
 import java.util.Comparator;
 import java.util.List;
@@ -9,15 +9,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
+import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.model.presenters.CProjectPresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.ICProjectPresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
+import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
 
 @SuppressWarnings("serial")
-public class CProjectDataProvider extends AbstractBackEndDataProvider<ICProjectPresenter, Void> {
+public class CProjectDataProvider extends AbstractRegistryDataProvider<ICProjectPresenter, Void> {
 	
 	public static final Logger logger = LogManager.getLogger(CProjectDataProvider.class);
 	private IProjectService service;
@@ -32,7 +35,7 @@ public class CProjectDataProvider extends AbstractBackEndDataProvider<ICProjectP
 											   ICProjectPresenter.FIELD_CREATE_DATE, 
 											   ICProjectPresenter.FIELD_CHANGE_DATE};
 
-	CProjectDataProvider(IProjectService service) {
+	public CProjectDataProvider(IProjectService service) {
 		this.service = service;
 		this.filter = new CProjectPresenterFilter();
 	}
@@ -48,6 +51,7 @@ public class CProjectDataProvider extends AbstractBackEndDataProvider<ICProjectP
 		return (int) service.getCPRepository().findAll().stream().map(item -> (ICProjectPresenter)new CProjectPresenter(item))
 				.filter(getFilter().getFilterPredicate(columnIDs)).count();
 	}
+	
 	
 	public CProjectPresenterFilter getFilter() {
 		return this.filter;
@@ -99,7 +103,7 @@ public class CProjectDataProvider extends AbstractBackEndDataProvider<ICProjectP
 		};
 	}
 	
-	public static class CProjectPresenterFilter {
+	public static class CProjectPresenterFilter implements IRegisterFilter {
 		private String commonTextFilter;
 		
 		private CProjectPresenterFilter() {
@@ -114,6 +118,12 @@ public class CProjectDataProvider extends AbstractBackEndDataProvider<ICProjectP
 			this.commonTextFilter = commonTextFilter.toLowerCase();
 		}
 	
+		@Override
+		public <T> Predicate<T> getFilterPredicate(List<ColumnSettings> shownColumns) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 		public Predicate<ICProjectPresenter> getFilterPredicate(String[] columnIDs) {
 			return p -> {
 				boolean result = false;
@@ -165,5 +175,17 @@ public class CProjectDataProvider extends AbstractBackEndDataProvider<ICProjectP
 			}
 			return result;
 		}
+	}
+
+	@Override
+	public List<ColumnSettings> getShownColumns() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setShownColumns(List<ColumnSettings> shownColumns) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.contractreg;
+package ru.gzpn.spc.csl.model.presenters.interfaces;
 
 import ru.gzpn.spc.csl.model.interfaces.IContract;
 

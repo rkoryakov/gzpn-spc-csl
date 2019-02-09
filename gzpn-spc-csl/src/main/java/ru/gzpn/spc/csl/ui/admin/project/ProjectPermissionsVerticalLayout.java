@@ -16,7 +16,11 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.SingleSelectionModel;
 
+import ru.gzpn.spc.csl.model.dataproviders.CProjectDataProvider;
+import ru.gzpn.spc.csl.model.dataproviders.HProjectDataProvider;
 import ru.gzpn.spc.csl.model.enums.Entities;
+import ru.gzpn.spc.csl.model.presenters.interfaces.ICProjectPresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IHProjectPresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.ui.admin.UsersAndRolesVerticalLayout;
 import ru.gzpn.spc.csl.ui.common.I18n;

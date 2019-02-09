@@ -3,8 +3,8 @@ package ru.gzpn.spc.csl.ui.approval;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.VerticalLayout;
 
+import ru.gzpn.spc.csl.model.dataproviders.AbstractRegistryDataProvider;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
-import ru.gzpn.spc.csl.ui.common.AbstractRegisterDataProvider;
 
 public class LocalEstimatesApprovalComponent extends AbstractLocalEstimatesApprovalComponent {
 
@@ -14,7 +14,7 @@ public class LocalEstimatesApprovalComponent extends AbstractLocalEstimatesAppro
 	}
 
 	@Override
-	public <T, F> AbstractRegisterDataProvider<T, F> getDataProvider() {
+	public <T, F> AbstractRegistryDataProvider<T, F> getDataProvider() {
 		// TODO Auto-generated method stub
 		return null;
 	}

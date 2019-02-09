@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.contractreg;
+package ru.gzpn.spc.csl.model.dataproviders;
 
 import java.util.List;
 import java.util.Locale;
@@ -9,13 +9,14 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import com.vaadin.data.provider.Query;
 
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.model.presenters.ContractPresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IContractPresenter;
 import ru.gzpn.spc.csl.services.bl.ContractService.ContractFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractService;
-import ru.gzpn.spc.csl.ui.common.AbstractRegisterDataProvider;
 import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
 
 @SuppressWarnings("serial")
-public class ContractDataProvider extends AbstractRegisterDataProvider<IContractPresenter, Void> {
+public class ContractDataProvider extends AbstractRegistryDataProvider<IContractPresenter, Void> {
 	
 	private IContractService contractService;
 	private List<ColumnSettings> shownColumns;

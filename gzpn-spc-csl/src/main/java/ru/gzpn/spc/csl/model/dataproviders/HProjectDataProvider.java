@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.admin.project;
+package ru.gzpn.spc.csl.model.dataproviders;
 
 import java.util.Comparator;
 import java.util.List;
@@ -14,6 +14,8 @@ import com.vaadin.data.provider.Query;
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
+import ru.gzpn.spc.csl.model.presenters.HProjectPresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IHProjectPresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 
 @SuppressWarnings("serial")
@@ -29,7 +31,7 @@ public class HProjectDataProvider extends AbstractBackEndDataProvider<IHProjectP
 											   IHProjectPresenter.FIELD_CREATE_DATE, 
 											   IHProjectPresenter.FIELD_CHANGE_DATE};
 	
-	HProjectDataProvider(IProjectService service) {
+	public HProjectDataProvider(IProjectService service) {
 		this.service = service;
 		this.filter = new HProjectPresenterFilter();
 	}

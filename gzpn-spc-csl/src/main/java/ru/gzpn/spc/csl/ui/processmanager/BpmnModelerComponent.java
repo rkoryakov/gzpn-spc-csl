@@ -44,7 +44,7 @@ public class BpmnModelerComponent extends AbstractBpmnModelerComponent {
 		try {
 			streamData = new byte[is.available()];
 			is.read(streamData, 0, is.available());
-			bpmnModeler.setBpmnXml(new String(streamData, "UTF8"));
+			bpmnModeler.setBpmnXml(new String(streamData, "UTF-8"));
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}

@@ -16,10 +16,10 @@ import com.vaadin.shared.data.sort.SortDirection;
 
 import ru.gzpn.spc.csl.model.interfaces.IContract;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IContractPresenter;
 import ru.gzpn.spc.csl.model.repositories.ContractRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractService;
 import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
-import ru.gzpn.spc.csl.ui.contractreg.IContractPresenter;
 
 @Service
 @Transactional

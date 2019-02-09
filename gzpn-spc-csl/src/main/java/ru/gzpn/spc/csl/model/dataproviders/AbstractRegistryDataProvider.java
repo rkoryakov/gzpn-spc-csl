@@ -1,13 +1,14 @@
-package ru.gzpn.spc.csl.ui.common;
+package ru.gzpn.spc.csl.model.dataproviders;
 
 import java.util.List;
 
 import com.vaadin.data.provider.AbstractBackEndDataProvider;
 
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
 
 @SuppressWarnings("serial")
-public abstract class AbstractRegisterDataProvider<T, F> extends AbstractBackEndDataProvider<T, F> {
+public abstract class AbstractRegistryDataProvider<T, F> extends AbstractBackEndDataProvider<T, F> {
 	
 	public abstract IRegisterFilter getFilter();
 

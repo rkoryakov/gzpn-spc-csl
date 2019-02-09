@@ -37,6 +37,9 @@ import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.themes.ValoTheme;
 
+import ru.gzpn.spc.csl.model.dataproviders.DocumentsDataProvider;
+import ru.gzpn.spc.csl.model.dataproviders.ProjectTreeDataProvider;
+import ru.gzpn.spc.csl.model.dataproviders.WorksetDataProvider;
 import ru.gzpn.spc.csl.model.enums.DocType;
 import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.interfaces.IBaseEntity;
@@ -47,6 +50,8 @@ import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IDocumentPresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IWorkSetPresenter;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.ICreateDocService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;

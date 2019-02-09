@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.createdoc;
+package ru.gzpn.spc.csl.model.dataproviders;
 
 import java.util.List;
 import java.util.Locale;
@@ -13,6 +13,8 @@ import com.vaadin.data.provider.Query;
 import ru.gzpn.spc.csl.model.Document;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.model.presenters.DocumentPresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IDocumentPresenter;
 import ru.gzpn.spc.csl.services.bl.DocumentService.DocumentFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;
 

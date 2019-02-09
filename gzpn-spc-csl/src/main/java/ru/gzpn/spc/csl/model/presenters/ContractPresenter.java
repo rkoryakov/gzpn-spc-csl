@@ -1,9 +1,10 @@
-package ru.gzpn.spc.csl.ui.contractreg;
+package ru.gzpn.spc.csl.model.presenters;
 
 import java.time.format.DateTimeFormatter;
 
 import ru.gzpn.spc.csl.model.Contract;
 import ru.gzpn.spc.csl.model.interfaces.IContract;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IContractPresenter;
 
 @SuppressWarnings("serial")
 public class ContractPresenter extends Contract implements IContractPresenter {

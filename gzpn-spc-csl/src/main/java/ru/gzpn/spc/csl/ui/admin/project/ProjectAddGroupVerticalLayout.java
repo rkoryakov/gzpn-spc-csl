@@ -26,9 +26,13 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import ru.gzpn.spc.csl.model.dataproviders.CProjectDataProvider;
+import ru.gzpn.spc.csl.model.dataproviders.HProjectDataProvider;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.jsontypes.ACLJson;
+import ru.gzpn.spc.csl.model.presenters.interfaces.ICProjectPresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IHProjectPresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.ui.admin.GroupTemplate;
 import ru.gzpn.spc.csl.ui.admin.UsersAndRolesVerticalLayout;

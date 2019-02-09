@@ -23,9 +23,9 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import ru.gzpn.spc.csl.model.dataproviders.AbstractRegistryDataProvider;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
-import ru.gzpn.spc.csl.ui.common.AbstractRegisterDataProvider;
 import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 import ru.gzpn.spc.csl.ui.common.RegisterComponent;
@@ -85,7 +85,7 @@ public abstract class AbstractLocalEstimatesApprovalComponent extends VerticalLa
 		refreshUiElements();
 	}
 
-	public abstract <T, F> AbstractRegisterDataProvider<T, F> getDataProvider();
+	public abstract <T, F> AbstractRegistryDataProvider<T, F> getDataProvider();
 
 	public abstract <T> Grid<T> getLocalEstimatesGrid();
 	

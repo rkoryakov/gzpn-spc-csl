@@ -16,10 +16,10 @@ import com.vaadin.shared.data.sort.SortDirection;
 
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
 import ru.gzpn.spc.csl.model.repositories.EstimateCalculationRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
 import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
-import ru.gzpn.spc.csl.ui.estimatereg.IEstimateCalculationPresenter;
 
 @Service
 @Transactional

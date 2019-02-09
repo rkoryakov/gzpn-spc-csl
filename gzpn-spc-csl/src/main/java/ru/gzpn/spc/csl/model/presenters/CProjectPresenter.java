@@ -1,17 +1,18 @@
-package ru.gzpn.spc.csl.ui.admin.project;
+package ru.gzpn.spc.csl.model.presenters;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import ru.gzpn.spc.csl.model.CProject;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.presenters.interfaces.ICProjectPresenter;
 
 @SuppressWarnings("serial")
 public class CProjectPresenter extends CProject implements ICProjectPresenter {
 
 	private ICProject cProject;
 	
-	CProjectPresenter(ICProject icProject){
+	public CProjectPresenter(ICProject icProject){
 		this.setId(icProject.getId());
 		this.setName(icProject.getName());
 		this.setCode(icProject.getCode());
