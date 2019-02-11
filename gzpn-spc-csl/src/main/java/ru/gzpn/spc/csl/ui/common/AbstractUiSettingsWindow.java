@@ -20,7 +20,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 
-public abstract class UISettingsWindow extends Window implements I18n {
+public abstract class AbstractUiSettingsWindow extends Window implements I18n {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -53,7 +53,7 @@ public abstract class UISettingsWindow extends Window implements I18n {
 
 	private Map<Action, Set<Listener>> listeners;
 	
-	public UISettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
+	public AbstractUiSettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
 		this.settingsService = settingsService;
 		this.user = settingsService.getCurrentUser();
 		this.messageSource = messageSource;

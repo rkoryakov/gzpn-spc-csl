@@ -13,7 +13,7 @@ import ru.gzpn.spc.csl.model.presenters.ContractPresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IContractPresenter;
 import ru.gzpn.spc.csl.services.bl.ContractService.ContractFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractService;
-import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
+import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 @SuppressWarnings("serial")
 public class ContractDataProvider extends AbstractRegistryDataProvider<IContractPresenter, Void> {
@@ -21,7 +21,7 @@ public class ContractDataProvider extends AbstractRegistryDataProvider<IContract
 	private IContractService contractService;
 	private List<ColumnSettings> shownColumns;
 	private Locale locale;
-	private IRegisterFilter filter;
+	private IGridFilter filter;
 	
 	public ContractDataProvider(IContractService contractService) {
 		this.contractService = contractService;
@@ -52,7 +52,7 @@ public class ContractDataProvider extends AbstractRegistryDataProvider<IContract
 	}
 
 	@Override
-	public IRegisterFilter getFilter() {
+	public IGridFilter getFilter() {
 		if (filter == null) {
 			filter = new ContractFilter();
 		}

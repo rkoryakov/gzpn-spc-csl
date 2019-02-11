@@ -29,7 +29,7 @@ public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSetPre
 	
 	public WorksetDataProvider(IWorkSetService service) {
 		this.service = service;
-		this.filter = service.createWorkSetFilter();
+		this.filter = new WorkSetFilter();
 		this.parentNode = null;
 	}
 

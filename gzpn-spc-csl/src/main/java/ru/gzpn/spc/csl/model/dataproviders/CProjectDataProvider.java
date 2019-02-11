@@ -13,11 +13,12 @@ import com.vaadin.data.provider.Query;
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.CProjectPresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.ICProjectPresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
-import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
+import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 @SuppressWarnings("serial")
 public class CProjectDataProvider extends AbstractRegistryDataProvider<ICProjectPresenter, Void> {
@@ -103,7 +104,7 @@ public class CProjectDataProvider extends AbstractRegistryDataProvider<ICProject
 		};
 	}
 	
-	public static class CProjectPresenterFilter implements IRegisterFilter {
+	public static class CProjectPresenterFilter implements IGridFilter<ICProject> {
 		private String commonTextFilter;
 		
 		private CProjectPresenterFilter() {
@@ -119,7 +120,7 @@ public class CProjectDataProvider extends AbstractRegistryDataProvider<ICProject
 		}
 	
 		@Override
-		public <T> Predicate<T> getFilterPredicate(List<ColumnSettings> shownColumns) {
+		public Predicate<ICProject> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// TODO Auto-generated method stub
 			return null;
 		}

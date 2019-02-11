@@ -48,9 +48,10 @@ import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.DraggableTree;
 import ru.gzpn.spc.csl.ui.common.I18n;
-import ru.gzpn.spc.csl.ui.common.UISettingsWindow;
+import ru.gzpn.spc.csl.ui.common.AbstractUiSettingsWindow;
 
-public class CreateDocSettingsWindow extends UISettingsWindow {
+@SuppressWarnings("serial")
+public class CreateDocSettingsWindow extends AbstractUiSettingsWindow {
 
 	public static final int GRID_ROWS = 8;
 	public static final int GRID_ROW_HEIGHT = 38;

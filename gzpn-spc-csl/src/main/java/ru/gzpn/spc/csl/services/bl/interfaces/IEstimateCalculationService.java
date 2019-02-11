@@ -8,7 +8,7 @@ import com.vaadin.data.provider.QuerySortOrder;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
 
-public interface IEstimateCalculationService {
+public interface IEstimateCalculationService extends IDataService<IEstimateCalculation, IEstimateCalculationPresenter> {
 
 	List<IEstimateCalculation> getEstimateCalculation();
 	Comparator<IEstimateCalculationPresenter> getSortComparator(List<QuerySortOrder> list);

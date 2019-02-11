@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,7 @@ import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
 import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
-import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
+import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 
 @Service
@@ -28,6 +29,9 @@ public class LocalEstimateService implements ILocalEstimateService {
 
 	@Autowired
 	private LocalEstimateRepository localEstimateRepository;
+	
+	@Autowired
+	MessageSource messageSource;
 	
 	@Override
 	public List<ILocalEstimate> getLocalEstimates() {
@@ -97,7 +101,7 @@ public class LocalEstimateService implements ILocalEstimateService {
 	}
 	
 	
-	public static final class LocalEstimateFilter implements IRegisterFilter {
+	public static final class LocalEstimateFilter implements IGridFilter<ILocalEstimate> {
 		private String commonTextFilter;
 		
 		public LocalEstimateFilter() {
@@ -112,7 +116,7 @@ public class LocalEstimateService implements ILocalEstimateService {
 			this.commonTextFilter = commonTextFilter.toLowerCase();
 		}
 
-		public <T> Predicate<T> getFilterPredicate(List<ColumnSettings> shownColumns) {
+		public Predicate<ILocalEstimate> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// only common filter is working now
 			return p -> {
 				boolean result = false;
@@ -186,5 +190,23 @@ public class LocalEstimateService implements ILocalEstimateService {
 			}
 			return result;
 		}
+	}
+
+
+	@Override
+	public MessageSource getMessageSource() {
+		return messageSource;
+	}
+
+	@Override
+	public void save(ILocalEstimate bean) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void remove(ILocalEstimate bean) {
+		// TODO Auto-generated method stub
+		
 	}
 }

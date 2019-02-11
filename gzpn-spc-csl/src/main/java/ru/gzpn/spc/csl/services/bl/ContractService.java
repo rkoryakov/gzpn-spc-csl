@@ -15,11 +15,12 @@ import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
 import ru.gzpn.spc.csl.model.interfaces.IContract;
+import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IContractPresenter;
 import ru.gzpn.spc.csl.model.repositories.ContractRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractService;
-import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
+import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 @Service
 @Transactional
@@ -90,7 +91,7 @@ public class ContractService implements IContractService {
 	}
 	
 	
-	public static final class ContractFilter implements IRegisterFilter {
+	public static final class ContractFilter implements IGridFilter<ILocalEstimate> {
 		private String commonTextFilter;
 		
 		public ContractFilter() {
@@ -105,7 +106,7 @@ public class ContractService implements IContractService {
 			this.commonTextFilter = commonTextFilter.toLowerCase();
 		}
 
-		public <T> Predicate<T> getFilterPredicate(List<ColumnSettings> shownColumns) {
+		public Predicate<ILocalEstimate> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// only common filter is working now
 			return p -> {
 				boolean result = false;

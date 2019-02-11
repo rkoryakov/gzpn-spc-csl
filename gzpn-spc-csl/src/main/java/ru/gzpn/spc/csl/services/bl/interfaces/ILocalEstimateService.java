@@ -8,7 +8,7 @@ import com.vaadin.data.provider.QuerySortOrder;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
 
-public interface ILocalEstimateService {
+public interface ILocalEstimateService extends IDataService<ILocalEstimate, ILocalEstimatePresenter> {
 
 	List<ILocalEstimate> getLocalEstimates();
 	Comparator<ILocalEstimatePresenter> getSortComparator(List<QuerySortOrder> list);

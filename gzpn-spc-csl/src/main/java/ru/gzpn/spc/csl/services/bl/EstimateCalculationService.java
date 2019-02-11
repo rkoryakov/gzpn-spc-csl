@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,7 @@ import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
 import ru.gzpn.spc.csl.model.repositories.EstimateCalculationRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
-import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
+import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 @Service
 @Transactional
@@ -27,6 +28,9 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 
 	@Autowired
 	EstimateCalculationRepository estimateCalculationRepository;
+	
+	@Autowired
+	MessageSource messageSource;
 	
 	@Override
 	public List<IEstimateCalculation> getEstimateCalculation() {
@@ -73,7 +77,7 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 		};
 	}
 	
-	public static final class EstimateCalculationFilter implements IRegisterFilter {
+	public static final class EstimateCalculationFilter implements IGridFilter<IEstimateCalculation> {
 		private String commonTextFilter;
 		
 		public EstimateCalculationFilter() {
@@ -88,7 +92,7 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 			this.commonTextFilter = commonTextFilter.toLowerCase();
 		}
 
-		public <T> Predicate<T> getFilterPredicate(List<ColumnSettings> shownColumns) {
+		public Predicate<IEstimateCalculation> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// only common filter is working now
 			return p -> {
 				boolean result = false;
@@ -141,5 +145,21 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 			}
 			return result;
 		}
+	}
+
+	@Override
+	public MessageSource getMessageSource() {
+		return messageSource;
+	}
+	
+	@Override
+	public void save(IEstimateCalculation bean) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void remove(IEstimateCalculation bean) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -13,7 +13,7 @@ import ru.gzpn.spc.csl.model.presenters.LocalEstimatePresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
 import ru.gzpn.spc.csl.services.bl.LocalEstimateService.LocalEstimateFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
-import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
+import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 @SuppressWarnings("serial")
 public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILocalEstimatePresenter, Void> {
@@ -21,7 +21,7 @@ public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILoc
 	private ILocalEstimateService localEstimateService;
 	private List<ColumnSettings> shownColumns;
 	private Locale locale;
-	private IRegisterFilter filter;
+	private IGridFilter filter;
 
 
 	public LocalEstimateDataProvider(ILocalEstimateService localEstimateService) {
@@ -55,7 +55,7 @@ public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILoc
 	}
 	
 	@Override
-	public IRegisterFilter getFilter() {
+	public IGridFilter getFilter() {
 		if (filter == null) {
 			filter = new LocalEstimateFilter();
 		}

@@ -13,7 +13,7 @@ import ru.gzpn.spc.csl.model.presenters.EstimateCalculationPresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
 import ru.gzpn.spc.csl.services.bl.EstimateCalculationService.EstimateCalculationFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
-import ru.gzpn.spc.csl.ui.common.IRegisterFilter;
+import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 @SuppressWarnings("serial")
 public class EstimateCalculationDataProvider extends AbstractRegistryDataProvider<IEstimateCalculationPresenter, Void> {
@@ -21,7 +21,7 @@ public class EstimateCalculationDataProvider extends AbstractRegistryDataProvide
 	private IEstimateCalculationService estimateCalculationService;
 	private List<ColumnSettings> shownColumns;
 	private Locale locale;
-	private IRegisterFilter filter;
+	private IGridFilter filter;
 	
 	public EstimateCalculationDataProvider(IEstimateCalculationService estimateCalculationService) {
 		this.estimateCalculationService = estimateCalculationService;
@@ -55,7 +55,7 @@ public class EstimateCalculationDataProvider extends AbstractRegistryDataProvide
 	}
 
 	@Override
-	public IRegisterFilter getFilter() {
+	public IGridFilter getFilter() {
 		if (filter == null) {
 			filter = new EstimateCalculationFilter();
 		}

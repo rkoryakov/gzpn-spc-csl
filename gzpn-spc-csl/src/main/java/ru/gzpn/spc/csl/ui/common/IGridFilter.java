@@ -5,8 +5,8 @@ import java.util.function.Predicate;
 
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 
-public interface IRegisterFilter {
+public interface IGridFilter<T> {
 	public String getCommonTextFilter();
 	public void setCommonTextFilter(String commonTextFilter);
-	public <T> Predicate<T> getFilterPredicate(List<ColumnSettings> shownColumns);
+	public Predicate<T> getFilterPredicate(List<ColumnSettings> shownColumns);
 }

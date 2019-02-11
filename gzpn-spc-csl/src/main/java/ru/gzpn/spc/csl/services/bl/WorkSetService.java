@@ -15,8 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
@@ -43,16 +43,6 @@ public class WorkSetService implements IWorkSetService {
 	private WorkSetRepository repository;
 	@Autowired
 	private PlanObjectRepository planObjectRepository;
-	
-	@Override
-	public Order createSortOrder(String fieldName, Direction direction) {
-		return new Order(direction, fieldName);
-	}
-	
-	@Override
-	public WorkSetFilter createWorkSetFilter() {
-		return new WorkSetFilter();
-	}
 	
 	@Override
 	public Stream<IWorkSet> getAllItems(List<Order> sortOrders, int offset, int limit) {
@@ -100,7 +90,7 @@ public class WorkSetService implements IWorkSetService {
 	}
 	
 	@Override
-	public Comparator<IWorkSet> getSortComparator(List<QuerySortOrder> list) {
+	public Comparator<IWorkSetPresenter> getSortComparator(List<QuerySortOrder> list) {
 		return (a, b) -> {
 			int result = 0;
 			for (QuerySortOrder qso : list) {
@@ -145,7 +135,7 @@ public class WorkSetService implements IWorkSetService {
 		private String  nameFilter;
 		// and some other field filters...
 		
-		private WorkSetFilter() {
+		public WorkSetFilter() {
 			
 		}
 
@@ -241,5 +231,23 @@ public class WorkSetService implements IWorkSetService {
 			
 			this.repository.save((WorkSet)ws);
 		}
+	}
+
+	@Override
+	public MessageSource getMessageSource() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void save(IWorkSet bean) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void remove(IWorkSet bean) {
+		// TODO Auto-generated method stub
+		
 	}
 }

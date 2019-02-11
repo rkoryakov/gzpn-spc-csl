@@ -22,7 +22,7 @@ import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IDocumentPresenter;
 import ru.gzpn.spc.csl.model.repositories.DocumentRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;
-import ru.gzpn.spc.csl.ui.common.I18n;
+import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 @Service
 @Transactional
@@ -94,7 +94,7 @@ public class DocumentService implements IDocumentService {
 		};
 	}
 	
-	public static final class DocumentFilter implements I18n {
+	public static final class DocumentFilter implements IGridFilter<IDocument> {
 		private String commonTextFilter;
 		private String codeFilter;
 		private String nameFilter;
@@ -128,6 +128,7 @@ public class DocumentService implements IDocumentService {
 			this.nameFilter = nameFilter;
 		}
 
+		@Override
 		public Predicate<IDocument> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// only common filter is working now
 			return p -> {
