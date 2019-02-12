@@ -3,7 +3,6 @@ package ru.gzpn.spc.csl.ui.common;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.context.MessageSource;
@@ -41,9 +40,8 @@ public abstract class AbstractUiSettingsWindow extends Window implements I18n {
 	public static final Action SAVE_AND_CLOSE_ACTION = new Action("save&closeAction");
 	
 	protected IUserSettigsService settingsService;
-	protected ISettingsJson userSettings;
 	protected MessageSource messageSource;
-	protected String user;
+	protected String currentUser;
 	
 	protected ComponentContainer bodyLayout;
 	protected HorizontalLayout footerLayout;
@@ -53,11 +51,18 @@ public abstract class AbstractUiSettingsWindow extends Window implements I18n {
 
 	private Map<Action, Set<Listener>> listeners;
 	
+	public abstract ComponentContainer createBodyLayout();
+	public abstract ISettingsJson getUserSettings();
+	/* Fill these UI elements with data from the {@code UserSettingsJson uiSettings} */
+	public abstract void refreshUiElements();
+	/* Fill the {@code UserSettingsJson userSettings} with actual data from UI elements */
+	public abstract void refreshSettings();
+	
+	
 	public AbstractUiSettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
 		this.settingsService = settingsService;
-		this.user = settingsService.getCurrentUser();
+		this.currentUser = settingsService.getCurrentUser();
 		this.messageSource = messageSource;
-		this.userSettings = settingsService.getUserSettings();
 		initEventActions();
 		
 		createBody();
@@ -71,24 +76,11 @@ public abstract class AbstractUiSettingsWindow extends Window implements I18n {
 		listeners.put(CLOSE_ACTION, new HashSet<>());
 		listeners.put(SAVE_AND_CLOSE_ACTION, new HashSet<>());
 	}
-	
-	public ISettingsJson getUiSettings() {
-		if (Objects.isNull(userSettings)) {
-			userSettings = settingsService.getUserSettings();
-		}
-		return userSettings;
-	}
-
-	public void setUiSettings(ISettingsJson uiSettings) {
-		this.userSettings = uiSettings;
-	}
 
 	public void createBody() {
 		this.bodyLayout = createBodyLayout();
 		this.setContent(bodyLayout);
 	}
-
-	public abstract ComponentContainer createBodyLayout();
 
 	public void createFooter() {
 		HorizontalLayout footer = createFooterLayout();
@@ -129,24 +121,13 @@ public abstract class AbstractUiSettingsWindow extends Window implements I18n {
 		closeSettings();
 		onSaveAndClose();
 	}
-
-	/**  
-	 * Fill these UI elements with data from the {@code UserSettingsJson uiSettings}
-	 */
-	public abstract void refreshUiElements();
 	
 	public void save() {
 		refreshSettings();
-		settingsService.save(user, userSettings);
+		settingsService.save(currentUser, getUserSettings());
 		refreshUiElements();
 		onSave();
 	}
-	
-	/**
-	 * Fill the {@code UserSettingsJson userSettings} with actual data
-	 * from UI elements
-	 */
-	public abstract void refreshSettings();
 
 	public void closeSettings() {
 		onClose();

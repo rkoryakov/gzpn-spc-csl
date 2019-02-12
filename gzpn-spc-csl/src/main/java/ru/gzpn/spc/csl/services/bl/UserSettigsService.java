@@ -30,12 +30,6 @@ public class UserSettigsService implements IUserSettigsService {
 	ServerProperties serverProperties;
 	
 	@Override
-	public ISettingsJson getUserSettings() {
-		String user = getCurrentUser();
-		return getCreateDocUserSettings(user);
-	}
-	
-	@Override
 	public String getCurrentUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String user = null;

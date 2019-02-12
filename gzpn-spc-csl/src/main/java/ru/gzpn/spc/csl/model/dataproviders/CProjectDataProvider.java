@@ -13,7 +13,6 @@ import com.vaadin.data.provider.Query;
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
-import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.CProjectPresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.ICProjectPresenter;
@@ -104,7 +103,7 @@ public class CProjectDataProvider extends AbstractRegistryDataProvider<ICProject
 		};
 	}
 	
-	public static class CProjectPresenterFilter implements IGridFilter<ICProject> {
+	public static class CProjectPresenterFilter implements IGridFilter<ICProjectPresenter> {
 		private String commonTextFilter;
 		
 		private CProjectPresenterFilter() {
@@ -120,7 +119,7 @@ public class CProjectDataProvider extends AbstractRegistryDataProvider<ICProject
 		}
 	
 		@Override
-		public Predicate<ICProject> getFilterPredicate(List<ColumnSettings> shownColumns) {
+		public Predicate<ICProjectPresenter> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// TODO Auto-generated method stub
 			return null;
 		}

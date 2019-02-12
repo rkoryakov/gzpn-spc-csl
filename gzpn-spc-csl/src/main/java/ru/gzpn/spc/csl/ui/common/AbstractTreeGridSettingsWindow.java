@@ -1,11 +1,13 @@
 package ru.gzpn.spc.csl.ui.common;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -14,6 +16,7 @@ import org.springframework.context.MessageSource;
 
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.grid.DropMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
@@ -22,19 +25,21 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.grid.GridDragSource;
 import com.vaadin.ui.components.grid.GridDropTarget;
 import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.components.grid.TreeGridDropTarget;
+import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
-import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.createdoc.ProjectItemIconGenerator;
@@ -46,6 +51,8 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 	private static final String I18N_COLUMNSTAB_CAPTION = "TreeGridSettingsWindow.columnstab.cap";
 	private static final String I18N_HEADERSTAB_CAPTION = "TreeGridSettingsWindow.headerstab.cap";
 	private static final String I18N_TREE_CAPTION = "TreeGridSettingsWindow.tree.cap";
+	private static final String I18N_SETTINGS_ADD_HEADER_BUTTON = "TreeGridSettingsWindow.addButton.cap";
+	private static final String I18N_SETTINGS_ADD_HEADER_NEWITEM = "TreeGridSettingsWindow.newItem.cap";
 	
 	public static final int GRID_ROWS = 8;
 	public static final int GRID_ROW_HEIGHT = 38;
@@ -57,18 +64,26 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 	private List<NodeWrapper> draggedItems;
 	private TreeData<NodeWrapper> treeData;
 	private TreeDataProvider<NodeWrapper> treeDataProvider;
-	private ComponentContainer columnsLayout;
+	private VerticalLayout columnsLayout;
 	private Grid<ColumnSettingsPresenter> columnsGrid;
 	private List<ColumnSettingsPresenter> columnsGridData;
+	private Grid<ColumnHeaderPresenter> headersGrid;
+	private VerticalLayout headersLayout;
+	private List<ColumnHeaderPresenter> headersGridData;
+	private Button addButton;
 
 	
 	public abstract NodeWrapper getTreeSettings();
+	public abstract void setTreeSettings(NodeWrapper node);
+	
 	public abstract List<ColumnSettings> getColumnSettings();
+	public abstract void setColumnSettings(List<ColumnSettings> columns);
+	
 	public abstract List<ColumnHeaderGroup> getHeaderSettings();
+	public abstract void setHeaderSettings(List<ColumnHeaderGroup> headers);
 	
 	public AbstractTreeGridSettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
 		super(settingsService, messageSource);
-		this.userSettings = settingsService.getCreateDocUserSettings(user, new CreateDocSettingsJson());
 		this.center();
 		this.setCaption(getI18nText(I18N_WINDOW_CAPTION, messageSource));
 		this.setModal(true);
@@ -248,29 +263,264 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 		column.setId(id);
 	}
 	
-	private void refreshHeadersGrid() {
-		// TODO Auto-generated method stub
+	public CheckBox cretateGridColumnVisibleCheckBox(ColumnSettings item) {
+		CheckBox checkBox = new CheckBox();
+		checkBox.setValue(item.isShown());
+	
+		return checkBox;
+	}
+	
+	public ComboBox<String> cretateGridColumnMergedHeadComboBox(ColumnSettings item, Set<ColumnHeaderGroup> flatHeaders) {
+		ComboBox<String> mergedHeadComboBox = new ComboBox<>();
+
+		mergedHeadComboBox.setItems(flatHeaders.stream().map(element -> element.getCaption()));
+		ColumnHeaderGroup header = flatHeaders.stream()
+				.filter(element -> element.hasColumns() && element.getColumns().contains(item)).findFirst().orElse(null);
+		if (header != null) {
+			mergedHeadComboBox.setSelectedItem(header.getCaption());
+		}
 		
+		return mergedHeadComboBox;
+	}
+	
+	private void refreshHeadersGrid() {
+		if (headersGrid != null) {
+			headersLayout.removeComponent(headersGrid);
+		}
+		
+		headersGrid = new Grid<>();
+		headersLayout.addComponent(headersGrid);
+		headersGrid.setSizeFull();
+		headersGrid.setHeightByRows(GRID_ROWS);
+		
+		List<ColumnHeaderGroup> headers = getHeaderSettings();
+		Set<ColumnHeaderGroup> flatHeaders = toFlatSet(headers);
+		
+		setColumnAttribures("id", headersGrid.addColumn(ColumnHeaderPresenter::getCaption).setEditorComponent(new TextField(), ColumnHeaderPresenter::setCaption).setEditable(true), I18N_SETTINGS_HEADERS_COLUMN_ID);
+		setColumnAttribures("visibility", headersGrid.addComponentColumn(ColumnHeaderPresenter::getVisibilityCheckBox), I18N_SETTINGS_HEADERS_COLUMN_VISIBLE);
+		setColumnAttribures("headers", headersGrid.addComponentColumn(ColumnHeaderPresenter::getMergedHeadComboBox), I18N_SETTINGS_HEADERS_COLUMN_HEAD);
+		setColumnAttribures("remove", headersGrid.addComponentColumn(ColumnHeaderPresenter::getRemoveButton), "");
+		
+		headersGrid.getEditor().addSaveListener(saveEvent -> {
+			save();
+			headersGrid.setItems(this.headersGridData);
+		});
+		
+		headersGrid.getEditor().setEnabled(true);
+		
+		this.headersGridData = flatHeaders.stream().map(item -> {
+			ColumnHeaderPresenter resultItem = new ColumnHeaderPresenter(item, settingsService);
+			resultItem.setVisibilityCheckBox(cretateGridColumnHeaderVisibleCheckBox(item));
+			resultItem.setMergedHeadComboBox(cretateGridColumnHeaderMergedHeadComboBox(item, headers, flatHeaders));
+			resultItem.setRemoveButton(cretateGridColumnHeaderRemoveButton(resultItem));
+			return resultItem;
+		}).collect(Collectors.toList());
+		
+		headersGrid.setItems(this.headersGridData);
 	}
 
+	public CheckBox cretateGridColumnHeaderVisibleCheckBox(ColumnHeaderGroup item) {
+		CheckBox checkBox = new CheckBox();
+		checkBox.setValue(item.isShown());
+		return checkBox;
+	}
+	
+	public ComboBox<String> cretateGridColumnHeaderMergedHeadComboBox(ColumnHeaderGroup item, List<ColumnHeaderGroup> headers, Set<ColumnHeaderGroup> flatHeaders) {
+		ComboBox<String> mergedHeadComboBox = new ComboBox<>();
+
+		mergedHeadComboBox.setItems(flatHeaders.stream().map(element -> element.getCaption()));
+		ColumnHeaderGroup parentHeader = getParentHeader(headers, item);
+		if (parentHeader != null) {
+			mergedHeadComboBox.setSelectedItem(parentHeader.getCaption());
+		}
+		
+		return mergedHeadComboBox;
+	}
+	
+	private ColumnHeaderGroup getParentHeader(List<ColumnHeaderGroup> headers, ColumnHeaderGroup item) {
+		ColumnHeaderGroup result = null;
+		for (ColumnHeaderGroup header : headers) {
+			if (header.hasChildrenGroups() && header.getChildren().contains(item)) {
+				result = header;
+				break;
+			} else if (header.hasChildrenGroups()) {
+				getParentHeader(header.getChildren(), item);
+			}
+		}
+		return result;
+	}
+	
+	private Button cretateGridColumnHeaderRemoveButton(ColumnHeaderPresenter item) {
+		Button removeButton = new Button(VaadinIcons.TRASH);
+		removeButton.setStyleName(ValoTheme.BUTTON_BORDERLESS);
+		removeButton.addClickListener(clickEvent -> {
+			int index = this.headersGridData.indexOf(item);
+			this.headersGridData.remove(index);
+			save();
+			headersGrid.setItems(this.headersGridData);
+		});
+		return removeButton;
+	}
+	
 	private Component createRightColumnsGrid() {
-		// TODO Auto-generated method stub
-		return null;
+		columnsLayout = new VerticalLayout();
+		columnsLayout.setSizeFull();
+		columnsLayout.setMargin(false);
+		columnsLayout.setSpacing(false);
+		refreshColumnsGrid();
+		
+		return columnsLayout;
 	}
 
 	private Component createColumnHeadersGrid() {
-		// TODO Auto-generated method stub
-		return null;
+		headersLayout = new VerticalLayout();
+		
+		headersLayout.setSizeFull();
+		headersLayout.setMargin(true);
+		headersLayout.setSpacing(true);
+		
+		refreshHeadersGrid();
+		headersLayout.addComponentAsFirst(createColumnHeadersButtons());
+		
+		return headersLayout;
 	}
 
+	private Component createColumnHeadersButtons() {
+		HorizontalLayout layout = new HorizontalLayout();
+		addButton = new Button();
+		addButton.setIcon(VaadinIcons.PLUS);
+		addButton.setDescription(getI18nText(I18N_SETTINGS_ADD_HEADER_BUTTON, messageSource));
+		layout.addComponent(addButton);
+		
+		addButton.addClickListener(clickEvent -> {
+			
+			List<ColumnHeaderGroup> headers = getHeaderSettings();
+			Set<ColumnHeaderGroup> flatHeaders = toFlatSet(headers);
 
-
-	@Override
-	public void refreshSettings() {
-		// TODO Auto-generated method stub
-
+			StringBuilder newItemText = new StringBuilder(getI18nText(I18N_SETTINGS_ADD_HEADER_NEWITEM, messageSource));
+			newItemText = newItemText.append(headersGridData.size() + 1);
+			ColumnHeaderGroup newHeaderGroup = new ColumnHeaderGroup(newItemText.toString());
+			ColumnHeaderPresenter newGridRow = new ColumnHeaderPresenter(newHeaderGroup, settingsService);
+			newGridRow.setVisibilityCheckBox(cretateGridColumnHeaderVisibleCheckBox(newGridRow));
+			newGridRow.setMergedHeadComboBox(cretateGridColumnHeaderMergedHeadComboBox(newHeaderGroup, headers, flatHeaders));
+			newGridRow.setRemoveButton(cretateGridColumnHeaderRemoveButton(newGridRow));
+			
+			this.headersGridData.add(newGridRow);
+			save();
+	
+			this.headersGrid.setItems(headersGridData);
+		});
+		return layout;
 	}
 	
+	@Override
+	public void refreshSettings() {
+		NodeWrapper next = treeData.getRootItems().get(0);
+		NodeWrapper result = next;
+		result.setParent(null);
+		
+		while (!treeData.getChildren(next).isEmpty()) {
+			NodeWrapper child = treeData.getChildren(next).get(0);
+			child.setParent(next);
+			next.setChild(child);
+			next = child;
+		}
+		
+		setTreeSettings(result);
+
+		List<ColumnHeaderGroup> headers = headersGridData.stream()
+				.map(item -> (ColumnHeaderGroup)item)
+					.peek(item -> {item.setChildren(null); item.setColumns(null);})
+						.collect(Collectors.toList());
+		
+		refreshHeaders(headers);
+		refreshColumnsSettings(headers);
+		
+		setHeaderSettings(this.headersGridData.stream()
+					.filter(item -> !item.mergedHeadComboBox.getSelectedItem().isPresent())
+						.map(this::creteHeaderGroupByPresenterHeader).collect(Collectors.toList()));
+		
+		setColumnSettings(this.columnsGridData.stream()
+					.map(this::createColumnSettingsByPresenter).collect(Collectors.toList()));
+	}
+	
+	
+	public void refreshHeaders(List<ColumnHeaderGroup> headers) {	
+		for (ColumnHeaderPresenter chp : this.headersGridData) {
+			if (chp.getMergedHeadComboBox().getSelectedItem().isPresent()) {
+				String caption = chp.getMergedHeadComboBox().getSelectedItem().get();
+				Optional<ColumnHeaderGroup>  parent = getHeaderByCaption(caption, headers);
+				if (parent.isPresent()) {
+					List<ColumnHeaderGroup> children = parent.get().getChildren();
+				
+					if (children == null) {
+						children = new ArrayList<>();
+					}
+					ColumnHeaderGroup ch = creteHeaderGroupByPresenterHeader(chp);
+					if (!children.contains(ch)) {
+						children.add(ch);
+					}
+					parent.get().setChildren(children);
+				}
+			}
+		}
+	}
+
+	private Optional<ColumnHeaderGroup> getHeaderByCaption(String caption, List<ColumnHeaderGroup> headers) {
+		Optional<ColumnHeaderGroup> result = Optional.empty();
+		for (ColumnHeaderGroup chg : headers) {
+			if (chg.hasChildrenGroups()) {
+				result = getHeaderByCaption(caption, chg.getChildren());
+			}
+			
+			if (!result.isPresent() && chg.getCaption().equals(caption)) {
+				result = Optional.of(chg);
+			}
+		}
+		return result;
+	}
+	
+	private ColumnHeaderGroup creteHeaderGroupByPresenterHeader(ColumnHeaderPresenter header) {
+		ColumnHeaderGroup result = new ColumnHeaderGroup();
+		result.setCaption(header.getCaption());
+		result.setChildren(header.getChildren());
+		result.setColumns(header.getColumns());
+		result.setShown(header.isShown());
+		return result;
+	}
+	
+	private ColumnSettings createColumnSettingsByPresenter(ColumnSettingsPresenter column) {
+		ColumnSettings result = new ColumnSettings();
+		result.setEntityFieldName(column.getEntityFieldName());
+		result.setEntityName(column.getEntityName());
+		result.setOrderIndex(column.getOrderIndex());
+		result.setShown(column.isShown());
+		result.setWidth(column.getWidth());
+		return result;
+	}
+	
+	private void refreshColumnsSettings(List<ColumnHeaderGroup> headers) {	
+		for (ColumnSettingsPresenter csp : this.columnsGridData) {
+			if (csp.getMergedHeadComboBox().getSelectedItem().isPresent()) {
+				String caption = csp.getMergedHeadComboBox().getSelectedItem().get();
+				Optional<ColumnHeaderGroup> header = getHeaderByCaption(caption, headers);
+				if (header.isPresent()) {
+					List<ColumnSettings> columns = header.get().getColumns();
+					if (columns == null) {
+						columns = new ArrayList<>();
+					}
+					csp.setOrderIndex(caption.hashCode());
+					ColumnSettings cs = createColumnSettingsByPresenter(csp);
+					
+					if (!columns.contains(cs)) {
+						columns.add(cs);
+					}
+					header.get().setColumns(columns);
+				}
+			}
+		}
+	}
+
 	@Override
 	public void refreshUiElements() {
 		refreshUiTreeData();

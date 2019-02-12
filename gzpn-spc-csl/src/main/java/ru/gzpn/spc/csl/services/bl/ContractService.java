@@ -15,7 +15,6 @@ import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
 import ru.gzpn.spc.csl.model.interfaces.IContract;
-import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IContractPresenter;
 import ru.gzpn.spc.csl.model.repositories.ContractRepository;
@@ -91,7 +90,7 @@ public class ContractService implements IContractService {
 	}
 	
 	
-	public static final class ContractFilter implements IGridFilter<ILocalEstimate> {
+	public static final class ContractFilter implements IGridFilter<IContractPresenter> {
 		private String commonTextFilter;
 		
 		public ContractFilter() {
@@ -106,7 +105,7 @@ public class ContractService implements IContractService {
 			this.commonTextFilter = commonTextFilter.toLowerCase();
 		}
 
-		public Predicate<ILocalEstimate> getFilterPredicate(List<ColumnSettings> shownColumns) {
+		public Predicate<IContractPresenter> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// only common filter is working now
 			return p -> {
 				boolean result = false;

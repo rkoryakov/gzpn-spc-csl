@@ -175,18 +175,19 @@ public class NodeWrapper implements Serializable, I18n {
 		Entities entity = Entities.valueOf(entityName.toUpperCase());
 		String entityCaption = entity.getEntityText(messageSource);
 		String fieldCaption = "";
-		
-		switch (groupFiled) {
-		case IBaseEntity.FIELD_ID:
-		case IBaseEntity.FIELD_VERSION:
-		case IBaseEntity.FIELD_CHANGE_DATE:
-		case IBaseEntity.FIELD_CREATE_DATE:
-			fieldCaption = Entities.getEntityFieldText("BaseEntity", messageSource);
-			break;
-		default:
-			fieldCaption = Entities.getEntityFieldText(entityName  + "." + groupFiled, messageSource);
+
+		if (groupFiled != null) {
+			switch (groupFiled) {
+			case IBaseEntity.FIELD_ID:
+			case IBaseEntity.FIELD_VERSION:
+			case IBaseEntity.FIELD_CHANGE_DATE:
+			case IBaseEntity.FIELD_CREATE_DATE:
+				fieldCaption = Entities.getEntityFieldText("BaseEntity", messageSource);
+				break;
+			default:
+				fieldCaption = Entities.getEntityFieldText(entityName + "." + groupFiled, messageSource);
+			}
 		}
-		
 		return entityCaption + " - " + fieldCaption;
 	}
 	

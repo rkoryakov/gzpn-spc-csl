@@ -21,7 +21,7 @@ public class ContractDataProvider extends AbstractRegistryDataProvider<IContract
 	private IContractService contractService;
 	private List<ColumnSettings> shownColumns;
 	private Locale locale;
-	private IGridFilter filter;
+	private IGridFilter<IContractPresenter> filter;
 	
 	public ContractDataProvider(IContractService contractService) {
 		this.contractService = contractService;
@@ -52,7 +52,7 @@ public class ContractDataProvider extends AbstractRegistryDataProvider<IContract
 	}
 
 	@Override
-	public IGridFilter getFilter() {
+	public IGridFilter<IContractPresenter> getFilter() {
 		if (filter == null) {
 			filter = new ContractFilter();
 		}
