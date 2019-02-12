@@ -26,15 +26,17 @@ import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.ContractsRegSettingsJson;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IContractPresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractRegisterService;
-import ru.gzpn.spc.csl.ui.common.RegisterComponent;
+import ru.gzpn.spc.csl.ui.common.AbstractTreeGridSettingsWindow;
+import ru.gzpn.spc.csl.ui.common.RegistryComponent;
 
-public class ContractRegisterComponent extends RegisterComponent {
+@SuppressWarnings("serial")
+public class ContractRegistryComponent extends RegistryComponent {
 
 	private Grid<IContractPresenter> contractGrid;
 	private ContractDataProvider contractDataProvider;
 	private static final int CONTRACT_GRID_ROWS = 11;
 	
-	public ContractRegisterComponent(IContractRegisterService service) {
+	public ContractRegistryComponent(IContractRegisterService service) {
 		super(service);
 		//contractDataProvider = new ContractDataProvider(service.getContractService());
 		setSizeFull();
@@ -50,19 +52,32 @@ public class ContractRegisterComponent extends RegisterComponent {
 		return bodyLayout;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public AbstractRegistryDataProvider getDataProvider() {
+	public AbstractRegistryDataProvider<IContractPresenter, Void> getDataProvider() {
 		if (contractDataProvider == null) {
 			contractDataProvider = new ContractDataProvider(((IContractRegisterService)service).getContractService());
 		}
 		return contractDataProvider; 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Grid getRegisterGrid() {
+	public Grid<IContractPresenter> getRegisterGrid() {
 		return contractGrid;
 	}
 
+	@Override
+	public void refreshUiElements() {
+		refreshContractGrid();
+	}
+
+	@Override
+	public AbstractTreeGridSettingsWindow getSettingsWindow() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	private Component createContractGrid() {
 		contractGrid = new Grid<>();
 		refreshContractGrid();
@@ -73,7 +88,7 @@ public class ContractRegisterComponent extends RegisterComponent {
 		contractDataProvider = new ContractDataProvider(((IContractRegisterService)service).getContractService());
 		
 		ContractsRegSettingsJson userSettings = (ContractsRegSettingsJson)service.getUserSettingsService().getContracrRegSettings(this.user, new ContractsRegSettingsJson());
-		List<ColumnSettings> columnSettings = userSettings.getRightResultColumns();
+		List<ColumnSettings> columnSettings = userSettings.getColumns();
 		
 		columnSettings.sort((cs1, cs2) -> 
 			Integer.compare(cs1.getOrderIndex(), cs2.getOrderIndex())
@@ -87,13 +102,13 @@ public class ContractRegisterComponent extends RegisterComponent {
 		contractGrid.setDataProvider(contractDataProvider);
 		
 		// test column headers
-		userSettings.getRightResultColumns();
+		userSettings.getColumns();
 		createContractsRegSettingsJson(userSettings);
 	}
 	
 	public void createContractsRegSettingsJson(ContractsRegSettingsJson userSettings) {
-		if (userSettings.hasRightColumnHeaders()) {
-			refreshColumnHeaderGroups(userSettings.getRightColumnHeaders());
+		if (userSettings.hasHeaders()) {
+			refreshColumnHeaderGroups(userSettings.getHeaders());
 		}
 		contractGrid.setHeightByRows(CONTRACT_GRID_ROWS - contractGrid.getHeaderRowCount() + 1);
 	}
@@ -205,10 +220,5 @@ public class ContractRegisterComponent extends RegisterComponent {
 		}
 		
 		column.setId(settings.getEntityFieldName());
-	}
-	
-	@Override
-	public void refreshUiElements() {
-		refreshContractGrid();
 	}
 }

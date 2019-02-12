@@ -26,7 +26,6 @@ import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
-import ru.gzpn.spc.csl.ui.createdoc.CreateDocSettingsWindow;
 
 @SuppressWarnings("serial")
 public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends VerticalLayout implements I18n {
@@ -63,7 +62,7 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 	public abstract String getReportName();
 	/* Fill these UI elements with data from the {@code UserSettingsJson uiSettings} */
 	public abstract void refreshUiElements();
-	
+	public abstract AbstractTreeGridSettingsWindow getSettingsWindow();
 	
 	public AbstractTreeGridComponent(IDataService<T, ?> service, IUserSettigsService userSettingsService) {
 		this.service = service;
@@ -140,7 +139,7 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 		userLayoutSettingsButton.setIcon(VaadinIcons.COG_O);
 		userLayoutSettingsButton.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC, messageSource, I18N_USERLAYOUTSETTINGS_DESC));
 		userLayoutSettingsButton.addClickListener(event -> {
-			CreateDocSettingsWindow settingsWindow = new CreateDocSettingsWindow(userSettingsService, messageSource);
+			AbstractTreeGridSettingsWindow settingsWindow = getSettingsWindow();
 			settingsWindow.addOnSaveAndCloseListener(closeEvent -> {
 				refreshUiElements();
 			});

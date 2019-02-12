@@ -28,12 +28,12 @@ import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
-import ru.gzpn.spc.csl.ui.common.RegisterComponent;
+import ru.gzpn.spc.csl.ui.common.RegistryComponent;
 import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
 import ru.gzpn.spc.csl.ui.createdoc.CreateDocSettingsWindow;
 
 public abstract class AbstractLocalEstimatesApprovalComponent extends VerticalLayout implements I18n {
-	public static final Logger logger = LogManager.getLogger(RegisterComponent.class);
+	public static final Logger logger = LogManager.getLogger(RegistryComponent.class);
 	private static final long serialVersionUID = 1L;
 
 	public static final String I18N_CREATEITEMBUTTON_CAP = "RegisterComponent.createItemButton.cap";

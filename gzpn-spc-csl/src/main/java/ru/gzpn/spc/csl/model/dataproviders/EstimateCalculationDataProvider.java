@@ -1,10 +1,7 @@
 package ru.gzpn.spc.csl.model.dataproviders;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Stream;
-
-import org.springframework.context.i18n.LocaleContextHolder;
 
 import com.vaadin.data.provider.Query;
 
@@ -20,12 +17,10 @@ public class EstimateCalculationDataProvider extends AbstractRegistryDataProvide
 
 	private IEstimateCalculationService estimateCalculationService;
 	private List<ColumnSettings> shownColumns;
-	private Locale locale;
-	private IGridFilter filter;
+	private IGridFilter<IEstimateCalculationPresenter> filter;
 	
 	public EstimateCalculationDataProvider(IEstimateCalculationService estimateCalculationService) {
 		this.estimateCalculationService = estimateCalculationService;
-		this.locale = LocaleContextHolder.getLocale();
 	}
 	
 	@Override
@@ -55,7 +50,7 @@ public class EstimateCalculationDataProvider extends AbstractRegistryDataProvide
 	}
 
 	@Override
-	public IGridFilter getFilter() {
+	public IGridFilter<IEstimateCalculationPresenter> getFilter() {
 		if (filter == null) {
 			filter = new EstimateCalculationFilter();
 		}

@@ -77,7 +77,7 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 		};
 	}
 	
-	public static final class EstimateCalculationFilter implements IGridFilter<IEstimateCalculation> {
+	public static final class EstimateCalculationFilter implements IGridFilter<IEstimateCalculationPresenter> {
 		private String commonTextFilter;
 		
 		public EstimateCalculationFilter() {
@@ -92,7 +92,7 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 			this.commonTextFilter = commonTextFilter.toLowerCase();
 		}
 
-		public Predicate<IEstimateCalculation> getFilterPredicate(List<ColumnSettings> shownColumns) {
+		public Predicate<IEstimateCalculationPresenter> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// only common filter is working now
 			return p -> {
 				boolean result = false;

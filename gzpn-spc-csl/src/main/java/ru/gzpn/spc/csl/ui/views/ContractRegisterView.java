@@ -15,7 +15,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractRegisterService;
-import ru.gzpn.spc.csl.ui.contractreg.ContractRegisterComponent;
+import ru.gzpn.spc.csl.ui.contractreg.ContractRegistryComponent;
 
 @SpringView(name = ContractRegisterView.NAME)
 @UIScope
@@ -34,7 +34,7 @@ public class ContractRegisterView extends VerticalLayout implements View {
 
 	@PostConstruct
 	void init() {
-		ContractRegisterComponent layout = new ContractRegisterComponent(contractRegisterService);
+		ContractRegistryComponent layout = new ContractRegistryComponent(contractRegisterService);
 		addComponent(layout);
 	}
 

@@ -33,6 +33,7 @@ public class CreateDocSettingsJson implements ISettingsJson, Serializable {
 	private NodeWrapper rightTreeGroup;
 	private int mainSplitPosition;
 	private int leftSplitPosition;
+	private boolean showTree = true;
 	
 	// the displayed columns
 	private List<ColumnSettings> leftResultColumns;
@@ -250,6 +251,37 @@ public class CreateDocSettingsJson implements ISettingsJson, Serializable {
 	
 	public boolean hasRightColumnHeaders() {
 		return rightColumnHeaders != null && !rightColumnHeaders.isEmpty();
+	}
+
+	@JsonIgnore
+	@Override
+	public boolean isShownTree() {
+		return showTree;
+	}
+	@JsonIgnore
+	public void setShowTree(boolean showTree) {
+		this.showTree = showTree;
+	}
+	
+	@JsonIgnore
+	@Override
+	public NodeWrapper getTreeSettings() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@JsonIgnore
+	@Override
+	public List<ColumnSettings> getColumns() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@JsonIgnore
+	@Override
+	public List<ColumnHeaderGroup> getHeaders() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

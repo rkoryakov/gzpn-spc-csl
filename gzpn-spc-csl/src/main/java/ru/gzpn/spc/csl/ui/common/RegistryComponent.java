@@ -27,10 +27,9 @@ import ru.gzpn.spc.csl.model.dataproviders.AbstractRegistryDataProvider;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
-import ru.gzpn.spc.csl.ui.createdoc.CreateDocSettingsWindow;
 
-public abstract class RegisterComponent extends VerticalLayout implements I18n {
-		public static final Logger logger = LogManager.getLogger(RegisterComponent.class);
+public abstract class RegistryComponent extends VerticalLayout implements I18n {
+		public static final Logger logger = LogManager.getLogger(RegistryComponent.class);
 		private static final long serialVersionUID = 1L;
 
 		public static final String I18N_CREATEITEMBUTTON_CAP = "RegisterComponent.createItemButton.cap";
@@ -65,8 +64,14 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 		private Map<Action, Set<Listener>> listeners;
 		private Button userLayoutSettingsButton;
 
+
+		public abstract AbstractTreeGridSettingsWindow getSettingsWindow();
+		public abstract <T, F> AbstractRegistryDataProvider<T, F> getDataProvider();
+		public abstract <T> Grid<T> getRegisterGrid();
+		/* Fill these UI elements with data from the {@code UserSettingsJson uiSettings} */
+		public abstract void refreshUiElements();
 		
-		public RegisterComponent(IUIService service) {
+		public RegistryComponent(IUIService service) {
 			this.service = service;
 			this.messageSource = service.getMessageSource();
 			this.userSettingsService = service.getUserSettingsService();
@@ -81,10 +86,6 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			createFooter();
 			refreshUiElements();
 		}
-
-		public abstract <T, F> AbstractRegistryDataProvider<T, F> getDataProvider();
-
-		public abstract <T> Grid<T> getRegisterGrid();
 		
 		protected void initEventActions() {
 			listeners = new HashMap<>();
@@ -150,7 +151,7 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			userLayoutSettingsButton.setIcon(VaadinIcons.COG_O);
 			userLayoutSettingsButton.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC, messageSource, I18N_USERLAYOUTSETTINGS_DESC));
 			userLayoutSettingsButton.addClickListener(event -> {
-				CreateDocSettingsWindow settingsWindow = new CreateDocSettingsWindow(userSettingsService, messageSource);
+				AbstractTreeGridSettingsWindow settingsWindow = getSettingsWindow();
 				settingsWindow.addOnSaveAndCloseListener(closeEvent -> {
 					refreshUiElements();
 				});
@@ -206,11 +207,6 @@ public abstract class RegisterComponent extends VerticalLayout implements I18n {
 			});
 			return openItemButton;
 		}
-
-		/**  
-		 * Fill these UI elements with data from the {@code UserSettingsJson uiSettings}
-		 */
-		public abstract void refreshUiElements();
 		
 		public void createItem() {
 			onCreate();

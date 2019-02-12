@@ -24,20 +24,15 @@ public class ContractsRegSettingsJson implements ISettingsJson {
 	
 	// null if there are no header groups
 	private List<ColumnHeaderGroup> rightColumnHeaders;
+
+	private boolean showTree = false;
 	
-	public boolean hasRightColumnHeaders() {
+	public boolean hasHeaders() {
 		return rightColumnHeaders != null && !rightColumnHeaders.isEmpty();
 	}
 	
-	public List<ColumnHeaderGroup> getRightColumnHeaders() {
-		if (Objects.isNull(rightColumnHeaders)) {
-			rightColumnHeaders = getRightDefaultColumnHeaderGroups();
-		}
-		return rightColumnHeaders;
-	}
-	
 	@JsonIgnore
-	public List<ColumnHeaderGroup> getRightDefaultColumnHeaderGroups() {
+	public List<ColumnHeaderGroup> getDefaultHeaders() {
 		
 		List<ColumnHeaderGroup> result = new ArrayList<>();
 		List<ColumnHeaderGroup> subGroups = new ArrayList<>();
@@ -56,23 +51,17 @@ public class ContractsRegSettingsJson implements ISettingsJson {
 		return result;
 	}
 	
-	public void setRightColumnHeaders(List<ColumnHeaderGroup> rightColumnHeaders) {
+	public void setHeaders(List<ColumnHeaderGroup> rightColumnHeaders) {
 		this.rightColumnHeaders = rightColumnHeaders;
 	}
 	
-	public NodeWrapper getLeftTreeGroup() {
-		if (leftTreeGroup == null) {
-			leftTreeGroup = getLeftDefaultNodesHierarchy();
-		}
-		return leftTreeGroup;
-	}
 
-	public void setLeftTreeGroup(NodeWrapper leftTreeGroup) {
+	public void setTreeSettings(NodeWrapper leftTreeGroup) {
 		this.leftTreeGroup = leftTreeGroup;
 	}
 	
 	@JsonIgnore
-	public NodeWrapper getLeftDefaultNodesHierarchy() {
+	public NodeWrapper getDefaultNodesHierarchy() {
 		NodeWrapper root =  new NodeWrapper("HProject", "name");
 			root.addChild(new NodeWrapper("CProject", "name"))
 				.addChild(new NodeWrapper("Stage", "name"))
@@ -80,20 +69,13 @@ public class ContractsRegSettingsJson implements ISettingsJson {
 		return root;
 	}
 	
-	public List<ColumnSettings> getRightResultColumns() {
-		if (Objects.isNull(rightResultColumns)) {
-			rightResultColumns = getRightDefaultColumns();
-		}
-		
-		return rightResultColumns;
-	}
 
 	public void setRightResultColumns(List<ColumnSettings> rightResultColumns) {
 		this.rightResultColumns = rightResultColumns;
 	}
 	
 	@JsonIgnore
-	public List<ColumnSettings> getRightDefaultColumns() {
+	public List<ColumnSettings> getDefaultColumns() {
 		List<ColumnSettings> result = new ArrayList<>();
 		String entityName = Document.class.getSimpleName();
 		
@@ -109,5 +91,43 @@ public class ContractsRegSettingsJson implements ISettingsJson {
 		result.add(new ColumnSettings(entityName, IContract.FIELD_VERSION, null, false, 8));
 		
 		return result;
+	}
+
+	@JsonIgnore
+	@Override
+	public boolean isShownTree() {
+		return showTree ;
+	}
+	@JsonIgnore
+	public void setShowTree(boolean showTree) {
+		this.showTree = showTree;
+	}
+
+	@JsonIgnore
+	@Override
+	public NodeWrapper getTreeSettings() {
+		if (leftTreeGroup == null) {
+			leftTreeGroup = getDefaultNodesHierarchy();
+		}
+		return leftTreeGroup;
+	}
+
+	@JsonIgnore
+	@Override
+	public List<ColumnSettings> getColumns() {
+		if (Objects.isNull(rightResultColumns)) {
+			rightResultColumns = getDefaultColumns();
+		}
+		
+		return rightResultColumns;
+	}
+
+	@JsonIgnore
+	@Override
+	public List<ColumnHeaderGroup> getHeaders() {
+		if (Objects.isNull(rightColumnHeaders)) {
+			rightColumnHeaders = getDefaultHeaders();
+		}
+		return rightColumnHeaders;
 	}
 }

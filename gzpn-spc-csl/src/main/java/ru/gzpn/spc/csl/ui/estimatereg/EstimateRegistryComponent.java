@@ -26,15 +26,17 @@ import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.EstimatesRegSettingsJson;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateRegisterService;
-import ru.gzpn.spc.csl.ui.common.RegisterComponent;
+import ru.gzpn.spc.csl.ui.common.AbstractTreeGridSettingsWindow;
+import ru.gzpn.spc.csl.ui.common.RegistryComponent;
 
-public class EstimateRegisterComponent extends RegisterComponent {
+@SuppressWarnings("serial")
+public class EstimateRegistryComponent extends RegistryComponent {
 	
 	private Grid<IEstimateCalculationPresenter> estimateGrid;
 	private EstimateCalculationDataProvider estimateCalculationDataProvider;
 	private static final int ESTIMATE_GRID_ROWS = 11;
 	
-	public EstimateRegisterComponent(IEstimateRegisterService service) {
+	public EstimateRegistryComponent(IEstimateRegisterService service) {
 		super(service);
 		
 		setSizeFull();
@@ -52,8 +54,9 @@ public class EstimateRegisterComponent extends RegisterComponent {
 		return bodyLayout;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public AbstractRegistryDataProvider getDataProvider() {
+	public AbstractRegistryDataProvider<IEstimateCalculationPresenter, Void> getDataProvider() {
 		if (estimateCalculationDataProvider == null) {
 				estimateCalculationDataProvider = new EstimateCalculationDataProvider(((IEstimateRegisterService)service).getEstimateCalculationService());
 		}
@@ -61,9 +64,21 @@ public class EstimateRegisterComponent extends RegisterComponent {
 		return estimateCalculationDataProvider;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Grid getRegisterGrid() {
+	public Grid<IEstimateCalculationPresenter> getRegisterGrid() {
 		return estimateGrid;
+	}
+	
+	@Override
+	public void refreshUiElements() {
+		refreshEstimateGrid();
+	}
+
+	@Override
+	public AbstractTreeGridSettingsWindow getSettingsWindow() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	private Component createEstimateGrid() {
@@ -95,8 +110,8 @@ public class EstimateRegisterComponent extends RegisterComponent {
 	}
 	
 	public void createEstimateHeaderColumns(EstimatesRegSettingsJson userSettings) {
-		if (userSettings.hasRightColumnHeaders()) {
-			refreshColumnHeaderGroups(userSettings.getRightColumnHeaders());
+		if (userSettings.hasHeaders()) {
+			refreshColumnHeaderGroups(userSettings.getHeaders());
 		}
 		estimateGrid.setHeightByRows(ESTIMATE_GRID_ROWS - estimateGrid.getHeaderRowCount() + 1);
 	}
@@ -212,11 +227,4 @@ public class EstimateRegisterComponent extends RegisterComponent {
 		
 		column.setId(settings.getEntityFieldName());
 	}
-	
-	@Override
-	public void refreshUiElements() {
-		refreshEstimateGrid();
-	}
-
-
 }
