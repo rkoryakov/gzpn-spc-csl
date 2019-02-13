@@ -8,6 +8,7 @@ import com.vaadin.data.provider.Query;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.EstimateCalculationPresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.EstimateCalculationService.EstimateCalculationFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
 import ru.gzpn.spc.csl.ui.common.IGridFilter;
@@ -55,5 +56,17 @@ public class EstimateCalculationDataProvider extends AbstractRegistryDataProvide
 			filter = new EstimateCalculationFilter();
 		}
 		return filter;
+	}
+
+	@Override
+	public NodeWrapper getParentNode() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setParentNode(NodeWrapper node) {
+		// TODO Auto-generated method stub
+		
 	}
 }

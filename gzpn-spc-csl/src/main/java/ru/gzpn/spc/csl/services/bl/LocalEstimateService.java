@@ -101,7 +101,7 @@ public class LocalEstimateService implements ILocalEstimateService {
 	}
 	
 	
-	public static final class LocalEstimateFilter implements IGridFilter<ILocalEstimate> {
+	public static final class LocalEstimateFilter implements IGridFilter<ILocalEstimatePresenter> {
 		private String commonTextFilter;
 		
 		public LocalEstimateFilter() {
@@ -116,7 +116,7 @@ public class LocalEstimateService implements ILocalEstimateService {
 			this.commonTextFilter = commonTextFilter.toLowerCase();
 		}
 
-		public Predicate<ILocalEstimate> getFilterPredicate(List<ColumnSettings> shownColumns) {
+		public Predicate<ILocalEstimatePresenter> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// only common filter is working now
 			return p -> {
 				boolean result = false;

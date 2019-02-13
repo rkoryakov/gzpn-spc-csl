@@ -16,6 +16,7 @@ import com.vaadin.shared.data.sort.SortDirection;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.CProjectPresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.ICProjectPresenter;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
@@ -185,6 +186,18 @@ public class CProjectDataProvider extends AbstractRegistryDataProvider<ICProject
 
 	@Override
 	public void setShownColumns(List<ColumnSettings> shownColumns) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public NodeWrapper getParentNode() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setParentNode(NodeWrapper node) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -11,6 +11,7 @@ import com.vaadin.data.provider.Query;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.ContractPresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IContractPresenter;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.ContractService.ContractFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractService;
 import ru.gzpn.spc.csl.ui.common.IGridFilter;
@@ -57,5 +58,17 @@ public class ContractDataProvider extends AbstractRegistryDataProvider<IContract
 			filter = new ContractFilter();
 		}
 		return filter;
+	}
+
+	@Override
+	public NodeWrapper getParentNode() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setParentNode(NodeWrapper node) {
+		// TODO Auto-generated method stub
+		
 	}
 }

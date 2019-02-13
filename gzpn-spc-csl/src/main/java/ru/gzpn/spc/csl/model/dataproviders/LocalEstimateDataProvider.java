@@ -11,6 +11,7 @@ import com.vaadin.data.provider.Query;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.LocalEstimatePresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.LocalEstimateService.LocalEstimateFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
 import ru.gzpn.spc.csl.ui.common.IGridFilter;
@@ -21,7 +22,7 @@ public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILoc
 	private ILocalEstimateService localEstimateService;
 	private List<ColumnSettings> shownColumns;
 	private Locale locale;
-	private IGridFilter filter;
+	private IGridFilter<ILocalEstimatePresenter> filter;
 
 
 	public LocalEstimateDataProvider(ILocalEstimateService localEstimateService) {
@@ -55,10 +56,22 @@ public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILoc
 	}
 	
 	@Override
-	public IGridFilter getFilter() {
+	public IGridFilter<ILocalEstimatePresenter> getFilter() {
 		if (filter == null) {
 			filter = new LocalEstimateFilter();
 		}
 		return filter;
+	}
+
+	@Override
+	public NodeWrapper getParentNode() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setParentNode(NodeWrapper node) {
+		// TODO Auto-generated method stub
+		
 	}
 }
