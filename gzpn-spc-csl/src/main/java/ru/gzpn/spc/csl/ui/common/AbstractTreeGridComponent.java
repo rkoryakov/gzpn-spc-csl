@@ -178,6 +178,7 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 	public void createBody() {
 		body = new VerticalLayout();
 		refreshUiElements();
+		addComponent(body);
 	}
 
 	public void refreshUiElements() {

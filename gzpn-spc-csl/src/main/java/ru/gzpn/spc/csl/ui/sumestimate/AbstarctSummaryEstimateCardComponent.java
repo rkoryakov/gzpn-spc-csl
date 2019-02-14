@@ -15,8 +15,8 @@ import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -40,7 +40,6 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 	private static final String I18N_CLOSEBUTTON_CAP = "SummaryEstimateCardComponent.closebutton.cap";
 	private static final String I18N_SETTINGSBUTTON_DESC = "SummaryEstimateCardComponent.settingsbutton.cap";
 	private static final String I18N_SAVEBUTTON_DESC = "SummaryEstimateCardComponent.saveButton.desc";
-	private static final String I18N_ESTIMATECALCULATIONFILEDS_CAP = "SummaryEstimateCardComponent.estimatecalculationfileds.cap";
 
 	protected IUIService service;
 	protected IUserSettigsService userSettingsService;
@@ -59,7 +58,10 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 	private Map<Action, Set<Listener>> listeners;
 	private Button settingsButton;
 	private Button closeButton;
+	private CssLayout calculationFieldsLayout;
 
+	public abstract VerticalLayout createBodyLayout();
+	
 	
 	public AbstarctSummaryEstimateCardComponent(IUIService service) {
 		this.service = service;
@@ -72,10 +74,8 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 
 		initEventActions();
 		createHeadFutures();
-		createEstimateCalculationFileds();
 		createBody();
 		createFooter();
-		refreshUiElements();
 	}
 	
 	protected void initEventActions() {
@@ -104,15 +104,6 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 		this.addComponent(verticalLayout);	
 	}
 	
-	public void createEstimateCalculationFileds() {
-		Panel panel = new Panel(getI18nText(I18N_ESTIMATECALCULATIONFILEDS_CAP, messageSource));
-		panel.setSizeFull();
-
-		
-		addComponent(panel);
-	}
-	
-	
 	public Component createSaveButton() {
 		saveButton = new Button(VaadinIcons.CLOUD_DOWNLOAD_O);
 		saveButton.setDescription(getI18nText(I18N_SAVEBUTTON_DESC, messageSource));
@@ -129,13 +120,18 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 	}
 	
 	public void createBody() {
-		this.bodyLayout = createBodyLayout();
-		this.bodyLayout.setSpacing(false);
-		this.bodyLayout.setMargin(false);
-		this.addComponent(bodyLayout);
+		bodyLayout = createBodyLayout();
+		bodyLayout.setSpacing(false);
+		bodyLayout.setMargin(false);
+		refreshUiElements();
+		addComponent(bodyLayout);
+	}
+	
+	public void refreshUiElements() {
+		bodyLayout.removeAllComponents();
+		createBodyLayout();
 	}
 
-	public abstract VerticalLayout createBodyLayout();
 
 	public void createFooter() {
 		HorizontalLayout footer = createFooterLayout();
@@ -162,8 +158,7 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 		initialMaxPriceButton.setStyleName(ValoTheme.BUTTON_FRIENDLY);
 		initialMaxPriceButton.setEnabled(false);
 		initialMaxPriceButton.addClickListener(listener -> {
-			/* TODO */
-			refreshUiElements();
+
 		});
 		return initialMaxPriceButton;
 	}
@@ -172,8 +167,7 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 		sendForApprovalButton = new Button(getI18nText(I18N_SENDFORAPPROVALBUTTON_CAP, messageSource));
 		sendForApprovalButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		sendForApprovalButton.addClickListener(listener -> {
-			/* TODO */
-			refreshUiElements();
+
 		});
 		return sendForApprovalButton;
 	}
@@ -186,11 +180,7 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 		
 		return closeButton;
 	}
-	
-	/**  
-	 * Fill these UI elements with data from the {@code UserSettingsJson uiSettings}
-	 */
-	public abstract void refreshUiElements();
+
 	
 	public void calculateInitialMaxPrice() {
 		OnCalculateInitialMaxPrice();
