@@ -149,7 +149,7 @@ public class MainUI extends UI {
 		VerticalLayout result = new VerticalLayout();
 		result.setMargin(true);
 		result.setSpacing(true);
-		result.setSizeFull();
+		//result.setSizeFull();
 		return result;
 	}
 

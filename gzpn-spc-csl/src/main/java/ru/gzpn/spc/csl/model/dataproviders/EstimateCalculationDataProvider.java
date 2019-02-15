@@ -26,7 +26,7 @@ public class EstimateCalculationDataProvider extends AbstractRegistryDataProvide
 	
 	@Override
 	protected Stream<IEstimateCalculationPresenter> fetchFromBackEnd(Query<IEstimateCalculationPresenter, Void> query) {
-		return estimateCalculationService.getEstimateCalculation().stream().map(
+		return estimateCalculationService.getEstimateCalculations().stream().map(
 					item -> (IEstimateCalculationPresenter) new EstimateCalculationPresenter(item)
 						).filter(getFilter().getFilterPredicate(shownColumns))
 							.sorted(estimateCalculationService.getSortComparator(query.getSortOrders()));
@@ -34,7 +34,7 @@ public class EstimateCalculationDataProvider extends AbstractRegistryDataProvide
 
 	@Override
 	protected int sizeInBackEnd(Query<IEstimateCalculationPresenter, Void> query) {
-		return (int)estimateCalculationService.getEstimateCalculation().stream().map(
+		return (int)estimateCalculationService.getEstimateCalculations().stream().map(
 					item -> (IEstimateCalculationPresenter) new EstimateCalculationPresenter(item)
 						).filter(getFilter().getFilterPredicate(shownColumns)).count();
 	}

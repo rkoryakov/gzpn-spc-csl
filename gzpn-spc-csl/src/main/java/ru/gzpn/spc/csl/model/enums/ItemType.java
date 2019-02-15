@@ -7,10 +7,9 @@ import java.util.stream.Collectors;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-public enum PriceLevel {
-	LEVEL_200("ru.gzpn.spc.csl.model.enums.PriceLevel.level_2000"),
-	CURRENT("ru.gzpn.spc.csl.model.enums.PriceLevel.current"),
-	CONTRACT("ru.gzpn.spc.csl.model.enums.PriceLevel.contract");
+public enum ItemType {
+	ALL("ru.gzpn.spc.csl.model.enums.ItemType.all"),
+	MY_ITEMS("ru.gzpn.spc.csl.model.enums.ItemType.my_items");
 	
 	private String i18n;
 	private String i18Value;
@@ -20,7 +19,7 @@ public enum PriceLevel {
 		messageSource.setBasename("i18n/captions");
 	}
 	
-	private PriceLevel(String i18n) {
+	private ItemType(String i18n) {
 		this.i18n = i18n;
 	}
 
@@ -39,9 +38,9 @@ public enum PriceLevel {
 						.collect(Collectors.toList());
 	}
 	
-	public static List<PriceLevel> getAll() {
+	public static List<ItemType> getAll() {
 		return Arrays.asList(values())
-					.stream().map(item -> (PriceLevel)item)
+					.stream().map(item -> (ItemType)item)
 						.collect(Collectors.toList());
 	}
 	

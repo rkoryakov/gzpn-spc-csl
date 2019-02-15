@@ -2,16 +2,21 @@ package ru.gzpn.spc.csl.ui.sumestimate;
 
 import com.vaadin.data.Binder;
 import com.vaadin.ui.AbstractField;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
+import ru.gzpn.spc.csl.model.enums.EstimateType;
+import ru.gzpn.spc.csl.model.enums.ItemType;
+import ru.gzpn.spc.csl.model.enums.PriceLevel;
+import ru.gzpn.spc.csl.model.presenters.EstimateCalculationPresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
+import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ISummaryEstimateCardService;
 import ru.gzpn.spc.csl.ui.common.I18n;
 
@@ -24,6 +29,8 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	public static final String I18N_ESTIMATECALCULATIONFILED_NAME = "SummaryEstimateCardComponent.calcFields.name.cap";
 	public static final String I18N_ESTIMATECALCULATIONFILE_PRJ_CODE = "SummaryEstimateCardComponent.calcFields.projectCode.cap";
 	public static final String I18N_ESTIMATECALCULATIONFILED_DATE = "SummaryEstimateCardComponent.calcFields.createDate.cap";
+	private static final String I18N_VIEWATTRIBUTES_CAP = "SummaryEstimateCardComponent.viewAttributes.cap";
+	private static final String I18N_PRICELEVEL_CAP = "SummaryEstimateCardComponent.priceLevel.cap";
 	
 	private CssLayout calculationFieldsLayout;
 	private Binder<IEstimateCalculationPresenter> calculationFieldsBinder;
@@ -31,6 +38,12 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	private TextField estimateName;
 	private TextField projectCodeField;
 	private DateField estimateCreateDateField;
+
+	private CssLayout viewAttributesLayout;
+
+	private ComboBox<EstimateType> viewComboBox;
+	private ComboBox<ItemType> itemsComboBox;
+	private ComboBox<PriceLevel> priceLevelComboBox;
 	
 	public SummaryEstimateCardComponent(ISummaryEstimateCardService service) {
 		super(service);
@@ -41,19 +54,44 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		VerticalLayout body = new VerticalLayout();
 		body.setSizeFull();
 		body.addComponent(createEstimateCalculationFileds());
-		
+		body.addComponent(createViewAttributes());
 		return body;
+	}
+
+	public Component createViewAttributes() {
+		Panel panel = new Panel(getI18nText(I18N_VIEWATTRIBUTES_CAP, messageSource));
+		panel.setSizeFull();
+		viewAttributesLayout = createResponsiveLayout();
+		viewAttributesLayout.addComponent(createViewComboBox());
+		viewAttributesLayout.addComponent(createItemsComboBox());
+		viewAttributesLayout.addComponent(createPriceLevelComboBox());
+		panel.setContent(viewAttributesLayout);
+		return panel;
+	}
+
+	private Component createViewComboBox() {
+		viewComboBox = new ComboBox<>("", EstimateType.getAll());
+		return viewComboBox;
+	}
+
+	private Component createItemsComboBox() {
+		itemsComboBox = new ComboBox<>("", ItemType.getAll());
+		return itemsComboBox;
+	}
+
+	private Component createPriceLevelComboBox() {
+		priceLevelComboBox = new ComboBox<>("", PriceLevel.getAll());
+		priceLevelComboBox.setPlaceholder(getI18nText(I18N_PRICELEVEL_CAP, messageSource));
+
+		return priceLevelComboBox;
 	}
 
 	public Component createEstimateCalculationFileds() {
 		Panel panel = new Panel(getI18nText(I18N_ESTIMATECALCULATIONFILEDS_CAP, messageSource));
 		panel.setSizeFull();
-		VerticalLayout layout = new VerticalLayout();
-		layout.setSizeFull();
-		layout.setMargin(true);
-		calculationFieldsLayout = new CssLayout();
-		layout.addComponent(calculationFieldsLayout);
-		panel.setContent(layout);
+		calculationFieldsLayout = createResponsiveLayout();
+		
+		panel.setContent(calculationFieldsLayout);
 		
 		calculationFieldsBinder = new Binder<>();
 		
@@ -70,11 +108,28 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 				wrapCalculationField(getI18nText(I18N_ESTIMATECALCULATIONFILED_DATE, messageSource), 
 						createEstimateDateField()));
 		
+		ISummaryEstimateCardService service = (ISummaryEstimateCardService)this.service;
+		IEstimateCalculationService calcService = service.getEstimateCalculationService();
+		
+		if (calcService.getEstimateCalculation(1).isPresent()) {
+			IEstimateCalculationPresenter calculationPresenter = new EstimateCalculationPresenter(calcService.getEstimateCalculation(1).get());
+			calculationFieldsBinder.readBean(calculationPresenter);
+		}
+		
 		return panel;
 	}
 	
 	
-	private TextField createEstimateCodeField() {
+	private CssLayout createResponsiveLayout() {
+		return new CssLayout() {
+			@Override
+			protected String getCss(Component c) {
+				return "margin: 10px";
+			}
+		};
+	}
+
+	public TextField createEstimateCodeField() {
 		estimateCodeField = new TextField();
 		calculationFieldsBinder.forField(estimateCodeField)
 				.bind(IEstimateCalculationPresenter::getCode, IEstimateCalculationPresenter::setCode);
@@ -82,7 +137,7 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		return estimateCodeField;
 	}
 
-	private TextField createEstimateNameField() {
+	public TextField createEstimateNameField() {
 		estimateName = new TextField();
 		calculationFieldsBinder.forField(estimateName)
 				.bind(IEstimateCalculationPresenter::getName, IEstimateCalculationPresenter::setName);
@@ -90,14 +145,14 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		return estimateName;
 	}
 
-	private TextField createProjectCodeField() {
+	public TextField createProjectCodeField() {
 		projectCodeField = new TextField();
 		calculationFieldsBinder.forField(projectCodeField)
 				.bind(item -> item.getProject().getCode(), null);
 		return projectCodeField;
 	}
 
-	private DateField createEstimateDateField() {
+	public DateField createEstimateDateField() {
 		estimateCreateDateField = new DateField();
 		calculationFieldsBinder.forField(estimateCreateDateField)
 				.bind(item -> item.getCreateDate().toLocalDate(), null);
@@ -106,10 +161,10 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 
 	public HorizontalLayout wrapCalculationField(String label, AbstractField field) {
 		HorizontalLayout layout = new HorizontalLayout();
-		layout.addComponent(new Label(label));
+		field.setCaption(label);
+		layout.setMargin(false);
 		layout.addComponent(field);
 		
-		calculationFieldsLayout.addComponent(layout);
 		return layout;
 	}
 }

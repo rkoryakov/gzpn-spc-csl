@@ -31,7 +31,7 @@ window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnModeler = function() {
         return console.error('could not import BPMN 2.0 diagram', err);
       }
       // access modeler components
-  //    var canvas = bpmnModeler.get('canvas');
+      var canvas = bpmnModeler.get('canvas');
     //  var overlays = bpmnModeler.get('overlays');
       // zoom to fit full viewport
       canvas.zoom('fit-viewport');

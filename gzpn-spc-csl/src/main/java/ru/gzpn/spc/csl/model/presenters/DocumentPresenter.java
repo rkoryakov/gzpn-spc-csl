@@ -38,7 +38,12 @@ public class DocumentPresenter extends Document implements IDocumentPresenter, I
 
 	@Override
 	public String getWorkText() {
-		return getWork().getName();
+		String work = "";
+		if (getWork() != null) {
+			work = getWork().getName();
+		}
+		
+		return work;
 	}
 
 	@Override

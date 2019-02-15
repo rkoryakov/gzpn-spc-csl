@@ -3,6 +3,7 @@ package ru.gzpn.spc.csl.services.bl;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,12 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 	MessageSource messageSource;
 	
 	@Override
-	public List<IEstimateCalculation> getEstimateCalculation() {
+	public Optional<IEstimateCalculation> getEstimateCalculation(long id) {
+		return estimateCalculationRepository.findById(id).map(value -> (IEstimateCalculation)value);
+	}
+	
+	@Override
+	public List<IEstimateCalculation> getEstimateCalculations() {
 		return estimateCalculationRepository.findAll().stream().map(item -> (IEstimateCalculation)item).collect(Collectors.toList());
 	}
 	@Override
