@@ -23,20 +23,20 @@ import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
-import ru.gzpn.spc.csl.model.jsontypes.EstimatesRegSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.EstimateCalculationsRegSettingsJson;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateRegisterService;
 import ru.gzpn.spc.csl.ui.common.AbstractTreeGridSettingsWindow;
 import ru.gzpn.spc.csl.ui.common.RegistryComponent;
 
 @SuppressWarnings("serial")
-public class EstimateRegistryComponent extends RegistryComponent {
+public class EstimateCalculationsRegistryComponent extends RegistryComponent {
 	
 	private Grid<IEstimateCalculationPresenter> estimateGrid;
 	private EstimateCalculationDataProvider estimateCalculationDataProvider;
 	private static final int ESTIMATE_GRID_ROWS = 11;
 	
-	public EstimateRegistryComponent(IEstimateRegisterService service) {
+	public EstimateCalculationsRegistryComponent(IEstimateRegisterService service) {
 		super(service);
 		
 		setSizeFull();
@@ -90,7 +90,7 @@ public class EstimateRegistryComponent extends RegistryComponent {
 	public void refreshEstimateGrid() {
 		estimateCalculationDataProvider = new EstimateCalculationDataProvider(((IEstimateRegisterService) service).getEstimateCalculationService());
 		
-		EstimatesRegSettingsJson userSettings = (EstimatesRegSettingsJson)service.getUserSettingsService().getEstimatesRegSettings(this.user, new EstimatesRegSettingsJson());
+		EstimateCalculationsRegSettingsJson userSettings = (EstimateCalculationsRegSettingsJson)service.getUserSettingsService().getEstimatesRegSettings(this.user, new EstimateCalculationsRegSettingsJson());
 		List<ColumnSettings> columnSettings = userSettings.getRightResultColumns();
 		
 		columnSettings.sort((cs1, cs2) -> 
@@ -109,7 +109,7 @@ public class EstimateRegistryComponent extends RegistryComponent {
 		createEstimateHeaderColumns(userSettings);
 	}
 	
-	public void createEstimateHeaderColumns(EstimatesRegSettingsJson userSettings) {
+	public void createEstimateHeaderColumns(EstimateCalculationsRegSettingsJson userSettings) {
 		if (userSettings.hasHeaders()) {
 			refreshColumnHeaderGroups(userSettings.getHeaders());
 		}

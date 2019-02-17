@@ -15,8 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.gzpn.spc.csl.model.UserSettings;
 import ru.gzpn.spc.csl.model.jsontypes.ContractsRegSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
-import ru.gzpn.spc.csl.model.jsontypes.EstimatesRegSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.EstimateCalculationsRegSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.SummaryEstimateCardSettingsJson;
 import ru.gzpn.spc.csl.model.repositories.UserSettingsRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 
@@ -141,8 +142,22 @@ public class UserSettigsService implements IUserSettigsService {
 			settings.setCreateDocSettingsJson((CreateDocSettingsJson)settingsJson);
 		} else if (settingsJson instanceof ContractsRegSettingsJson) {
 			settings.setContractsRegSettingsJson((ContractsRegSettingsJson)settingsJson);
-		} else if (settingsJson instanceof EstimatesRegSettingsJson) {
-			settings.setEstimatesRegSettingsJson((EstimatesRegSettingsJson)settingsJson);
+		} else if (settingsJson instanceof EstimateCalculationsRegSettingsJson) {
+			settings.setEstimatesRegSettingsJson((EstimateCalculationsRegSettingsJson)settingsJson);
+		} else if (settingsJson instanceof SummaryEstimateCardSettingsJson) {
+			settings.setSummaryEstimateCardSettingsJson((SummaryEstimateCardSettingsJson)settingsJson);
 		}
+	}
+
+	@Override
+	public ISettingsJson getSummaryEstimateCardSettings(String userId, ISettingsJson defaultValue) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ISettingsJson getSummaryEstimateCardSettings(String userId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

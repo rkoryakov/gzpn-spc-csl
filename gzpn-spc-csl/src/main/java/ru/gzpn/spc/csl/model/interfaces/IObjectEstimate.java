@@ -16,7 +16,6 @@ public interface IObjectEstimate extends IBaseEntity {
 	public static final String FIELD_TOTAL = ENTITYNAME_DOT + "total";
 
 	public static final String FIELD_ESTIMATECALCULATION = ENTITYNAME_DOT + "estimateCalculation";
-	public static final String FIELD_OBJECTESTIMATE = ENTITYNAME_DOT + "objectEstimate";
 	public static final String FIELD_ESTIMATEHEAD = ENTITYNAME_DOT + "estimateHead";
 
 	/* Overridden fields */

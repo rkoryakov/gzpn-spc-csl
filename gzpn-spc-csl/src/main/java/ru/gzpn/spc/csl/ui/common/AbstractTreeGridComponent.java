@@ -63,7 +63,8 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 	protected DraggableTree<NodeWrapper> tree;
 	protected Grid<T> grid;
 	
-	protected IDataService<T, ?> gridDataService;
+	@SuppressWarnings("rawtypes")
+	protected IDataService gridDataService;
 	protected IProjectService treeDataService;
 	protected IUserSettigsService userSettingsService;
 	protected MessageSource messageSource;
@@ -81,7 +82,7 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 	private T selectedGridItem;
 	
 	public abstract boolean isTreeVisible();
-	public abstract <F> AbstractRegistryDataProvider<T, F> getGridDataProvider();
+	public abstract AbstractRegistryDataProvider<T, ?> getGridDataProvider();
 	public abstract ProjectTreeDataProvider getTreeDataProvider();
 	public abstract String getExcelName();
 	public abstract AbstractTreeGridSettingsWindow getSettingsWindow();

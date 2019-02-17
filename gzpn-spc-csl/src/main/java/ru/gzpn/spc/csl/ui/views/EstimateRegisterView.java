@@ -15,7 +15,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateRegisterService;
-import ru.gzpn.spc.csl.ui.estimatereg.EstimateRegistryComponent;
+import ru.gzpn.spc.csl.ui.estimatereg.EstimateCalculationsRegistryComponent;
 
 @SuppressWarnings("serial")
 @SpringView(name = EstimateRegisterView.NAME)
@@ -34,7 +34,7 @@ public class EstimateRegisterView extends VerticalLayout implements View {
 	
 	@PostConstruct
 	void init() {
-		EstimateRegistryComponent layout = new EstimateRegistryComponent(estimateRegisterService);
+		EstimateCalculationsRegistryComponent layout = new EstimateCalculationsRegistryComponent(estimateRegisterService);
 		addComponent(layout);
 	}
 

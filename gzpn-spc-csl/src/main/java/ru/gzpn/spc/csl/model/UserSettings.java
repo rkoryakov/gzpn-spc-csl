@@ -12,7 +12,8 @@ import org.hibernate.annotations.Type;
 import ru.gzpn.spc.csl.model.interfaces.IUserSettings;
 import ru.gzpn.spc.csl.model.jsontypes.ContractsRegSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
-import ru.gzpn.spc.csl.model.jsontypes.EstimatesRegSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.EstimateCalculationsRegSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.SummaryEstimateCardSettingsJson;
 
 @Entity
 @Table(schema = "spc_csl_schema", name = "user_settings", indexes = {
@@ -32,8 +33,12 @@ public class UserSettings extends BaseEntity implements IUserSettings, Serializa
 	private ContractsRegSettingsJson contractsRegSettingsJson;
 	
 	@Column
-	@Type(type="EstimatesRegSettingsJsonType")
-	private EstimatesRegSettingsJson estimatesRegSettingsJson;
+	@Type(type="EstimateCalculationsRegSettingsJsonType")
+	private EstimateCalculationsRegSettingsJson estimatesRegSettingsJson;
+	
+	@Column
+	@Type(type="SummaryEstimateCardSettingsJsonType")
+	private SummaryEstimateCardSettingsJson summaryEstimateCardSettingsJson;
 	
 	public UserSettings() {
 	}
@@ -69,12 +74,23 @@ public class UserSettings extends BaseEntity implements IUserSettings, Serializa
 	}
 
 	@Override
-	public EstimatesRegSettingsJson getEstimatesRegSettingsJson() {
+	public EstimateCalculationsRegSettingsJson getEstimatesRegSettingsJson() {
 		return estimatesRegSettingsJson;
 	}
 
 	@Override
-	public void setEstimatesRegSettingsJson(EstimatesRegSettingsJson estimatesRegSettingsJson) {
-		estimatesRegSettingsJson = estimatesRegSettingsJson;
+	public void setEstimatesRegSettingsJson(EstimateCalculationsRegSettingsJson estimatesRegSettingsJson) {
+		this.estimatesRegSettingsJson = estimatesRegSettingsJson;
 	}
+
+	@Override
+	public SummaryEstimateCardSettingsJson getSummaryEstimateCardSettingsJson() {
+		return summaryEstimateCardSettingsJson;
+	}
+
+	@Override
+	public void setSummaryEstimateCardSettingsJson(SummaryEstimateCardSettingsJson sumEstimatesSettingsJson) {
+		this.summaryEstimateCardSettingsJson = sumEstimatesSettingsJson;
+	}
+	
 }

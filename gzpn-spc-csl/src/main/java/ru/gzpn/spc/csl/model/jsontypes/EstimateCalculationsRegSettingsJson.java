@@ -15,7 +15,7 @@ import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
-public class EstimatesRegSettingsJson implements ISettingsJson {
+public class EstimateCalculationsRegSettingsJson implements ISettingsJson {
 	// sequence of grouping fields/entities to show in a treeGreed component
 	private NodeWrapper leftTreeGroup;
 

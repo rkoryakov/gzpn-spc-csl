@@ -15,4 +15,7 @@ public interface IUserSettigsService {
 	
 	ISettingsJson getEstimatesRegSettings(String userId, ISettingsJson defaultValue);
 	ISettingsJson getEstimatesRegSettings(String userId);
+	
+	ISettingsJson getSummaryEstimateCardSettings(String userId, ISettingsJson defaultValue);
+	ISettingsJson getSummaryEstimateCardSettings(String userId);
 }

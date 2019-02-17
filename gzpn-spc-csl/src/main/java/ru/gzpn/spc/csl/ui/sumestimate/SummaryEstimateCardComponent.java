@@ -31,6 +31,8 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	public static final String I18N_ESTIMATECALCULATIONFILED_DATE = "SummaryEstimateCardComponent.calcFields.createDate.cap";
 	private static final String I18N_VIEWATTRIBUTES_CAP = "SummaryEstimateCardComponent.viewAttributes.cap";
 	private static final String I18N_PRICELEVEL_CAP = "SummaryEstimateCardComponent.priceLevel.cap";
+	private static final String I18N_VIEWCOMBOBOX_PLH = "SummaryEstimateCardComponent.viewCombobox.placeholder";
+	private static final String I18N_ITEMSCOMBOBOX_PLH = "SummaryEstimateCardComponent.itemsCombobox.placeholder";
 	
 	private CssLayout calculationFieldsLayout;
 	private Binder<IEstimateCalculationPresenter> calculationFieldsBinder;
@@ -45,6 +47,9 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	private ComboBox<ItemType> itemsComboBox;
 	private ComboBox<PriceLevel> priceLevelComboBox;
 	
+	private VerticalLayout estimatesLayout;
+	private VerticalLayout calculationsLayout;
+	
 	public SummaryEstimateCardComponent(ISummaryEstimateCardService service) {
 		super(service);
 	}
@@ -55,7 +60,20 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		body.setSizeFull();
 		body.addComponent(createEstimateCalculationFileds());
 		body.addComponent(createViewAttributes());
+		body.addComponent(createEstimatesGrid());
 		return body;
+	}
+
+	public Component createEstimatesGrid() {
+		estimatesLayout = new VerticalLayout();
+		refreshEstimatesGrid();
+		return estimatesLayout;
+	}
+	
+	public void refreshEstimatesGrid() {
+		estimatesLayout.removeAllComponents();
+		
+		estimatesLayout.addComponent(c);
 	}
 
 	public Component createViewAttributes() {
@@ -71,11 +89,13 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 
 	private Component createViewComboBox() {
 		viewComboBox = new ComboBox<>("", EstimateType.getAll());
+		viewComboBox.setPlaceholder(getI18nText(I18N_VIEWCOMBOBOX_PLH, messageSource));
 		return viewComboBox;
 	}
 
 	private Component createItemsComboBox() {
 		itemsComboBox = new ComboBox<>("", ItemType.getAll());
+		itemsComboBox.setPlaceholder(getI18nText(I18N_ITEMSCOMBOBOX_PLH, messageSource));
 		return itemsComboBox;
 	}
 

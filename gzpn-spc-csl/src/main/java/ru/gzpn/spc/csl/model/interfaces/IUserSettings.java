@@ -2,7 +2,8 @@ package ru.gzpn.spc.csl.model.interfaces;
 
 import ru.gzpn.spc.csl.model.jsontypes.ContractsRegSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
-import ru.gzpn.spc.csl.model.jsontypes.EstimatesRegSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.EstimateCalculationsRegSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.SummaryEstimateCardSettingsJson;
 
 public interface IUserSettings {
 
@@ -18,7 +19,11 @@ public interface IUserSettings {
 
 	void setContractsRegSettingsJson(ContractsRegSettingsJson contractsRegSettingsJson);
 
-	EstimatesRegSettingsJson getEstimatesRegSettingsJson();
+	EstimateCalculationsRegSettingsJson getEstimatesRegSettingsJson();
 
-	void setEstimatesRegSettingsJson(EstimatesRegSettingsJson estimatesRegSettingsJson);
+	void setEstimatesRegSettingsJson(EstimateCalculationsRegSettingsJson estimatesRegSettingsJson);
+
+	SummaryEstimateCardSettingsJson getSummaryEstimateCardSettingsJson();
+
+	void setSummaryEstimateCardSettingsJson(SummaryEstimateCardSettingsJson sumEstimatesSettingsJson);
 }
