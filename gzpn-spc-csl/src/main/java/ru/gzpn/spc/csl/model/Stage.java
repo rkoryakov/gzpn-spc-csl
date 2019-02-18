@@ -71,7 +71,7 @@ public class Stage extends BaseEntity implements IStage, Serializable {
 
 	@Override
 	public String toString() {
-		return "name: " + getName() + " id: " + getId();
+		return getName() + " - " + getCode();
 	}
 
 	@Override
@@ -103,4 +103,6 @@ public class Stage extends BaseEntity implements IStage, Serializable {
 	public void setPlanObjects(List<IPlanObject> planObjects) {
 		this.planObjects = planObjects;
 	}
+	
+	
 }

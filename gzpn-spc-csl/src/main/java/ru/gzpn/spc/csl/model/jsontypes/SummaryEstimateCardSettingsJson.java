@@ -20,6 +20,8 @@ import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
 public class SummaryEstimateCardSettingsJson implements ISettingsJson {
 
+	private int splitPosition;
+
 	private NodeWrapper localEstimatesTreeGroup;
 	private NodeWrapper objectEstimatesTreeGroup;
 	private NodeWrapper estimateCalculationsTreeGroup;
@@ -35,8 +37,23 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson {
 	private List<ColumnHeaderGroup> estimateCalculationsColumnHeaders;
 	private List<ColumnHeaderGroup> worksColumnHeaders;
 	
-	private boolean showTree = false;
+	private boolean showTree;
 
+	public int getSplitPosition() {
+		return splitPosition;
+	}
+
+	public void setSplitPosition(int splitPosition) {
+		this.splitPosition = splitPosition;
+	}
+	
+	public boolean isShowTree() {
+		return showTree;
+	}
+
+	public void setShowTree(boolean showTree) {
+		this.showTree = showTree;
+	}
 
 	@JsonIgnore
 	public List<ColumnHeaderGroup> getDefaultLocalEstimatesHeaders() {

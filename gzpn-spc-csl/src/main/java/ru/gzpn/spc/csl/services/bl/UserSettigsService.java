@@ -151,13 +151,25 @@ public class UserSettigsService implements IUserSettigsService {
 
 	@Override
 	public ISettingsJson getSummaryEstimateCardSettings(String userId, ISettingsJson defaultValue) {
-		// TODO Auto-generated method stub
-		return null;
+		UserSettings userSettings = repository.findByUserId(userId);
+		ISettingsJson result = null;
+		
+		if (userSettings != null) {
+			result = userSettings.getSummaryEstimateCardSettingsJson();
+			// JSON field is empty
+			if (Objects.isNull(result)) {
+				result = defaultValue;
+			}
+		// no such user settings
+		} else {
+			result = defaultValue;
+		}
+		
+		return result;
 	}
 
 	@Override
 	public ISettingsJson getSummaryEstimateCardSettings(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+		return getSummaryEstimateCardSettings(userId, null);
 	}
 }

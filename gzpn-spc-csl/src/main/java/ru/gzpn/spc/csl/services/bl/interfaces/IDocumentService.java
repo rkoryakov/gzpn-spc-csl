@@ -17,10 +17,4 @@ public interface IDocumentService extends IDataService<IDocument, IDocumentPrese
 	
 	Comparator<IDocumentPresenter> getSortComparator(List<QuerySortOrder> list);
 	MessageSource getMessageSource();
-	/**
-	 * Save existing bean. If the bean doesn't exist then create it
-	 * @param bean
-	 */
-	void save(IDocument bean);
-	void remove(IDocument bean);
 }

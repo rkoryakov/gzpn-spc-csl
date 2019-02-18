@@ -50,6 +50,8 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	private VerticalLayout estimatesLayout;
 	private VerticalLayout calculationsLayout;
 	
+	private LocalEstimatesTreeGridComponent localEstimatesTreeGrid;
+	
 	public SummaryEstimateCardComponent(ISummaryEstimateCardService service) {
 		super(service);
 	}
@@ -62,48 +64,6 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		body.addComponent(createViewAttributes());
 		body.addComponent(createEstimatesGrid());
 		return body;
-	}
-
-	public Component createEstimatesGrid() {
-		estimatesLayout = new VerticalLayout();
-		refreshEstimatesGrid();
-		return estimatesLayout;
-	}
-	
-	public void refreshEstimatesGrid() {
-		estimatesLayout.removeAllComponents();
-		
-		estimatesLayout.addComponent(c);
-	}
-
-	public Component createViewAttributes() {
-		Panel panel = new Panel(getI18nText(I18N_VIEWATTRIBUTES_CAP, messageSource));
-		panel.setSizeFull();
-		viewAttributesLayout = createResponsiveLayout();
-		viewAttributesLayout.addComponent(createViewComboBox());
-		viewAttributesLayout.addComponent(createItemsComboBox());
-		viewAttributesLayout.addComponent(createPriceLevelComboBox());
-		panel.setContent(viewAttributesLayout);
-		return panel;
-	}
-
-	private Component createViewComboBox() {
-		viewComboBox = new ComboBox<>("", EstimateType.getAll());
-		viewComboBox.setPlaceholder(getI18nText(I18N_VIEWCOMBOBOX_PLH, messageSource));
-		return viewComboBox;
-	}
-
-	private Component createItemsComboBox() {
-		itemsComboBox = new ComboBox<>("", ItemType.getAll());
-		itemsComboBox.setPlaceholder(getI18nText(I18N_ITEMSCOMBOBOX_PLH, messageSource));
-		return itemsComboBox;
-	}
-
-	private Component createPriceLevelComboBox() {
-		priceLevelComboBox = new ComboBox<>("", PriceLevel.getAll());
-		priceLevelComboBox.setPlaceholder(getI18nText(I18N_PRICELEVEL_CAP, messageSource));
-
-		return priceLevelComboBox;
 	}
 
 	public Component createEstimateCalculationFileds() {
@@ -137,16 +97,6 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		}
 		
 		return panel;
-	}
-	
-	
-	private CssLayout createResponsiveLayout() {
-		return new CssLayout() {
-			@Override
-			protected String getCss(Component c) {
-				return "margin: 10px";
-			}
-		};
 	}
 
 	public TextField createEstimateCodeField() {
@@ -186,5 +136,58 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		layout.addComponent(field);
 		
 		return layout;
+	}
+	
+	public Component createViewAttributes() {
+		Panel panel = new Panel(getI18nText(I18N_VIEWATTRIBUTES_CAP, messageSource));
+		panel.setSizeFull();
+		viewAttributesLayout = createResponsiveLayout();
+		viewAttributesLayout.addComponent(createViewComboBox());
+		viewAttributesLayout.addComponent(createItemsComboBox());
+		viewAttributesLayout.addComponent(createPriceLevelComboBox());
+		panel.setContent(viewAttributesLayout);
+		return panel;
+	}
+
+	private CssLayout createResponsiveLayout() {
+		return new CssLayout() {
+			@Override
+			protected String getCss(Component c) {
+				return "margin: 10px";
+			}
+		};
+	}
+	
+	private Component createViewComboBox() {
+		viewComboBox = new ComboBox<>("", EstimateType.getAll());
+		viewComboBox.setPlaceholder(getI18nText(I18N_VIEWCOMBOBOX_PLH, messageSource));
+		return viewComboBox;
+	}
+
+	private Component createItemsComboBox() {
+		itemsComboBox = new ComboBox<>("", ItemType.getAll());
+		itemsComboBox.setPlaceholder(getI18nText(I18N_ITEMSCOMBOBOX_PLH, messageSource));
+		return itemsComboBox;
+	}
+
+	private Component createPriceLevelComboBox() {
+		priceLevelComboBox = new ComboBox<>("", PriceLevel.getAll());
+		priceLevelComboBox.setPlaceholder(getI18nText(I18N_PRICELEVEL_CAP, messageSource));
+
+		return priceLevelComboBox;
+	}
+	
+	public Component createEstimatesGrid() {
+		estimatesLayout = new VerticalLayout();
+		refreshEstimatesGrid();
+		return estimatesLayout;
+	}
+	
+	public void refreshEstimatesGrid() {
+		ISummaryEstimateCardService estimateCardService = (ISummaryEstimateCardService)this.service;
+		estimatesLayout.removeAllComponents();
+		localEstimatesTreeGrid = new LocalEstimatesTreeGridComponent(estimateCardService.getProjectService(), 
+					estimateCardService.getLocalEstimateService(), estimateCardService.getUserSettingsService());
+		estimatesLayout.addComponent(localEstimatesTreeGrid);
 	}
 }

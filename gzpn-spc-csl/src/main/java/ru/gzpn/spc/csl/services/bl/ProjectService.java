@@ -19,6 +19,7 @@ import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
+import ru.gzpn.spc.csl.model.repositories.StageRepository;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
@@ -33,6 +34,8 @@ public class ProjectService implements IProjectService {
 	private CProjectRepository cpRepository;
 	@Autowired
 	private PlanObjectRepository planObjectRepository;
+	@Autowired
+	private StageRepository stageRepository;
 	
 	@Override
 	public HProjectRepository getBaseRepository() {
@@ -53,6 +56,11 @@ public class ProjectService implements IProjectService {
 	@Override
 	public PlanObjectRepository getPlanObjectRepository() {
 		return planObjectRepository;
+	}
+	
+	@Override
+	public StageRepository getStagesRepository() {
+		return stageRepository;
 	}
 	
 	@Override
@@ -190,5 +198,4 @@ public class ProjectService implements IProjectService {
 		T result = suplier.get();
 		return result;
 	}
-
 }

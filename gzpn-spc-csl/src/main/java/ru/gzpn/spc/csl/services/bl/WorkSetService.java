@@ -51,6 +51,10 @@ public class WorkSetService implements IWorkSetService {
 		return repository.findAll().stream().map(e -> (IWorkSet)e);
 	}
 	
+	public PlanObjectRepository getPlanObjectRepository() {
+		return planObjectRepository;
+	}
+
 	@Override
 	public Stream<IWorkSet> getItemsByNode(NodeWrapper node, int offset, int limit) {
 //		int pageNumber = offset/limit;
@@ -219,7 +223,13 @@ public class WorkSetService implements IWorkSetService {
 	}
 
 	@Override
-	public void save(IWorkSetPresenter bean) {
+	public MessageSource getMessageSource() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void save(IWorkSet bean) {
 		Optional<WorkSet> workset = this.repository.findById(bean.getId());
 		if (workset.isPresent()) {
 			IWorkSet ws = workset.get();
@@ -234,20 +244,9 @@ public class WorkSetService implements IWorkSetService {
 	}
 
 	@Override
-	public MessageSource getMessageSource() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void save(IWorkSet bean) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void remove(IWorkSet bean) {
-		// TODO Auto-generated method stub
-		
+		if (bean.getId() != null) {
+			this.repository.deleteById(bean.getId());
+		}
 	}
 }

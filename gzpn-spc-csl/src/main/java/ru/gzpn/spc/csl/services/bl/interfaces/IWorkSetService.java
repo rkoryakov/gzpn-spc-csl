@@ -19,5 +19,4 @@ public interface IWorkSetService extends IDataService<IWorkSet, IWorkSetPresente
 	 */
 	public Stream<IWorkSet> getItemsByNode(NodeWrapper node, int offset, int limit);
 	public Comparator<IWorkSetPresenter> getSortComparator(List<QuerySortOrder> list);
-	public void save(IWorkSetPresenter bean);
 }

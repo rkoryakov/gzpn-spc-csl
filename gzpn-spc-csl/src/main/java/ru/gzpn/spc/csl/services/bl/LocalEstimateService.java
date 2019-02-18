@@ -3,6 +3,7 @@ package ru.gzpn.spc.csl.services.bl;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -15,11 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
+import ru.gzpn.spc.csl.model.LocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
 import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 
@@ -29,9 +32,10 @@ public class LocalEstimateService implements ILocalEstimateService {
 
 	@Autowired
 	private LocalEstimateRepository localEstimateRepository;
-	
 	@Autowired
-	MessageSource messageSource;
+	private MessageSource messageSource;
+	@Autowired
+	private IUserSettigsService userSettings;
 	
 	@Override
 	public List<ILocalEstimate> getLocalEstimates() {
@@ -198,15 +202,34 @@ public class LocalEstimateService implements ILocalEstimateService {
 		return messageSource;
 	}
 
+	
 	@Override
 	public void save(ILocalEstimate bean) {
-		// TODO Auto-generated method stub
-		
+		Optional<LocalEstimate> localEstimate = localEstimateRepository.findById(bean.getId());
+		if (localEstimate.isPresent()) {
+			ILocalEstimate le = localEstimate.get();
+			le.setCode(bean.getCode());
+			le.setName(bean.getName());
+			le.setChangedBy(userSettings.getCurrentUser());
+			le.setComment(bean.getComment());
+			le.setDocument(bean.getDocument());
+			le.setDrawing(bean.getDrawing());
+			le.setEstimateCalculation(bean.getEstimateCalculation());
+			le.setEstimateCosts(bean.getEstimateCosts());
+			le.setEstimateHead(bean.getEstimateHead());
+			le.setObjectEstimate(bean.getObjectEstimate());
+			le.setStage(bean.getStage());
+			le.setStatus(bean.getStatus());
+			le.setWorks(bean.getWorks());
+			
+			localEstimateRepository.save((LocalEstimate)le);
+		}
 	}
 
 	@Override
 	public void remove(ILocalEstimate bean) {
-		// TODO Auto-generated method stub
-		
+		if (bean.getId() != null) {
+			localEstimateRepository.deleteById(bean.getId());
+		}
 	}
 }

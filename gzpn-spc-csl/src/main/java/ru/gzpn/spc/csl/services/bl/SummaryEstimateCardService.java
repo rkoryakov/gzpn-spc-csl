@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ISummaryEstimateCardService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 @Service
@@ -23,6 +24,8 @@ public class SummaryEstimateCardService implements ISummaryEstimateCardService {
 	private ILocalEstimateService localEstimateService;
 	@Autowired
 	private IEstimateCalculationService estimateCalculationService;
+	@Autowired
+	private IProjectService projectService;
 	
 	@Override
 	public MessageSource getMessageSource() {
@@ -42,5 +45,10 @@ public class SummaryEstimateCardService implements ISummaryEstimateCardService {
 	@Override
 	public IEstimateCalculationService getEstimateCalculationService() {
 		return estimateCalculationService;
+	}
+
+	@Override
+	public IProjectService getProjectService() {
+		return projectService;
 	}
 }

@@ -63,8 +63,7 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 	protected DraggableTree<NodeWrapper> tree;
 	protected Grid<T> grid;
 	
-	@SuppressWarnings("rawtypes")
-	protected IDataService gridDataService;
+	protected IDataService<? super T, T> gridDataService;
 	protected IProjectService treeDataService;
 	protected IUserSettigsService userSettingsService;
 	protected MessageSource messageSource;
@@ -92,7 +91,7 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 	public abstract void createGridColumn(ColumnSettings column);
 	public abstract void saveGridItem(T item);
 	
-	public AbstractTreeGridComponent(IProjectService treeDataService, IDataService<T, ?> gridDataService, IUserSettigsService userSettingsService) {
+	public AbstractTreeGridComponent(IProjectService treeDataService, IDataService<? super T, T> gridDataService, IUserSettigsService userSettingsService) {
 		this.treeDataService = treeDataService;
 		this.gridDataService = gridDataService;
 		this.userSettingsService = userSettingsService;
