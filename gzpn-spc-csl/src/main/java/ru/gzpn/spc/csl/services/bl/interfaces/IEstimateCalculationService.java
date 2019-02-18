@@ -12,6 +12,6 @@ import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter
 public interface IEstimateCalculationService extends IDataService<IEstimateCalculation, IEstimateCalculationPresenter> {
 
 	List<IEstimateCalculation> getEstimateCalculations();
-	Optional<IEstimateCalculation> getEstimateCalculation(long id);
+	Optional<IEstimateCalculation> getEstimateCalculation(Long id);
 	Comparator<IEstimateCalculationPresenter> getSortComparator(List<QuerySortOrder> list);
 }

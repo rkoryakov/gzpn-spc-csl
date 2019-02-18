@@ -2,6 +2,8 @@ package ru.gzpn.spc.csl.ui.views;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.navigator.View;
@@ -19,7 +21,11 @@ import ru.gzpn.spc.csl.ui.sumestimate.SummaryEstimateCardComponent;
 @SpringView(name = SummaryEstimateCardView.NAME)
 @UIScope
 public class SummaryEstimateCardView extends VerticalLayout implements View {
+	public static final Logger logger = LogManager.getLogger(SummaryEstimateCardView.class);
 	public static final String NAME = "summaryEstimateCardView";
+
+	private static final String REQUEST_PARAM_SSRID = "ssrId";
+	private static final String REQUEST_PARAM_TASKID = "taskId";
 	
 	@Autowired
 	private ISummaryEstimateCardService service;
@@ -31,13 +37,25 @@ public class SummaryEstimateCardView extends VerticalLayout implements View {
 
 	@PostConstruct
 	void init() {
-		SummaryEstimateCardComponent layout = new SummaryEstimateCardComponent(service);
-		addComponent(layout);
+		
 	}
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-
+		if (event.getParameters() != null) {
+			String ssrId = event.getParameterMap().get(REQUEST_PARAM_SSRID);
+			String taskId = event.getParameterMap().get(REQUEST_PARAM_TASKID);
+			logger.debug(event.getParameters());
+			logger.debug(event.getParameterMap());
+			
+			Long ssrid = null;
+			if (ssrId != null) {
+				ssrid = Long.parseLong(ssrId);
+			}
+			
+			SummaryEstimateCardComponent layout = new SummaryEstimateCardComponent(service, ssrid, taskId);
+			addComponent(layout);
+		}
 	}
 
 	@Override

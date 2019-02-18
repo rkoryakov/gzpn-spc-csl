@@ -55,19 +55,21 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 
 	protected Button saveButton;
 
-	private Map<Action, Set<Listener>> listeners;
-	private Button settingsButton;
-	private Button closeButton;
-	private CssLayout calculationFieldsLayout;
-
+	protected Map<Action, Set<Listener>> listeners;
+	protected Button settingsButton;
+	protected Button closeButton;
+	protected CssLayout calculationFieldsLayout;
+	protected Long estimateCalculationId;
+	
 	public abstract VerticalLayout createBodyLayout();
 	
 	
-	public AbstarctSummaryEstimateCardComponent(IUIService service) {
+	public AbstarctSummaryEstimateCardComponent(IUIService service, Long estimateCalculationId, String taskId) {
 		this.service = service;
 		this.messageSource = service.getMessageSource();
 		this.userSettingsService = service.getUserSettingsService();
 		this.user = userSettingsService.getCurrentUser();
+		this.estimateCalculationId = estimateCalculationId;
 		
 		setSpacing(false);
 		setMargin(false);

@@ -1,5 +1,7 @@
 package ru.gzpn.spc.csl.ui.sumestimate;
 
+import java.util.Optional;
+
 import com.vaadin.data.Binder;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.ComboBox;
@@ -11,11 +13,14 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
+import ru.gzpn.spc.csl.model.LocalEstimate;
 import ru.gzpn.spc.csl.model.enums.EstimateType;
 import ru.gzpn.spc.csl.model.enums.ItemType;
 import ru.gzpn.spc.csl.model.enums.PriceLevel;
+import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.presenters.EstimateCalculationPresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ISummaryEstimateCardService;
 import ru.gzpn.spc.csl.ui.common.I18n;
@@ -52,8 +57,8 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	
 	private LocalEstimatesTreeGridComponent localEstimatesTreeGrid;
 	
-	public SummaryEstimateCardComponent(ISummaryEstimateCardService service) {
-		super(service);
+	public SummaryEstimateCardComponent(ISummaryEstimateCardService service, Long estimateCalculationId, String taskId) {
+		super(service, estimateCalculationId, taskId);
 	}
 
 	@Override
@@ -91,8 +96,9 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		ISummaryEstimateCardService service = (ISummaryEstimateCardService)this.service;
 		IEstimateCalculationService calcService = service.getEstimateCalculationService();
 		
-		if (calcService.getEstimateCalculation(1).isPresent()) {
-			IEstimateCalculationPresenter calculationPresenter = new EstimateCalculationPresenter(calcService.getEstimateCalculation(1).get());
+		Optional<IEstimateCalculation> calculation = calcService.getEstimateCalculation(estimateCalculationId);
+		if (calculation.isPresent()) {
+			IEstimateCalculationPresenter calculationPresenter = new EstimateCalculationPresenter(calculation.get());
 			calculationFieldsBinder.readBean(calculationPresenter);
 		}
 		
@@ -179,6 +185,8 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	
 	public Component createEstimatesGrid() {
 		estimatesLayout = new VerticalLayout();
+		estimatesLayout.setMargin(false);
+		estimatesLayout.setSpacing(false);
 		refreshEstimatesGrid();
 		return estimatesLayout;
 	}
@@ -187,7 +195,12 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		ISummaryEstimateCardService estimateCardService = (ISummaryEstimateCardService)this.service;
 		estimatesLayout.removeAllComponents();
 		localEstimatesTreeGrid = new LocalEstimatesTreeGridComponent(estimateCardService.getProjectService(), 
-					estimateCardService.getLocalEstimateService(), estimateCardService.getUserSettingsService());
+																	 estimateCardService.getLocalEstimateService(), 
+																	 estimateCardService.getUserSettingsService());
+		
+		NodeWrapper parentNode = new NodeWrapper(LocalEstimate.class.getSimpleName());
+		parentNode.setId(this.estimateCalculationId);
+		localEstimatesTreeGrid.getGridDataProvider().setParentNode(parentNode);
 		estimatesLayout.addComponent(localEstimatesTreeGrid);
 	}
 }

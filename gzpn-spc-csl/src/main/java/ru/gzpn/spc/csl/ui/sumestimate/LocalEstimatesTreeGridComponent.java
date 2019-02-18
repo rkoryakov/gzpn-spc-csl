@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.ui.sumestimate;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -14,10 +15,12 @@ import ru.gzpn.spc.csl.model.dataproviders.ProjectTreeDataProvider;
 import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IStage;
+import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.SummaryEstimateCardSettingsJson;
 import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
+import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
@@ -51,6 +54,7 @@ public class LocalEstimatesTreeGridComponent extends AbstractTreeGridComponent<I
 		if (gridDataProvider == null) {
 			gridDataProvider = new LocalEstimateDataProvider((ILocalEstimateService)gridDataService);
 		}
+		
 		return  gridDataProvider;
 	}
 
@@ -79,7 +83,29 @@ public class LocalEstimatesTreeGridComponent extends AbstractTreeGridComponent<I
 		SummaryEstimateCardSettingsJson settings = new SummaryEstimateCardSettingsJson();
 		settings.setSplitPosition(30);
 		settings.setShowTree(false);
-		return userSettingsService.getSummaryEstimateCardSettings(user, settings);
+		ISettingsJson settingsJson = userSettingsService.getSummaryEstimateCardSettings(user, settings);
+		
+		return new ISettingsJson() {
+			@Override
+			public boolean isShownTree() {
+				return settingsJson.isShownTree();
+			}
+
+			@Override
+			public NodeWrapper getTreeSettings() {
+				return ((SummaryEstimateCardSettingsJson)settingsJson).getLocalEstimatesTreeGroup();
+			}
+
+			@Override
+			public List<ColumnSettings> getColumns() {
+				return ((SummaryEstimateCardSettingsJson)settingsJson).getLocalEstimatesColumns();
+			}
+
+			@Override
+			public List<ColumnHeaderGroup> getHeaders() {
+				return ((SummaryEstimateCardSettingsJson)settingsJson).getLocalEstimatesColumnHeaders();
+			}
+		};
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 @SuppressWarnings("serial")
 public abstract class AbstractRegistryDataProvider<T, F> extends AbstractBackEndDataProvider<T, F> {
+	protected NodeWrapper parentNode;
 	
 	public abstract IGridFilter<T> getFilter();
 	public abstract NodeWrapper getParentNode();

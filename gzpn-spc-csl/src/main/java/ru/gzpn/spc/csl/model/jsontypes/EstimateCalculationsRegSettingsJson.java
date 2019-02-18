@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.model.jsontypes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,9 +14,10 @@ import ru.gzpn.spc.csl.model.Document;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 
+@SuppressWarnings("serial")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
-public class EstimateCalculationsRegSettingsJson implements ISettingsJson {
+public class EstimateCalculationsRegSettingsJson implements ISettingsJson, Serializable {
 	// sequence of grouping fields/entities to show in a treeGreed component
 	private NodeWrapper leftTreeGroup;
 

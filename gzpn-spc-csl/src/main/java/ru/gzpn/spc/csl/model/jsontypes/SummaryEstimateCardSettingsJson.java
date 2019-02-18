@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.model.jsontypes;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -16,9 +17,10 @@ import ru.gzpn.spc.csl.model.interfaces.IObjectEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IWork;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 
+@SuppressWarnings("serial")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
-public class SummaryEstimateCardSettingsJson implements ISettingsJson {
+public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializable {
 
 	private int splitPosition;
 
@@ -45,10 +47,6 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson {
 
 	public void setSplitPosition(int splitPosition) {
 		this.splitPosition = splitPosition;
-	}
-	
-	public boolean isShowTree() {
-		return showTree;
 	}
 
 	public void setShowTree(boolean showTree) {
@@ -306,7 +304,7 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson {
 	
 	public List<ColumnSettings> getLocalEstimatesColumns() {
 		if (Objects.isNull(localEstimatesColumns)) {
-			estimateCalculationsColumns = getDefaultEstimateCalculationsColumns();
+			estimateCalculationsColumns = getDefaultLocalEstimatesColumns();
 		}
 
 		return estimateCalculationsColumns;
@@ -350,23 +348,27 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson {
 	
 
 	@Override
+	@JsonIgnore
 	public boolean isShownTree() {
 		return showTree;
 	}
 
 	@Override
+	@JsonIgnore
 	public NodeWrapper getTreeSettings() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@JsonIgnore
 	public List<ColumnSettings> getColumns() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@JsonIgnore
 	public List<ColumnHeaderGroup> getHeaders() {
 		// TODO Auto-generated method stub
 		return null;

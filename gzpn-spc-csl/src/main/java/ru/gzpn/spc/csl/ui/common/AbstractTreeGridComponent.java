@@ -177,6 +177,8 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 
 	public void createBody() {
 		body = new VerticalLayout();
+		body.setMargin(false);
+		body.setSpacing(false);
 		refreshUiElements();
 		addComponent(body);
 	}
@@ -245,10 +247,10 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 	}
 	
 	public void refreshWorksetGrid() {
-		AbstractRegistryDataProvider<T, ?> gridDataProvider = (AbstractRegistryDataProvider<T, ?>)grid.getDataProvider();
-		NodeWrapper parentNode = gridDataProvider.getParentNode();
-		gridDataProvider = getGridDataProvider();
-		gridDataProvider.setParentNode(parentNode);
+	//	AbstractRegistryDataProvider gridDataProvider = (AbstractRegistryDataProvider)grid.getDataProvider();
+	//	NodeWrapper parentNode = gridDataProvider.getParentNode();
+		AbstractRegistryDataProvider<T, ?> gridDataProvider = getGridDataProvider();
+	//	gridDataProvider.setParentNode(parentNode);
 
 		List<ColumnSettings> columnSettings = getSettings().getColumns();
 		

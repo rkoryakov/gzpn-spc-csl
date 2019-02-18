@@ -62,16 +62,28 @@ public class LocalEstimatePresenter extends LocalEstimate implements ILocalEstim
 	
 	@Override
 	public String getEstimateCalculationCaption() {
-		return getEstimateCalculation().getName();
+		String result = "";
+		if (getEstimateCalculation() != null) {
+			result = getEstimateCalculation().getName();
+		}
+		return result;
 	}
 	
 	@Override
 	public String getObjectEstimateCaption() {
-		return getObjectEstimate().getName();
+		String result = "";
+		if (getObjectEstimate() != null) {
+			result = getObjectEstimate().getName();
+		}
+		return result;
 	}
 	
 	@Override
 	public String getEstimateHeadCaption() {
-		return getEstimateHead().getName();
+		String result = "";
+		if (getEstimateHead() != null) {
+			result = getEstimateHead().getName();
+		}
+		return result;
 	}
 }

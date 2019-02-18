@@ -34,8 +34,15 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 	MessageSource messageSource;
 	
 	@Override
-	public Optional<IEstimateCalculation> getEstimateCalculation(long id) {
-		return estimateCalculationRepository.findById(id).map(value -> (IEstimateCalculation)value);
+	public Optional<IEstimateCalculation> getEstimateCalculation(Long id) {
+		Optional<IEstimateCalculation> result = Optional.empty();
+		
+		if (id != null) {
+			result = estimateCalculationRepository.findById(id)
+						.map(value -> (IEstimateCalculation)value);
+		}
+		
+		return result;
 	}
 	
 	@Override

@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.services.bl;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -16,10 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
+import ru.gzpn.spc.csl.model.EstimateCalculation;
 import ru.gzpn.spc.csl.model.LocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
+import ru.gzpn.spc.csl.model.repositories.EstimateCalculationRepository;
 import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
@@ -33,9 +36,23 @@ public class LocalEstimateService implements ILocalEstimateService {
 	@Autowired
 	private LocalEstimateRepository localEstimateRepository;
 	@Autowired
+	private EstimateCalculationRepository estimateCalculationsRepository;
+	@Autowired
 	private MessageSource messageSource;
 	@Autowired
 	private IUserSettigsService userSettings;
+	
+	@Override
+	public List<ILocalEstimate> getLocalEstimatesByCalculationId(Long calculationId) {
+		List<ILocalEstimate> result = new ArrayList<>();
+		if (calculationId != null) {
+			Optional<EstimateCalculation> c = estimateCalculationsRepository.findById(calculationId);
+			if (c.isPresent()) {
+				result = c.get().getEstimates();
+			}
+		}
+		return result;
+	}
 	
 	@Override
 	public List<ILocalEstimate> getLocalEstimates() {
@@ -151,7 +168,9 @@ public class LocalEstimateService implements ILocalEstimateService {
 					result = localEstimatePresenter.getCode().toLowerCase().startsWith(commonTextFilter);
 					break;
 				case ILocalEstimate.FIELD_CHANGEDBY:
-					result = localEstimatePresenter.getChangedBy().toLowerCase().startsWith(commonTextFilter);
+					if (localEstimatePresenter.getChangedBy() != null) {
+						result = localEstimatePresenter.getChangedBy().toLowerCase().startsWith(commonTextFilter);
+					}
 					break;
 				case ILocalEstimate.FIELD_DRAWING:
 					result = localEstimatePresenter.getDrawing().toLowerCase().startsWith(commonTextFilter);
