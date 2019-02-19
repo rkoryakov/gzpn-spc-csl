@@ -16,6 +16,8 @@ import com.vaadin.data.provider.SortOrder;
 import ru.gzpn.spc.csl.model.BaseEntity;
 import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.interfaces.IBaseEntity;
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.ui.common.I18n;
@@ -141,6 +143,12 @@ public class NodeWrapper implements Serializable, I18n {
 		case PLANOBJECT:
 			result = getPlanObjectCaption(entity, service, messageSource);
 			break;
+		case HPROJECT:
+			result = getHProjectCaption(entity, service, messageSource);
+			break;
+		case CPROJECT:
+			result = getCProjectCaption(entity, service, messageSource);
+			break;
 		default:
 			if (isGrouping()) {
 				result = getGroupFiledValue().toString();
@@ -149,7 +157,7 @@ public class NodeWrapper implements Serializable, I18n {
 		
 		return result;
 	}
-	
+
 	public String getPlanObjectCaption(Entities entity, IProjectService service, MessageSource messageSource) {
 		StringBuilder result = new StringBuilder();
 		
@@ -160,6 +168,42 @@ public class NodeWrapper implements Serializable, I18n {
 			result.append(planObject.getCode());
 			result.append(" - ");
 			result.append(planObject.getName());
+		} else {
+			result.append(this.getGroupFiledValue());
+		}
+		
+		return result.toString();
+	}
+	
+	public String getHProjectCaption(Entities entity, IProjectService service, MessageSource messageSource) {
+		StringBuilder result = new StringBuilder();
+		
+		//result.append(entity.getEntityText(messageSource));
+		//result.append(" ");
+		if (this.id != null) {
+			IHProject hProject = service.getHPRepository().findById(id).get();
+			result.append(hProject.getCode());
+			result.append(" - ");
+			result.append(hProject.getName());
+			
+		} else {
+			result.append(this.getGroupFiledValue());
+		}
+		
+		return result.toString();
+	}
+	
+	public String getCProjectCaption(Entities entity, IProjectService service, MessageSource messageSource) {
+		StringBuilder result = new StringBuilder();
+		
+		result.append(entity.getEntityText(messageSource));
+		result.append(" ");
+		if (this.id != null) {
+			ICProject cProject = service.getCPRepository().findById(id).get();
+			result.append(cProject.getCode());
+			result.append(" - ");
+			result.append(cProject.getName());
+			
 		} else {
 			result.append(this.getGroupFiledValue());
 		}

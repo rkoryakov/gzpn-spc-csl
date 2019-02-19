@@ -5,10 +5,14 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.vaadin.data.ValueProvider;
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.TextField;
 
+import ru.gzpn.spc.csl.model.LocalEstimate;
 import ru.gzpn.spc.csl.model.dataproviders.AbstractRegistryDataProvider;
 import ru.gzpn.spc.csl.model.dataproviders.LocalEstimateDataProvider;
 import ru.gzpn.spc.csl.model.dataproviders.ProjectTreeDataProvider;
@@ -27,13 +31,18 @@ import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.AbstractTreeGridComponent;
 import ru.gzpn.spc.csl.ui.common.AbstractTreeGridSettingsWindow;
+import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 
 @SuppressWarnings("serial")
 public class LocalEstimatesTreeGridComponent extends AbstractTreeGridComponent<ILocalEstimatePresenter> {
 
+	private static final String I18N_ADDITEMBUTTON_DESC = "LocalEstimatesTreeGridComponent.addItemButton.desc";
+	private static final String I18N_REMOVEITEMBUTTON_DESC = "LocalEstimatesTreeGridComponent.removeItemButton.desc";
 	private boolean treeVisibility = false;
 	private AbstractRegistryDataProvider<ILocalEstimatePresenter, Void> gridDataProvider;
 	private ProjectTreeDataProvider treeDataProvider;
+	private Button addItemButton;
+	private Button removeItemButton;
 	
 	public LocalEstimatesTreeGridComponent(IProjectService treeDataService,
 			IDataService<ILocalEstimate, ILocalEstimatePresenter> gridDataService, IUserSettigsService userSettingsService) {
@@ -201,6 +210,41 @@ public class LocalEstimatesTreeGridComponent extends AbstractTreeGridComponent<I
 		column.setId(columnSettings.getEntityFieldName());
 		
 		return column;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Component createGridButtons() {
+		JoinedLayout<Button, Button> buttons = new JoinedLayout<>();
+		addItemButton = new Button(VaadinIcons.PLUS);
+		addItemButton.addClickListener(clickEvent -> {
+			ILocalEstimate le = new LocalEstimate();
+			
+			((ILocalEstimateService)gridDataService)
+				.cretaeLocalEstimateByCalculationId(le, getGridDataProvider()
+						.getParentNode().getId());
+			getGridDataProvider().refreshAll();
+		});
+		
+		removeItemButton = new Button(VaadinIcons.MINUS);
+		removeItemButton.addClickListener(clickEvent -> {
+			grid.getSelectedItems().forEach(item -> {
+				gridDataService.remove(item);
+			});
+			
+			grid.deselectAll();
+			grid.getDataProvider().refreshAll();
+		});
+		
+		addItemButton.setDescription(getI18nText(I18N_ADDITEMBUTTON_DESC, messageSource));
+		removeItemButton.setDescription(getI18nText(I18N_REMOVEITEMBUTTON_DESC, messageSource));
+		addItemButton.setEnabled(true);
+		removeItemButton.setEnabled(true);
+		
+		buttons.addComponent(addItemButton);
+		buttons.addComponent(removeItemButton);
+		
+		return buttons;
 	}
 	
 	@Override

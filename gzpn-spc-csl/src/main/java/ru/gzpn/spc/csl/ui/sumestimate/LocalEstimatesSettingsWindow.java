@@ -14,7 +14,8 @@ import ru.gzpn.spc.csl.ui.common.AbstractTreeGridSettingsWindow;
 
 @SuppressWarnings("serial")
 public class LocalEstimatesSettingsWindow extends AbstractTreeGridSettingsWindow {
-
+	private SummaryEstimateCardSettingsJson changedSummaryEstimateCardSettingsJson = null;
+	
 	public LocalEstimatesSettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
 		super(settingsService, messageSource);
 	}
@@ -51,7 +52,11 @@ public class LocalEstimatesSettingsWindow extends AbstractTreeGridSettingsWindow
 
 	@Override
 	public ISettingsJson getUserSettings() {
-		return settingsService.getSummaryEstimateCardSettings(currentUser, new SummaryEstimateCardSettingsJson());
+		if (changedSummaryEstimateCardSettingsJson == null) {
+			changedSummaryEstimateCardSettingsJson = (SummaryEstimateCardSettingsJson)
+					settingsService.getSummaryEstimateCardSettings(currentUser, new SummaryEstimateCardSettingsJson());
+		}
+		return changedSummaryEstimateCardSettingsJson;
 	}
 
 }

@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 
 import com.vaadin.data.provider.Query;
 
-import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.LocalEstimatePresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
@@ -25,7 +24,6 @@ public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILoc
 	private ILocalEstimateService localEstimateService;
 	private List<ColumnSettings> shownColumns;
 	private IGridFilter<ILocalEstimatePresenter> filter;
-	private IEstimateCalculation currentEstimateCalculation;
 	
 	//First Request with page and limit = 1 
     //long totalElements = pageCommand.findPages(1, 1).getTotalElements();
@@ -70,7 +68,7 @@ public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILoc
 		Stream<ILocalEstimatePresenter> result = Stream.empty();
 		
 		switch (parentNode.getEntityEnum()) {
-		case ESTIMATECALCULATION:
+		case LOCALESTIMATE:
 			result = fetchByEstimateCalculationId(query, parentNode);
 			break;
 		default:
@@ -88,7 +86,7 @@ public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILoc
 			result = localEstimateService.getLocalEstimatesByCalculationId(parentNode.getId())
 							.stream().map(item -> (ILocalEstimatePresenter) new LocalEstimatePresenter(item))
 								.filter(getFilter().getFilterPredicate(shownColumns))
-									.sorted(localEstimateService.getSortComparator(query.getSortOrders()));;
+									.sorted(localEstimateService.getSortComparator(query.getSortOrders()));
 		}
 		
 		return result;
@@ -118,13 +116,6 @@ public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILoc
 		return filter;
 	}
 
-	public IEstimateCalculation getCurrentEstimateCalculation() {
-		return currentEstimateCalculation;
-	}
-
-	public void setCurrentEstimateCalculation(IEstimateCalculation currentEstimateCalculation) {
-		this.currentEstimateCalculation = currentEstimateCalculation;
-	}
 
 	@Override
 	public NodeWrapper getParentNode() {

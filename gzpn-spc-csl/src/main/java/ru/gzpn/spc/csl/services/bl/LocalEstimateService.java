@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -49,8 +50,29 @@ public class LocalEstimateService implements ILocalEstimateService {
 			Optional<EstimateCalculation> c = estimateCalculationsRepository.findById(calculationId);
 			if (c.isPresent()) {
 				result = c.get().getEstimates();
+				Hibernate.initialize(result);
 			}
 		}
+		return result;
+	}
+	
+	/**
+	 * Persists the given le and links it to the calculationId
+	 */
+	@Override
+	public ILocalEstimate cretaeLocalEstimateByCalculationId(ILocalEstimate le, Long calculationId) {
+		ILocalEstimate result = null;
+		
+		result = localEstimateRepository.save((LocalEstimate)le);
+		
+		if (calculationId != null) {
+			Optional<EstimateCalculation> c = estimateCalculationsRepository.findById(calculationId);
+			if (c.isPresent()) {
+				result.setEstimateCalculation(c.get());
+				result = localEstimateRepository.save((LocalEstimate)result);
+			}
+		}
+		
 		return result;
 	}
 	

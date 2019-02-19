@@ -41,6 +41,7 @@ import ru.gzpn.spc.csl.ui.views.CreateDocView;
 import ru.gzpn.spc.csl.ui.views.ErrorView;
 import ru.gzpn.spc.csl.ui.views.EstimateRegisterView;
 import ru.gzpn.spc.csl.ui.views.ProcessManagerView;
+import ru.gzpn.spc.csl.ui.views.SummaryEstimateCardView;
 
 @SuppressWarnings("serial")
 @SpringUI
@@ -51,6 +52,7 @@ public class MainUI extends UI {
 
 	public static final String REQUEST_PARAM_TASKID = "taskId";
 	public static final String REQUEST_PARAM_VIEWID = "viewId";
+	public static final String REQUEST_PARAM_SSRID = "ssrId";
 	
 	@Autowired
 	private SpringViewProvider viewProvider;
@@ -67,11 +69,13 @@ public class MainUI extends UI {
 
 	private String viewId;
 	private String taskId;
+	private String ssrId;
 	
 	@Override
 	protected void init(VaadinRequest request) {
 		viewId = VaadinService.getCurrentRequest().getParameter(REQUEST_PARAM_VIEWID);
 		taskId = VaadinService.getCurrentRequest().getParameter(REQUEST_PARAM_TASKID);
+		ssrId = VaadinService.getCurrentRequest().getParameter(REQUEST_PARAM_SSRID);
 		
 		head = createHead();
 		mainLayout = createMainLayout();
@@ -100,8 +104,11 @@ public class MainUI extends UI {
 		Set<String> authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
 				.collect(Collectors.toSet());
 		
-		if (CreateDocView.NAME.equals(viewId)) {
-			navigator.navigateTo(CreateDocView.NAME);
+		if (viewId != null) {
+			if (SummaryEstimateCardView.NAME.equals(viewId)) {
+				navigator.navigateTo(viewId + "/" + REQUEST_PARAM_SSRID + "=" + ssrId);
+			}
+			
 		} else {
 			if (authorities.contains(Roles.CREATOR_ROLE.toString())) {
 				navigator.navigateTo(CreateDocView.NAME);
@@ -114,7 +121,7 @@ public class MainUI extends UI {
 			} else if (authorities.contains(Roles.CONTRACT_EX_ROLE.toString())) {
 				navigator.navigateTo("");
 			} else if (authorities.contains(Roles.EXPERT_ES_ROLE.toString())) {
-				navigator.navigateTo("");
+				navigator.navigateTo(EstimateRegisterView.NAME);
 			} else if (authorities.contains(Roles.USER_ROLE.toString())) {
 				navigator.navigateTo(CreateDocView.NAME);
 			}

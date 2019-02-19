@@ -13,4 +13,5 @@ public interface ILocalEstimateService extends IDataService<ILocalEstimate, ILoc
 	List<ILocalEstimate> getLocalEstimates();
 	Comparator<ILocalEstimatePresenter> getSortComparator(List<QuerySortOrder> list);
 	List<ILocalEstimate> getLocalEstimatesByCalculationId(Long calculationId);
+	ILocalEstimate cretaeLocalEstimateByCalculationId(ILocalEstimate le, Long calculationId);
 }

@@ -10,11 +10,12 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import ru.gzpn.spc.csl.model.Document;
+import ru.gzpn.spc.csl.model.EstimateCalculation;
+import ru.gzpn.spc.csl.model.LocalEstimate;
+import ru.gzpn.spc.csl.model.ObjectEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IObjectEstimate;
-import ru.gzpn.spc.csl.model.interfaces.IWork;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 
 @SuppressWarnings("serial")
@@ -27,17 +28,14 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 	private NodeWrapper localEstimatesTreeGroup;
 	private NodeWrapper objectEstimatesTreeGroup;
 	private NodeWrapper estimateCalculationsTreeGroup;
-	private NodeWrapper worksTreeGroup;
 	
 	private List<ColumnSettings> localEstimatesColumns;
 	private List<ColumnSettings> objectEstimatesColumns;
 	private List<ColumnSettings> estimateCalculationsColumns;
-	private List<ColumnSettings> worksColumns;
 
 	private List<ColumnHeaderGroup> localEstimatesColumnHeaders;
 	private List<ColumnHeaderGroup> objectEstimatesColumnHeaders;
 	private List<ColumnHeaderGroup> estimateCalculationsColumnHeaders;
-	private List<ColumnHeaderGroup> worksColumnHeaders;
 	
 	private boolean showTree;
 
@@ -138,7 +136,7 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 	@JsonIgnore
 	public List<ColumnSettings> getDefaultLocalEstimatesColumns() {
 		List<ColumnSettings> result = new ArrayList<>();
-		String entityName = Document.class.getSimpleName();
+		String entityName = LocalEstimate.class.getSimpleName();
 
 		result.add(new ColumnSettings(entityName, ILocalEstimate.FIELD_ID, null, false, 0));
 		result.add(new ColumnSettings(entityName, ILocalEstimate.FIELD_NAME, null, true, 1));
@@ -156,7 +154,7 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 	@JsonIgnore
 	public List<ColumnSettings> getDefaultObjectEstimatesColumns() {
 		List<ColumnSettings> result = new ArrayList<>();
-		String entityName = Document.class.getSimpleName();
+		String entityName = ObjectEstimate.class.getSimpleName();
 
 		result.add(new ColumnSettings(entityName, IObjectEstimate.FIELD_ID, null, false, 0));
 		result.add(new ColumnSettings(entityName, IObjectEstimate.FIELD_NAME, null, true, 1));
@@ -175,7 +173,7 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 	@JsonIgnore
 	public List<ColumnSettings> getDefaultEstimateCalculationsColumns() {
 		List<ColumnSettings> result = new ArrayList<>();
-		String entityName = Document.class.getSimpleName();
+		String entityName = EstimateCalculation.class.getSimpleName();
 
 		result.add(new ColumnSettings(entityName, IEstimateCalculation.FIELD_ID, null, false, 0));
 		result.add(new ColumnSettings(entityName, IEstimateCalculation.FIELD_NAME, null, true, 1));
@@ -189,27 +187,6 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 
 		return result;
 	}
-	
-	@JsonIgnore
-	public List<ColumnSettings> getDefaultWorksColumns() {
-		List<ColumnSettings> result = new ArrayList<>();
-		String entityName = Document.class.getSimpleName();
-
-		result.add(new ColumnSettings(entityName, IWork.FIELD_ID, null, false, 0));
-		result.add(new ColumnSettings(entityName, IWork.FIELD_NAME, null, true, 1));
-		result.add(new ColumnSettings(entityName, IWork.FIELD_CODE, null, true, 2));
-		result.add(new ColumnSettings(entityName, IWork.FIELD_TYPE, null, true, 3));
-		result.add(new ColumnSettings(entityName, IWork.FIELD_MILESTONE, null, true, 4));
-
-		result.add(new ColumnSettings(entityName, IWork.FIELD_CREATE_DATE, null, true, 6));
-		result.add(new ColumnSettings(entityName, IWork.FIELD_CHANGE_DATE, null, false, 7));
-		result.add(new ColumnSettings(entityName, IWork.FIELD_VERSION, null, false, 8));
-
-		return result;
-	}
-	
-	
-	
 	
 	
 	public List<ColumnHeaderGroup> getLocalEstimatesColumnHeaders() {
@@ -244,17 +221,6 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 	public void setEstimateCalculationsColumnHeaders(List<ColumnHeaderGroup> headers) {
 		estimateCalculationsColumnHeaders = headers;
 	}
-
-	public List<ColumnHeaderGroup> getWorksColumnHeaders() {
-		if (Objects.isNull(worksColumnHeaders)) {
-			worksColumnHeaders = getDefaultWorksHeaders();
-		}
-
-		return worksColumnHeaders;
-	}
-	public void setWorksColumnHeaders(List<ColumnHeaderGroup> headers) {
-		worksColumnHeaders = headers;
-	}
 	
 	
 	
@@ -287,16 +253,6 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 	}
 	public void getEstimateCalculationsTreeGroup(NodeWrapper node) {
 		estimateCalculationsTreeGroup = node;
-	}
-	
-	public NodeWrapper getWorksTreeGroup() {
-		if (Objects.isNull(worksTreeGroup)) {
-			worksTreeGroup = getDefaultWorksTreeGroup();
-		}
-		return worksTreeGroup;
-	}
-	public void setWorksTreeGroup(NodeWrapper node) {
-		worksTreeGroup = node;
 	}
 	
 	
@@ -333,17 +289,6 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 	}
 	public void setEstimateCalculationsColumns(List<ColumnSettings> columns) {
 		estimateCalculationsColumns = columns;
-	}
-	
-	public List<ColumnSettings> getWorksColumns() {
-		if (Objects.isNull(worksColumns)) {
-			worksColumns = getDefaultWorksColumns();
-		}
-
-		return worksColumns;
-	}
-	public void setWorksColumns(List<ColumnSettings> columns) {
-		worksColumns = columns;
 	}
 	
 

@@ -2,6 +2,7 @@ package ru.gzpn.spc.csl.ui.views;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,8 @@ public class SummaryEstimateCardView extends VerticalLayout implements View {
 			logger.debug(event.getParameterMap());
 			
 			Long ssrid = null;
-			if (ssrId != null) {
+
+			if (ssrId != null && StringUtils.isNumeric(ssrId)) {
 				ssrid = Long.parseLong(ssrId);
 			}
 			

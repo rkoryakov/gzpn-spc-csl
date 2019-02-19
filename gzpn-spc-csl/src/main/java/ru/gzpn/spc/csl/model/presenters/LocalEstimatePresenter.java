@@ -31,6 +31,16 @@ public class LocalEstimatePresenter extends LocalEstimate implements ILocalEstim
 	}
 	
 	@Override
+	public String getChangedBy() {
+		String result = super.getChangedBy();
+		if (result == null) {
+			result = "";
+		}
+		
+		return result;
+	}
+	
+	@Override
 	public ILocalEstimate getLocalEstimate() {
 		return localEstimate;
 	}

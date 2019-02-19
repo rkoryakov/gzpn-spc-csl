@@ -70,7 +70,7 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 	protected String user;
 	
 	private Map<Action, Set<Listener>> listeners;
-	private HorizontalLayout headFuturesLayout;
+	private HorizontalLayout headFeaturesLayout;
 	private TextField registerFilterField;
 	private Button registerFilterSettingsButton;
 	private Button downloadWorksetButton;
@@ -79,6 +79,7 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 	private Panel treePanel;
 	private Registration treeItemSelectRegistration;
 	private T selectedGridItem;
+	
 	
 	public abstract boolean isTreeVisible();
 	public abstract AbstractRegistryDataProvider<T, ?> getGridDataProvider();
@@ -122,12 +123,12 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 		layout.setStyleName("gzpn-head");
 		layout.setHeight(50.0f, Unit.PIXELS);
 		layout.setWidth(100.f, Unit.PERCENTAGE);
-		headFuturesLayout = new HorizontalLayout();
-		headFuturesLayout.addComponent(createRegisterFilter());
-
-		headFuturesLayout.addComponent(createExcelButton());
+		headFeaturesLayout = new HorizontalLayout();
+		headFeaturesLayout.addComponent(createRegisterFilter());
+		headFeaturesLayout.addComponent(createGridButtons());
+		headFeaturesLayout.addComponent(createExcelButton());
 		layout.addComponent(createSettingsButton(), "top:5px; left:5px");
-		layout.addComponent(headFuturesLayout, "top:5px; right:5px");
+		layout.addComponent(headFeaturesLayout, "top:5px; right:5px");
 		
 		verticalLayout.addComponent(layout);
 		this.addComponent(verticalLayout);	
@@ -148,7 +149,7 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 		});
 		return searchComp;
 	}
-
+	
 	public Component createExcelButton() {
 		downloadWorksetButton = new Button(VaadinIcons.TABLE);
 		downloadWorksetButton.setDescription(getI18nText(I18N_DOWNLOADWORKSETBUTTON_DESC, messageSource));
@@ -389,5 +390,10 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 		for (Listener listener : listeners.get(action)) {
 			listener.componentEvent(new Event(this));
 		}
+	}
+	
+	public Component createGridButtons() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
