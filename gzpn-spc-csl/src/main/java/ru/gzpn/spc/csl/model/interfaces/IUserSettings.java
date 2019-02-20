@@ -3,6 +3,7 @@ package ru.gzpn.spc.csl.model.interfaces;
 import ru.gzpn.spc.csl.model.jsontypes.ContractsRegSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.EstimateCalculationsRegSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.LocalEstimatesApprovalJson;
 import ru.gzpn.spc.csl.model.jsontypes.SummaryEstimateCardSettingsJson;
 
 public interface IUserSettings {
@@ -26,4 +27,8 @@ public interface IUserSettings {
 	SummaryEstimateCardSettingsJson getSummaryEstimateCardSettingsJson();
 
 	void setSummaryEstimateCardSettingsJson(SummaryEstimateCardSettingsJson sumEstimatesSettingsJson);
+
+	LocalEstimatesApprovalJson getLocalEstimatesApprovalJson();
+
+	void setLocalEstimatesApprovalJson(LocalEstimatesApprovalJson localEstimatesApprovalJson);
 }

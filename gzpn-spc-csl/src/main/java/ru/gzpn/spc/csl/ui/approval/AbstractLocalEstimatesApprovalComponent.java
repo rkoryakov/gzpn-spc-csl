@@ -11,25 +11,18 @@ import org.springframework.context.MessageSource;
 
 import com.vaadin.event.Action;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.FileDownloader;
-import com.vaadin.server.StreamResource;
-import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import ru.gzpn.spc.csl.model.dataproviders.AbstractRegistryDataProvider;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.I18n;
-import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 import ru.gzpn.spc.csl.ui.common.RegistryComponent;
-import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
 import ru.gzpn.spc.csl.ui.createdoc.CreateDocSettingsWindow;
 
 public abstract class AbstractLocalEstimatesApprovalComponent extends VerticalLayout implements I18n {
@@ -41,15 +34,11 @@ public abstract class AbstractLocalEstimatesApprovalComponent extends VerticalLa
 	// event actions
 	public static final Action APPROVE_ACTION = new Action("approveAction");
 	public static final Action REJECT_ACTION = new Action("rejectAction");
-
+	
 	private static final String I18N_SEARCHSETTINGS_DESC = "";
-
 	private static final String I18N_SEARCHFIELD_PLACEHOLDER = "RegisterComponent.filter.placeholder";
-
 	private static final String I18N_DOWNLOADWORKSETBUTTON_DESC = "";
-
 	private static final String I18N_USERLAYOUTSETTINGS_DESC = "";
-
 
 	protected IUIService service;
 	protected IUserSettigsService userSettingsService;
@@ -79,76 +68,17 @@ public abstract class AbstractLocalEstimatesApprovalComponent extends VerticalLa
 		setMargin(false);
 
 		initEventActions();
-		createHeadFutures();
 		createBody();
 		createFooter();
 		refreshUiElements();
 	}
-
-	public abstract <T, F> AbstractRegistryDataProvider<T, F> getDataProvider();
-
-	public abstract <T> Grid<T> getLocalEstimatesGrid();
-	
 	
 	protected void initEventActions() {
 		listeners = new HashMap<>();
 		listeners.put(APPROVE_ACTION, new HashSet<>());
 		listeners.put(REJECT_ACTION, new HashSet<>());
 	}
-
-	public void createHeadFutures() {
-		VerticalLayout verticalLayout = new VerticalLayout();
-		verticalLayout.setMargin(false);
-		verticalLayout.setSpacing(false);
-		AbsoluteLayout layout = new AbsoluteLayout();
-		
-		layout.setStyleName("gzpn-head");
-		layout.setHeight(50.0f, Unit.PIXELS);
-		layout.setWidth(100.f, Unit.PERCENTAGE);
-		headFuturesLayout = new HorizontalLayout();
-		headFuturesLayout.addComponent(createRegisterFilter());
-
-		headFuturesLayout.addComponent(createExcelButton());
-		layout.addComponent(createSettingsButton(), "top:5px; left:5px");
-		layout.addComponent(headFuturesLayout, "top:5px; right:5px");
-		
-		verticalLayout.addComponent(layout);
-		this.addComponent(verticalLayout);	
-	}
 	
-	public Component createRegisterFilter() {
-		registerFilterField = new TextField();
-		registerFilterField.setWidth(300.0f, Unit.PIXELS);
-		registerFilterSettingsButton = new Button();
-		registerFilterSettingsButton.setIcon(VaadinIcons.FILTER);
-		registerFilterSettingsButton.setDescription(getI18nText(I18N_SEARCHSETTINGS_DESC, messageSource, I18N_SEARCHSETTINGS_DESC));
-		JoinedLayout<TextField, Button> searchComp = new JoinedLayout<>(registerFilterField, registerFilterSettingsButton);
-		registerFilterField.setPlaceholder(getI18nText(I18N_SEARCHFIELD_PLACEHOLDER, messageSource));
-		
-		registerFilterField.addValueChangeListener(e -> {
-			getDataProvider().getFilter().setCommonTextFilter(e.getValue());
-			
-			getDataProvider().refreshAll();
-		});
-		return searchComp;
-	}
-	
-	public Component createExcelButton() {
-		downloadWorksetButton = new Button(VaadinIcons.TABLE);
-		downloadWorksetButton.setDescription(getI18nText(I18N_DOWNLOADWORKSETBUTTON_DESC, messageSource, I18N_DOWNLOADWORKSETBUTTON_DESC));
-		StreamResource excelStreamResource = new StreamResource(
-				(StreamResource.StreamSource) () -> Exporter.exportAsExcel(getLocalEstimatesGrid()), getReportName());
-		
-		FileDownloader excelFileDownloader = new FileDownloader(excelStreamResource);
-		excelFileDownloader.extend(downloadWorksetButton);
-		
-		return downloadWorksetButton;
-	}
-	
-	protected String getReportName() {
-		return "report.xls";
-	}
-
 	public Component createSettingsButton() {
 		userLayoutSettingsButton = new Button();
 		userLayoutSettingsButton.setIcon(VaadinIcons.COG_O);
@@ -211,10 +141,12 @@ public abstract class AbstractLocalEstimatesApprovalComponent extends VerticalLa
 		return openItemButton;
 	}
 
-	/**  
-	 * Fill these UI elements with data from the {@code UserSettingsJson uiSettings}
-	 */
-	public abstract void refreshUiElements();
+	public void refreshUiElements() {
+		if (bodyLayout != null) {
+			bodyLayout.removeAllComponents();
+		}
+		bodyLayout = createBodyLayout();
+	}
 	
 	public void approve() {
 		onApprove();

@@ -4,5 +4,6 @@
 @org.hibernate.annotations.TypeDef(name = "EstimateCalculationsRegSettingsJsonType", typeClass = EstimateCalculationsRegSettingsJsonType.class)
 @org.hibernate.annotations.TypeDef(name = "ContractsRegSettingsJsonType", typeClass = ContractsRegSettingsJsonType.class)
 @org.hibernate.annotations.TypeDef(name = "SummaryEstimateCardSettingsJsonType", typeClass = SummaryEstimateCardSettingsJsonType.class)
+@org.hibernate.annotations.TypeDef(name = "LocalEstimatesApprovalJsonType", typeClass = LocalEstimatesApprovalJsonType.class)
 
 package ru.gzpn.spc.csl.model.jsontypes;

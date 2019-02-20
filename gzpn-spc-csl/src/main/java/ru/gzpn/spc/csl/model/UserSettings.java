@@ -13,6 +13,7 @@ import ru.gzpn.spc.csl.model.interfaces.IUserSettings;
 import ru.gzpn.spc.csl.model.jsontypes.ContractsRegSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.EstimateCalculationsRegSettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.LocalEstimatesApprovalJson;
 import ru.gzpn.spc.csl.model.jsontypes.SummaryEstimateCardSettingsJson;
 
 @Entity
@@ -39,6 +40,10 @@ public class UserSettings extends BaseEntity implements IUserSettings, Serializa
 	@Column
 	@Type(type="SummaryEstimateCardSettingsJsonType")
 	private SummaryEstimateCardSettingsJson summaryEstimateCardSettingsJson;
+	
+	@Column
+	@Type(type="LocalEstimatesApprovalJsonType")
+	private LocalEstimatesApprovalJson localEstimatesApprovalJson;
 	
 	public UserSettings() {
 	}
@@ -92,5 +97,16 @@ public class UserSettings extends BaseEntity implements IUserSettings, Serializa
 	public void setSummaryEstimateCardSettingsJson(SummaryEstimateCardSettingsJson sumEstimatesSettingsJson) {
 		this.summaryEstimateCardSettingsJson = sumEstimatesSettingsJson;
 	}
+
+	@Override
+	public LocalEstimatesApprovalJson getLocalEstimatesApprovalJson() {
+		return localEstimatesApprovalJson;
+	}
+
+	@Override
+	public void setLocalEstimatesApprovalJson(LocalEstimatesApprovalJson localEstimatesApprovalJson) {
+		this.localEstimatesApprovalJson = localEstimatesApprovalJson;
+	}
+	
 	
 }

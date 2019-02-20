@@ -56,17 +56,6 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 
 		List<ColumnHeaderGroup> result = new ArrayList<>();
 		List<ColumnHeaderGroup> subGroups = new ArrayList<>();
-//			ColumnHeaderGroup root0 = new ColumnHeaderGroup("Root group 0");
-//			ColumnHeaderGroup root1 = new ColumnHeaderGroup("Root group 1");
-//			ColumnHeaderGroup root2 = new ColumnHeaderGroup("Root group 2");
-//			
-//			subGroups.add(new ColumnHeaderGroup("Group 1").addColumn(leftResultColumns.get(1)).addColumn(leftResultColumns.get(2)));
-//			subGroups.add(new ColumnHeaderGroup("Group 2").addColumn(leftResultColumns.get(3)).addColumn(leftResultColumns.get(4)));
-//			
-//			root2.setChildren(subGroups);
-//			root1.setChildren(Arrays.asList(root2));
-//			root0.setChildren(Arrays.asList(root1));
-//			result.add(root0);
 
 		return result;
 	}
