@@ -49,7 +49,7 @@ public class CProjectPresenter extends CProject implements ICProjectPresenter {
 	
 	@Override
 	public String getPhaseCaption() {
-		String result = "---";
+		String result = "";
 		if (Objects.nonNull(getPhase())) {
 			result = getPhase().getName();
 		}
@@ -58,7 +58,7 @@ public class CProjectPresenter extends CProject implements ICProjectPresenter {
 	
 	@Override
 	public String getMilestoneCaption() {
-		String result = "---";
+		String result = "";
 		if (Objects.nonNull(getMilestone())) {
 			result = getMilestone().getCode();
 		}
@@ -67,7 +67,7 @@ public class CProjectPresenter extends CProject implements ICProjectPresenter {
 	
 	@Override
 	public String getHProjectCaption() {
-		String result = "---";
+		String result = "";
 		if (Objects.nonNull(getHproject())) {
 			result = getHproject().getName();
 		}

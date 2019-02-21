@@ -17,6 +17,7 @@ import ru.gzpn.spc.csl.model.jsontypes.ContractsRegSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.EstimateCalculationsRegSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
+import ru.gzpn.spc.csl.model.jsontypes.LocalEstimatesApprovalJson;
 import ru.gzpn.spc.csl.model.jsontypes.SummaryEstimateCardSettingsJson;
 import ru.gzpn.spc.csl.model.repositories.UserSettingsRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
@@ -121,6 +122,55 @@ public class UserSettigsService implements IUserSettigsService {
 		return result;
 	}
 	
+
+	@Override
+	public ISettingsJson getSummaryEstimateCardSettings(String userId, ISettingsJson defaultValue) {
+		UserSettings userSettings = repository.findByUserId(userId);
+		ISettingsJson result = null;
+		
+		if (userSettings != null) {
+			result = userSettings.getSummaryEstimateCardSettingsJson();
+			// JSON field is empty
+			if (Objects.isNull(result)) {
+				result = defaultValue;
+			}
+		// no such user settings
+		} else {
+			result = defaultValue;
+		}
+		
+		return result;
+	}
+
+	@Override
+	public ISettingsJson getSummaryEstimateCardSettings(String userId) {
+		return getSummaryEstimateCardSettings(userId, null);
+	}
+	
+	@Override
+	public ISettingsJson getLocalEstimatesApprovalSettings(String userId, ISettingsJson defaultValue) {
+		UserSettings userSettings = repository.findByUserId(userId);
+		ISettingsJson result = null;
+		
+		if (userSettings != null) {
+			result = userSettings.getLocalEstimatesApprovalJson();
+			// JSON field is empty
+			if (Objects.isNull(result)) {
+				result = defaultValue;
+			}
+		// no such user settings
+		} else {
+			result = defaultValue;
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public ISettingsJson getLocalEstimatesApprovalSettings(String userId) {
+		return getLocalEstimatesApprovalSettings(userId);
+	}
+	
 	
 	@Override
 	public void save(String userId, ISettingsJson settingsJson) {
@@ -146,30 +196,8 @@ public class UserSettigsService implements IUserSettigsService {
 			settings.setEstimatesRegSettingsJson((EstimateCalculationsRegSettingsJson)settingsJson);
 		} else if (settingsJson instanceof SummaryEstimateCardSettingsJson) {
 			settings.setSummaryEstimateCardSettingsJson((SummaryEstimateCardSettingsJson)settingsJson);
+		} else if (settingsJson instanceof LocalEstimatesApprovalJson) {
+			settings.setLocalEstimatesApprovalJson((LocalEstimatesApprovalJson)settingsJson);
 		}
-	}
-
-	@Override
-	public ISettingsJson getSummaryEstimateCardSettings(String userId, ISettingsJson defaultValue) {
-		UserSettings userSettings = repository.findByUserId(userId);
-		ISettingsJson result = null;
-		
-		if (userSettings != null) {
-			result = userSettings.getSummaryEstimateCardSettingsJson();
-			// JSON field is empty
-			if (Objects.isNull(result)) {
-				result = defaultValue;
-			}
-		// no such user settings
-		} else {
-			result = defaultValue;
-		}
-		
-		return result;
-	}
-
-	@Override
-	public ISettingsJson getSummaryEstimateCardSettings(String userId) {
-		return getSummaryEstimateCardSettings(userId, null);
 	}
 }

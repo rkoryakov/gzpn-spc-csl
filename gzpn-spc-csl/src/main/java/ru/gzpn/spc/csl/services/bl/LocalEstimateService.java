@@ -1,6 +1,7 @@
 package ru.gzpn.spc.csl.services.bl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -73,6 +74,15 @@ public class LocalEstimateService implements ILocalEstimateService {
 			}
 		}
 		
+		return result;
+	}
+	
+	@Override
+	public List<ILocalEstimate> getLocalEstimatesByIds(Collection<Long> ids) {
+		List<ILocalEstimate> result = java.util.Collections.emptyList();
+		result = localEstimateRepository.findAllById(ids)
+					.stream().map(item -> (ILocalEstimate)item)
+						.collect(Collectors.toList());
 		return result;
 	}
 	

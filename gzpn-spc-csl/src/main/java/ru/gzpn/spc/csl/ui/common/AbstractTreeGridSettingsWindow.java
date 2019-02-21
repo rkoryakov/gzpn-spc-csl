@@ -31,8 +31,6 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.components.grid.GridDragSource;
-import com.vaadin.ui.components.grid.GridDropTarget;
 import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.components.grid.TreeGridDropTarget;
 import com.vaadin.ui.themes.ValoTheme;
@@ -97,13 +95,9 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 		tabSheet = new TabSheet();
 		
 		VerticalLayout columnsSettings = new VerticalLayout();
-		splitPanel = new HorizontalSplitPanel();
-		splitPanel.setFirstComponent(createLeftTree());
-		splitPanel.setSecondComponent(createRightColumnsGrid());
-		splitPanel.setSplitPosition(30);
-		columnsSettings.addComponent(splitPanel);
+		columnsSettings.addComponent(createRightColumnsGrid());
 		
-		tabSheet.addTab(splitPanel, getI18nText(I18N_COLUMNSTAB_CAPTION, messageSource));
+		tabSheet.addTab(columnsSettings, getI18nText(I18N_COLUMNSTAB_CAPTION, messageSource));
 		tabSheet.addTab(createColumnHeadersGrid(), getI18nText(I18N_HEADERSTAB_CAPTION, messageSource));
 		
 		bodyLayout.addComponent(tabSheet);
@@ -214,15 +208,15 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 		columnsGrid.setHeightByRows(GRID_ROWS);
 		columnsLayout.addComponent(columnsGrid);
 		
-		GridDragSource<ColumnSettingsPresenter> dragSource = new GridDragSource<>(columnsGrid);
-		GridDropTarget<NodeWrapper> dropTarget = new GridDropTarget<>(projectTree.getCompositionRoot(), DropMode.ON_TOP);
+//		GridDragSource<ColumnSettingsPresenter> dragSource = new GridDragSource<>(columnsGrid);
+//		GridDropTarget<NodeWrapper> dropTarget = new GridDropTarget<>(projectTree.getCompositionRoot(), DropMode.ON_TOP);
 		
-		dragSource.addGridDragStartListener(dragEvent -> {
-			List<ColumnSettingsPresenter> items = dragEvent.getDraggedItems();
-			this.draggedItems = items.stream().map(item -> 
-				new NodeWrapper(item.getEntityName(), item.getEntityFieldName().substring(item.getEntityName().length() + 1)))
-					.collect(Collectors.toList());
-		});
+//		dragSource.addGridDragStartListener(dragEvent -> {
+//			List<ColumnSettingsPresenter> items = dragEvent.getDraggedItems();
+//			this.draggedItems = items.stream().map(item -> 
+//				new NodeWrapper(item.getEntityName(), item.getEntityFieldName().substring(item.getEntityName().length() + 1)))
+//					.collect(Collectors.toList());
+//		});
 
 		List<ColumnSettings> columns = getColumnSettings();
 		List<ColumnHeaderGroup> headers = getHeaderSettings();
@@ -415,18 +409,18 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 	
 	@Override
 	public void refreshSettings() {
-		NodeWrapper next = treeData.getRootItems().get(0);
-		NodeWrapper result = next;
-		result.setParent(null);
-		
-		while (!treeData.getChildren(next).isEmpty()) {
-			NodeWrapper child = treeData.getChildren(next).get(0);
-			child.setParent(next);
-			next.setChild(child);
-			next = child;
-		}
-		
-		setTreeSettings(result);
+//		NodeWrapper next = treeData.getRootItems().get(0);
+//		NodeWrapper result = next;
+//		result.setParent(null);
+//		
+//		while (!treeData.getChildren(next).isEmpty()) {
+//			NodeWrapper child = treeData.getChildren(next).get(0);
+//			child.setParent(next);
+//			next.setChild(child);
+//			next = child;
+//		}
+//		
+//		setTreeSettings(result);
 
 		List<ColumnHeaderGroup> headers = headersGridData.stream()
 				.map(item -> (ColumnHeaderGroup)item)
@@ -523,7 +517,7 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 
 	@Override
 	public void refreshUiElements() {
-		refreshUiTreeData();
+	//	refreshUiTreeData();
 		refreshColumnsGrid();
 		refreshHeadersGrid();
 	}

@@ -36,6 +36,10 @@ public class LocalEstimatesApprovalJson implements ISettingsJson, Serializable {
 
 	@Override
 	public List<ColumnSettings> getColumns() {
+		if (Objects.isNull(columns)) {
+			columns = getDefaultColums();
+		}
+		
 		return columns;
 	}
 

@@ -15,6 +15,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -29,16 +30,14 @@ public abstract class AbstractLocalEstimatesApprovalComponent extends VerticalLa
 	public static final Logger logger = LogManager.getLogger(RegistryComponent.class);
 	private static final long serialVersionUID = 1L;
 
-	public static final String I18N_CREATEITEMBUTTON_CAP = "RegisterComponent.createItemButton.cap";
-	public static final String I18N_OPENITEMBUTTON_CAP = "RegisterComponent.openItemButton.cap";
+	public static final String I18N_APPROVEBUTTONN_CAP = "LocalEstimatesApprovalComponent.approveButton.cap";
+	public static final String I18N_REJECTBUTTON_CAP = "LocalEstimatesApprovalComponent.rejectButton.cap";
 	// event actions
 	public static final Action APPROVE_ACTION = new Action("approveAction");
 	public static final Action REJECT_ACTION = new Action("rejectAction");
 	
-	private static final String I18N_SEARCHSETTINGS_DESC = "";
-	private static final String I18N_SEARCHFIELD_PLACEHOLDER = "RegisterComponent.filter.placeholder";
-	private static final String I18N_DOWNLOADWORKSETBUTTON_DESC = "";
-	private static final String I18N_USERLAYOUTSETTINGS_DESC = "";
+	private static final String I18N_USERLAYOUTSETTINGS_DESC = "LocalEstimatesApprovalComponent.settingsbutton.cap";
+	private static final String I18N_COMMENTFIELD_PLACEHOLDER = "LocalEstimatesApprovalComponent.commentField.placeholder";
 
 	protected IUIService service;
 	protected IUserSettigsService userSettingsService;
@@ -49,13 +48,14 @@ public abstract class AbstractLocalEstimatesApprovalComponent extends VerticalLa
 	protected VerticalLayout bodyLayout;
 	protected HorizontalLayout footerLayout;
 
-	protected Button createItemButton;
-	protected Button openItemButton;
+	protected Button approveButton;
+	protected Button rejectButton;
 	protected Button registerFilterSettingsButton;
 	protected Button downloadWorksetButton;
 	protected TextField registerFilterField;
 	private Map<Action, Set<Listener>> listeners;
 	private Button userLayoutSettingsButton;
+	private TextArea commentField;
 
 	
 	public AbstractLocalEstimatesApprovalComponent(IUIService service) {
@@ -70,7 +70,6 @@ public abstract class AbstractLocalEstimatesApprovalComponent extends VerticalLa
 		initEventActions();
 		createBody();
 		createFooter();
-		refreshUiElements();
 	}
 	
 	protected void initEventActions() {
@@ -94,59 +93,79 @@ public abstract class AbstractLocalEstimatesApprovalComponent extends VerticalLa
 	}
 	
 	public void createBody() {
-		this.bodyLayout = createBodyLayout();
-		this.bodyLayout.setSpacing(false);
-		this.bodyLayout.setMargin(false);
-		this.addComponent(bodyLayout);
-	}
-
-	public abstract VerticalLayout createBodyLayout();
-
-	public void createFooter() {
-		HorizontalLayout footer = createFooterLayout();
-		this.bodyLayout.addComponent(footer);
-	}
-
-	public HorizontalLayout createFooterLayout() {
-		footerLayout = new HorizontalLayout();
-		HorizontalLayout horizontalLayout = new HorizontalLayout();
-		footerLayout.setSizeFull();
-		footerLayout.setMargin(true);
-		footerLayout.setSpacing(true);
-		footerLayout.setDefaultComponentAlignment(Alignment.MIDDLE_RIGHT);
-		horizontalLayout.addComponent(createCreateButton());
-		horizontalLayout.addComponent(createOpenButton());
-		footerLayout.addComponent(horizontalLayout);
-		
-		return footerLayout;
-	}
-
-	public Component createCreateButton() {
-		createItemButton = new Button(getI18nText(I18N_CREATEITEMBUTTON_CAP, messageSource, I18N_CREATEITEMBUTTON_CAP));
-		createItemButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
-		createItemButton.addClickListener(listener -> {
-			approve(/* TODO */);
-			refreshUiElements();
-		});
-		return createItemButton;
-	}
-
-	public Component createOpenButton() {
-		openItemButton = new Button(getI18nText(I18N_OPENITEMBUTTON_CAP, messageSource, I18N_OPENITEMBUTTON_CAP));
-		openItemButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
-		openItemButton.addClickListener(listener -> {
-			reject(/* TODO */);
-			refreshUiElements();
-		});
-		return openItemButton;
+		refreshUiElements();
 	}
 
 	public void refreshUiElements() {
 		if (bodyLayout != null) {
-			bodyLayout.removeAllComponents();
+			VerticalLayout layout = createBodyLayout();
+			layout.setSpacing(false);
+			layout.setMargin(false);
+			replaceComponent(bodyLayout, layout);
+			bodyLayout = layout;
+		} else {
+			bodyLayout = createBodyLayout();
+			bodyLayout.setSpacing(false);
+			bodyLayout.setMargin(false);
+			addComponent(bodyLayout);
 		}
-		bodyLayout = createBodyLayout();
 	}
+	
+	public abstract VerticalLayout createBodyLayout();
+
+	public void createFooter() {
+		HorizontalLayout footer = createFooterLayout();
+		addComponent(footer);
+	}
+
+	public HorizontalLayout createFooterLayout() {
+		footerLayout = new HorizontalLayout();
+		//HorizontalLayout footerContent = new HorizontalLayout();
+		
+		footerLayout.setSizeFull();
+		footerLayout.setMargin(true);
+		footerLayout.setSpacing(true);
+		footerLayout.setDefaultComponentAlignment(Alignment.TOP_RIGHT);
+		
+		footerLayout.addComponent(createCommentField());
+		footerLayout.setExpandRatio(commentField, 2);
+		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		buttonsLayout.addComponents(createApproveButton(), createRejectButton());
+		footerLayout.addComponent(buttonsLayout);
+		footerLayout.setExpandRatio(commentField, 1);
+		//footerLayout.addComponent(footerContent);
+		
+		return footerLayout;
+	}
+
+	public Component createCommentField() {
+		commentField = new TextArea();
+		commentField.setPlaceholder(getI18nText(I18N_COMMENTFIELD_PLACEHOLDER, messageSource));
+		commentField.setSizeFull();
+		commentField.setHeight(100, Unit.PIXELS);
+		return commentField;
+	}
+	
+	public Component createApproveButton() {
+		approveButton = new Button(getI18nText(I18N_APPROVEBUTTONN_CAP, messageSource, I18N_APPROVEBUTTONN_CAP));
+		approveButton.setStyleName(ValoTheme.BUTTON_FRIENDLY);
+		approveButton.addClickListener(listener -> {
+			approve();
+			refreshUiElements();
+		});
+		return approveButton;
+	}
+
+	public Component createRejectButton() {
+		rejectButton = new Button(getI18nText(I18N_REJECTBUTTON_CAP, messageSource, I18N_REJECTBUTTON_CAP));
+		rejectButton.setStyleName(ValoTheme.BUTTON_DANGER);
+		rejectButton.addClickListener(listener -> {
+			reject();
+			refreshUiElements();
+		});
+		return rejectButton;
+	}
+	
 	
 	public void approve() {
 		onApprove();

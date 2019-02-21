@@ -243,11 +243,11 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 	
 	public Component createGrid() {
 		grid = new Grid<>();
-		refreshWorksetGrid();
+		refreshGrid();
 		return grid;
 	}
 	
-	public void refreshWorksetGrid() {
+	public void refreshGrid() {
 	//	AbstractRegistryDataProvider gridDataProvider = (AbstractRegistryDataProvider)grid.getDataProvider();
 	//	NodeWrapper parentNode = gridDataProvider.getParentNode();
 		AbstractRegistryDataProvider<T, ?> gridDataProvider = getGridDataProvider();

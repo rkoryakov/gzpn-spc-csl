@@ -130,9 +130,17 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 	
 	public void refreshUiElements() {
 		if (bodyLayout != null) {
-			bodyLayout.removeAllComponents();
+			VerticalLayout layout = createBodyLayout();
+			layout.setSpacing(false);
+			layout.setMargin(false);
+			replaceComponent(bodyLayout, layout);
+			bodyLayout = layout;
+		} else {
+			bodyLayout = createBodyLayout();
+			bodyLayout.setSpacing(false);
+			bodyLayout.setMargin(false);
+			addComponent(bodyLayout);
 		}
-		bodyLayout = createBodyLayout();
 	}
 
 

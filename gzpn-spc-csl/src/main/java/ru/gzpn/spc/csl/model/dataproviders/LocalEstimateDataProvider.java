@@ -21,9 +21,9 @@ import ru.gzpn.spc.csl.ui.common.IGridFilter;
 public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILocalEstimatePresenter, Void> {
 
 	public Logger logger = LogManager.getLogger(LocalEstimateDataProvider.class);
-	private ILocalEstimateService localEstimateService;
-	private List<ColumnSettings> shownColumns;
-	private IGridFilter<ILocalEstimatePresenter> filter;
+	protected ILocalEstimateService localEstimateService;
+	protected List<ColumnSettings> shownColumns;
+	protected IGridFilter<ILocalEstimatePresenter> filter;
 	
 	//First Request with page and limit = 1 
     //long totalElements = pageCommand.findPages(1, 1).getTotalElements();
@@ -77,8 +77,6 @@ public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILoc
 		
 		return result;
 	}
-	
-	
 	
 	protected Stream<ILocalEstimatePresenter> fetchByEstimateCalculationId(Query<ILocalEstimatePresenter, Void> query, NodeWrapper parentNode) {
 		Stream<ILocalEstimatePresenter> result = Stream.empty();

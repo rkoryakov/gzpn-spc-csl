@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.services.bl.interfaces;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -14,4 +15,5 @@ public interface ILocalEstimateService extends IDataService<ILocalEstimate, ILoc
 	Comparator<ILocalEstimatePresenter> getSortComparator(List<QuerySortOrder> list);
 	List<ILocalEstimate> getLocalEstimatesByCalculationId(Long calculationId);
 	ILocalEstimate cretaeLocalEstimateByCalculationId(ILocalEstimate le, Long calculationId);
+	List<ILocalEstimate> getLocalEstimatesByIds(Collection<Long> ids);
 }
