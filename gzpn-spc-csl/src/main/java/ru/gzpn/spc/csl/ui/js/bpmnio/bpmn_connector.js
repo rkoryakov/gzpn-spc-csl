@@ -54,4 +54,11 @@ window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnModeler = function() {
 	  // wire save button
 	  //$('#save-button').click(exportDiagram);
   }
+  
+  this.registerRpc({
+	  deployBpmn: function() {
+		  this.exportDiagram();
+	  }
+  });
+  
 }

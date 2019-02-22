@@ -31,6 +31,8 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.components.grid.GridDragSource;
+import com.vaadin.ui.components.grid.GridDropTarget;
 import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.components.grid.TreeGridDropTarget;
 import com.vaadin.ui.themes.ValoTheme;
@@ -45,30 +47,30 @@ import ru.gzpn.spc.csl.ui.createdoc.ProjectItemIconGenerator;
 @SuppressWarnings("serial")
 public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsWindow {
 
-	private static final String I18N_WINDOW_CAPTION = "TreeGridSettingsWindow.cap";
-	private static final String I18N_COLUMNSTAB_CAPTION = "TreeGridSettingsWindow.columnstab.cap";
-	private static final String I18N_HEADERSTAB_CAPTION = "TreeGridSettingsWindow.headerstab.cap";
-	private static final String I18N_TREE_CAPTION = "TreeGridSettingsWindow.tree.cap";
-	private static final String I18N_SETTINGS_ADD_HEADER_BUTTON = "TreeGridSettingsWindow.addButton.cap";
-	private static final String I18N_SETTINGS_ADD_HEADER_NEWITEM = "TreeGridSettingsWindow.newItem.cap";
+	public static final String I18N_WINDOW_CAPTION = "TreeGridSettingsWindow.cap";
+	public static final String I18N_COLUMNSTAB_CAPTION = "TreeGridSettingsWindow.columnstab.cap";
+	public static final String I18N_HEADERSTAB_CAPTION = "TreeGridSettingsWindow.headerstab.cap";
+	public static final String I18N_TREE_CAPTION = "TreeGridSettingsWindow.tree.cap";
+	public static final String I18N_SETTINGS_ADD_HEADER_BUTTON = "TreeGridSettingsWindow.addButton.cap";
+	public static final String I18N_SETTINGS_ADD_HEADER_NEWITEM = "TreeGridSettingsWindow.newItem.cap";
 	
 	public static final int GRID_ROWS = 8;
 	public static final int GRID_ROW_HEIGHT = 38;
 	
 	
-	private TabSheet tabSheet;
-	private HorizontalSplitPanel splitPanel;
-	private DraggableTree<NodeWrapper> projectTree;
-	private List<NodeWrapper> draggedItems;
-	private TreeData<NodeWrapper> treeData;
-	private TreeDataProvider<NodeWrapper> treeDataProvider;
-	private VerticalLayout columnsLayout;
-	private Grid<ColumnSettingsPresenter> columnsGrid;
-	private List<ColumnSettingsPresenter> columnsGridData;
-	private Grid<ColumnHeaderPresenter> headersGrid;
-	private VerticalLayout headersLayout;
-	private List<ColumnHeaderPresenter> headersGridData;
-	private Button addButton;
+	protected TabSheet tabSheet;
+	protected HorizontalSplitPanel splitPanel;
+	protected DraggableTree<NodeWrapper> projectTree;
+	protected List<NodeWrapper> draggedItems;
+	protected TreeData<NodeWrapper> treeData;
+	protected TreeDataProvider<NodeWrapper> treeDataProvider;
+	protected VerticalLayout columnsLayout;
+	protected Grid<ColumnSettingsPresenter> columnsGrid;
+	protected List<ColumnSettingsPresenter> columnsGridData;
+	protected Grid<ColumnHeaderPresenter> headersGrid;
+	protected VerticalLayout headersLayout;
+	protected List<ColumnHeaderPresenter> headersGridData;
+	protected Button addButton;
 
 	
 	public abstract NodeWrapper getTreeSettings();
@@ -95,9 +97,13 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 		tabSheet = new TabSheet();
 		
 		VerticalLayout columnsSettings = new VerticalLayout();
-		columnsSettings.addComponent(createRightColumnsGrid());
+		splitPanel = new HorizontalSplitPanel();
+		splitPanel.setFirstComponent(createLeftTree());
+		splitPanel.setSecondComponent(createRightColumnsGrid());
+		splitPanel.setSplitPosition(30);
+		columnsSettings.addComponent(splitPanel);
 		
-		tabSheet.addTab(columnsSettings, getI18nText(I18N_COLUMNSTAB_CAPTION, messageSource));
+		tabSheet.addTab(splitPanel, getI18nText(I18N_COLUMNSTAB_CAPTION, messageSource));
 		tabSheet.addTab(createColumnHeadersGrid(), getI18nText(I18N_HEADERSTAB_CAPTION, messageSource));
 		
 		bodyLayout.addComponent(tabSheet);
@@ -190,15 +196,18 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 
 	public void refreshUiTreeData() {
 		NodeWrapper rootNode = getTreeSettings();
-		treeData = new TreeData<>();
-		treeData.addItem(null, rootNode);
 
-		while (rootNode.hasChild()) {
-			treeData.addItem(rootNode, rootNode.getChild());
-			rootNode = rootNode.getChild();
+		if (rootNode != null) {
+			treeData = new TreeData<>();
+			treeData.addItem(null, rootNode);
+
+			while (rootNode.hasChild()) {
+				treeData.addItem(rootNode, rootNode.getChild());
+				rootNode = rootNode.getChild();
+			}
+
+			onRefreshUiTreeData(treeData);
 		}
-
-		onRefreshUiTreeData(treeData);
 	}
 	
 	private void refreshColumnsGrid() {
@@ -208,15 +217,17 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 		columnsGrid.setHeightByRows(GRID_ROWS);
 		columnsLayout.addComponent(columnsGrid);
 		
-//		GridDragSource<ColumnSettingsPresenter> dragSource = new GridDragSource<>(columnsGrid);
-//		GridDropTarget<NodeWrapper> dropTarget = new GridDropTarget<>(projectTree.getCompositionRoot(), DropMode.ON_TOP);
+		GridDragSource<ColumnSettingsPresenter> dragSource = new GridDragSource<>(columnsGrid);
+		if (projectTree != null) {
+			GridDropTarget<NodeWrapper> dropTarget = new GridDropTarget<>(projectTree.getCompositionRoot(), DropMode.ON_TOP);
+		}
 		
-//		dragSource.addGridDragStartListener(dragEvent -> {
-//			List<ColumnSettingsPresenter> items = dragEvent.getDraggedItems();
-//			this.draggedItems = items.stream().map(item -> 
-//				new NodeWrapper(item.getEntityName(), item.getEntityFieldName().substring(item.getEntityName().length() + 1)))
-//					.collect(Collectors.toList());
-//		});
+		dragSource.addGridDragStartListener(dragEvent -> {
+			List<ColumnSettingsPresenter> items = dragEvent.getDraggedItems();
+			this.draggedItems = items.stream().map(item -> 
+				new NodeWrapper(item.getEntityName(), item.getEntityFieldName().substring(item.getEntityName().length() + 1)))
+					.collect(Collectors.toList());
+		});
 
 		List<ColumnSettings> columns = getColumnSettings();
 		List<ColumnHeaderGroup> headers = getHeaderSettings();
@@ -331,7 +342,7 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 		return mergedHeadComboBox;
 	}
 	
-	private ColumnHeaderGroup getParentHeader(List<ColumnHeaderGroup> headers, ColumnHeaderGroup item) {
+	protected ColumnHeaderGroup getParentHeader(List<ColumnHeaderGroup> headers, ColumnHeaderGroup item) {
 		ColumnHeaderGroup result = null;
 		for (ColumnHeaderGroup header : headers) {
 			if (header.hasChildrenGroups() && header.getChildren().contains(item)) {
@@ -344,7 +355,7 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 		return result;
 	}
 	
-	private Button cretateGridColumnHeaderRemoveButton(ColumnHeaderPresenter item) {
+	protected Button cretateGridColumnHeaderRemoveButton(ColumnHeaderPresenter item) {
 		Button removeButton = new Button(VaadinIcons.TRASH);
 		removeButton.setStyleName(ValoTheme.BUTTON_BORDERLESS);
 		removeButton.addClickListener(clickEvent -> {
@@ -356,7 +367,7 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 		return removeButton;
 	}
 	
-	private Component createRightColumnsGrid() {
+	protected Component createRightColumnsGrid() {
 		columnsLayout = new VerticalLayout();
 		columnsLayout.setSizeFull();
 		columnsLayout.setMargin(false);
@@ -366,7 +377,7 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 		return columnsLayout;
 	}
 
-	private Component createColumnHeadersGrid() {
+	protected Component createColumnHeadersGrid() {
 		headersLayout = new VerticalLayout();
 		
 		headersLayout.setSizeFull();
@@ -379,7 +390,7 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 		return headersLayout;
 	}
 
-	private Component createColumnHeadersButtons() {
+	protected Component createColumnHeadersButtons() {
 		HorizontalLayout layout = new HorizontalLayout();
 		addButton = new Button();
 		addButton.setIcon(VaadinIcons.PLUS);
@@ -409,19 +420,20 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 	
 	@Override
 	public void refreshSettings() {
-//		NodeWrapper next = treeData.getRootItems().get(0);
-//		NodeWrapper result = next;
-//		result.setParent(null);
-//		
-//		while (!treeData.getChildren(next).isEmpty()) {
-//			NodeWrapper child = treeData.getChildren(next).get(0);
-//			child.setParent(next);
-//			next.setChild(child);
-//			next = child;
-//		}
-//		
-//		setTreeSettings(result);
+		if (treeData != null) {
+			NodeWrapper next = treeData.getRootItems().get(0);
+			NodeWrapper result = next;
+			result.setParent(null);
 
+			while (!treeData.getChildren(next).isEmpty()) {
+				NodeWrapper child = treeData.getChildren(next).get(0);
+				child.setParent(next);
+				next.setChild(child);
+				next = child;
+			}
+
+			setTreeSettings(result);
+		}
 		List<ColumnHeaderGroup> headers = headersGridData.stream()
 				.map(item -> (ColumnHeaderGroup)item)
 					.peek(item -> {item.setChildren(null); item.setColumns(null);})
@@ -460,7 +472,7 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 		}
 	}
 
-	private Optional<ColumnHeaderGroup> getHeaderByCaption(String caption, List<ColumnHeaderGroup> headers) {
+	protected Optional<ColumnHeaderGroup> getHeaderByCaption(String caption, List<ColumnHeaderGroup> headers) {
 		Optional<ColumnHeaderGroup> result = Optional.empty();
 		for (ColumnHeaderGroup chg : headers) {
 			if (chg.hasChildrenGroups()) {
@@ -474,7 +486,7 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 		return result;
 	}
 	
-	private ColumnHeaderGroup creteHeaderGroupByPresenterHeader(ColumnHeaderPresenter header) {
+	protected ColumnHeaderGroup creteHeaderGroupByPresenterHeader(ColumnHeaderPresenter header) {
 		ColumnHeaderGroup result = new ColumnHeaderGroup();
 		result.setCaption(header.getCaption());
 		result.setChildren(header.getChildren());
@@ -483,7 +495,7 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 		return result;
 	}
 	
-	private ColumnSettings createColumnSettingsByPresenter(ColumnSettingsPresenter column) {
+	protected ColumnSettings createColumnSettingsByPresenter(ColumnSettingsPresenter column) {
 		ColumnSettings result = new ColumnSettings();
 		result.setEntityFieldName(column.getEntityFieldName());
 		result.setEntityName(column.getEntityName());
@@ -493,7 +505,7 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 		return result;
 	}
 	
-	private void refreshColumnsSettings(List<ColumnHeaderGroup> headers) {	
+	protected void refreshColumnsSettings(List<ColumnHeaderGroup> headers) {	
 		for (ColumnSettingsPresenter csp : this.columnsGridData) {
 			if (csp.getMergedHeadComboBox().getSelectedItem().isPresent()) {
 				String caption = csp.getMergedHeadComboBox().getSelectedItem().get();
@@ -517,7 +529,7 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 
 	@Override
 	public void refreshUiElements() {
-	//	refreshUiTreeData();
+		refreshUiTreeData();
 		refreshColumnsGrid();
 		refreshHeadersGrid();
 	}

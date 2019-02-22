@@ -30,7 +30,7 @@ import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 
 
 @MappedSuperclass
-public abstract class BaseEntity {
+public abstract class BaseEntity implements IBaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spc_csl_gen")
 	@SequenceGenerator(name = "spc_csl_gen", initialValue = 1, allocationSize = 1, schema = "spc_csl_schema")

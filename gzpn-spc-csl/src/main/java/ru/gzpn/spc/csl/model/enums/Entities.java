@@ -21,6 +21,7 @@ import ru.gzpn.spc.csl.model.Stage;
 import ru.gzpn.spc.csl.model.UserSettings;
 import ru.gzpn.spc.csl.model.Work;
 import ru.gzpn.spc.csl.model.WorkSet;
+import ru.gzpn.spc.csl.model.interfaces.IBaseEntity;
 import ru.gzpn.spc.csl.ui.common.I18n;
 
 public enum Entities implements I18n {
@@ -66,7 +67,20 @@ public enum Entities implements I18n {
 	}
 	
 	public static String getEntityFieldText(String field, MessageSource source) {
-		return source.getMessage(ENTITIES_PREFIX + field, null, field, HPROJECT.getLocale());
+		String result = source.getMessage(ENTITIES_PREFIX + field, null, field, HPROJECT.getLocale());
+		
+		String fieldId = field.substring(field.indexOf('.')+1);
+		switch (fieldId) {
+		case IBaseEntity.FIELD_ID:
+		case IBaseEntity.FIELD_CREATE_DATE:
+		case IBaseEntity.FIELD_CHANGE_DATE:
+		case IBaseEntity.FIELD_VERSION:
+			fieldId = "BaseEntity." + fieldId;
+			result = source.getMessage(ENTITIES_PREFIX + fieldId, null, fieldId, HPROJECT.getLocale());
+			break;
+		}
+		
+		return result;
 	}
 	
 	@SuppressWarnings("unchecked")

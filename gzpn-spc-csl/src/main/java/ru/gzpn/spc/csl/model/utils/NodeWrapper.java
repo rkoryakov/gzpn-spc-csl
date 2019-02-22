@@ -226,7 +226,7 @@ public class NodeWrapper implements Serializable, I18n {
 			case IBaseEntity.FIELD_VERSION:
 			case IBaseEntity.FIELD_CHANGE_DATE:
 			case IBaseEntity.FIELD_CREATE_DATE:
-				fieldCaption = Entities.getEntityFieldText("BaseEntity", messageSource);
+				fieldCaption = Entities.getEntityFieldText("BaseEntity." + groupFiled, messageSource);
 				break;
 			default:
 				fieldCaption = Entities.getEntityFieldText(entityName + "." + groupFiled, messageSource);

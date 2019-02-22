@@ -4,6 +4,10 @@ import java.util.List;
 
 import org.springframework.context.MessageSource;
 
+import com.vaadin.ui.ComponentContainer;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.VerticalLayout;
+
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
@@ -18,6 +22,21 @@ public class LocalEstimatesSettingsWindow extends AbstractTreeGridSettingsWindow
 	
 	public LocalEstimatesSettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
 		super(settingsService, messageSource);
+	}
+	
+	@Override
+	public ComponentContainer createBodyLayout() {
+		VerticalLayout bodyLayout = new VerticalLayout();
+		tabSheet = new TabSheet();
+		
+		VerticalLayout columnsSettings = new VerticalLayout();
+		columnsSettings.addComponent(createRightColumnsGrid());
+		
+		tabSheet.addTab(columnsSettings, getI18nText(I18N_COLUMNSTAB_CAPTION, messageSource));
+		tabSheet.addTab(createColumnHeadersGrid(), getI18nText(I18N_HEADERSTAB_CAPTION, messageSource));
+		
+		bodyLayout.addComponent(tabSheet);
+		return bodyLayout;
 	}
 
 	@Override

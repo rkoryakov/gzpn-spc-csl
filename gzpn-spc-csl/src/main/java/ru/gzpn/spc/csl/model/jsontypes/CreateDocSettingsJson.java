@@ -14,7 +14,6 @@ import ru.gzpn.spc.csl.model.Document;
 import ru.gzpn.spc.csl.model.Mark;
 import ru.gzpn.spc.csl.model.PlanObject;
 import ru.gzpn.spc.csl.model.WorkSet;
-import ru.gzpn.spc.csl.model.interfaces.IBaseEntity;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IMark;
 import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
@@ -149,7 +148,7 @@ public class CreateDocSettingsJson implements ISettingsJson, Serializable {
 		String entityPlanObjName = PlanObject.class.getSimpleName();
 		String entityMarkName = Mark.class.getSimpleName();
 		
-		result.add(new ColumnSettings(entityWorkSetName, IBaseEntity.BASE_FIELD_ID, null, false, 0));
+		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_ID, null, false, 0));
 		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_NAME, null, true, 1));
 		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_CODE, null, true, 2));
 		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_PIR, null, true, 3));
@@ -161,9 +160,9 @@ public class CreateDocSettingsJson implements ISettingsJson, Serializable {
 		result.add(new ColumnSettings(entityPlanObjName, IPlanObject.FIELD_CODE, null, false, 8));
 		result.add(new ColumnSettings(entityPlanObjName, IPlanObject.FIELD_CPROJECT, null, false, 9));
 		
-		result.add(new ColumnSettings(entityWorkSetName, IBaseEntity.BASE_FIELD_CREATE_DATE, null, false, 10));
-		result.add(new ColumnSettings(entityWorkSetName, IBaseEntity.BASE_FIELD_CHANGE_DATE, null, false, 11));
-		result.add(new ColumnSettings(entityWorkSetName, IBaseEntity.BASE_FIELD_VERSION, null, false, 12));
+		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_CREATE_DATE, null, false, 10));
+		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_CHANGE_DATE, null, false, 11));
+		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_VERSION, null, false, 12));
 		
 		return result;
 	}
