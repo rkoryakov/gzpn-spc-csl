@@ -34,6 +34,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.services.bl.Roles;
+import ru.gzpn.spc.csl.services.bpm.ITaskNavigator;
 import ru.gzpn.spc.csl.ui.views.AccessDeniedView;
 import ru.gzpn.spc.csl.ui.views.AdminView;
 import ru.gzpn.spc.csl.ui.views.ContractRegisterView;
@@ -52,7 +53,6 @@ public class MainUI extends UI {
 
 	public static final String REQUEST_PARAM_TASKID = "taskId";
 	public static final String REQUEST_PARAM_VIEWID = "viewId";
-	public static final String REQUEST_PARAM_SSRID = "ssrId";
 	
 	@Autowired
 	private SpringViewProvider viewProvider;
@@ -61,6 +61,9 @@ public class MainUI extends UI {
 	@Autowired
 	MessageSource messageSource;
 
+	@Autowired
+	ITaskNavigator taskNavigator;
+	
 	private Panel viewContainer;
 	private VerticalLayout mainLayout;
 	private AbsoluteLayout head;
@@ -75,7 +78,7 @@ public class MainUI extends UI {
 	protected void init(VaadinRequest request) {
 		viewId = VaadinService.getCurrentRequest().getParameter(REQUEST_PARAM_VIEWID);
 		taskId = VaadinService.getCurrentRequest().getParameter(REQUEST_PARAM_TASKID);
-		ssrId = VaadinService.getCurrentRequest().getParameter(REQUEST_PARAM_SSRID);
+		ssrId = VaadinService.getCurrentRequest().getParameter("id");
 		
 		head = createHead();
 		mainLayout = createMainLayout();
@@ -96,19 +99,21 @@ public class MainUI extends UI {
 		navigator.setErrorView(errorView);
 		viewProvider.setAccessDeniedViewClass(AccessDeniedView.class);
 		
-		navigateByRole();
+		navigate();
 	}
-
-	private void navigateByRole() {
+	
+	private void navigate() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Set<String> authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
 				.collect(Collectors.toSet());
 		
-		if (viewId != null) {
-			if (SummaryEstimateCardView.NAME.equals(viewId)) {
-				navigator.navigateTo(viewId + "/" + REQUEST_PARAM_SSRID + "=" + ssrId);
-			}
+		if (taskId != null) {
+			navigateByTaskId(navigator, taskId);
 			
+		} else if (viewId != null) {
+			if (SummaryEstimateCardView.NAME.equals(viewId)) {
+				navigator.navigateTo(viewId + "/id=" + ssrId);
+			}
 		} else {
 			if (authorities.contains(Roles.CREATOR_ROLE.toString())) {
 				navigator.navigateTo(CreateDocView.NAME);
@@ -128,6 +133,12 @@ public class MainUI extends UI {
 		}
 	}
 
+	private void navigateByTaskId(Navigator navigator, String taskId) {
+		if (taskId != null) {
+			taskNavigator.navigate(navigator, taskId);
+		}
+	}
+	
 	private AbsoluteLayout createHead() {
 		AbsoluteLayout head = new AbsoluteLayout();
 

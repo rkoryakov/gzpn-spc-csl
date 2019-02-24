@@ -25,7 +25,6 @@ public class SummaryEstimateCardView extends VerticalLayout implements View {
 	public static final Logger logger = LogManager.getLogger(SummaryEstimateCardView.class);
 	public static final String NAME = "summaryEstimateCardView";
 
-	private static final String REQUEST_PARAM_SSRID = "ssrId";
 	private static final String REQUEST_PARAM_TASKID = "taskId";
 	
 	@Autowired
@@ -44,7 +43,7 @@ public class SummaryEstimateCardView extends VerticalLayout implements View {
 	@Override
 	public void enter(ViewChangeEvent event) {
 		if (event.getParameters() != null) {
-			String ssrId = event.getParameterMap().get(REQUEST_PARAM_SSRID);
+			String ssrId = event.getParameterMap().get("id");
 			String taskId = event.getParameterMap().get(REQUEST_PARAM_TASKID);
 			logger.debug(event.getParameters());
 			logger.debug(event.getParameterMap());
