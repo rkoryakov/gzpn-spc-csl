@@ -36,13 +36,15 @@
       <bpmn:outgoing>SequenceFlow_11t1f2u</bpmn:outgoing>
     </bpmn:parallelGateway>
     
+    
+    
     <bpmn:userTask id="CreateDocument" name="Создание документа" activiti:formKey="createDocView" activiti:assignee="$INITIATOR">
       <bpmn:incoming>SequenceFlow_162n4wn</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_00ojaap</bpmn:outgoing>
     </bpmn:userTask>
     
     <bpmn:userTask id="EstimatesApproval" name="Согл. сметного расчета в НТЦ" activiti:formKey="estimatesApprovalView">
-      <bpmn:incoming>SequenceFlow_0lqmx1l</bpmn:incoming>
+		<bpmn:incoming>SequenceFlow_0lqmx1l</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1fgovy0</bpmn:outgoing>
       <bpmn:potentialOwner>
         <bpmn:resourceAssignmentExpression>
@@ -60,6 +62,7 @@
         </bpmn:resourceAssignmentExpression>
       </bpmn:potentialOwner>
     </bpmn:userTask>
+    
     <bpmn:userTask id="CalculateMaxLotPrice" name="Расчет начальной макс. цены лота" activiti:formKey="contractView">
       <bpmn:incoming>SequenceFlow_0vmlp2u</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1o72c9j</bpmn:outgoing>
@@ -69,6 +72,7 @@
         </bpmn:resourceAssignmentExpression>
       </bpmn:potentialOwner>
     </bpmn:userTask>
+    
     <bpmn:endEvent id="EndEvent_0gxk7vk">
       <bpmn:incoming>SequenceFlow_1o72c9j</bpmn:incoming>
     </bpmn:endEvent>
