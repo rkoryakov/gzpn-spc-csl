@@ -33,8 +33,8 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import ru.gzpn.spc.csl.services.bl.Roles;
-import ru.gzpn.spc.csl.services.bpm.ITaskNavigator;
+import ru.gzpn.spc.csl.model.enums.Roles;
+import ru.gzpn.spc.csl.services.bpm.IUserTaskNavigator;
 import ru.gzpn.spc.csl.ui.views.AccessDeniedView;
 import ru.gzpn.spc.csl.ui.views.AdminView;
 import ru.gzpn.spc.csl.ui.views.ContractRegisterView;
@@ -62,7 +62,7 @@ public class MainUI extends UI {
 	MessageSource messageSource;
 
 	@Autowired
-	ITaskNavigator taskNavigator;
+	IUserTaskNavigator taskNavigator;
 	
 	private Panel viewContainer;
 	private VerticalLayout mainLayout;

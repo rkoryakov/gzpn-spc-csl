@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.services.bl;
+package ru.gzpn.spc.csl.model.enums;
 
 public enum Roles {
 	ADMIN_ROLE, 

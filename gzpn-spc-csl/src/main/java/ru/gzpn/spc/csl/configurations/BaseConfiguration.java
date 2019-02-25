@@ -16,7 +16,7 @@ import ru.gzpn.spc.csl.model.HProject;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.repositories.CustomJpaRepositoryFactoryBean;
 import ru.gzpn.spc.csl.services.bl.LoginController;
-import ru.gzpn.spc.csl.services.bpm.TaskNavigator;
+import ru.gzpn.spc.csl.services.bpm.UserTaskNavigator;
 import ru.gzpn.spc.csl.ui.MainUI;
 import ru.gzpn.spc.csl.ui.views.AdminView;
 
@@ -29,7 +29,7 @@ import ru.gzpn.spc.csl.ui.views.AdminView;
 									  MainUI.class, 
 									  LoginController.class,
 									  AdminView.class,
-									  TaskNavigator.class})
+									  UserTaskNavigator.class})
 public class BaseConfiguration {
 
 	/**

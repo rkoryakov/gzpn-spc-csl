@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import com.vaadin.spring.access.ViewAccessControl;
 import com.vaadin.ui.UI;
 
-import ru.gzpn.spc.csl.services.bl.Roles;
+import ru.gzpn.spc.csl.model.enums.Roles;
 import ru.gzpn.spc.csl.ui.views.AdminView;
 import ru.gzpn.spc.csl.ui.views.ContractRegisterView;
 import ru.gzpn.spc.csl.ui.views.CreateDocView;
