@@ -9,4 +9,5 @@ import org.springframework.context.MessageSource;
 public interface IUIService {
 	public MessageSource getMessageSource();
 	public IUserSettigsService getUserSettingsService();
+	IProcessService getProcessService();
 }

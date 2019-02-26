@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateRegisterService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 
 @Service
@@ -17,6 +18,8 @@ public class EstimateRegisterService implements IEstimateRegisterService {
 	private IUserSettigsService userSettingsService;
 	@Autowired
 	private MessageSource messageSource;
+	@Autowired
+	private IProcessService processService;
 	
 	@Override
 	public IEstimateCalculationService getEstimateCalculationService() {
@@ -31,6 +34,11 @@ public class EstimateRegisterService implements IEstimateRegisterService {
 	@Override
 	public IUserSettigsService getUserSettingsService() {
 		return userSettingsService;
+	}
+
+	@Override
+	public IProcessService getProcessService() {
+		return processService;
 	}
 
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.ICreateDocService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
@@ -23,7 +24,9 @@ public class CreateDocService implements ICreateDocService {
 	private MessageSource messageSource;
 	@Autowired
 	private IDocumentService documentService;
-
+	@Autowired
+	private IProcessService processService;
+	
 	@Override
 	public IProjectService getProjectService() {
 		return projectService;
@@ -47,5 +50,10 @@ public class CreateDocService implements ICreateDocService {
 	@Override
 	public IDocumentService getDocumentService() {
 		return documentService;
+	}
+	
+	@Override
+	public IProcessService getProcessService() {
+		return processService;
 	}
 }

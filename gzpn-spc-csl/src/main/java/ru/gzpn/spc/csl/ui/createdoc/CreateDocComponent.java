@@ -462,10 +462,26 @@ public class CreateDocComponent extends HorizontalSplitPanel implements I18n {
 		JoinedLayout<Button, Button> buttons = new JoinedLayout<>();
 		addWorksetButton = new Button(VaadinIcons.PLUS);
 		delWorksetButton = new Button(VaadinIcons.MINUS);
+		
+		addWorksetButton.addClickListener(clickListener -> {
+			WorksetDataProvider provider = (WorksetDataProvider)worksetGrid.getDataProvider();
+			provider.createEmptyItem();
+			provider.refreshAll();
+		});
+		
+		delWorksetButton.addClickListener(clickListener -> {
+			worksetGrid.getSelectedItems().forEach(item -> {
+				worksetService.remove(item);
+			});
+		
+			worksetGrid.deselectAll();
+			((WorksetDataProvider)worksetGrid.getDataProvider()).refreshAll();
+		});
+		
 		addWorksetButton.setDescription(getI18nText(I18N_ADDWORKSETBUTTON_DESC, messageSource));
 		delWorksetButton.setDescription(getI18nText(I18N_DELWORKSETBUTTON_DESC, messageSource));
-		addWorksetButton.setEnabled(false);
-		delWorksetButton.setEnabled(false);
+		addWorksetButton.setEnabled(true);
+		delWorksetButton.setEnabled(true);
 		
 		buttons.addComponent(addWorksetButton);
 		buttons.addComponent(delWorksetButton);

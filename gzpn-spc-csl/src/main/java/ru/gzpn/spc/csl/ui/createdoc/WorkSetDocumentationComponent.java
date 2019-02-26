@@ -1,10 +1,12 @@
 package ru.gzpn.spc.csl.ui.createdoc;
 
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -42,6 +44,7 @@ import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IDocumentPresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.ICreateDocService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
@@ -65,6 +68,7 @@ class WorkSetDocumentationComponent extends VerticalLayout implements I18n {
 	private IUserSettigsService settingsService;
 	private MessageSource messageSource;
 	private IDocumentService documentService;
+	private IProcessService processService;
 	
 	private Grid<IDocumentPresenter> documentsGrid;	
 	private DocumentsDataProvider documentsDataProvider;
@@ -88,6 +92,7 @@ class WorkSetDocumentationComponent extends VerticalLayout implements I18n {
 		this.settingsService = service.getUserSettingsService();
 		this.messageSource = service.getMessageSource();
 		this.currentUser = settingsService.getCurrentUser();
+		this.processService = service.getProcessService();
 		refreshUiElements();
 	}
 	
@@ -129,7 +134,12 @@ class WorkSetDocumentationComponent extends VerticalLayout implements I18n {
 		sendButton = new Button(getI18nText(I18N_SENDBUTTON_CAP, messageSource, I18N_SENDBUTTON_CAP));
 		sendButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		sendButton.addClickListener(clickEvent -> {
-			// TODO:
+			Map<String, Object> processVariables = new HashMap<>();
+			if (documentsGrid.getSelectedItems().size() > 0) {
+				processVariables.put("documents", documentsGrid.getSelectedItems());
+				processVariables.put("documnetsComment", descriptionField.getValue());
+				this.processService.startEstimateAccountingProcess(processVariables);
+			}
 		});
 		return sendButton;
 	}

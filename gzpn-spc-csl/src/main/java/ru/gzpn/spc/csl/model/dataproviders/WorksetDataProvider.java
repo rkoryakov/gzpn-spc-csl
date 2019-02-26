@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
 
+import ru.gzpn.spc.csl.model.WorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.WorkSetPresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IWorkSetPresenter;
@@ -36,6 +37,7 @@ public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSetPre
 	@Override
 	protected Stream<IWorkSetPresenter> fetchFromBackEnd(Query<IWorkSetPresenter, Void> query) {
 		Stream<IWorkSetPresenter> result = Stream.empty();
+		/* TODO: needs optimization */
 		if (!Objects.isNull(parentNode)) {
 			result = service
 						.getItemsByNode(parentNode, query.getOffset(), query.getLimit())
@@ -49,6 +51,7 @@ public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSetPre
 	@Override
 	protected int sizeInBackEnd(Query<IWorkSetPresenter, Void> query) {
 		long result = 0;
+		/* TODO: needs optimization */
 		if (!Objects.isNull(parentNode)) {
 			result = service
 						.getItemsByNode(parentNode, query.getOffset(), query.getLimit())
@@ -56,6 +59,11 @@ public class WorksetDataProvider extends AbstractBackEndDataProvider<IWorkSetPre
 		}
 
 		return (int)result;
+	}
+	
+	public void createEmptyItem() {
+		WorkSet workset = new WorkSet();
+		service.save(workset, parentNode);
 	}
 	
 	public WorkSetFilter getFilter() {

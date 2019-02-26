@@ -38,9 +38,25 @@
     
     
     
-    <bpmn:userTask id="CreateDocument" name="Создание документа" activiti:formKey="createDocView" activiti:assignee="$INITIATOR">
+    <bpmn:userTask id="CreateDocument" name="Создание документа" activiti:formKey="createDocView">
       <bpmn:incoming>SequenceFlow_162n4wn</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_00ojaap</bpmn:outgoing>
+      <bpmn:potentialOwner>
+        <bpmn:resourceAssignmentExpression>
+          <bpmn:formalExpression>group(CREATOR_ROLE)</bpmn:formalExpression>
+        </bpmn:resourceAssignmentExpression>
+      </bpmn:potentialOwner>
+    </bpmn:userTask>
+    
+    <bpmn:userTask id="EstimatesRegistration" name="Регистрация смет" activiti:formKey="summaryEstimateCardView">
+      <bpmn:incoming>SequenceFlow_05msbcl</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_18v4ytt</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0lqmx1l</bpmn:outgoing>
+      <bpmn:potentialOwner>
+        <bpmn:resourceAssignmentExpression>
+          <bpmn:formalExpression>group(EXPERT_ES_ROLE)</bpmn:formalExpression>
+        </bpmn:resourceAssignmentExpression>
+      </bpmn:potentialOwner>
     </bpmn:userTask>
     
     <bpmn:userTask id="EstimatesApproval" name="Согл. сметного расчета в НТЦ" activiti:formKey="estimatesApprovalView">
@@ -48,7 +64,7 @@
       <bpmn:outgoing>SequenceFlow_1fgovy0</bpmn:outgoing>
       <bpmn:potentialOwner>
         <bpmn:resourceAssignmentExpression>
-          <bpmn:expression xsi:type="bpmn:tFormalExpression">APPROVER_NTC_ROLE</bpmn:expression>
+          <bpmn:formalExpression>group(APPROVER_NTC_ROLE)</bpmn:formalExpression>
         </bpmn:resourceAssignmentExpression>
       </bpmn:potentialOwner>
     </bpmn:userTask>
@@ -58,7 +74,7 @@
       <bpmn:outgoing>SequenceFlow_021v1s5</bpmn:outgoing>
       <bpmn:potentialOwner>
         <bpmn:resourceAssignmentExpression>
-          <bpmn:expression xsi:type="bpmn:tFormalExpression">CONTRACT_EX_ROLE</bpmn:expression>
+          <bpmn:formalExpression>group(CONTRACT_EX_ROLE)</bpmn:formalExpression>
         </bpmn:resourceAssignmentExpression>
       </bpmn:potentialOwner>
     </bpmn:userTask>
@@ -68,7 +84,7 @@
       <bpmn:outgoing>SequenceFlow_1o72c9j</bpmn:outgoing>
       <bpmn:potentialOwner>
         <bpmn:resourceAssignmentExpression>
-          <bpmn:expression xsi:type="bpmn:tFormalExpression">CONTRACT_ES_ROLE</bpmn:expression>
+          <bpmn:formalExpression>group(CONTRACT_ES_ROLE)</bpmn:formalExpression>
         </bpmn:resourceAssignmentExpression>
       </bpmn:potentialOwner>
     </bpmn:userTask>
@@ -86,16 +102,9 @@
       <bpmn:incoming>SequenceFlow_1airt40</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0vmlp2u</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:userTask id="EstimatesRegistration" name="Регистрация смет" activiti:formKey="summaryEstimateCardView">
-      <bpmn:incoming>SequenceFlow_05msbcl</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_18v4ytt</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0lqmx1l</bpmn:outgoing>
-      <bpmn:potentialOwner>
-        <bpmn:resourceAssignmentExpression>
-          <bpmn:expression xsi:type="bpmn:tFormalExpression">EXPERT_ES_ROLE</bpmn:expression>
-        </bpmn:resourceAssignmentExpression>
-      </bpmn:potentialOwner>
-    </bpmn:userTask>
+    
+    
+    
     <bpmn:sequenceFlow id="SequenceFlow_11t1f2u" sourceRef="ExclusiveGateway_1goj4pw" targetRef="CreateContract" />
     <bpmn:sequenceFlow id="SequenceFlow_05msbcl" sourceRef="ExclusiveGateway_1goj4pw" targetRef="EstimatesRegistration" />
     <bpmn:sequenceFlow id="SequenceFlow_00ojaap" sourceRef="CreateDocument" targetRef="ExclusiveGateway_1goj4pw" />

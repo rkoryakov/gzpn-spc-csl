@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimatesApprovalService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 
 @Service
@@ -18,6 +19,8 @@ public class LocalEstimatesApprovalService implements ILocalEstimatesApprovalSer
 	private MessageSource messageSource;
 	@Autowired
 	private ILocalEstimateService localEstimateService;
+	@Autowired
+	private IProcessService processService;
 	
 	@Override
 	public MessageSource getMessageSource() {
@@ -32,5 +35,10 @@ public class LocalEstimatesApprovalService implements ILocalEstimatesApprovalSer
 	@Override
 	public ILocalEstimateService getLocalEstimateService() {
 		return localEstimateService;
+	}
+
+	@Override
+	public IProcessService getProcessService() {
+		return processService;
 	}
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractRegisterService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 
 @Service
@@ -17,6 +18,8 @@ public class ContractRegisterService implements IContractRegisterService {
 	private IUserSettigsService userSettingsService;
 	@Autowired
 	private MessageSource messageSource;
+	@Autowired
+	private IProcessService processService;
 	
 	@Override
 	public IContractService getContractService() {
@@ -31,6 +34,11 @@ public class ContractRegisterService implements IContractRegisterService {
 	@Override
 	public IUserSettigsService getUserSettingsService() {
 		return userSettingsService;
+	}
+
+	@Override
+	public IProcessService getProcessService() {
+		return processService;
 	}
 
 }

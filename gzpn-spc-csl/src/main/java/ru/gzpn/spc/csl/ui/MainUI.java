@@ -33,7 +33,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import ru.gzpn.spc.csl.model.enums.Roles;
+import ru.gzpn.spc.csl.model.enums.Role;
 import ru.gzpn.spc.csl.services.bpm.IUserTaskNavigator;
 import ru.gzpn.spc.csl.ui.views.AccessDeniedView;
 import ru.gzpn.spc.csl.ui.views.AdminView;
@@ -115,19 +115,19 @@ public class MainUI extends UI {
 				navigator.navigateTo(viewId + "/id=" + ssrId);
 			}
 		} else {
-			if (authorities.contains(Roles.CREATOR_ROLE.toString())) {
+			if (authorities.contains(Role.CREATOR_ROLE.toString())) {
 				navigator.navigateTo(CreateDocView.NAME);
-			} else if (authorities.contains(Roles.ADMIN_ROLE.toString())) {
+			} else if (authorities.contains(Role.ADMIN_ROLE.toString())) {
 				navigator.navigateTo(AdminView.NAME);
-			} else if (authorities.contains(Roles.APPROVER_NTC_ROLE.toString())) {
+			} else if (authorities.contains(Role.APPROVER_NTC_ROLE.toString())) {
 				navigator.navigateTo("");
-			} else if (authorities.contains(Roles.CONTRACT_ES_ROLE.toString())) {
+			} else if (authorities.contains(Role.CONTRACT_ES_ROLE.toString())) {
 				navigator.navigateTo("");
-			} else if (authorities.contains(Roles.CONTRACT_EX_ROLE.toString())) {
+			} else if (authorities.contains(Role.CONTRACT_EX_ROLE.toString())) {
 				navigator.navigateTo("");
-			} else if (authorities.contains(Roles.EXPERT_ES_ROLE.toString())) {
+			} else if (authorities.contains(Role.EXPERT_ES_ROLE.toString())) {
 				navigator.navigateTo(EstimateRegisterView.NAME);
-			} else if (authorities.contains(Roles.USER_ROLE.toString())) {
+			} else if (authorities.contains(Role.USER_ROLE.toString())) {
 				navigator.navigateTo(CreateDocView.NAME);
 			}
 		}
