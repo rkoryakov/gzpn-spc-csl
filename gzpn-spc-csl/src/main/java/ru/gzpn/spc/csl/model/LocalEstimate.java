@@ -238,4 +238,9 @@ public class LocalEstimate extends BaseEntity implements ILocalEstimate, Seriali
 	public void setEstimateCosts(List<IEstimateCost> estimateCosts) {
 		this.estimateCosts = estimateCosts;
 	}
+	
+	@Override
+	public String toString() {
+		return "[code = " + this.getCode() + ", name = " + this.name + "]"; 
+	}
 }

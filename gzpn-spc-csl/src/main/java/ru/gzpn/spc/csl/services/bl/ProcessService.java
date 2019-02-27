@@ -1,5 +1,8 @@
 package ru.gzpn.spc.csl.services.bl;
 
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 
 import javax.mail.internet.AddressException;
@@ -13,6 +16,7 @@ import org.activiti.engine.delegate.event.ActivitiEntityEvent;
 import org.activiti.engine.delegate.event.ActivitiEvent;
 import org.activiti.engine.delegate.event.ActivitiEventListener;
 import org.activiti.engine.delegate.event.ActivitiEventType;
+import org.activiti.engine.identity.User;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.slf4j.Logger;
@@ -28,9 +32,10 @@ import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.services.bpm.ITaskNotificationService;
 import ru.gzpn.spc.csl.ui.views.CreateDocView;
 
+@SuppressWarnings("serial")
 @Service
 @Transactional
-public class ProcessService implements IProcessService {
+public class ProcessService implements IProcessService, Serializable {
 	public static final Logger logger = LoggerFactory.getLogger(ProcessService.class);
 	public static final String PROCESS_DEFINITION = "EstimateAccounting";
 
@@ -60,36 +65,47 @@ public class ProcessService implements IProcessService {
 	@Override
 	public ProcessInstance startEstimateAccountingProcess(Map<String, Object> processVariables) {
 		runtimeService.addEventListener(new CustomEventListener(), ActivitiEventType.TASK_CREATED);
+		/* skip this formal task as it's initiate event */
+		taskService.claim(taskEntity.getId(), userSettings.getCurrentUser());
+		taskService.complete(taskEntity.getId());
 		return runtimeService.startProcessInstanceByKey(PROCESS_DEFINITION, processVariables);
 	}
 
 	class CustomEventListener implements ActivitiEventListener {
 		
 		@Override
-		public void onEvent(ActivitiEvent event) {
+		public void onEvent(ActivitiEvent taskCretaeEvent) {
 
-			ActivitiEntityEvent activitiEntityEvent = (ActivitiEntityEvent) event;
+			ActivitiEntityEvent activitiEntityEvent = (ActivitiEntityEvent) taskCretaeEvent;
 			TaskEntity taskEntity = (TaskEntity) activitiEntityEvent.getEntity();
 			String taskDef = taskEntity.getTaskDefinitionKey();
 			String formKey = taskEntity.getFormKey();
 
-			if (!CreateDocView.NAME.equals(formKey)) {
+			if (CreateDocView.NAME.equals(formKey)) {
+
 				MessageType messageType = MessageType.getMessageTypeByDefinition(taskDef);
+				Role taskRole = Role.getRoleByTaskDefinition(taskDef);
+
+				String comment = " ";
+				if (taskRole == Role.EXPERT_ES_ROLE) {
+					comment = (String) runtimeService.getVariable(taskEntity.getProcessInstanceId(),
+							IProcessService.COMMENTS);
+				}
 				
-				String groupId = Role.getRoleByTaskDefinition(taskDef).name();
-				identityService.createUserQuery()
-					.memberOfGroup(groupId)
-						.list().forEach(user -> {
-							InternetAddress address = null;
-							try {
-								address = new InternetAddress(user.getEmail());
-							} catch (AddressException e) {
-								e.printStackTrace();
-							}
-							notificationService.sendMessage(messageType, address, "");
-							logger.debug("[ON TASK_CREATED  MAILING ] messageType: {}, user: {}, sendTo: {}", messageType, user, address);
-						});
-	
+				for (User user : identityService.createUserQuery().memberOfGroup(taskRole.name()).list()) {
+					InternetAddress address = null;
+					try {
+						address = new InternetAddress(user.getEmail());
+						logger.debug("[ON TASK_CREATED  MAILING ] messageType: {}, user: {}, sendTo: {}", messageType,
+								user, address);
+						notificationService.sendMessage(messageType, address, taskEntity.getId(), URLEncoder.encode(comment, "utf-8") );
+						
+					} catch (AddressException e) {
+						logger.error(e.getMessage());
+					} catch (UnsupportedEncodingException e) {
+						logger.error(e.getMessage());
+					}
+				}
 			}
 		}
 

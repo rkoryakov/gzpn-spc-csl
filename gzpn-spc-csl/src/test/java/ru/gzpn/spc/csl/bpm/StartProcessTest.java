@@ -2,6 +2,9 @@ package ru.gzpn.spc.csl.bpm;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
@@ -16,9 +19,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Example;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import ru.gzpn.spc.csl.Application;
+import ru.gzpn.spc.csl.model.LocalEstimate;
+import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=Application.class)
@@ -30,15 +37,25 @@ public class StartProcessTest {
 	TaskService taskService;
 	@Autowired 
 	IdentityService identityService;
-	
+	@Autowired
+	IProjectService projectService;
+	@Autowired
+	LocalEstimateRepository localEstimateRepository;
 	
 	@Test
 	public void startPocessTest() throws InterruptedException {
 		runtimeService.addEventListener(new MyEventListener(taskService));
 		identityService.setAuthenticatedUserId("user");
-		ProcessInstance instance = runtimeService.startProcessInstanceByKey("EstimateAccounting");
+		Map<String, Object> variables = new HashMap<>();
 		
-		taskService.createTaskQuery().taskCandidateGroup("users").list().forEach(task -> {
+		LocalEstimate example = new LocalEstimate();
+
+		example.setName("Локальная смета 1");
+		variables.put("list", localEstimateRepository.findAll(Example.of((example))));
+		
+		ProcessInstance instance = runtimeService.startProcessInstanceByKey("EstimateAccounting", variables);
+		
+		taskService.createTaskQuery().taskCandidateGroup("EXPERT_ES_ROLE").list().forEach(task -> {
 			logger.debug("[startPocessTest] claim task {}", task.getId());
 			taskService.setAssignee(task.getId(), "user");
 			taskService.setOwner(task.getId(), "user");
@@ -46,10 +63,10 @@ public class StartProcessTest {
 		});
 		
 		logger.debug("[startPocessTest] taskAssignee(\"user\") = {}", taskService.createTaskQuery().taskAssignee("user").count());
-		 taskService.createTaskQuery().taskAssignee("user").list().forEach(task -> {
+		taskService.createTaskQuery().taskAssignee("user").list().forEach(task -> {
 			 taskService.complete(task.getId());
 			 logger.debug("[startPocessTest] task.getId() = {} is completed", task.getId());
-		 });
+		});
 		 
 		assertThat(instance).isNotNull();
 		

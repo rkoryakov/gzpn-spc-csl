@@ -136,8 +136,8 @@ class WorkSetDocumentationComponent extends VerticalLayout implements I18n {
 		sendButton.addClickListener(clickEvent -> {
 			Map<String, Object> processVariables = new HashMap<>();
 			if (documentsGrid.getSelectedItems().size() > 0) {
-				processVariables.put("documents", documentsGrid.getSelectedItems());
-				processVariables.put("documnetsComment", descriptionField.getValue());
+				processVariables.put(IProcessService.DOCUMENTS, documentsGrid.getSelectedItems());
+				processVariables.put(IProcessService.COMMENTS, descriptionField.getValue());
 				this.processService.startEstimateAccountingProcess(processVariables);
 			}
 		});

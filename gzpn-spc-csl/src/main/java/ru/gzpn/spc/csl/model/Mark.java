@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -16,7 +17,7 @@ import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 @Table(schema = "spc_csl_schema", name = "marks", indexes = {
 		@Index(name = "spc_csl_idx_mark", columnList = "name,code", unique = true)
 })
-public class Mark extends BaseEntity implements IMark {
+public class Mark extends BaseEntity implements IMark, Serializable {
 	private String name;
 	@Column(length = 4)
 	private String code;

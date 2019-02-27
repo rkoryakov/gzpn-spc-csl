@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.services.bl;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -24,9 +25,10 @@ import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 
+@SuppressWarnings("serial")
 @Service
 @Transactional
-public class ProjectService implements IProjectService {
+public class ProjectService implements IProjectService, Serializable {
 	public static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 	@Autowired
 	private HProjectRepository hpRepository;
