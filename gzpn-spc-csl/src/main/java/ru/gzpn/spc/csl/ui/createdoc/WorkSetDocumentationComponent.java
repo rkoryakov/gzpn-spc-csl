@@ -26,6 +26,8 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -46,6 +48,7 @@ import ru.gzpn.spc.csl.services.bl.interfaces.ICreateDocService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
 import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
@@ -136,9 +139,27 @@ class WorkSetDocumentationComponent extends VerticalLayout implements I18n {
 		sendButton.addClickListener(clickEvent -> {
 			Map<String, Object> processVariables = new HashMap<>();
 			if (documentsGrid.getSelectedItems().size() > 0) {
-				processVariables.put(IProcessService.DOCUMENTS, documentsGrid.getSelectedItems());
-				processVariables.put(IProcessService.COMMENTS, descriptionField.getValue());
-				this.processService.startEstimateAccountingProcess(processVariables);
+
+				getUI().addWindow((new ConfirmDialogWindow("Подтвердите операцию",
+						"Запустить процесс регистрации смет для выделенных документов?", "Да", "Отмена",
+						confirmClickEvent -> {
+							(new Thread() {
+								@Override
+								public void run() {
+									processVariables.put(IProcessService.DOCUMENTS, documentsGrid.getSelectedItems());
+									processVariables.put(IProcessService.COMMENTS, descriptionField.getValue());
+									processService.startEstimateAccountingProcess(processVariables);
+								}
+							}).start();
+
+							Notification.show("Процесс регистрации смет запущен",
+									"Формируется список ответственных, выполняется назначение задач.",
+									Type.TRAY_NOTIFICATION);
+						})));
+
+			} else {
+
+				Notification.show("Необходимо выбрать документы", Type.WARNING_MESSAGE);
 			}
 		});
 		return sendButton;

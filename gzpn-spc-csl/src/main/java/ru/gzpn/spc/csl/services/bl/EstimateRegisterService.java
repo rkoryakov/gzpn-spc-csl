@@ -40,5 +40,4 @@ public class EstimateRegisterService implements IEstimateRegisterService {
 	public IProcessService getProcessService() {
 		return processService;
 	}
-
 }

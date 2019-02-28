@@ -16,9 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
+import ru.gzpn.spc.csl.model.EstimateCalculation;
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
+import ru.gzpn.spc.csl.model.repositories.DocumentRepository;
 import ru.gzpn.spc.csl.model.repositories.EstimateCalculationRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
 import ru.gzpn.spc.csl.ui.common.IGridFilter;
@@ -29,6 +33,9 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 
 	@Autowired
 	EstimateCalculationRepository estimateCalculationRepository;
+	
+	@Autowired
+	DocumentRepository documentRepository;
 	
 	@Autowired
 	MessageSource messageSource;
@@ -174,5 +181,19 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 	public void remove(IEstimateCalculation bean) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public IEstimateCalculation createEstimateCalculationByDocument(IDocument document) {
+		document = documentRepository.findById(document.getId()).get();
+		ICProject project = document.getWorkset().getPlanObject().getCproject();
+		
+		String code  = project.getCode();
+		IEstimateCalculation calculation = new EstimateCalculation();
+		calculation = estimateCalculationRepository.save((EstimateCalculation)calculation);
+		calculation.setCode(code + "-" + calculation.getId());
+		calculation.setProject(project);
+		calculation = estimateCalculationRepository.save((EstimateCalculation)calculation);
+		return calculation;
 	}
 }

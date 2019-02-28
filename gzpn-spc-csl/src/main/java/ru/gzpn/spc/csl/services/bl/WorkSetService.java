@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -197,10 +198,14 @@ public class WorkSetService implements IWorkSetService {
 				result = workset.getCode().toLowerCase().startsWith(commonTextFilter);
 				break;
 			case IWorkSet.FIELD_PIR:
-				result = workset.getPir().getCode().toLowerCase().startsWith(commonTextFilter);
+				if (workset.getPir() != null) {
+					result = workset.getPir().getCode().toLowerCase().startsWith(commonTextFilter);
+				}
 				break;
 			case IWorkSet.FIELD_SMR:
-				result = workset.getSmr().getCode().toLowerCase().startsWith(commonTextFilter);
+				if (workset.getSmr() != null) {
+					result = workset.getSmr().getCode().toLowerCase().startsWith(commonTextFilter);
+				}
 				break;
 			case IWorkSet.FIELD_ID:
 				result = workset.getId().toString().startsWith(commonTextFilter);
@@ -229,20 +234,17 @@ public class WorkSetService implements IWorkSetService {
 
 	@Override
 	public void save(IWorkSet bean) {
-		this.repository.save((WorkSet)bean);
-//		Optional<WorkSet> workset = this.repository.findById(bean.getId());
-//		if (workset.isPresent()) {
-//			IWorkSet ws = workset.get();
-//			ws.setCode(bean.getCode());
-//			ws.setName(bean.getName());
-//			ws.setPir(bean.getPir());
-//			ws.setSmr(bean.getSmr());
-//			ws.setPlanObject(bean.getPlanObject());
-//			
-//			this.repository.save((WorkSet)ws);
-//		} else {
-//			this.repository.save((WorkSet)bean);
-//		}
+		Optional<WorkSet> workset = this.repository.findById(bean.getId());
+		if (workset.isPresent()) {
+			IWorkSet ws = workset.get();
+			ws.setCode(bean.getCode());
+			ws.setName(bean.getName());
+			ws.setPir(bean.getPir());
+			ws.setSmr(bean.getSmr());
+			ws.setPlanObject(bean.getPlanObject());
+			
+			this.repository.save((WorkSet)ws);
+		}
 	}
 
 	@Override

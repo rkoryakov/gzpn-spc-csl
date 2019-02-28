@@ -3,12 +3,14 @@ package ru.gzpn.spc.csl.ui.processmanager;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.activiti.engine.repository.ProcessDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 
+import ru.gzpn.spc.csl.services.bl.ProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessManagerService;
 import ru.gzpn.spc.csl.ui.js.bpmnio.BpmnModeler;
 
@@ -35,10 +37,12 @@ public class BpmnModelerComponent extends AbstractBpmnModelerComponent {
 
 	public Component createBpmnModeler() {
 		bpmnModeler = new BpmnModeler();
+		ProcessDefinition processDefinition = service.getProcessService().getProcessEngine()
+										.getRepositoryService().createProcessDefinitionQuery().processDefinitionKeyLike(ProcessService.PROCESS_DEFINITION).latestVersion().singleResult();
 		
 		InputStream is = service.getProcessService().getProcessEngine()
 			.getRepositoryService()
-				.getProcessModel("EstimateAccounting:4:6397504");//getResourceAsStream("772501", "/Users/macbookmacbook/git/gzpn-spc-csl/gzpn-spc-csl/bin/main/processes/estimate_accounting.bpmn20.xml");
+				.getProcessModel(processDefinition.getId());//getResourceAsStream("772501", "/Users/macbookmacbook/git/gzpn-spc-csl/gzpn-spc-csl/bin/main/processes/estimate_accounting.bpmn20.xml");
 		
 		byte streamData[];
 		try {

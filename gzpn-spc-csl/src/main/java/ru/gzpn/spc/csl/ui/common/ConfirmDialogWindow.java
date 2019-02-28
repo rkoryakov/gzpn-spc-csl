@@ -6,6 +6,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 public class ConfirmDialogWindow extends Window {
@@ -15,6 +16,17 @@ public class ConfirmDialogWindow extends Window {
 	private VerticalLayout body;
 	private String textInfoBox;
 	private ClickListener listener;
+	
+	public ConfirmDialogWindow(String caption, String textInfoBox, String textOK, String textClose, ClickListener listener) {
+		this.textInfoBox = textInfoBox;
+		this.listener = listener;
+		body = createVerticalLayout(textInfoBox, textOK, textClose, listener);
+		this.setModal(true);
+		this.setCaption(caption);
+		this.setClosable(false);
+		this.setResizable(false);
+		this.setContent(body);	
+	}
 	
 	public ConfirmDialogWindow(String textInfoBox, String textOK, String textClose, ClickListener listener) {
 		this.textInfoBox = textInfoBox;
@@ -41,7 +53,7 @@ public class ConfirmDialogWindow extends Window {
 			textCloseButton = "Close";
 		}
 		Button closeBut = new Button(textCloseButton);
-		closeBut.setSizeFull();
+		closeBut.setStyleName(ValoTheme.BUTTON_DANGER);
 		closeBut.addClickListener(event -> this.close());
 		return closeBut;
 	}
@@ -51,7 +63,7 @@ public class ConfirmDialogWindow extends Window {
 			textOKButton = "OK";
 		}
 		Button okBut = new Button(textOKButton);
-		okBut.setSizeFull();
+		okBut.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		okBut.addClickListener(listener);
 		okBut.addClickListener(event -> this.close());
 		return okBut;
@@ -67,7 +79,7 @@ public class ConfirmDialogWindow extends Window {
 		okButton = createOKButton(textOKButton, listener);
 		closeButton = createCloseButton(textCloseButton);
 		bottom.addComponents(okButton, closeButton);
-		bottom.setSizeFull();
+		
 		layout.addComponents(top, bottom);
 		return layout;
 	}

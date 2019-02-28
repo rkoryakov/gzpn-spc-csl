@@ -27,7 +27,7 @@ indexes = {
 })
 public class EstimateCalculation extends BaseEntity implements IEstimateCalculation, Serializable {
 	private static final long serialVersionUID = -8670063022967614874L;
-	@Column(length=16)
+	@Column(length=32)
 	private String code;
 	private String name;
 	private String handler;

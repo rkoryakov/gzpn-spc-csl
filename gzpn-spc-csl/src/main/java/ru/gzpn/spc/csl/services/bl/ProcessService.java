@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.Set;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -19,6 +20,7 @@ import org.activiti.engine.delegate.event.ActivitiEventType;
 import org.activiti.engine.identity.User;
 import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.enums.MessageType;
 import ru.gzpn.spc.csl.model.enums.Role;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IDocumentPresenter;
+import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.services.bpm.ITaskNotificationService;
@@ -57,6 +61,9 @@ public class ProcessService implements IProcessService, Serializable {
 	@Autowired
 	IUserSettigsService userSettings;
 
+	@Autowired
+	IEstimateCalculationService estimateCalculationService;
+	
 	@Override
 	public ProcessEngine getProcessEngine() {
 		return processEngine;
@@ -66,9 +73,21 @@ public class ProcessService implements IProcessService, Serializable {
 	public ProcessInstance startEstimateAccountingProcess(Map<String, Object> processVariables) {
 		runtimeService.addEventListener(new CustomEventListener(), ActivitiEventType.TASK_CREATED);
 		/* skip this formal task as it's initiate event */
-		taskService.claim(taskEntity.getId(), userSettings.getCurrentUser());
-		taskService.complete(taskEntity.getId());
-		return runtimeService.startProcessInstanceByKey(PROCESS_DEFINITION, processVariables);
+	
+		ProcessInstance instance = runtimeService.startProcessInstanceByKey(PROCESS_DEFINITION, processVariables);
+		Task task = taskService.createTaskQuery().processInstanceId(instance.getId())
+				.taskCandidateGroup(Role.CREATOR_ROLE.name()).singleResult();
+		
+		
+		taskService.claim(task.getId(), userSettings.getCurrentUser());
+		taskService.complete(task.getId());
+		
+		/* create SSR */
+		@SuppressWarnings("unchecked")
+		Set<IDocumentPresenter> docs = (Set<IDocumentPresenter>) processVariables.get(DOCUMENTS);
+		estimateCalculationService.createEstimateCalculationByDocument(docs.iterator().next());
+		
+		return instance;
 	}
 
 	class CustomEventListener implements ActivitiEventListener {
@@ -80,9 +99,9 @@ public class ProcessService implements IProcessService, Serializable {
 			TaskEntity taskEntity = (TaskEntity) activitiEntityEvent.getEntity();
 			String taskDef = taskEntity.getTaskDefinitionKey();
 			String formKey = taskEntity.getFormKey();
-
-			if (CreateDocView.NAME.equals(formKey)) {
-
+			logger.debug("[ON TASK_CREATED FIRE ON taskDef = {}, ProcessInstanceId = {}]", taskDef, taskEntity.getProcessInstanceId());
+			
+			if (!CreateDocView.NAME.equals(formKey)) {
 				MessageType messageType = MessageType.getMessageTypeByDefinition(taskDef);
 				Role taskRole = Role.getRoleByTaskDefinition(taskDef);
 

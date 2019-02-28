@@ -38,12 +38,20 @@ public class WorkSetPresenter extends WorkSet implements IWorkSetPresenter, I18n
 
 	@Override
 	public String getPirText() {
-		return getPir().getCode();
+		String result = "";
+		if (getPir() != null) {
+			result = getPir().getCode();
+		}
+		return result;
 	}
 
 	@Override
 	public String getSmrText() {
-		return getSmr().getCode();
+		String result = "";
+		if (getSmr() != null) {
+			result = getSmr().getCode();
+		}
+		return result;
 	}
 	
 	@Override
