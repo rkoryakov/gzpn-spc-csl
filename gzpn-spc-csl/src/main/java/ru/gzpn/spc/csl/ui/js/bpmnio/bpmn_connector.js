@@ -34,7 +34,7 @@ window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnModeler = function() {
       var canvas = bpmnModeler.get('canvas');
     //  var overlays = bpmnModeler.get('overlays');
       // zoom to fit full viewport
-      canvas.zoom('fit-viewport');
+     // canvas.zoom('fit-viewport');
       // attach an overlay to a node
 //      overlays.add('SCAN_OK', 'note', {
 //        position: {

@@ -6,6 +6,7 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.enums.MessageType;
 import ru.gzpn.spc.csl.model.enums.Role;
+import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IDocumentPresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
@@ -37,7 +39,7 @@ import ru.gzpn.spc.csl.services.bpm.ITaskNotificationService;
 import ru.gzpn.spc.csl.ui.views.CreateDocView;
 
 @SuppressWarnings("serial")
-@Service
+@Service()
 @Transactional
 public class ProcessService implements IProcessService, Serializable {
 	public static final Logger logger = LoggerFactory.getLogger(ProcessService.class);
@@ -64,6 +66,11 @@ public class ProcessService implements IProcessService, Serializable {
 	@Autowired
 	IEstimateCalculationService estimateCalculationService;
 	
+	@PostConstruct
+	public void initProcessEngine() {
+		runtimeService.addEventListener(new CustomEventListener(), ActivitiEventType.TASK_CREATED);
+	}
+	
 	@Override
 	public ProcessEngine getProcessEngine() {
 		return processEngine;
@@ -71,25 +78,24 @@ public class ProcessService implements IProcessService, Serializable {
 
 	@Override
 	public ProcessInstance startEstimateAccountingProcess(Map<String, Object> processVariables) {
-		runtimeService.addEventListener(new CustomEventListener(), ActivitiEventType.TASK_CREATED);
-		/* skip this formal task as it's initiate event */
 	
 		ProcessInstance instance = runtimeService.startProcessInstanceByKey(PROCESS_DEFINITION, processVariables);
 		Task task = taskService.createTaskQuery().processInstanceId(instance.getId())
 				.taskCandidateGroup(Role.CREATOR_ROLE.name()).singleResult();
 		
-		
 		taskService.claim(task.getId(), userSettings.getCurrentUser());
-		taskService.complete(task.getId());
-		
 		/* create SSR */
 		@SuppressWarnings("unchecked")
 		Set<IDocumentPresenter> docs = (Set<IDocumentPresenter>) processVariables.get(DOCUMENTS);
-		estimateCalculationService.createEstimateCalculationByDocument(docs.iterator().next());
-		
+		IEstimateCalculation ssr = estimateCalculationService.createEstimateCalculationByDocuments(docs);
+		instance.getProcessVariables().put("ssrId", ssr.getId());
+		/* complete */
+		taskService.complete(task.getId());		
+	
 		return instance;
 	}
 
+	
 	class CustomEventListener implements ActivitiEventListener {
 		
 		@Override

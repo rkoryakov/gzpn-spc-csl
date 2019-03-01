@@ -26,6 +26,7 @@ public class BpmnModelerComponent extends AbstractBpmnModelerComponent {
 	@Override
 	public VerticalLayout createBodyLayout() {
 		VerticalLayout body = new VerticalLayout();
+		
 		body.setHeight("700px");
 		body.setWidth("100%");
 		body.setMargin(false);

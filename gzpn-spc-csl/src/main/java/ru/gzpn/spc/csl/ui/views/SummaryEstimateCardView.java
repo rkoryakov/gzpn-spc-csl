@@ -37,7 +37,6 @@ public class SummaryEstimateCardView extends VerticalLayout implements View {
 
 	@PostConstruct
 	void init() {
-		
 	}
 
 	@Override

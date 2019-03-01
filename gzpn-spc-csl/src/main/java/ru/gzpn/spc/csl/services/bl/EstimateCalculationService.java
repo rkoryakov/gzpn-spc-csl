@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IDocumentPresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
 import ru.gzpn.spc.csl.model.repositories.DocumentRepository;
 import ru.gzpn.spc.csl.model.repositories.EstimateCalculationRepository;
@@ -183,10 +185,13 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 		
 	}
 
+	/* TODO: implement the logic of creating SSR and local estimates by given documents */
 	@Override
-	public IEstimateCalculation createEstimateCalculationByDocument(IDocument document) {
-		document = documentRepository.findById(document.getId()).get();
-		ICProject project = document.getWorkset().getPlanObject().getCproject();
+	public IEstimateCalculation createEstimateCalculationByDocuments(Set<IDocumentPresenter> docs) {
+		IDocument firstDocument = docs.iterator().next();
+		
+		firstDocument = documentRepository.findById(firstDocument.getId()).get();
+		ICProject project = firstDocument.getWorkset().getPlanObject().getCproject();
 		
 		String code  = project.getCode();
 		IEstimateCalculation calculation = new EstimateCalculation();

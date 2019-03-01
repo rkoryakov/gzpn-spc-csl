@@ -24,7 +24,7 @@ import ru.gzpn.spc.csl.ui.views.AdminView;
 @EnableJpaRepositories(basePackages= {"ru.gzpn.spc.csl.model.repositories"},/*basePackageClasses = {IHProject.class },*/ 
 					   entityManagerFactoryRef = "projectEntityManagerFactory", 
 					   repositoryFactoryBeanClass = CustomJpaRepositoryFactoryBean.class)
-@ComponentScan(basePackageClasses = { String.class, 
+@ComponentScan(basePackageClasses = { //String.class, 
 									  ICProject.class, 
 									  MainUI.class, 
 									  LoginController.class,

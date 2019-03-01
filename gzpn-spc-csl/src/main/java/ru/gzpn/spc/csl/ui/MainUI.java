@@ -51,8 +51,8 @@ import ru.gzpn.spc.csl.ui.views.SummaryEstimateCardView;
 public class MainUI extends UI {
 	public static final Logger logger = LoggerFactory.getLogger(MainUI.class);
 
-	public static final String REQUEST_PARAM_TASKID = "taskId";
-	public static final String REQUEST_PARAM_VIEWID = "viewId";
+	public static final String REQUEST_PARAM_TASKID = "taskID";
+	public static final String REQUEST_PARAM_VIEWID = "viewID";
 	
 	@Autowired
 	private SpringViewProvider viewProvider;
