@@ -68,6 +68,7 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		body.addComponent(createEstimateCalculationFileds());
 		body.addComponent(createViewAttributes());
 		body.addComponent(createEstimatesGrid());
+		//body.addComponent(create);
 		return body;
 	}
 
@@ -167,7 +168,19 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	private Component createViewComboBox() {
 		viewComboBox = new ComboBox<>("", EstimateType.getAll());
 		viewComboBox.setPlaceholder(getI18nText(I18N_VIEWCOMBOBOX_PLH, messageSource));
+		viewComboBox.addSelectionListener(selectEvent -> {
+			if (selectEvent.getSelectedItem().isPresent()) {
+				if (selectEvent.getSelectedItem().get() == EstimateType.LOCAL_ESTIMATES) {
+					showEstimatesFeautures();
+				}
+			}
+		});
 		return viewComboBox;
+	}
+
+	private void showEstimatesFeautures() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private Component createItemsComboBox() {
