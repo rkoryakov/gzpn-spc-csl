@@ -78,7 +78,7 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 	private VerticalLayout body;
 	private Panel treePanel;
 	private Registration treeItemSelectRegistration;
-	private T selectedGridItem;
+	protected T selectedGridItem;
 	
 	
 	public abstract boolean isTreeVisible();
@@ -108,6 +108,14 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 		createFooter();
 	}
 
+	public T getSelectedGridItem() {
+		return selectedGridItem;
+	}
+	
+	public void setSelectedGridItem(T selectedGridItem) {
+		this.selectedGridItem = selectedGridItem;
+	}
+	
 	public void initEventActions() {
 		listeners = new HashMap<>();
 		listeners.put(GRID_ITEM_SELECTED_ACTION, new HashSet<>());

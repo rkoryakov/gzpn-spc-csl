@@ -63,11 +63,11 @@ public enum Entities implements I18n {
 	}
 	
 	public String getEntityText(MessageSource source) {
-		return source.getMessage(i18n, null, i18n, getLocale());
+		return source.getMessage(i18n, null, i18n, getCurrentLocale());
 	}
 	
 	public static String getEntityFieldText(String field, MessageSource source) {
-		String result = source.getMessage(ENTITIES_PREFIX + field, null, field, HPROJECT.getLocale());
+		String result = source.getMessage(ENTITIES_PREFIX + field, null, field, HPROJECT.getCurrentLocale());
 		
 		String fieldId = field.substring(field.indexOf('.')+1);
 		switch (fieldId) {
@@ -76,7 +76,7 @@ public enum Entities implements I18n {
 		case IBaseEntity.FIELD_CHANGE_DATE:
 		case IBaseEntity.FIELD_VERSION:
 			fieldId = "BaseEntity." + fieldId;
-			result = source.getMessage(ENTITIES_PREFIX + fieldId, null, fieldId, HPROJECT.getLocale());
+			result = source.getMessage(ENTITIES_PREFIX + fieldId, null, fieldId, HPROJECT.getCurrentLocale());
 			break;
 		}
 		

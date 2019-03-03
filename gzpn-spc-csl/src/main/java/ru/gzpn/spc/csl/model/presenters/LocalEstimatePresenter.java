@@ -4,10 +4,10 @@ import java.time.format.DateTimeFormatter;
 
 import ru.gzpn.spc.csl.model.LocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
-import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCost;
 
 @SuppressWarnings("serial")
-public class LocalEstimatePresenter extends LocalEstimate implements ILocalEstimatePresenter {
+public class LocalEstimatePresenter extends LocalEstimate implements IEstimateCost {
 	
 	private ILocalEstimate localEstimate;
 

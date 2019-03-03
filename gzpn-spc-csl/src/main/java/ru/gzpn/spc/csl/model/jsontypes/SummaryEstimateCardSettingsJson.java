@@ -11,9 +11,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import ru.gzpn.spc.csl.model.EstimateCalculation;
+import ru.gzpn.spc.csl.model.EstimateCost;
 import ru.gzpn.spc.csl.model.LocalEstimate;
 import ru.gzpn.spc.csl.model.ObjectEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
+import ru.gzpn.spc.csl.model.interfaces.IEstimateCost;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IObjectEstimate;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
@@ -28,16 +30,57 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 	private NodeWrapper localEstimatesTreeGroup;
 	private NodeWrapper objectEstimatesTreeGroup;
 	private NodeWrapper estimateCalculationsTreeGroup;
+	private NodeWrapper estimateCostTreeGroup;
 	
 	private List<ColumnSettings> localEstimatesColumns;
 	private List<ColumnSettings> objectEstimatesColumns;
 	private List<ColumnSettings> estimateCalculationsColumns;
-
+	private List<ColumnSettings> estimateCostColumns;
+	
 	private List<ColumnHeaderGroup> localEstimatesColumnHeaders;
 	private List<ColumnHeaderGroup> objectEstimatesColumnHeaders;
 	private List<ColumnHeaderGroup> estimateCalculationsColumnHeaders;
+	private List<ColumnHeaderGroup> estimateCostColumnHeaders;
 	
 	private boolean showTree;
+
+	private boolean showLocalEstimatesTree;
+	private boolean showObjectEstimatesTree;
+	private boolean showEstimateCalculationsTree;
+	private boolean showEstimateCostTreeGroup;
+
+	
+	public boolean isShowLocalEstimatesTree() {
+		return showLocalEstimatesTree;
+	}
+
+	public void setShowLocalEstimatesTree(boolean showLocalEstimatesTree) {
+		this.showLocalEstimatesTree = showLocalEstimatesTree;
+	}
+
+	public boolean isShowObjectEstimatesTree() {
+		return showObjectEstimatesTree;
+	}
+
+	public void setShowObjectEstimatesTree(boolean showObjectEstimatesTree) {
+		this.showObjectEstimatesTree = showObjectEstimatesTree;
+	}
+
+	public boolean isShowEstimateCalculationsTree() {
+		return showEstimateCalculationsTree;
+	}
+
+	public void setShowEstimateCalculationsTree(boolean showEstimateCalculationsTree) {
+		this.showEstimateCalculationsTree = showEstimateCalculationsTree;
+	}
+
+	public boolean isShowEstimateCostTreeGroup() {
+		return showEstimateCostTreeGroup;
+	}
+
+	public void setShowEstimateCostTreeGroup(boolean showEstimateCostTreeGroup) {
+		this.showEstimateCostTreeGroup = showEstimateCostTreeGroup;
+	}
 
 	public int getSplitPosition() {
 		return splitPosition;
@@ -79,7 +122,7 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 	}
 	
 	@JsonIgnore
-	public List<ColumnHeaderGroup> getDefaultWorksHeaders() {
+	public List<ColumnHeaderGroup> getDefaultEstimateCostHeaders() {
 
 		List<ColumnHeaderGroup> result = new ArrayList<>();
 		List<ColumnHeaderGroup> subGroups = new ArrayList<>();
@@ -113,7 +156,7 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 	}
 	
 	@JsonIgnore
-	public NodeWrapper getDefaultWorksTreeGroup() {
+	public NodeWrapper getDefaultEstimateCostTreeGroup() {
 		NodeWrapper root = new NodeWrapper("HProject", "name");
 		root.addChild(new NodeWrapper("CProject", "name")).addChild(new NodeWrapper("Stage", "name"))
 				.addChild(new NodeWrapper("PlanObject", "name"));
@@ -177,6 +220,39 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 		return result;
 	}
 	
+	@JsonIgnore
+	public List<ColumnSettings> getDefaultEstimateCostColumns() {
+		List<ColumnSettings> result = new ArrayList<>();
+		String entityName = EstimateCost.class.getSimpleName();
+
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_ID, null, false, 0));
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_MAT_CUSTOMER_SUPPLY, null, true, 1));
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_MAT_CONTRACTOR_SUPPLY, null, true, 2));
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_MAT_PERCENT_MANUAL_SUPPLY, null, true, 3));
+		
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_OZP, null, true, 4));
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_EMM, null, true, 5));
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_ZPM, null, true, 6));
+		
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_NR, null, true, 7));
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_SP, null, true, 8));
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_SMR_TOTAL, null, true, 9));
+		
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_DEVICES_TOTAL, null, true, 10));
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_DEVICES_PERCENT_MANUAL, null, true, 11));
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_DEVICES_CUSTOMER_SUPPLY, null, true, 12));
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_DEVICES_CONTRACTOR_SUPPLY, null, true, 13));
+
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_OTHER, null, true, 14));
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_TOTAL, null, true, 15));
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_SERVICES, null, true, 16));
+		
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_CREATE_DATE, null, true, 17));
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_CHANGE_DATE, null, false, 18));
+		result.add(new ColumnSettings(entityName, IEstimateCost.FIELD_VERSION, null, false, 19));
+
+		return result;
+	}
 	
 	public List<ColumnHeaderGroup> getLocalEstimatesColumnHeaders() {
 		if (Objects.isNull(localEstimatesColumnHeaders)) {
@@ -209,6 +285,17 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 	}
 	public void setEstimateCalculationsColumnHeaders(List<ColumnHeaderGroup> headers) {
 		estimateCalculationsColumnHeaders = headers;
+	}
+	
+	public List<ColumnHeaderGroup> getEstimateCostColumnHeaders() {
+		if (Objects.isNull(estimateCostColumnHeaders)) {
+			estimateCostColumnHeaders = getDefaultEstimateCostHeaders();
+		}
+
+		return estimateCostColumnHeaders;
+	}
+	public void setEstimateCostColumnHeaders(List<ColumnHeaderGroup> headers) {
+		estimateCostColumnHeaders = headers;
 	}
 	
 	
@@ -244,6 +331,15 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 		estimateCalculationsTreeGroup = node;
 	}
 	
+	public NodeWrapper getEstimateCostTreeGroup() {
+		if (Objects.isNull(estimateCostTreeGroup)) {
+			estimateCostTreeGroup = getDefaultEstimateCostTreeGroup();
+		}
+		return estimateCostTreeGroup;
+	}
+	public void setEstimateCostTreeGroup(NodeWrapper node) {
+		estimateCostTreeGroup = node;
+	}
 	
 	
 	
@@ -279,6 +375,18 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 	public void setEstimateCalculationsColumns(List<ColumnSettings> columns) {
 		estimateCalculationsColumns = columns;
 	}
+	
+	public List<ColumnSettings> getEstimateCostColumns() {
+		if (Objects.isNull(estimateCostColumns)) {
+			estimateCostColumns = getDefaultEstimateCostColumns();
+		}
+
+		return estimateCostColumns;
+	}
+	public void setEstimateCostColumns(List<ColumnSettings> columns) {
+		estimateCostColumns = columns;
+	}
+	
 	
 
 	@Override

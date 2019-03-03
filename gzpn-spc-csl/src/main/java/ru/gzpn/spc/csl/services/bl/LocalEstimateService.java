@@ -23,7 +23,7 @@ import ru.gzpn.spc.csl.model.EstimateCalculation;
 import ru.gzpn.spc.csl.model.LocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
-import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCost;
 import ru.gzpn.spc.csl.model.repositories.EstimateCalculationRepository;
 import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
@@ -92,7 +92,7 @@ public class LocalEstimateService implements ILocalEstimateService {
 	}
 	
 	@Override
-	public Comparator<ILocalEstimatePresenter> getSortComparator(List<QuerySortOrder> list) {
+	public Comparator<IEstimateCost> getSortComparator(List<QuerySortOrder> list) {
 
 		return (a, b) -> {
 			int result = 0;
@@ -154,7 +154,7 @@ public class LocalEstimateService implements ILocalEstimateService {
 	}
 	
 	
-	public static final class LocalEstimateFilter implements IGridFilter<ILocalEstimatePresenter> {
+	public static final class LocalEstimateFilter implements IGridFilter<IEstimateCost> {
 		private String commonTextFilter;
 		
 		public LocalEstimateFilter() {
@@ -169,7 +169,7 @@ public class LocalEstimateService implements ILocalEstimateService {
 			this.commonTextFilter = commonTextFilter.toLowerCase();
 		}
 
-		public Predicate<ILocalEstimatePresenter> getFilterPredicate(List<ColumnSettings> shownColumns) {
+		public Predicate<IEstimateCost> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// only common filter is working now
 			return p -> {
 				boolean result = false;
@@ -190,8 +190,8 @@ public class LocalEstimateService implements ILocalEstimateService {
 		private boolean applyColumnFilter(ILocalEstimate localEstimate, ColumnSettings column) {
 			boolean result = false;
 
-			if (localEstimate instanceof ILocalEstimatePresenter) {
-				ILocalEstimatePresenter localEstimatePresenter = (ILocalEstimatePresenter)localEstimate;
+			if (localEstimate instanceof IEstimateCost) {
+				IEstimateCost localEstimatePresenter = (IEstimateCost)localEstimate;
 				switch (column.getEntityFieldName()) {
 				case ILocalEstimate.FIELD_NAME:
 					result = localEstimatePresenter.getName().toLowerCase().startsWith(commonTextFilter);

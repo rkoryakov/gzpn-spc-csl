@@ -151,10 +151,11 @@ class WorkSetDocumentationComponent extends VerticalLayout implements I18n {
 									processService.startEstimateAccountingProcess(processVariables);
 								}
 							}).start();
-
-							Notification.show("Процесс регистрации смет запущен",
+							Notification notification = new Notification("Процесс регистрации смет запущен",
 									"Формируется список ответственных, выполняется назначение задач.",
 									Type.TRAY_NOTIFICATION);
+							notification.setDelayMsec(8000);
+							notification.show(getUI().getPage());
 						})));
 
 			} else {

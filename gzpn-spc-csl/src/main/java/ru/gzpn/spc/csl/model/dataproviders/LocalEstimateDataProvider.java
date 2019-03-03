@@ -11,19 +11,19 @@ import com.vaadin.data.provider.Query;
 
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.LocalEstimatePresenter;
-import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCost;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.LocalEstimateService.LocalEstimateFilter;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
 import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 @SuppressWarnings("serial")
-public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILocalEstimatePresenter, Void> {
+public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<IEstimateCost, Void> {
 
 	public Logger logger = LogManager.getLogger(LocalEstimateDataProvider.class);
 	protected ILocalEstimateService localEstimateService;
 	protected List<ColumnSettings> shownColumns;
-	protected IGridFilter<ILocalEstimatePresenter> filter;
+	protected IGridFilter<IEstimateCost> filter;
 	
 	//First Request with page and limit = 1 
     //long totalElements = pageCommand.findPages(1, 1).getTotalElements();
@@ -33,14 +33,14 @@ public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILoc
 	}
 
 	@Override
-	protected Stream<ILocalEstimatePresenter> fetchFromBackEnd(Query<ILocalEstimatePresenter, Void> query) {
-		Stream<ILocalEstimatePresenter> result = Stream.empty();
+	protected Stream<IEstimateCost> fetchFromBackEnd(Query<IEstimateCost, Void> query) {
+		Stream<IEstimateCost> result = Stream.empty();
 		
 		if (parentNode != null) {
 			result = fetchByParentNode(query);
 		} else {
 			result = localEstimateService.getLocalEstimates().stream()
-						.map(item -> (ILocalEstimatePresenter) new LocalEstimatePresenter(item))
+						.map(item -> (IEstimateCost) new LocalEstimatePresenter(item))
 							.filter(getFilter().getFilterPredicate(shownColumns))
 								.sorted(localEstimateService.getSortComparator(query.getSortOrders()));
 		}
@@ -49,14 +49,14 @@ public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILoc
 	}
 
 	@Override
-	protected int sizeInBackEnd(Query<ILocalEstimatePresenter, Void> query) {
-		Stream<ILocalEstimatePresenter> result = Stream.empty();
+	protected int sizeInBackEnd(Query<IEstimateCost, Void> query) {
+		Stream<IEstimateCost> result = Stream.empty();
 		
 		if (parentNode != null) {
 			result = fetchByParentNode(query);
 		} else {
 			result = localEstimateService.getLocalEstimates().stream()
-						.map(item -> (ILocalEstimatePresenter) new LocalEstimatePresenter(item))
+						.map(item -> (IEstimateCost) new LocalEstimatePresenter(item))
 							.filter(getFilter().getFilterPredicate(shownColumns));
 		}
 		
@@ -64,11 +64,11 @@ public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILoc
 	}
 
 	
-	protected Stream<ILocalEstimatePresenter> fetchByParentNode(Query<ILocalEstimatePresenter, Void> query) {
-		Stream<ILocalEstimatePresenter> result = Stream.empty();
+	protected Stream<IEstimateCost> fetchByParentNode(Query<IEstimateCost, Void> query) {
+		Stream<IEstimateCost> result = Stream.empty();
 		
 		switch (parentNode.getEntityEnum()) {
-		case LOCALESTIMATE:
+		case ESTIMATECALCULATION:
 			result = fetchByEstimateCalculationId(query, parentNode);
 			break;
 		default:
@@ -78,11 +78,11 @@ public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILoc
 		return result;
 	}
 	
-	protected Stream<ILocalEstimatePresenter> fetchByEstimateCalculationId(Query<ILocalEstimatePresenter, Void> query, NodeWrapper parentNode) {
-		Stream<ILocalEstimatePresenter> result = Stream.empty();
+	protected Stream<IEstimateCost> fetchByEstimateCalculationId(Query<IEstimateCost, Void> query, NodeWrapper parentNode) {
+		Stream<IEstimateCost> result = Stream.empty();
 		if (parentNode.getId() != null) {
 			result = localEstimateService.getLocalEstimatesByCalculationId(parentNode.getId())
-							.stream().map(item -> (ILocalEstimatePresenter) new LocalEstimatePresenter(item))
+							.stream().map(item -> (IEstimateCost) new LocalEstimatePresenter(item))
 								.filter(getFilter().getFilterPredicate(shownColumns))
 									.sorted(localEstimateService.getSortComparator(query.getSortOrders()));
 		}
@@ -107,7 +107,7 @@ public class LocalEstimateDataProvider extends AbstractRegistryDataProvider<ILoc
 	}
 	
 	@Override
-	public IGridFilter<ILocalEstimatePresenter> getFilter() {
+	public IGridFilter<IEstimateCost> getFilter() {
 		if (filter == null) {
 			filter = new LocalEstimateFilter();
 		}

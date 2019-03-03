@@ -17,16 +17,21 @@ import org.springframework.transaction.annotation.Transactional;
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
+import ru.gzpn.spc.csl.model.Document;
 import ru.gzpn.spc.csl.model.EstimateCalculation;
+import ru.gzpn.spc.csl.model.LocalEstimate;
+import ru.gzpn.spc.csl.model.enums.DocType;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
+import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IDocumentPresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
 import ru.gzpn.spc.csl.model.repositories.DocumentRepository;
 import ru.gzpn.spc.csl.model.repositories.EstimateCalculationRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
+import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
 import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 @Service
@@ -35,9 +40,10 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 
 	@Autowired
 	EstimateCalculationRepository estimateCalculationRepository;
-	
 	@Autowired
 	DocumentRepository documentRepository;
+	@Autowired
+	ILocalEstimateService localEstimatesService;
 	
 	@Autowired
 	MessageSource messageSource;
@@ -185,7 +191,7 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 		
 	}
 
-	/* TODO: implement the logic of creating SSR and local estimates by given documents */
+	
 	@Override
 	public IEstimateCalculation createEstimateCalculationByDocuments(Set<IDocumentPresenter> docs) {
 		IDocument firstDocument = docs.iterator().next();
@@ -193,12 +199,27 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 		firstDocument = documentRepository.findById(firstDocument.getId()).get();
 		ICProject project = firstDocument.getWorkset().getPlanObject().getCproject();
 		
+		/* creating SSR card*/
 		String code  = project.getCode();
 		IEstimateCalculation calculation = new EstimateCalculation();
 		calculation = estimateCalculationRepository.save((EstimateCalculation)calculation);
 		calculation.setCode(code + "-" + calculation.getId());
 		calculation.setProject(project);
 		calculation = estimateCalculationRepository.save((EstimateCalculation)calculation);
+		
+		/* creating local estimates */
+		for (IDocumentPresenter dp : docs) {
+			if (dp.getType() == DocType.LOCAL_ESTIMATE) {
+				ILocalEstimate le = new LocalEstimate();
+				le.setStage(dp.getWorkset().getPlanObject().getStage());
+				Optional<Document> doc = documentRepository.findById(dp.getId());
+				le.setDocument(doc.orElseThrow());
+				le.setEstimateCalculation(calculation);
+				le.setCode(dp.getCode());
+				localEstimatesService.save(le);
+			}
+		}
+		
 		return calculation;
 	}
 }

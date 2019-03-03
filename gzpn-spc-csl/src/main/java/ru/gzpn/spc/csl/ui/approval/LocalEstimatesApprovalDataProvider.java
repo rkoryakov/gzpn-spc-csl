@@ -8,7 +8,7 @@ import com.vaadin.data.provider.Query;
 
 import ru.gzpn.spc.csl.model.dataproviders.LocalEstimateDataProvider;
 import ru.gzpn.spc.csl.model.presenters.LocalEstimatePresenter;
-import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCost;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
 
 @SuppressWarnings("serial")
@@ -20,15 +20,15 @@ public class LocalEstimatesApprovalDataProvider extends LocalEstimateDataProvide
 	}
 
 	@Override
-	protected Stream<ILocalEstimatePresenter> fetchFromBackEnd(Query<ILocalEstimatePresenter, Void> query) {
-		Stream<ILocalEstimatePresenter> result = Stream.empty();
+	protected Stream<IEstimateCost> fetchFromBackEnd(Query<IEstimateCost, Void> query) {
+		Stream<IEstimateCost> result = Stream.empty();
 		result = localEstimateService.getLocalEstimatesByIds(getIds())
 					.stream().map(item -> new LocalEstimatePresenter(item));
 		return result;
 	}
 
 	@Override
-	protected int sizeInBackEnd(Query<ILocalEstimatePresenter, Void> query) {
+	protected int sizeInBackEnd(Query<IEstimateCost, Void> query) {
 		return (int)fetchFromBackEnd(query).count();
 	}
 

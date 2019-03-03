@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCostService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
@@ -29,6 +30,8 @@ public class SummaryEstimateCardService implements ISummaryEstimateCardService {
 	private IProjectService projectService;
 	@Autowired
 	private IProcessService processService;
+	@Autowired 
+	private IEstimateCostService estimateCostService;
 	
 	@Override
 	public MessageSource getMessageSource() {
@@ -58,5 +61,10 @@ public class SummaryEstimateCardService implements ISummaryEstimateCardService {
 	@Override
 	public IProcessService getProcessService() {
 		return processService;
+	}
+
+	@Override
+	public IEstimateCostService getEstimateCostService() {
+		return estimateCostService;
 	}
 }

@@ -19,7 +19,7 @@ public interface I18n {
 		return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
 	}
 
-	public default Locale getLocale() {
+	public default Locale getCurrentLocale() {
 		return LocaleContextHolder.getLocale();
 	}
 	
