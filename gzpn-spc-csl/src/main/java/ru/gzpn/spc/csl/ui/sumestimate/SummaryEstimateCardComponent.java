@@ -228,6 +228,7 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	}
 	
 	public void refreshLocalEstimatesGrid() {
+		localEstimateFieldsBinder = new Binder<>();
 		estimateCardService = (ISummaryEstimateCardService)this.service;
 		estimatesLayout.removeAllComponents();
 		localEstimatesTreeGrid = new LocalEstimatesTreeGridComponent(estimateCardService.getProjectService(), 

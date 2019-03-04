@@ -213,7 +213,7 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 				ILocalEstimate le = new LocalEstimate();
 				le.setStage(dp.getWorkset().getPlanObject().getStage());
 				Optional<Document> doc = documentRepository.findById(dp.getId());
-				le.setDocument(doc.orElseThrow());
+				le.setDocument(doc.get());
 				le.setEstimateCalculation(calculation);
 				le.setCode(dp.getCode());
 				localEstimatesService.save(le);
