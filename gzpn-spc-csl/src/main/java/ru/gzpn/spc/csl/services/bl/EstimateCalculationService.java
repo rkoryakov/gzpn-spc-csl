@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.services.bl;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -9,6 +10,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -30,20 +33,22 @@ import ru.gzpn.spc.csl.model.presenters.interfaces.IDocumentPresenter;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter;
 import ru.gzpn.spc.csl.model.repositories.DocumentRepository;
 import ru.gzpn.spc.csl.model.repositories.EstimateCalculationRepository;
+import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
-import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
 import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 @Service
 @Transactional
 public class EstimateCalculationService implements IEstimateCalculationService {
-
+	public static final Logger logger = LogManager.getLogger(EstimateCalculationService.class);
 	@Autowired
 	EstimateCalculationRepository estimateCalculationRepository;
 	@Autowired
 	DocumentRepository documentRepository;
 	@Autowired
-	ILocalEstimateService localEstimatesService;
+	LocalEstimateRepository localEstimateRepository;
+	
+	//ILocalEstimateService localEstimatesService;
 	
 	@Autowired
 	MessageSource messageSource;
@@ -205,7 +210,7 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 		calculation = estimateCalculationRepository.save((EstimateCalculation)calculation);
 		calculation.setCode(code + "-" + calculation.getId());
 		calculation.setProject(project);
-		calculation = estimateCalculationRepository.save((EstimateCalculation)calculation);
+		calculation.setEstimates(new ArrayList<>());
 		
 		/* creating local estimates */
 		for (IDocumentPresenter dp : docs) {
@@ -215,10 +220,13 @@ public class EstimateCalculationService implements IEstimateCalculationService {
 				Optional<Document> doc = documentRepository.findById(dp.getId());
 				le.setDocument(doc.get());
 				le.setEstimateCalculation(calculation);
-				le.setCode(dp.getCode());
-				localEstimatesService.save(le);
+				le.setName(doc.get().getName());
+				calculation.getEstimates().add(localEstimateRepository.save((LocalEstimate)le));
 			}
 		}
+		
+		calculation = estimateCalculationRepository.save((EstimateCalculation)calculation);
+		logger.debug("EstimateCalculation = {}", calculation);
 		
 		return calculation;
 	}

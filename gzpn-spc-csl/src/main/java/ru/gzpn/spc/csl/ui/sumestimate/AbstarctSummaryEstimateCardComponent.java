@@ -20,14 +20,14 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.I18n;
-import ru.gzpn.spc.csl.ui.common.RegistryComponent;
 
 public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayout implements I18n {
 
-	public static final Logger logger = LogManager.getLogger(RegistryComponent.class);
+	public static final Logger logger = LogManager.getLogger(AbstarctSummaryEstimateCardComponent.class);
 	private static final long serialVersionUID = 1L;
 
 	// event actions
@@ -44,6 +44,8 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 	protected IUIService service;
 	protected IUserSettigsService userSettingsService;
 	protected MessageSource messageSource;
+	protected IProcessService processService;
+	
 	protected String user;
 	
 	protected HorizontalLayout headFuturesLayout;
@@ -70,6 +72,16 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 		this.userSettingsService = service.getUserSettingsService();
 		this.user = userSettingsService.getCurrentUser();
 		this.estimateCalculationId = estimateCalculationId;
+		this.processService = service.getProcessService();
+		
+		logger.debug("taskId= {} ", taskId);
+		logger.debug("user= {} ", user);
+		
+		if (taskId != null &&
+			processService.isAssigneeForTask(taskId, user)) {
+			this.estimateCalculationId = (Long) processService.getProcessVariable(taskId, "ssrId");
+			logger.debug("ssrId = {} ", this.estimateCalculationId);
+		}
 		
 		setSpacing(false);
 		setMargin(false);

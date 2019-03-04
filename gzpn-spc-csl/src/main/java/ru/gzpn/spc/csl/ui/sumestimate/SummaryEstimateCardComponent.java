@@ -1,19 +1,25 @@
 package ru.gzpn.spc.csl.ui.sumestimate;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.util.Optional;
 
 import com.vaadin.data.Binder;
+import com.vaadin.server.StreamVariable;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.dnd.FileDropTarget;
 
 import ru.gzpn.spc.csl.model.EstimateCalculation;
 import ru.gzpn.spc.csl.model.LocalEstimate;
@@ -77,6 +83,8 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	private CostsTreeGridComponent costGrid;
 
 	private TextArea comment;
+
+	private ProgressBar progress;
 	
 	public SummaryEstimateCardComponent(ISummaryEstimateCardService service, Long estimateCalculationId, String taskId) {
 		super(service, estimateCalculationId, taskId);
@@ -245,6 +253,7 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 			
 		});
 		
+		createUpoadFileTarget(localEstimatesTreeGrid);
 		NodeWrapper parentNode = new NodeWrapper(EstimateCalculation.class.getSimpleName());
 		parentNode.setId(this.estimateCalculationId);
 		localEstimatesTreeGrid.getGridDataProvider().setParentNode(parentNode);
@@ -253,6 +262,67 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		refreshLocalEstimatesFeautures();
 	}
 	
+	private void createUpoadFileTarget(final LocalEstimatesTreeGridComponent component) {
+		progress = new ProgressBar();
+        //progress.setIndeterminate(true);
+        progress.setVisible(false);
+
+		new FileDropTarget<>(component, fileDropEvent -> {
+			final int fileSizeLimit = 2 * 1024 * 1024; // 2MB
+			fileDropEvent.getFiles().forEach(html5File -> {
+				final String fileName = html5File.getFileName();
+
+				if (html5File.getFileSize() > fileSizeLimit) {
+					Notification.show("File rejected. Max 2MB files are accepted by Sampler",
+							Notification.Type.WARNING_MESSAGE);
+				} else {
+					final ByteArrayOutputStream bas = new ByteArrayOutputStream();
+					final StreamVariable streamVariable = new StreamVariable() {
+
+						@Override
+						public OutputStream getOutputStream() {
+							return bas;
+						}
+
+						@Override
+						public boolean listenProgress() {
+							return true;
+						}
+
+						@Override
+						public void onProgress(final StreamingProgressEvent event) {
+							progress.setValue(event.getBytesReceived() / (float) event.getContentLength());
+						}
+
+						@Override
+						public void streamingStarted(final StreamingStartEvent event) {
+							progress.setValue(0f);
+							progress.setVisible(true);
+						}
+
+						@Override
+						public void streamingFinished(final StreamingEndEvent event) {
+							progress.setVisible(false);
+							// showFile(fileName, bas);
+						}
+
+						@Override
+						public void streamingFailed(final StreamingErrorEvent event) {
+							progress.setVisible(false);
+						}
+
+						@Override
+						public boolean isInterrupted() {
+							return false;
+						}
+					};
+					html5File.setStreamVariable(streamVariable);
+					progress.setVisible(true);
+				}
+			});
+		});
+	}
+
 	public void refreshLocalEstimatesFeautures() {
 		if (localEstimatesFeautures == null) {
 			localEstimatesFeautures = new VerticalLayout();

@@ -256,25 +256,29 @@ public class LocalEstimateService implements ILocalEstimateService {
 	
 	@Override
 	public void save(ILocalEstimate bean) {
-		Optional<LocalEstimate> localEstimate = localEstimateRepository.findById(bean.getId());
-		if (localEstimate.isPresent()) {
-			ILocalEstimate le = localEstimate.get();
-			le.setCode(bean.getCode());
-			le.setName(bean.getName());
-			le.setChangedBy(userSettings.getCurrentUser());
-			le.setComment(bean.getComment());
-			le.setDocument(bean.getDocument());
-			le.setDrawing(bean.getDrawing());
-			le.setEstimateCalculation(bean.getEstimateCalculation());
-			le.setEstimateCosts(bean.getEstimateCosts());
-			le.setEstimateHead(bean.getEstimateHead());
-			le.setObjectEstimate(bean.getObjectEstimate());
-			le.setStage(bean.getStage());
-			le.setStatus(bean.getStatus());
-			le.setWorks(bean.getWorks());
-			
-			localEstimateRepository.save((LocalEstimate)le);
-		}
+		localEstimateRepository.save((LocalEstimate) bean);
+//		if (bean.getId() != null) {
+//			Optional<LocalEstimate> localEstimate = localEstimateRepository.findById(bean.getId());
+//
+//			if (localEstimate.isPresent()) {
+//				ILocalEstimate le = localEstimate.get();
+//				le.setCode(bean.getCode());
+//				le.setName(bean.getName());
+//				le.setChangedBy(userSettings.getCurrentUser());
+//				le.setComment(bean.getComment());
+//				le.setDocument(bean.getDocument());
+//				le.setDrawing(bean.getDrawing());
+//				le.setEstimateCalculation(bean.getEstimateCalculation());
+//				le.setEstimateCosts(bean.getEstimateCosts());
+//				le.setEstimateHead(bean.getEstimateHead());
+//				le.setObjectEstimate(bean.getObjectEstimate());
+//				le.setStage(bean.getStage());
+//				le.setStatus(bean.getStatus());
+//				le.setWorks(bean.getWorks());
+//
+//				localEstimateRepository.save((LocalEstimate) le);
+//			}
+//		}
 	}
 
 	@Override

@@ -88,13 +88,36 @@ public class ProcessService implements IProcessService, Serializable {
 		@SuppressWarnings("unchecked")
 		Set<IDocumentPresenter> docs = (Set<IDocumentPresenter>) processVariables.get(DOCUMENTS);
 		IEstimateCalculation ssr = estimateCalculationService.createEstimateCalculationByDocuments(docs);
-		instance.getProcessVariables().put("ssrId", ssr.getId());
+		logger.debug("[startEstimateAccountingProcess] ssr = {}", ssr);
+		logger.debug("[startEstimateAccountingProcess] ssrId  = {}", ssr.getId());
+	
+		runtimeService.setVariable(instance.getId(), "ssrId", ssr.getId());
+		logger.debug("[startEstimateAccountingProcess] ssrId from process  = {}", runtimeService.getVariable(instance.getId(), "ssrId"));
 		/* complete */
 		taskService.complete(task.getId());		
-	
+		
 		return instance;
 	}
 
+	@Override
+	public boolean isAssigneeForTask(String taskId, String user) {
+		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+		return user.equals(task.getAssignee());
+	}
+	
+	@Override
+	public Object getProcessVariable(String taskId, String varName) {
+		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+		
+		return runtimeService.getVariable(task.getProcessInstanceId(), varName);
+	}
+	
+	@Override
+	public void setProcessVariable(String taskId, String varName, Object value) {
+		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+		runtimeService.setVariable(task.getProcessInstanceId(), varName, value);
+	}
+	
 	
 	class CustomEventListener implements ActivitiEventListener {
 		

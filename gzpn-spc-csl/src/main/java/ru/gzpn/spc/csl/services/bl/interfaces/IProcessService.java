@@ -15,5 +15,8 @@ public interface IProcessService {
 	
 	public ProcessInstance startEstimateAccountingProcess(Map<String, Object> processVariables);
 	public ProcessEngine getProcessEngine();
+	boolean isAssigneeForTask(String taskId, String user);
+	Object getProcessVariable(String taskId, String varName);
+	void setProcessVariable(String taskId, String varName, Object value);
 	
 }

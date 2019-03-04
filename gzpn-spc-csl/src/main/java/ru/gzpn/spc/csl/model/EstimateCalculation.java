@@ -92,4 +92,11 @@ public class EstimateCalculation extends BaseEntity implements IEstimateCalculat
 		this.objectEstimates = objectEstimates;
 	}
 
+	@Override
+	public String toString() {
+		return "EstimateCalculation [code=" + code + ", name=" + name + ", handler=" + handler + ", project=" + project
+				+ ", localEstimates=" + localEstimates + ", objectEstimates=" + objectEstimates + "]";
+	}
+	
+	
 }

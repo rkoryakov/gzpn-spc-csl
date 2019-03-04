@@ -123,7 +123,7 @@ public class CostsTreeGridComponent extends AbstractTreeGridComponent<IEstimateC
 
 	@Override
 	public int getGridRowsCount() {
-		return 10;
+		return 5;
 	}
 
 //	public boolean isValidValue(String decimal) {

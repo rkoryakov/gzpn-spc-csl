@@ -124,7 +124,7 @@ public class LocalEstimatesTreeGridComponent extends AbstractTreeGridComponent<I
 
 	@Override
 	public int getGridRowsCount() {
-		return 10;
+		return 5;
 	}
 
 	@Override
