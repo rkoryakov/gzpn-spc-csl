@@ -15091,3 +15091,14 @@ div.v-layout.v-horizontal.v-widget {
 	border-radius: 5px;
 	background-color: rgba(215, 215, 215, 0.2);
 }
+
+.GzpnSpcCsl .upload-info {
+	top: auto !important;
+	left: 20px !important;
+	right: 20px !important;
+	bottom: 20px;
+}
+
+.GzpnSpcCsl .upload-info * {
+	font-size: 14px !important;
+}

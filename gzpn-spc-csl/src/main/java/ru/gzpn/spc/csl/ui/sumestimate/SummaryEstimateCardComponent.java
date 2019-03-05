@@ -4,21 +4,28 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.Optional;
 
+import org.assertj.core.util.Arrays;
+
 import com.vaadin.data.Binder;
 import com.vaadin.server.StreamVariable;
 import com.vaadin.ui.AbstractField;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.DateField;
+import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.dnd.FileDropTarget;
 
 import ru.gzpn.spc.csl.model.EstimateCalculation;
@@ -26,6 +33,7 @@ import ru.gzpn.spc.csl.model.LocalEstimate;
 import ru.gzpn.spc.csl.model.enums.EstimateType;
 import ru.gzpn.spc.csl.model.enums.ItemType;
 import ru.gzpn.spc.csl.model.enums.PriceLevel;
+import ru.gzpn.spc.csl.model.enums.ProgressState;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.presenters.EstimateCalculationPresenter;
@@ -52,6 +60,15 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	public static final String I18N_COSTSTAB_CAP = "SummaryEstimateCardComponent.costsTab.cap";
 	public static final String I18N_WORKSMRTAB_CAP = "SummaryEstimateCardComponent.workSmrTab.cap";
 	public static final String I18N_COMMENTTAB_CAP = "SummaryEstimateCardComponent.commentTab.cap";
+	
+	public static final String I18N_UPLOADLIMIT_MESSAGE_CAP = "SummaryEstimateCardComponent.uploadLimitMessage.cap";
+	private static final String I18N_UPLOADMIMETYPE_MESSAGE_CAP = "SummaryEstimateCardComponent.uploadMimeTypeMessage.cap";
+	private static final String I18N_UPLOADMIMETYPE_MESSAGE = "SummaryEstimateCardComponent.uploadMimeTypeMessage";
+	
+	public static final String XLS_MIME = "application/vnd.ms-excel";
+	public static final String XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+	
 	
 	private CssLayout calculationFieldsLayout;
 	private Binder<IEstimateCalculationPresenter> calculationFieldsBinder;
@@ -84,7 +101,6 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 
 	private TextArea comment;
 
-	private ProgressBar progress;
 	
 	public SummaryEstimateCardComponent(ISummaryEstimateCardService service, Long estimateCalculationId, String taskId) {
 		super(service, estimateCalculationId, taskId);
@@ -250,7 +266,6 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 			
 			localEstimateFieldsBinder.readBean(localEstimatesTreeGrid.getSelectedGridItem());
 			localEstimateFieldsBinder.forField(comment).bind(ILocalEstimate::getComment, ILocalEstimate::setComment);
-			
 		});
 		
 		createUpoadFileTarget(localEstimatesTreeGrid);
@@ -263,66 +278,117 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	}
 	
 	private void createUpoadFileTarget(final LocalEstimatesTreeGridComponent component) {
-		progress = new ProgressBar();
-        //progress.setIndeterminate(true);
-        progress.setVisible(false);
-
+        UploadProgressWindow progressWindow = new UploadProgressWindow();
+        
 		new FileDropTarget<>(component, fileDropEvent -> {
-			final int fileSizeLimit = 2 * 1024 * 1024; // 2MB
+			
+			final int fileSizeLimit = 5 * 1024 * 1024; // 5MB
 			fileDropEvent.getFiles().forEach(html5File -> {
 				final String fileName = html5File.getFileName();
-
-				if (html5File.getFileSize() > fileSizeLimit) {
-					Notification.show("File rejected. Max 2MB files are accepted by Sampler",
+				
+				if (!XLS_MIME.equals(html5File.getType()) && !XLSX_MIME.equals(html5File.getType())) {
+					Notification.show(getI18nText(I18N_UPLOADMIMETYPE_MESSAGE_CAP, messageSource),
+							getI18nText(I18N_UPLOADMIMETYPE_MESSAGE, messageSource),
+							Notification.Type.WARNING_MESSAGE);
+				} else if (html5File.getFileSize() > fileSizeLimit) {
+					Notification.show(getI18nText(I18N_UPLOADLIMIT_MESSAGE_CAP, Arrays.array(5), messageSource),
 							Notification.Type.WARNING_MESSAGE);
 				} else {
 					final ByteArrayOutputStream bas = new ByteArrayOutputStream();
-					final StreamVariable streamVariable = new StreamVariable() {
-
-						@Override
-						public OutputStream getOutputStream() {
-							return bas;
-						}
-
-						@Override
-						public boolean listenProgress() {
-							return true;
-						}
-
-						@Override
-						public void onProgress(final StreamingProgressEvent event) {
-							progress.setValue(event.getBytesReceived() / (float) event.getContentLength());
-						}
-
-						@Override
-						public void streamingStarted(final StreamingStartEvent event) {
-							progress.setValue(0f);
-							progress.setVisible(true);
-						}
-
-						@Override
-						public void streamingFinished(final StreamingEndEvent event) {
-							progress.setVisible(false);
-							// showFile(fileName, bas);
-						}
-
-						@Override
-						public void streamingFailed(final StreamingErrorEvent event) {
-							progress.setVisible(false);
-						}
-
-						@Override
-						public boolean isInterrupted() {
-							return false;
-						}
-					};
-					html5File.setStreamVariable(streamVariable);
-					progress.setVisible(true);
+					getUI().addWindow(progressWindow);
+					html5File.setStreamVariable(progressWindow);
+					
 				}
 			});
 		});
 	}
 
+	public class UploadProgressWindow extends Window implements StreamVariable {
+		public static final String I18N_UPLOADPROGRESSWINDOW_CAP = "SummaryEstimateCardComponent.uploadProgressWindow.cap";
+		public static final String I18N_UPLOADPROGRESSSTATE_CAP = "SummaryEstimateCardComponent.uploadProgressWindow.state.cap";
+		public static final String I18N_UPLOADFILENAME_CAP = "SummaryEstimateCardComponent.uploadProgressWindow.file.cap";
+		public static final String I18N_UPLOADCANCLEBTN_CAP = "SummaryEstimateCardComponent.uploadProgressWindow.cancelButton.cap";
+		public static final String I18N_UPLOADTOBACKBTN_CAP = "SummaryEstimateCardComponent.uploadProgressWindow.toBackgroundButton.cap";
+		public static final String I18N_UPLOADPROGRESSLABEL = "SummaryEstimateCardComponent.uploadProgressWindow.uploadingProgress.cap";
+		
+		final ByteArrayOutputStream bas = new ByteArrayOutputStream();
+		
+		private ProgressBar uploadingProgress = new ProgressBar();
+		private Label progressStateLabel = new Label();
+		private Label fileNameLabel = new Label();
+		private boolean interrupted = false;
+		private Button cancelButton;
+		private Button toBackgroundButton;
+		
+		public UploadProgressWindow() {
+			setCaption(getI18nText(I18N_UPLOADPROGRESSWINDOW_CAP, messageSource));
+			setResizable(false);
+			setDraggable(false);
+			addStyleName("upload-info");
+			
+			final HorizontalLayout stateLayout = new HorizontalLayout();
+			stateLayout.setSpacing(true);
+	        cancelButton = new Button(getI18nText(I18N_UPLOADCANCLEBTN_CAP, messageSource));
+	        toBackgroundButton = new Button(getI18nText(I18N_UPLOADTOBACKBTN_CAP, messageSource));
+	        cancelButton.addClickListener(event -> interrupted = true);
+	        
+	        cancelButton.setStyleName("small");
+	        toBackgroundButton.addClickListener(event -> this.close());
+	        toBackgroundButton.setEnabled(false);
+	        toBackgroundButton.setStyleName("small");
+	        stateLayout.addComponent(progressStateLabel);
+	        stateLayout.addComponent(cancelButton);
+	        stateLayout.addComponent(toBackgroundButton);
+	        stateLayout.setCaption(getI18nText(I18N_UPLOADPROGRESSSTATE_CAP, messageSource));
+	        
+	        FormLayout formLayout = new FormLayout();
+	        formLayout.setMargin(true);
+			formLayout.addComponent(stateLayout);
+			fileNameLabel.setCaption(getI18nText(I18N_UPLOADFILENAME_CAP, messageSource));
+			formLayout.addComponent(fileNameLabel);
+			uploadingProgress.setCaption(getI18nText(I18N_UPLOADPROGRESSLABEL, messageSource));
+			uploadingProgress.setWidth("30%");
+			formLayout.addComponent(uploadingProgress);
+			setContent(formLayout);
+		}
+		
+		@Override
+		public OutputStream getOutputStream() {
+			return bas;
+		}
+		@Override
+		public boolean listenProgress() {
+			return true;
+		}
+		@Override
+		public void onProgress(final StreamingProgressEvent event) {
+			uploadingProgress.setValue(event.getBytesReceived() / (float) event.getContentLength() * 0.5f);
+		}
+		@Override
+		public void streamingStarted(final StreamingStartEvent event) {
+			uploadingProgress.setValue(0f);
+			uploadingProgress.setVisible(true);
+			fileNameLabel.setValue(event.getFileName());
+			progressStateLabel.setValue(ProgressState.UPLOADING.getText());
+			UI.getCurrent().setPollInterval(500);
+		}
+		@Override
+		public void streamingFinished(final StreamingEndEvent event) {
+			progressStateLabel.setValue(ProgressState.INPROGRESS.getText());
+			toBackgroundButton.setEnabled(true);
+			
+		}
+		@Override
+		public void streamingFailed(final StreamingErrorEvent event) {
+			progressStateLabel.setValue(ProgressState.CANCELED.getText());
+		}
+		@Override
+		public boolean isInterrupted() {
+			return interrupted;
+		}
+	}
+	
+	
 	public void refreshLocalEstimatesFeautures() {
 		if (localEstimatesFeautures == null) {
 			localEstimatesFeautures = new VerticalLayout();
