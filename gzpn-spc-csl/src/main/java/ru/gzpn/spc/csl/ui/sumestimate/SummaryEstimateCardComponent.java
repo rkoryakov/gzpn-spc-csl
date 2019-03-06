@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.ui.sumestimate;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.Optional;
@@ -42,6 +43,7 @@ import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ISummaryEstimateCardService;
 import ru.gzpn.spc.csl.ui.common.I18n;
+import ru.gzpn.spc.csl.ui.common.data.imp.LocalEstimateExcelParser;
 
 @SuppressWarnings("serial")
 public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardComponent implements I18n {
@@ -376,7 +378,11 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		public void streamingFinished(final StreamingEndEvent event) {
 			progressStateLabel.setValue(ProgressState.INPROGRESS.getText());
 			toBackgroundButton.setEnabled(true);
-			
+			(new Thread(() -> {
+				ByteArrayInputStream inp = new ByteArrayInputStream(bas.toByteArray());
+				LocalEstimateExcelParser parser = new LocalEstimateExcelParser(inp);
+				parser.setOnProcess(() -> {uploadingProgress.setValue(0.5f + parser.getProcessed()/parser.getTotalAmount()*0.5f);});
+			})).start();
 		}
 		@Override
 		public void streamingFailed(final StreamingErrorEvent event) {

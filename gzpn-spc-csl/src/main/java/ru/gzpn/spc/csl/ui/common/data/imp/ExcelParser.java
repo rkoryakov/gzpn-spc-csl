@@ -20,14 +20,20 @@ public abstract class ExcelParser {
 	public static final Logger logger = LoggerFactory.getLogger(ExcelParser.class);
 	protected Workbook workbook;
 	protected Sheet sheet;
-
+	protected int lastRow;
+	
 	public ExcelParser(InputStream inp) {
 		 try {
 			workbook = WorkbookFactory.create(inp);
 			sheet = workbook.getSheetAt(0);
+			lastRow = sheet.getLastRowNum();
 		} catch (EncryptedDocumentException | IOException e) {
 			logger.error(e.getMessage());
 		}
+	}
+	
+	public int getLastRow() {
+		return lastRow;
 	}
 	
 	public Cell getCell(int row, int col) {
