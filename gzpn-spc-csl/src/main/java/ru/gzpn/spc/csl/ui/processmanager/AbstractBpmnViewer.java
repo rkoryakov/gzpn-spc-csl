@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.ui.processmanager;
 
+import org.activiti.engine.runtime.ProcessInstance;
 import org.springframework.context.MessageSource;
 
 import com.vaadin.ui.VerticalLayout;
@@ -10,19 +11,20 @@ import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.I18n;
 
 @SuppressWarnings("serial")
-public abstract class AbstractBpmnModelerComponent extends VerticalLayout implements I18n {
-
+public abstract class AbstractBpmnViewer extends VerticalLayout implements I18n {
 	protected IProcessManagerService service;
 	protected MessageSource messageSource;
 	protected IUserSettigsService userSettingsService;
 	protected String user;
 	protected VerticalLayout bodyLayout;
+	protected ProcessInstance processInstance;
 	
-	public AbstractBpmnModelerComponent(IUIService service) {
+	public AbstractBpmnViewer(IUIService service, ProcessInstance processInstance) {
 		this.service = (IProcessManagerService)service;
 		this.messageSource = service.getMessageSource();
 		this.userSettingsService = service.getUserSettingsService();
 		this.user = userSettingsService.getCurrentUser();		
+		this.processInstance = processInstance;
 		
 		setSpacing(false);
 		setMargin(false);

@@ -2,6 +2,8 @@ package ru.gzpn.spc.csl.model.interfaces;
 
 import java.math.BigDecimal;
 
+import ru.gzpn.spc.csl.model.enums.PriceLevel;
+
 public interface IEstimateCost extends IBaseEntity {
 	
 	public static final String ENTITYNAME_DOT = "EstimateCost.";
@@ -89,4 +91,13 @@ public interface IEstimateCost extends IBaseEntity {
 
 	public ILocalEstimate getLocalEstimate();
 	public void setLocalEstimate(ILocalEstimate localEstimate);
+	
+	PriceLevel getPriceLevel();
+	void setPriceLevel(PriceLevel priceLevel);
+	
+	BigDecimal getOverhead();
+	void setOverhead(BigDecimal overhead);
+	
+	BigDecimal getEstimateProfit();
+	void setEstimateProfit(BigDecimal estimateProfit);
 }

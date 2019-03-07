@@ -54,7 +54,6 @@ public class BpmnModelerComponent extends AbstractBpmnModelerComponent {
 			logger.error(e.getMessage());
 		}
 		
-		
 		return bpmnModeler;
 	}
 }

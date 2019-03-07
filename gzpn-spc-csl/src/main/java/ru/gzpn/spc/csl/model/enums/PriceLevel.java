@@ -45,6 +45,13 @@ public enum PriceLevel {
 						.collect(Collectors.toList());
 	}
 	
+	public static PriceLevel getByText(String caption) {
+		if (caption == null) {
+			return null;
+		}
+		return getAll().stream().filter(item -> item.getText().toLowerCase().equals(caption.toLowerCase())).findFirst().get();
+	}
+	
 	@Override
 	public String toString() {
 		return getText();

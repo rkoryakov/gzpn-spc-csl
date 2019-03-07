@@ -5,8 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.Optional;
 
-import org.assertj.core.util.Arrays;
-
 import com.vaadin.data.Binder;
 import com.vaadin.server.StreamVariable;
 import com.vaadin.ui.AbstractField;
@@ -19,6 +17,7 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.TabSheet;
@@ -293,7 +292,7 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 							getI18nText(I18N_UPLOADMIMETYPE_MESSAGE, messageSource),
 							Notification.Type.WARNING_MESSAGE);
 				} else if (html5File.getFileSize() > fileSizeLimit) {
-					Notification.show(getI18nText(I18N_UPLOADLIMIT_MESSAGE_CAP, Arrays.array(5), messageSource),
+					Notification.show(getI18nText(I18N_UPLOADLIMIT_MESSAGE_CAP, new Object[] {5}, messageSource),
 							Notification.Type.WARNING_MESSAGE);
 				} else {
 					final ByteArrayOutputStream bas = new ByteArrayOutputStream();
@@ -335,7 +334,10 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	        cancelButton.addClickListener(event -> interrupted = true);
 	        
 	        cancelButton.setStyleName("small");
-	        toBackgroundButton.addClickListener(event -> this.close());
+	        toBackgroundButton.addClickListener(event -> {
+	        	Notification.show("Переключение в фоновый режим", "По завершению операции на Ваш E-mail будет отправлено уведомление.", Type.TRAY_NOTIFICATION);
+	        	this.close();
+	        });
 	        toBackgroundButton.setEnabled(false);
 	        toBackgroundButton.setStyleName("small");
 	        stateLayout.addComponent(progressStateLabel);
@@ -382,6 +384,14 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 				ByteArrayInputStream inp = new ByteArrayInputStream(bas.toByteArray());
 				LocalEstimateExcelParser parser = new LocalEstimateExcelParser(inp);
 				parser.setOnProcess(() -> {uploadingProgress.setValue(0.5f + parser.getProcessed()/parser.getTotalAmount()*0.5f);});
+				for (int i = 1; i <= parser.getLastRow(); i ++) {
+					Optional<LocalEstimate> le = parser.getBean(i);
+					if (le.isPresent()) {
+						
+					}
+				}
+				
+				
 			})).start();
 		}
 		@Override

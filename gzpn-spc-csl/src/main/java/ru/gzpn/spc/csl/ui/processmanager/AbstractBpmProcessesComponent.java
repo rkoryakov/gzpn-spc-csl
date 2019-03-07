@@ -9,16 +9,14 @@ import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.I18n;
 
-@SuppressWarnings("serial")
-public abstract class AbstractBpmnModelerComponent extends VerticalLayout implements I18n {
-
+public abstract class AbstractBpmProcessesComponent extends VerticalLayout implements I18n {
 	protected IProcessManagerService service;
 	protected MessageSource messageSource;
 	protected IUserSettigsService userSettingsService;
 	protected String user;
 	protected VerticalLayout bodyLayout;
 	
-	public AbstractBpmnModelerComponent(IUIService service) {
+	public AbstractBpmProcessesComponent(IUIService service) {
 		this.service = (IProcessManagerService)service;
 		this.messageSource = service.getMessageSource();
 		this.userSettingsService = service.getUserSettingsService();

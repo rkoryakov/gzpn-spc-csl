@@ -92,6 +92,7 @@ public class ProcessService implements IProcessService, Serializable {
 		logger.debug("[startEstimateAccountingProcess] ssrId  = {}", ssr.getId());
 	
 		runtimeService.setVariable(instance.getId(), "ssrId", ssr.getId());
+		runtimeService.setVariable(instance.getId(), "cprojectCode", ssr.getProject().getCode());
 		logger.debug("[startEstimateAccountingProcess] ssrId from process  = {}", runtimeService.getVariable(instance.getId(), "ssrId"));
 		/* complete */
 		taskService.complete(task.getId());		

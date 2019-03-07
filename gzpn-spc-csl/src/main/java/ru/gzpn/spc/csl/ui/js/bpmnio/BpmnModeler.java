@@ -1,14 +1,16 @@
 package ru.gzpn.spc.csl.ui.js.bpmnio;
 
+import java.util.List;
+
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.annotations.StyleSheet;
 import com.vaadin.ui.AbstractJavaScriptComponent;
 
 @SuppressWarnings("serial")
-@StyleSheet({"https://unpkg.com/bpmn-js@3.2.0/dist/assets/diagram-js.css", 
-			"https://unpkg.com/bpmn-js@3.2.0/dist/assets/bpmn-font/css/bpmn.css",
-			"bpmn_connector.css"})
-@JavaScript({"https://unpkg.com/bpmn-js@3.2.0/dist/bpmn-modeler.development.js", "jquery.min.js", "bpmn_connector.js"})
+@StyleSheet({"diagram-js.css", 
+			 "bpmn.css", 
+			 "bpmn_connector.css"})
+@JavaScript({"bpmn-modeler.development.js", "jquery.min.js", "bpmn_modeler_connector.js"})
 public class BpmnModeler extends AbstractJavaScriptComponent {
 	
 	public BpmnModeler() {
@@ -19,8 +21,8 @@ public class BpmnModeler extends AbstractJavaScriptComponent {
 		getState().bpmnXML = xml;
 	}
 	
-	public void setCurrentTask(String task) {
-		getState().currentTask = task;
+	public void setCurrentTask(List<String> elements) {
+		getState().currentElementIds = elements;
 	}
 
 	@Override

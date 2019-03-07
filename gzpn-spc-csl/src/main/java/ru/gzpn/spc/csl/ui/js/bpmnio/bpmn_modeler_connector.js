@@ -32,19 +32,38 @@ window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnModeler = function() {
       }
       // access modeler components
       var canvas = bpmnModeler.get('canvas');
-    //  var overlays = bpmnModeler.get('overlays');
+      var overlays = bpmnModeler.get('overlays');
+      var elementRegistry = bpmnModeler.get('elementRegistry');
+      var shape = elementRegistry.get('EstimatesApproval');
+
+      var $overlayHtml =
+    	    $('<div class="completed-overlay">')
+    	      .css({
+    	        width: shape.width,
+    	        height: shape.height
+    	      });
+      
       // zoom to fit full viewport
      // canvas.zoom('fit-viewport');
       // attach an overlay to a node
-//      overlays.add('SCAN_OK', 'note', {
-//        position: {
-//          bottom: 0,
-//          right: 0
-//        },
-//        html: '<div class="diagram-note">Mixed up the labels?</div>'
-//      });
-//      // add marker
-//      canvas.addMarker('SCAN_OK', 'needs-discussion');
+      overlays.add('EstimatesApproval', 'note', {
+        position: {
+          bottom: 0,
+          right: 0
+        },
+        html: '<div class="diagram-note">Mixed up the labels?</div>'
+      });
+      
+      overlays.add('EstimatesApproval', {
+    	    position: {
+    	      top: 0,
+    	      left: 0
+    	    },
+    	    html: $overlayHtml
+    	  });
+      
+      // add marker
+      canvas.addMarker('EstimatesApproval', 'needs-discussion');
     });
   }
   // load external diagram file via AJAX and open it
