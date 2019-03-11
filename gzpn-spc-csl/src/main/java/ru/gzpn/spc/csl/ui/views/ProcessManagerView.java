@@ -18,6 +18,7 @@ import com.vaadin.ui.VerticalLayout;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessManagerService;
 import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.processmanager.AnalyticsComponent;
+import ru.gzpn.spc.csl.ui.processmanager.BpmProcessesComponent;
 import ru.gzpn.spc.csl.ui.processmanager.BpmnModelerComponent;
 
 @SuppressWarnings("serial")
@@ -28,6 +29,7 @@ public class ProcessManagerView extends VerticalLayout implements View, I18n {
 	public static final Logger logger = LoggerFactory.getLogger(ProcessManagerView.class);
 
 	public static final String I18N_MODELER_TAB_CAP = "ProcessManagerView.bpmnModelerTab.cap";
+	private static final String I18N_PROCVIEWERSTAB_CAP = "ProcessManagerView.procViewerTab.cap";
 	private static final String I18N_PLOTSTAB_CAP = "ProcessManagerView.plotsTab.cap";
 	
 	@Autowired
@@ -38,6 +40,7 @@ public class ProcessManagerView extends VerticalLayout implements View, I18n {
 	private BpmnModelerComponent bpmnModelerComponent;
 
 	private AnalyticsComponent analyticsComponent;
+	private BpmProcessesComponent bpmProcessesComponent;
 	
 	
 	public ProcessManagerView() {
@@ -48,8 +51,11 @@ public class ProcessManagerView extends VerticalLayout implements View, I18n {
 	@PostConstruct
 	void init() {
 		String modelerTabCap = getI18nText(I18N_MODELER_TAB_CAP, processManagerService.getMessageSource());
+		String processViewerTabCap = getI18nText(I18N_PROCVIEWERSTAB_CAP, processManagerService.getMessageSource());
 		String plotsTabCap = getI18nText(I18N_PLOTSTAB_CAP, processManagerService.getMessageSource());
+		
 		sheet.addTab(createBpmnModelerTab(), modelerTabCap);
+		sheet.addTab(createBpmnViewerTab(), processViewerTabCap);
 		sheet.addTab(createPlotsTab(), plotsTabCap);
 		
 		addComponents(sheet);
@@ -60,6 +66,11 @@ public class ProcessManagerView extends VerticalLayout implements View, I18n {
 		return analyticsComponent;
 	}
 
+	private Component createBpmnViewerTab() {
+		bpmProcessesComponent = new BpmProcessesComponent(processManagerService);
+		return bpmProcessesComponent;
+	}
+	
 	private Component createBpmnModelerTab() {
 		bpmnModelerComponent = new BpmnModelerComponent(processManagerService);
 		return bpmnModelerComponent;

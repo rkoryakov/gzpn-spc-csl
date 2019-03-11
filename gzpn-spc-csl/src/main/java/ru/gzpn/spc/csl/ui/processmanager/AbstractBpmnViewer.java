@@ -19,12 +19,11 @@ public abstract class AbstractBpmnViewer extends VerticalLayout implements I18n 
 	protected VerticalLayout bodyLayout;
 	protected ProcessInstance processInstance;
 	
-	public AbstractBpmnViewer(IUIService service, ProcessInstance processInstance) {
+	public AbstractBpmnViewer(IUIService service) {
 		this.service = (IProcessManagerService)service;
 		this.messageSource = service.getMessageSource();
 		this.userSettingsService = service.getUserSettingsService();
 		this.user = userSettingsService.getCurrentUser();		
-		this.processInstance = processInstance;
 		
 		setSpacing(false);
 		setMargin(false);
@@ -36,6 +35,7 @@ public abstract class AbstractBpmnViewer extends VerticalLayout implements I18n 
 		refreshUiElements();
 	}
 
+	
 	protected void refreshUiElements() {
 		
 	}

@@ -1,7 +1,5 @@
 package ru.gzpn.spc.csl.ui.js.bpmnio;
 
-import java.util.List;
-
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.annotations.StyleSheet;
 import com.vaadin.ui.AbstractJavaScriptComponent;
@@ -19,10 +17,6 @@ public class BpmnModeler extends AbstractJavaScriptComponent {
 	
 	public void setBpmnXml(String xml) {
 		getState().bpmnXML = xml;
-	}
-	
-	public void setCurrentTask(List<String> elements) {
-		getState().currentElementIds = elements;
 	}
 
 	@Override

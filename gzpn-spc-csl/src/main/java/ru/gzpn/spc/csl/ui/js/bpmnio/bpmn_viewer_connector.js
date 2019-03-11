@@ -102,7 +102,6 @@ window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnViewer = function() {
   }
   
   this.registerRpc({
-	  var previousHighlitedElementId;
 	  
 	  highlight: function(bpmElementId, info) {
 		  

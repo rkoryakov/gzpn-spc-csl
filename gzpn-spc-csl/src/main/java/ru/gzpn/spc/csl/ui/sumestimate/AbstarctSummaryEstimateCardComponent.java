@@ -79,7 +79,7 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 		
 		if (taskId != null &&
 			processService.isAssigneeForTask(taskId, user)) {
-			this.estimateCalculationId = (Long) processService.getProcessVariable(taskId, "ssrId");
+			this.estimateCalculationId = (Long) processService.getProcessVariableByTaskId(taskId, "ssrId");
 			logger.debug("ssrId = {} ", this.estimateCalculationId);
 		}
 		

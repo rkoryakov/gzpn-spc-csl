@@ -47,22 +47,16 @@ public class ProcessService implements IProcessService, Serializable {
 
 	@Autowired
 	ProcessEngine processEngine;
-
 	@Autowired
 	RuntimeService runtimeService;
-
 	@Autowired
 	TaskService taskService;
-
 	@Autowired
 	IdentityService identityService;
-
 	@Autowired
 	ITaskNotificationService notificationService;
-
 	@Autowired
 	IUserSettigsService userSettings;
-
 	@Autowired
 	IEstimateCalculationService estimateCalculationService;
 	
@@ -91,8 +85,8 @@ public class ProcessService implements IProcessService, Serializable {
 		logger.debug("[startEstimateAccountingProcess] ssr = {}", ssr);
 		logger.debug("[startEstimateAccountingProcess] ssrId  = {}", ssr.getId());
 	
-		runtimeService.setVariable(instance.getId(), "ssrId", ssr.getId());
-		runtimeService.setVariable(instance.getId(), "cprojectCode", ssr.getProject().getCode());
+		runtimeService.setVariable(instance.getId(), SSR_ID, ssr.getId());
+		runtimeService.setVariable(instance.getId(), CPROJECT_CODE, ssr.getProject().getCode());
 		logger.debug("[startEstimateAccountingProcess] ssrId from process  = {}", runtimeService.getVariable(instance.getId(), "ssrId"));
 		/* complete */
 		taskService.complete(task.getId());		
@@ -107,10 +101,14 @@ public class ProcessService implements IProcessService, Serializable {
 	}
 	
 	@Override
-	public Object getProcessVariable(String taskId, String varName) {
+	public Object getProcessVariableByTaskId(String taskId, String varName) {
 		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
-		
 		return runtimeService.getVariable(task.getProcessInstanceId(), varName);
+	}
+	
+	@Override
+	public Object getProcessVariable(String processInstanceId, String varName) {
+		return runtimeService.getVariable(processInstanceId, varName);
 	}
 	
 	@Override
@@ -118,6 +116,7 @@ public class ProcessService implements IProcessService, Serializable {
 		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 		runtimeService.setVariable(task.getProcessInstanceId(), varName, value);
 	}
+	
 	
 	
 	class CustomEventListener implements ActivitiEventListener {

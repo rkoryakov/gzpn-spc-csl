@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.activiti.engine.HistoryService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
@@ -26,8 +28,8 @@ public class BpmnViewerComponent extends AbstractBpmnViewer {
 	public static final Logger logger = LoggerFactory.getLogger(BpmnModelerComponent.class);
 	private BpmnViewer bpmnViewer;
 
-	public BpmnViewerComponent(IProcessManagerService service, ProcessInstance processInstance) {
-		super(service, processInstance);
+	public BpmnViewerComponent(IProcessManagerService service) {
+		super(service);
 	}
 
 	@Override
@@ -43,8 +45,13 @@ public class BpmnViewerComponent extends AbstractBpmnViewer {
 		return body;
 	}
 
-	public Component createBpmnViewer() {
+	
+	private Component createBpmnViewer() {
 		bpmnViewer = new BpmnViewer();
+		return bpmnViewer;
+	}
+
+	public void updateBpmnViewer(ProcessInstance processInstance) {
 		
 		ProcessDefinition processDefinition = service.getProcessService().getProcessEngine()
 										.getRepositoryService().createProcessDefinitionQuery()
@@ -65,15 +72,38 @@ public class BpmnViewerComponent extends AbstractBpmnViewer {
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
-		
-		return bpmnViewer;
 	}
 
 	private List<ElementInfo> getProcessElementInfos() {
 		List<ElementInfo> result = java.util.Collections.emptyList();
-		TaskService taskService = service.getProcessService().getProcessEngine().getTaskService(); 
-		List<Task> activeTasks = taskService.createTaskQuery().active().list();
+		TaskService taskService = service.getProcessService().getProcessEngine().getTaskService();
+		HistoryService historyService = service.getProcessService().getProcessEngine().getHistoryService();
 		
+		/* active or suspended tasks */
+		List<Task> tasks = taskService.createTaskQuery().list();
+		for (Task task : tasks) {
+			ElementInfo info = new ElementInfo(task.getId());
+			info.setUser(task.getAssignee());
+			info.setCompleted(false);
+			info.setStatus(task.getAssignee() != null ? "In Progress" : "Waiting for assignment");
+			info.setActive(true);
+			
+			if (task.isSuspended()) {
+				info.setStatus("Suspended");
+			}
+			result.add(info);
+		}
+		
+		/* completed tasks */
+		List<HistoricTaskInstance> historicTaskInstances = historyService.createHistoricTaskInstanceQuery().finished().list();
+		for (HistoricTaskInstance hTask : historicTaskInstances) {
+			ElementInfo info = new ElementInfo(hTask.getId());
+			info.setActive(false);
+			info.setCompleted(true);
+			info.setUser(hTask.getAssignee());
+			info.setStatus("Completed");
+			result.add(info);
+		}
 		return result;
 	}
 }

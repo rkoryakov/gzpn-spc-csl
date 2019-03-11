@@ -29,17 +29,18 @@ public class BpmnViewer extends AbstractJavaScriptComponent implements BpmnHighl
 		setSizeFull();
 	}
 	
-	protected ElementInfo getElementInfo(String elementId) {
-		// TODO Auto-generated method stub
-		return null;
+	public ElementInfo getElementInfo(String elementId) {
+		return getState().getElementInfos().stream()
+					.filter(item -> item.elementId.equals(elementId))
+						.findFirst().orElse(null);
 	}
-
-	public void setBpmnXml(String xml) {
-		getState().bpmnXML = xml;
+	public void setElementInfos(List<ElementInfo> elements) {
+		getState().getElementInfos().clear();
+		getState().getElementInfos().addAll(elements);
 	}
 	
-	public void setElementInfos(List<ElementInfo> elements) {
-		getState().elementInfos = elements;
+	public void setBpmnXml(String xml) {
+		getState().bpmnXML = xml;
 	}
 	
 	@Override
