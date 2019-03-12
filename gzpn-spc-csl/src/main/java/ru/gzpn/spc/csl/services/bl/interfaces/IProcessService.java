@@ -7,6 +7,7 @@ import org.activiti.engine.runtime.ProcessInstance;
 
 public interface IProcessService {
 	/* Process variables */
+	public static final String INITIATOR = "initiator";
 	public static final String COMMENTS = "comments";
 	public static final String DOCUMENTS = "documents";
 	public static final String ESTIMATES_FOR_APPROVAL = "estimatesForApproval";

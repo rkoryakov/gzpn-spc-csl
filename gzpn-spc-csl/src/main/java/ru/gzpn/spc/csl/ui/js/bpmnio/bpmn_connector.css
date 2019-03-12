@@ -5,19 +5,19 @@ html, body, #canvas {
 }
 
 .diagram-note {
-	background-color: rgba(190, 180, 21, 0.7);
+	background-color: rgba(0, 0, 0, 0.7);
+	text-align:left;
 	color: White;
 	border-radius: 5px;
 	font-family: Arial;
 	font-size: 12px;
 	padding: 5px;
 	min-height: 16px;
-	width: 50px;
-	text-align: center;
+	width: 200px;
 }
 
 .needs-discussion:not (.djs-connection ) .djs-visual>:nth-child(1) {
-	stroke: rgba(6, 180, 21, 0.7) !important; /* color elements as red */
+	stroke: /*rgba(6, 180, 21, 0.7)*/red !important; /* color elements as red */
 }
 
 #save-button {

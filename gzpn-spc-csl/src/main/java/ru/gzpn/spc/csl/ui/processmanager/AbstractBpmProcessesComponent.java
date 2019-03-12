@@ -4,6 +4,7 @@ import java.util.stream.Stream;
 
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.HistoricVariableInstance;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.springframework.context.MessageSource;
@@ -12,6 +13,8 @@ import com.vaadin.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.data.provider.Query;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -82,7 +85,7 @@ public abstract class AbstractBpmProcessesComponent extends VerticalLayout imple
 	
 				result = service.getProcessService().getProcessEngine()
 							.getRuntimeService().createProcessInstanceQuery().list()
-								.stream().map(item -> new ProcessPresenter(service, item));
+								.stream().map(item -> new ProcessPresenter(service, item, this));
 			
 			return result;
 		}
@@ -108,8 +111,8 @@ public abstract class AbstractBpmProcessesComponent extends VerticalLayout imple
 			Stream<ProcessPresenter> result = Stream.empty();
 
 			result = service.getProcessService().getProcessEngine()
-						.getHistoryService().createHistoricProcessInstanceQuery().list()
-							.stream().map(item -> new ProcessPresenter(service, item));
+						.getHistoryService().createHistoricProcessInstanceQuery().finished().list()
+							.stream().map(item -> new ProcessPresenter(service, item, this));
 			
 			return result;
 		}
@@ -117,7 +120,7 @@ public abstract class AbstractBpmProcessesComponent extends VerticalLayout imple
 		@Override
 		protected int sizeInBackEnd(Query<ProcessPresenter, Void> query) {
 			return (int)service.getProcessService().getProcessEngine()
-						.getHistoryService().createHistoricProcessInstanceQuery().count();
+						.getHistoryService().createHistoricProcessInstanceQuery().finished().count();
 						
 		}
 	}
@@ -206,7 +209,7 @@ public abstract class AbstractBpmProcessesComponent extends VerticalLayout imple
 		}
 	}
 	
-	
+	@SuppressWarnings("rawtypes")
 	public static class ProcessPresenter {
 		
 		private IProcessManagerService service;
@@ -215,16 +218,37 @@ public abstract class AbstractBpmProcessesComponent extends VerticalLayout imple
 		private Button completeButton;
 		private Button removeHistoricProcessButton;
 		
-		public ProcessPresenter(IProcessManagerService service, ProcessInstance processInstance) {
+		private AbstractBackEndDataProvider dataProvider;
+		
+		public ProcessPresenter(IProcessManagerService service, ProcessInstance processInstance, AbstractBackEndDataProvider dataProvider) {
 			this.service = service;
 			this.processInstance = processInstance;
+			this.dataProvider = dataProvider;
 		}
-		
-		public ProcessPresenter(IProcessManagerService service, HistoricProcessInstance historyProcessInstance) {
+
+		public ProcessPresenter(IProcessManagerService service, HistoricProcessInstance historyProcessInstance, AbstractBackEndDataProvider dataProvider) {
 			this.service = service;
 			this.historyProcessInstance = historyProcessInstance;
+			this.dataProvider = dataProvider;
 		}
 		
+		
+		public ProcessInstance getProcessInstance() {
+			return processInstance;
+		}
+
+		public void setProcessInstance(ProcessInstance processInstance) {
+			this.processInstance = processInstance;
+		}
+
+		public HistoricProcessInstance getHistoryProcessInstance() {
+			return historyProcessInstance;
+		}
+
+		public void setHistoryProcessInstance(HistoricProcessInstance historyProcessInstance) {
+			this.historyProcessInstance = historyProcessInstance;
+		}
+
 		public String getProcessId() {
 			return processInstance.getId();
 		}
@@ -240,23 +264,47 @@ public abstract class AbstractBpmProcessesComponent extends VerticalLayout imple
 		}
 		
 		public String getHistoricProjectCode() {
-			return (String)
-					service.getProcessService().getProcessVariable(historyProcessInstance.getId(), IProcessService.CPROJECT_CODE);
+			String result = "";
+			HistoricVariableInstance instance = service.getProcessService().getProcessEngine()
+						.getHistoryService().createHistoricVariableInstanceQuery()
+							.processInstanceId(historyProcessInstance.getId())
+								.variableName(IProcessService.CPROJECT_CODE).singleResult();
+			
+			if (instance != null) {
+				result = (String)instance.getValue();
+			}
+			return result;
 		}
 		
 		public Button getCompleteButton() {
-			completeButton = new Button();
-			completeButton.setIcon(VaadinIcons.STOP_COG);
-			completeButton.setDescription("Завершить принудительно");
-			completeButton.setStyleName(ValoTheme.BUTTON_ICON_ONLY);
+			if (completeButton == null) {
+				completeButton = new Button();
+				completeButton.setIcon(VaadinIcons.STOP);
+				completeButton.setDescription("Завершить принудительно");
+				completeButton.setStyleName(ValoTheme.BUTTON_BORDERLESS);
+				completeButton.addClickListener(clickEvent -> {
+					service.getProcessService().getProcessEngine()
+						.getRuntimeService().deleteProcessInstance(processInstance.getId(), "Принудительно завершен");
+					dataProvider.refreshAll();
+					Notification.show("Информация", "Инстанция процесса " + processInstance.getId() + " завершена" , Type.TRAY_NOTIFICATION);
+				});
+			}
 			return completeButton;
 		}
 		
 		public Button getRemoveHistoricProcessButton() {
-			removeHistoricProcessButton = new Button();
-			removeHistoricProcessButton.setIcon(VaadinIcons.RECYCLE);
-			removeHistoricProcessButton.setDescription("Удалить из истории");
-			removeHistoricProcessButton.setStyleName(ValoTheme.BUTTON_ICON_ONLY);
+			if (removeHistoricProcessButton == null) {
+				removeHistoricProcessButton = new Button();
+				removeHistoricProcessButton.setIcon(VaadinIcons.TRASH);
+				removeHistoricProcessButton.setDescription("Удалить из истории");
+				removeHistoricProcessButton.setStyleName(ValoTheme.BUTTON_BORDERLESS);
+				removeHistoricProcessButton.addClickListener(clickEvent -> {
+					service.getProcessService().getProcessEngine()
+						.getHistoryService().deleteHistoricProcessInstance(historyProcessInstance.getId());
+					dataProvider.refreshAll();
+					Notification.show("Информация", "Инстанция процесса " + historyProcessInstance.getId() + " удалена из истории" , Type.TRAY_NOTIFICATION);
+				});
+			}
 			return removeHistoricProcessButton;
 		}
 	}
@@ -296,18 +344,23 @@ public abstract class AbstractBpmProcessesComponent extends VerticalLayout imple
 		}
 		
 		public Button getCompleteButton() {
-			completeButton = new Button();
-			completeButton.setIcon(VaadinIcons.STOP_COG);
-			completeButton.setDescription("Завершить принудительно");
-			completeButton.setStyleName(ValoTheme.BUTTON_ICON_ONLY);
+			if (completeButton == null) {
+				completeButton = new Button();
+				completeButton.setIcon(VaadinIcons.STOP);
+				completeButton.setDescription("Завершить принудительно");
+				completeButton.setStyleName(ValoTheme.BUTTON_BORDERLESS);
+			}
+			
 			return completeButton;
 		}
 		
 		public Button getRemoveHistoricTaskButton() {
-			removeHistoricTaskButton = new Button();
-			removeHistoricTaskButton.setIcon(VaadinIcons.RECYCLE);
-			removeHistoricTaskButton.setDescription("Удалить из истории");
-			removeHistoricTaskButton.setStyleName(ValoTheme.BUTTON_ICON_ONLY);
+			if (removeHistoricTaskButton == null) {
+				removeHistoricTaskButton = new Button();
+				removeHistoricTaskButton.setIcon(VaadinIcons.TRASH);
+				removeHistoricTaskButton.setDescription("Удалить из истории");
+				removeHistoricTaskButton.setStyleName(ValoTheme.BUTTON_BORDERLESS);
+			}
 			return removeHistoricTaskButton;
 		}
 	}
