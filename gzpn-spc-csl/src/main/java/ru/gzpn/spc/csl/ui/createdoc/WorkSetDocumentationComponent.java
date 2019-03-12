@@ -146,6 +146,7 @@ class WorkSetDocumentationComponent extends VerticalLayout implements I18n {
 							(new Thread() {
 								@Override
 								public void run() {
+									processVariables.put(IProcessService.INITIATOR, currentUser);
 									processVariables.put(IProcessService.DOCUMENTS, documentsGrid.getSelectedItems());
 									processVariables.put(IProcessService.COMMENTS, descriptionField.getValue());
 									processService.startEstimateAccountingProcess(processVariables);

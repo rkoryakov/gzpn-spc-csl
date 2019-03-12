@@ -76,15 +76,18 @@ public class ProcessService implements IProcessService, Serializable {
 		ProcessInstance instance = runtimeService.startProcessInstanceByKey(PROCESS_DEFINITION, processVariables);
 		Task task = taskService.createTaskQuery().processInstanceId(instance.getId())
 				.taskCandidateGroup(Role.CREATOR_ROLE.name()).singleResult();
+	
+		String user = (String)processVariables.get(INITIATOR);
+		taskService.claim(task.getId(), user);
 		
-		taskService.claim(task.getId(), userSettings.getCurrentUser());
 		/* create SSR */
 		@SuppressWarnings("unchecked")
 		Set<IDocumentPresenter> docs = (Set<IDocumentPresenter>) processVariables.get(DOCUMENTS);
 		IEstimateCalculation ssr = estimateCalculationService.createEstimateCalculationByDocuments(docs);
 		logger.debug("[startEstimateAccountingProcess] ssr = {}", ssr);
 		logger.debug("[startEstimateAccountingProcess] ssrId  = {}", ssr.getId());
-	
+		logger.debug("[startEstimateAccountingProcess] user = {}", user);
+		
 		runtimeService.setVariable(instance.getId(), SSR_ID, ssr.getId());
 		runtimeService.setVariable(instance.getId(), CPROJECT_CODE, ssr.getProject().getCode());
 		logger.debug("[startEstimateAccountingProcess] ssrId from process  = {}", runtimeService.getVariable(instance.getId(), "ssrId"));

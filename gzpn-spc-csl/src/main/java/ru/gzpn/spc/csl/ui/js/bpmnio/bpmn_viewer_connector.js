@@ -1,6 +1,6 @@
 window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnViewer = function() {
   var element = $(this.getElement());
-  
+  var rpcProxy = this.getRpcProxy();
   
   
   // viewer instance
@@ -14,6 +14,8 @@ window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnViewer = function() {
    * @param {String} bpmnXML diagram to display
    */
   this.openDiagram = function (bpmnXML) {
+	var elementInfos = this.getState().elementInfos;
+	var thisScope = this;
     // import diagram
     bpmnViewer.importXML(bpmnXML, function(err) {
       if (err) {
@@ -23,29 +25,36 @@ window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnViewer = function() {
       var canvas = bpmnViewer.get('canvas');
       var overlays = bpmnViewer.get('overlays');
       var elementRegistry = bpmnViewer.get('elementRegistry');
-      var shape = elementRegistry.get(bpmElementId);
       
       var eventBus = bpmnViewer.get('eventBus');
       var events = [
     	  'element.hover',
-    	  'element.out',
-    	  'element.click',
-    	  'element.dblclick',
-    	  'element.mousedown',
-    	  'element.mouseup'
+    	//  'element.out',
+    	  'element.click'
+    	 // 'element.dblclick',
+    	 // 'element.mousedown',
+    	//  'element.mouseup'
     	];
 
       events.forEach(function(event) {
     		eventBus.on(event, function(e) {
     			// e.element = the model element
     			// e.gfx = the graphical element
-
-    			log(event, 'on', e.element.id);
+    			if (event == 'element.hover') {
+    				rpcProxy.onElementOver(e.element.id);
+    			} else 
+    			if (event == 'element.click') {
+    				rpcProxy.onElementClick(e.element.id);
+    			}
+    			
+    			//log(event, 'on', e.element.id);
     		});
       });
-
+      
+      thisScope.setElementsStatuses(elementInfos);
+      
       // zoom to fit full viewport
-     // canvas.zoom('fit-viewport');   
+      canvas.zoom('fit-viewport');   
     });
   }
 
@@ -53,7 +62,6 @@ window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnViewer = function() {
 	  var canvas = bpmnViewer.get('canvas');
       var overlays = bpmnViewer.get('overlays');
       var elementRegistry = bpmnViewer.get('elementRegistry');
-      var shape = elementRegistry.get(bpmElementId);
       
 	  for (i = 0; i < elementsInfoArray.length; i ++) {
 		  elementId = elementsInfoArray[i].elementId;
@@ -78,7 +86,7 @@ window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnViewer = function() {
 	  var canvas = bpmnViewer.get('canvas');
       var overlays = bpmnViewer.get('overlays');
       var elementRegistry = bpmnViewer.get('elementRegistry');
-      var shape = elementRegistry.get(bpmElementId);
+      var shape = elementRegistry.get(elementId);
       
       var $overlayHtml =
   	    $('<div class="' + cssClass + '">')
@@ -87,30 +95,33 @@ window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnViewer = function() {
   	        height: shape.height
   	      });
       
-      return overlays.add(elementId, {
+      overlays.add(elementId, {
   	    	position: {
   	    		top: 0,
   	    		left: 0
   	    	},
   	    	html: $overlayHtml
   	  });
+      //add marker
+  	  canvas.addMarker(elementId, 'needs-discussion');
   }
   
   this.onStateChange = function() {
 	  this.openDiagram(this.getState().bpmnXML);
-	  this.setElementsStatuses(this.getState().elementInfos);
   }
   
+  var previousHighlitedElementId;
+  
   this.registerRpc({
-	  
 	  highlight: function(bpmElementId, info) {
 		  
-		  if (previousHighlitedElementId) {
-			  overlays.remove(previousHighlitedElementId);
-		  }
 		  var canvas = bpmnViewer.get('canvas');
 	      var overlays = bpmnViewer.get('overlays');
 	      var elementRegistry = bpmnViewer.get('elementRegistry');
+	      
+	      if (previousHighlitedElementId) {
+			  overlays.remove(previousHighlitedElementId);
+		  }
 	      
 	      previousHighlitedElementId = overlays
 	      		.add(bpmElementId, 'note', {

@@ -1,11 +1,13 @@
 package ru.gzpn.spc.csl.ui.processmanager;
 
+import java.util.Optional;
+
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.VerticalSplitPanel;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 
@@ -13,10 +15,8 @@ import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 public class BpmProcessesComponent extends AbstractBpmProcessesComponent {
 
 	private HorizontalSplitPanel horizontalSplitPanel;
-	private VerticalSplitPanel activeProcTasksVerticalSplitPanel;
-	private VerticalSplitPanel bpmVerticalSplitPanel;
+	private VerticalLayout bpmVerticalLayout;
 	private BpmnViewerComponent bpmnViewerComponent;
-	private VerticalSplitPanel completedProcTasksVerticalSplitPanel;
 	private Grid<TaskPresenter> activeTasksGrid;
 	private Grid<TaskPresenter> completedTasksGrid;
 	private Grid<ProcessPresenter> activeProcessesGrid;
@@ -25,6 +25,10 @@ public class BpmProcessesComponent extends AbstractBpmProcessesComponent {
 	private HistoricProcessesDataProvider completedProcessesDataProvider;
 	private ActiveTasksDataProvider activeTasksDataProvider;
 	private HistoricTasksDataProvider completedTasksDataProvider;
+	private VerticalLayout activeProcTasksLayout;
+	private VerticalLayout completedProcTasksLayout;
+	private VerticalLayout propertiesPanelLayout;
+	private Panel propertiesPanel;
 
 	public BpmProcessesComponent(IUIService service) {
 		super(service);
@@ -33,8 +37,8 @@ public class BpmProcessesComponent extends AbstractBpmProcessesComponent {
 	@Override
 	public VerticalLayout createBodyLayout() {
 		VerticalLayout layout = new VerticalLayout();
+		layout.setMargin(false);
 		layout.addComponent(createHorizontalSplitPanel());
-		
 		return layout;
 	}
 
@@ -49,20 +53,19 @@ public class BpmProcessesComponent extends AbstractBpmProcessesComponent {
 	public Component createProcTasksPanel() {
 		TabSheet sheet = new TabSheet();
 		
-		activeProcTasksVerticalSplitPanel = new VerticalSplitPanel();
-		activeProcTasksVerticalSplitPanel.setSplitPosition(50f, Unit.PERCENTAGE);
-		activeProcTasksVerticalSplitPanel.setFirstComponent(createActiveProcesses());
-		activeProcTasksVerticalSplitPanel.setSecondComponent(createActiveTasks());
-		activeProcTasksVerticalSplitPanel.setHeight("700px");
+		activeProcTasksLayout = new VerticalLayout();
+		activeProcTasksLayout.setMargin(false);
+		activeProcTasksLayout.addComponent(createActiveProcesses());
+		activeProcTasksLayout.addComponent(createActiveTasks());
 		
-		completedProcTasksVerticalSplitPanel = new VerticalSplitPanel();
-		completedProcTasksVerticalSplitPanel.setSplitPosition(50f, Unit.PERCENTAGE);
-		completedProcTasksVerticalSplitPanel.setFirstComponent(createCompletedProcesses());
-		completedProcTasksVerticalSplitPanel.setSecondComponent(createCompletedTasks());
-		completedProcTasksVerticalSplitPanel.setSizeFull();
+		completedProcTasksLayout = new VerticalLayout();
+		completedProcTasksLayout.setSizeFull();
+		completedProcTasksLayout.setMargin(false);
+		completedProcTasksLayout.addComponent(createCompletedProcesses());
+		completedProcTasksLayout.addComponent(createCompletedTasks());
 		
-		sheet.addTab(activeProcTasksVerticalSplitPanel, "Активные");
-		sheet.addTab(completedProcTasksVerticalSplitPanel, "Завершенные");
+		sheet.addTab(activeProcTasksLayout, "Активные");
+		sheet.addTab(completedProcTasksLayout, "Завершенные");
 		sheet.setSizeFull();
 
 		return sheet;
@@ -72,11 +75,18 @@ public class BpmProcessesComponent extends AbstractBpmProcessesComponent {
 		activeProcessesGrid = new Grid<>();
 		activeProcessesDataProvider = new ActiveProcessesDataProvider(service);
 		activeProcessesGrid.setDataProvider(activeProcessesDataProvider);
-		activeProcessesGrid.addColumn(ProcessPresenter::getProcessId).setCaption("Ид.");
+		activeProcessesGrid.addColumn(ProcessPresenter::getProcessId).setCaption("Ид.").setWidth(110);
 		activeProcessesGrid.addColumn(ProcessPresenter::getProjectCode).setCaption("Проект");
-		activeProcessesGrid.addColumn(ProcessPresenter::getCompleteButton);
-		activeProcessesGrid.setHeightByRows(6);
+		activeProcessesGrid.addComponentColumn(ProcessPresenter::getCompleteButton).setWidth(90);
 		activeProcessesGrid.setSizeFull();
+		activeProcessesGrid.addSelectionListener(selectEvent -> {
+			Optional<ProcessPresenter> selectedItem = selectEvent.getFirstSelectedItem();
+			if (selectedItem.isPresent()) {
+				activeTasksDataProvider.setProcessInstance(selectedItem.get().getProcessInstance());
+				bpmnViewerComponent.updateBpmnViewer(selectedItem.get().getProcessInstance());
+				activeTasksDataProvider.refreshAll();
+			}
+		});
 		return activeProcessesGrid;
 	}
 	
@@ -84,11 +94,18 @@ public class BpmProcessesComponent extends AbstractBpmProcessesComponent {
 		completedProcessesGrid = new Grid<>();
 		completedProcessesDataProvider = new HistoricProcessesDataProvider(service);
 		completedProcessesGrid.setDataProvider(completedProcessesDataProvider);
-		completedProcessesGrid.addColumn(ProcessPresenter::getHistoricProcessId).setCaption("Ид.");
+		completedProcessesGrid.addColumn(ProcessPresenter::getHistoricProcessId).setCaption("Ид.").setWidth(110);
 		completedProcessesGrid.addColumn(ProcessPresenter::getHistoricProjectCode).setCaption("Проект");
-		completedProcessesGrid.addColumn(ProcessPresenter::getRemoveHistoricProcessButton);
-		completedProcessesGrid.setHeightByRows(6);
+		completedProcessesGrid.addComponentColumn(ProcessPresenter::getRemoveHistoricProcessButton).setWidth(90);
 		completedProcessesGrid.setSizeFull();
+		completedProcessesGrid.addSelectionListener(selectEvent -> {
+			Optional<ProcessPresenter> selectedItem = selectEvent.getFirstSelectedItem();
+			if (selectedItem.isPresent()) {
+				completedTasksDataProvider.setHistoryProcessInstance(selectedItem.get().getHistoryProcessInstance());
+				bpmnViewerComponent.updateBpmnViewer(selectedItem.get().getHistoryProcessInstance());
+				completedTasksDataProvider.refreshAll();
+			}
+		});
 		return completedProcessesGrid;
 	}
 	
@@ -96,10 +113,10 @@ public class BpmProcessesComponent extends AbstractBpmProcessesComponent {
 		activeTasksGrid = new Grid<>();
 		activeTasksDataProvider = new ActiveTasksDataProvider(service);
 		activeTasksGrid.setDataProvider(activeTasksDataProvider);
-		activeTasksGrid.addColumn(TaskPresenter::getTaskId).setCaption("Ид.");
+		activeTasksGrid.addColumn(TaskPresenter::getTaskId).setCaption("Ид.").setWidth(110);
 		activeTasksGrid.addColumn(TaskPresenter::getTaskDefName).setCaption("Задача");
-		activeTasksGrid.addColumn(TaskPresenter::getCompleteButton);
-		activeTasksGrid.setHeightByRows(6);
+		activeTasksGrid.addComponentColumn(TaskPresenter::getCompleteButton).setWidth(90);
+		activeTasksGrid.setSizeFull();
 		return activeTasksGrid;
 	}
 
@@ -107,27 +124,31 @@ public class BpmProcessesComponent extends AbstractBpmProcessesComponent {
 		completedTasksGrid = new Grid<>();
 		completedTasksDataProvider = new HistoricTasksDataProvider(service);
 		completedTasksGrid.setDataProvider(completedTasksDataProvider);
-		completedTasksGrid.addColumn(TaskPresenter::getHistoricTaskId).setCaption("Ид.");
+		completedTasksGrid.addColumn(TaskPresenter::getHistoricTaskId).setCaption("Ид.").setWidth(110);
 		completedTasksGrid.addColumn(TaskPresenter::getHistoricTaskDefName).setCaption("Задача");
-		completedTasksGrid.addColumn(TaskPresenter::getRemoveHistoricTaskButton);
-		completedTasksGrid.setHeightByRows(6);
+		completedTasksGrid.addComponentColumn(TaskPresenter::getRemoveHistoricTaskButton).setWidth(90);
+		completedTasksGrid.setSizeFull();
 		return completedTasksGrid;
 	}
 	
 	public Component createBpmPanel() {
-		bpmVerticalSplitPanel = new VerticalSplitPanel();
-		bpmVerticalSplitPanel.setSplitPosition(75f, Unit.PERCENTAGE);
-		bpmVerticalSplitPanel.setFirstComponent(createBpmViewer());
-		bpmVerticalSplitPanel.setSecondComponent(createTaskPropertiesPanel());
-		return bpmVerticalSplitPanel;
+		bpmVerticalLayout = new VerticalLayout();
+		bpmVerticalLayout.addComponent(createBpmViewer());
+		bpmVerticalLayout.addComponent(createTaskPropertiesPanel());
+//		bpmVerticalLayout.setExpandRatio(bpmVerticalLayout.getComponent(0), 3.0f);
+//		bpmVerticalLayout.setExpandRatio(bpmVerticalLayout.getComponent(1), 1.0f);
+		return bpmVerticalLayout;
 	}
 
 	public Component createBpmViewer() {
 		bpmnViewerComponent = new BpmnViewerComponent(service);
+		bpmnViewerComponent.setSizeFull();
 		return bpmnViewerComponent;
 	}
 
 	public Component createTaskPropertiesPanel() {
-		return null;
+		propertiesPanel = new Panel("Атрибуты задачи");		
+		propertiesPanel.setSizeFull();
+		return propertiesPanel;
 	}
 }
