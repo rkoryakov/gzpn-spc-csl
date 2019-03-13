@@ -26,9 +26,13 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import ru.gzpn.spc.csl.model.dataproviders.CProjectDataProvider;
+import ru.gzpn.spc.csl.model.dataproviders.HProjectDataProvider;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.jsontypes.ACLJson;
+import ru.gzpn.spc.csl.model.presenters.interfaces.ICProjectPresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IHProjectPresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.ui.admin.GroupTemplate;
 import ru.gzpn.spc.csl.ui.admin.UsersAndRolesVerticalLayout;
@@ -98,12 +102,12 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 	private DataProvider<String, String> createSelectGroupProvider() {
 		return DataProvider.fromFilteringCallbacks(query -> {
 			List<String> groupList = identityService.createGroupQuery().list().stream().
-					filter(group -> StringUtils.startsWithIgnoreCase(group.getId(), query.getFilter().orElse(""))
-						).map(Group :: getId).collect(Collectors.toList());
+					filter(group -> StringUtils.startsWithIgnoreCase(group.getName(), query.getFilter().orElse(""))
+						).map(Group :: getName).collect(Collectors.toList());
 			return groupList.stream();
 			
 		}, query -> identityService.createGroupQuery().list().stream().
-					filter(group -> StringUtils.startsWithIgnoreCase(group.getId(), query.getFilter().orElse(""))
+					filter(group -> StringUtils.startsWithIgnoreCase(group.getName(), query.getFilter().orElse(""))
 					).collect(Collectors.toList()).size());
 	}
 
@@ -112,7 +116,7 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 			Stream<GroupTemplate> gs = Stream.empty();
 			if(Objects.nonNull(currentIHProject.getAcl()) && Objects.nonNull(currentIHProject)) {
 			 gs = currentIHProject.getAcl().getRoles()
-						.stream().flatMap(item -> identityService.createGroupQuery().groupId(item).list().stream())
+						.stream().flatMap(item -> identityService.createGroupQuery().groupName(item).list().stream())
 							.map(item -> {
 								GroupTemplate group = new GroupTemplate();
 								group.setId(item.getId());
@@ -138,7 +142,7 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 			Stream<GroupTemplate> gs = Stream.empty();
 			if(Objects.nonNull(currentICProject.getAcl()) && Objects.nonNull(currentICProject)) {
 			 gs = currentICProject.getAcl().getRoles()
-						.stream().flatMap(item -> identityService.createGroupQuery().groupId(item).list().stream())
+						.stream().flatMap(item -> identityService.createGroupQuery().groupName(item).list().stream())
 							.map(item -> {
 								GroupTemplate group = new GroupTemplate();
 								group.setId(item.getId());
@@ -163,21 +167,21 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 	private Button buttonDeleteGroupMemberProject(String projectID, Group group) {
 		Button deleteButton = new Button();
 		ClickListener okDeleteClick = event -> {
-			String[] paramsForDelete = new String[] {group.getId(), projectID};
+			String[] paramsForDelete = new String[] {group.getName(), projectID};
 			try {
 				if(currentICProject == null) {
 					ACLJson acljson = currentIHProject.getAcl();
-	 				acljson.getRoles().remove(group.getId());
+	 				acljson.getRoles().remove(group.getName());
 	 				currentIHProject.setAcl(acljson);
-	 				projectService.saveHProject(currentIHProject);
+	 				projectService.saveHProjectAcls(currentIHProject);
 	 				groupForHProject.refreshAll();
 	 				hpDataProvider.refreshAll();
 				}
 				else if(currentIHProject == null) {
 					ACLJson acljson = currentICProject.getAcl();
-	 				acljson.getRoles().remove(group.getId());
+	 				acljson.getRoles().remove(group.getName());
 	 				currentICProject.setAcl(acljson);
-	 				projectService.saveCProject(currentICProject);
+	 				projectService.saveCProjectAcls(currentICProject);
 	 				groupForCProject.refreshAll();
 	 				cpDataProvider.refreshAll();
 				}
@@ -254,7 +258,7 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 	 				}
 	 				Notification.show(notificationTextAdd, Type.WARNING_MESSAGE);
 	 	 			currentIHProject.setAcl(acljson);
-	 	 			projectService.saveHProject(currentIHProject);
+	 	 			projectService.saveHProjectAcls(currentIHProject);
 	 	 			groupForHProject.refreshAll();
 	 	 			hpDataProvider.refreshAll();
 				}
@@ -271,7 +275,7 @@ public class ProjectAddGroupVerticalLayout extends VerticalLayout implements I18
 	 				}
 	 				Notification.show(notificationTextAdd, Type.WARNING_MESSAGE);
 		 			currentICProject.setAcl(acljson);
-		 			projectService.saveCProject(currentICProject);
+		 			projectService.saveCProjectAcls(currentICProject);
 		 			groupForCProject.refreshAll();
 		 			cpDataProvider.refreshAll();
 				}

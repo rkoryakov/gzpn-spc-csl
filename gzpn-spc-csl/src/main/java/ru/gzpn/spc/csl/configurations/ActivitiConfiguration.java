@@ -48,7 +48,7 @@ public class ActivitiConfiguration {
 	public IdentityService identityService() throws Exception {
 		return processEngine().getObject().getIdentityService();
 	}
-
+	
 	private void initUsersAndGroups(IdentityService identityService) {
 		User admin = createOrGetUser("admin", "secret", identityService);
 		User user = createOrGetUser("user", "secret", identityService);

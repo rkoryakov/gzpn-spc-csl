@@ -15,7 +15,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.ICreateDocService;
-import ru.gzpn.spc.csl.ui.createdoc.CreateDocLayout;
+import ru.gzpn.spc.csl.ui.createdoc.CreateDocComponent;
 
 @SpringView(name = CreateDocView.NAME)
 @UIScope
@@ -35,7 +35,7 @@ public class CreateDocView extends VerticalLayout implements View {
 
 	@PostConstruct
 	void init() {
-		CreateDocLayout layout = new CreateDocLayout(createDocService);
+		CreateDocComponent layout = new CreateDocComponent(createDocService);
 		addComponent(layout);
 	}
 

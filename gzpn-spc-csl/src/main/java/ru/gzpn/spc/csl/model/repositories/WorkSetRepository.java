@@ -18,8 +18,8 @@ public interface WorkSetRepository extends BaseRepository<WorkSet> {
 	countQuery = "SELECT COUNT(po) FROM PlanObject po WHERE po.cproject.id = ?1")
 	public List<IWorkSet> findWorkSetByCProjectId(Long id/*, Pageable pageable*/);
 	
-	@Query(value = "SELECT po.workset FROM PlanObject po WHERE po.cproject.stage.id = ?1",
-	countQuery = "SELECT COUNT(po.workset) FROM PlanObject po WHERE po.cproject.stage.id = ?1")
+	@Query(value = "SELECT po.workset FROM PlanObject po WHERE po.stage.id = ?1",
+	countQuery = "SELECT po.workset FROM PlanObject po WHERE po.stage.id = ?1")
 	public List<IWorkSet> findWorkSetByStageId(Long id/*, Pageable pageable*/);
 }
 

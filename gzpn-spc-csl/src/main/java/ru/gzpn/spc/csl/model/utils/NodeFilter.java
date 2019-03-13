@@ -47,37 +47,29 @@ public class NodeFilter implements Serializable {
 	}
 	
 	
-	/**
-	 * Filtering by commonFilter in the all entity's fields
-	 * if any matches return true
-	 * @param item
-	 * @return
-	 */
-	protected boolean applyCommonFilterOnEntity(NodeWrapper item) {
-		boolean isShown = false;
-		BaseEntity entity = item.getItem();
-		for (Field e : entity.getClass().getDeclaredFields()) {
-			int mod = e.getModifiers();
-			boolean isNotJoinColumnAnnotation = Stream.of(e.getDeclaredAnnotations())
-					.noneMatch(a -> a.annotationType() == JoinColumn.class);
-			if (!Modifier.isStatic(mod) && !Modifier.isFinal(mod) && isNotJoinColumnAnnotation) {
-				e.setAccessible(true);
-				Object value = null;
-				try {
-					value = e.get(entity);
-				} catch (IllegalArgumentException | IllegalAccessException e1) {
-					logger.error(e1.getMessage());
-				}
-				if (value != null) {
-					isShown = value.toString().startsWith(commonFilter);
-					if (isShown) {
-						break;
-					}
-				}
-			}
-		}
-		return isShown;
-	}
+		
+//		for (Field e : entity.getClass().getDeclaredFields()) {
+//			int mod = e.getModifiers();
+//			boolean isNotJoinColumnAnnotation = Stream.of(e.getDeclaredAnnotations())
+//					.noneMatch(a -> a.annotationType() == JoinColumn.class);
+//			if (!Modifier.isStatic(mod) && !Modifier.isFinal(mod) && isNotJoinColumnAnnotation) {
+//				e.setAccessible(true);
+//				Object value = null;
+//				try {
+//					value = e.get(entity);
+//				} catch (IllegalArgumentException | IllegalAccessException e1) {
+//					logger.error(e1.getMessage());
+//				}
+//				if (value != null) {
+//					isShown = value.toString().startsWith(commonFilter);
+//					if (isShown) {
+//						break;
+//					}
+//				}
+//			}
+//		}
+//		return isShown;
+//	}
 	
 	/**
 	 * Filtering by queryNodeFilters if the entity item isn't null
@@ -115,17 +107,18 @@ public class NodeFilter implements Serializable {
 		return item -> {
 			boolean isShown = true;
 			if (item.hasEntityItem()) {
-				if ( !queryNodeFilters.isEmpty() ) {
-					isShown = applyQueryNodeFiltersOnEntity(item);
-				} 
-				else if (StringUtils.isNotEmpty(commonFilter)) {
-					isShown = applyCommonFilterOnEntity(item);
-				}
+//				if ( !queryNodeFilters.isEmpty() ) {
+//					isShown = applyQueryNodeFiltersOnEntity(item);
+//				} 
+//				else if (StringUtils.isNotEmpty(commonFilter)) {
+//					isShown = applyPermissionsFilterOnEntity(item);
+//				}
 			} else if (StringUtils.isNotEmpty(commonFilter)) {
 				isShown = item.getGroupFiledValue().toString()
 							.toLowerCase()
 							.startsWith(commonFilter.toLowerCase());
-			}
+			} 
+			
 			return isShown;
 		};
 	}

@@ -3,6 +3,7 @@ package ru.gzpn.spc.csl.services.bl;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,13 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
+import ru.gzpn.spc.csl.model.Document;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IDocumentPresenter;
 import ru.gzpn.spc.csl.model.repositories.DocumentRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;
-import ru.gzpn.spc.csl.ui.common.I18n;
-import ru.gzpn.spc.csl.ui.createdoc.IDocumentPresenter;
+import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 @Service
 @Transactional
@@ -92,7 +94,7 @@ public class DocumentService implements IDocumentService {
 		};
 	}
 	
-	public static final class DocumentFilter implements I18n {
+	public static final class DocumentFilter implements IGridFilter<IDocument> {
 		private String commonTextFilter;
 		private String codeFilter;
 		private String nameFilter;
@@ -126,6 +128,7 @@ public class DocumentService implements IDocumentService {
 			this.nameFilter = nameFilter;
 		}
 
+		@Override
 		public Predicate<IDocument> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// only common filter is working now
 			return p -> {
@@ -157,7 +160,7 @@ public class DocumentService implements IDocumentService {
 					result = documentPresenter.getCode().toLowerCase().startsWith(commonTextFilter);
 					break;
 				case IDocument.FIELD_TYPE:
-					result = documentPresenter.getTypeText(source).toLowerCase().startsWith(commonTextFilter);
+					result = documentPresenter.getType().getText().toLowerCase().startsWith(commonTextFilter);
 					break;
 				case IDocument.FIELD_WORK:
 					result = documentPresenter.getWorkText().toLowerCase().startsWith(commonTextFilter);
@@ -172,6 +175,29 @@ public class DocumentService implements IDocumentService {
 			return result;
 		}
 	}
+
+	@Override
+	public void save(IDocument bean) {
+		
+		if (bean.getId() != null) {
+			Optional<Document> doc = this.documentRepository.findById(bean.getId());
+			if (doc.isPresent()) {
+				IDocument document = doc.get();
+				document.setCode(bean.getCode());
+				document.setName(bean.getName());
+				document.setType(bean.getType());
+			
+				this.documentRepository.save((Document)document);
+			}
+		} else {
+			this.documentRepository.save((Document)bean);
+		}
+	}
+	
+	@Override
+	public void remove(IDocument bean) {
+		if (bean.getId() != null) {
+			this.documentRepository.deleteById(bean.getId());
+		}
+	}
 }
-
-

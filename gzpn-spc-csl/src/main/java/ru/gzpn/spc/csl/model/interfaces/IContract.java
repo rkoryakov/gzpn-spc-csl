@@ -3,8 +3,8 @@ package ru.gzpn.spc.csl.model.interfaces;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface IContract {
-	public static final String ENTITYNAME_DOT = "contract.";
+public interface IContract extends IBaseEntity {
+	public static final String ENTITYNAME_DOT = "Contract.";
 	
 	public static final String FIELD_NAME = ENTITYNAME_DOT + "name";
 	public static final String FIELD_CODE = ENTITYNAME_DOT + "code";
@@ -22,7 +22,6 @@ public interface IContract {
 	public static final String FIELD_CHANGE_DATE = ENTITYNAME_DOT + IBaseEntity.FIELD_CHANGE_DATE;
 	public static final String FIELD_CREATE_DATE = ENTITYNAME_DOT + IBaseEntity.FIELD_CREATE_DATE;
 	public static final String FIELD_VERSION = ENTITYNAME_DOT + IBaseEntity.FIELD_VERSION;
-	
 	
 	String getName();
 	void setName(String name);

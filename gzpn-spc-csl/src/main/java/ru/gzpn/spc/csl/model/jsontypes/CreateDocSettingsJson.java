@@ -11,8 +11,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import ru.gzpn.spc.csl.model.Document;
+import ru.gzpn.spc.csl.model.Mark;
+import ru.gzpn.spc.csl.model.PlanObject;
 import ru.gzpn.spc.csl.model.WorkSet;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
+import ru.gzpn.spc.csl.model.interfaces.IMark;
+import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 
@@ -28,6 +32,7 @@ public class CreateDocSettingsJson implements ISettingsJson, Serializable {
 	private NodeWrapper rightTreeGroup;
 	private int mainSplitPosition;
 	private int leftSplitPosition;
+	private boolean showTree = true;
 	
 	// the displayed columns
 	private List<ColumnSettings> leftResultColumns;
@@ -119,7 +124,8 @@ public class CreateDocSettingsJson implements ISettingsJson, Serializable {
 		NodeWrapper root =  new NodeWrapper("HProject", "name");
 			root.addChild(new NodeWrapper("CProject", "name"))
 				.addChild(new NodeWrapper("Stage", "name"))
-					.addChild(new NodeWrapper("PlanObject", "code"));
+					.addChild(new NodeWrapper("Mark", "code"))
+						.addChild(new NodeWrapper("PlanObject", "code"));
 		return root;
 	}
 	
@@ -138,18 +144,25 @@ public class CreateDocSettingsJson implements ISettingsJson, Serializable {
 	@JsonIgnore
 	public List<ColumnSettings> getLeftDefaultWorksetColumns() {
 		List<ColumnSettings> result = new ArrayList<>();
-		String entityName = WorkSet.class.getSimpleName();
+		String entityWorkSetName = WorkSet.class.getSimpleName();
+		String entityPlanObjName = PlanObject.class.getSimpleName();
+		String entityMarkName = Mark.class.getSimpleName();
 		
-		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_ID, null, false, 0));
-		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_NAME, null, true, 1));
-		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_CODE, null, true, 2));
-		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_PIR, null, true, 3));
-		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_SMR, null, true, 4));
+		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_ID, null, false, 0));
+		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_NAME, null, true, 1));
+		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_CODE, null, true, 2));
+		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_PIR, null, true, 3));
+		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_SMR, null, true, 4));
 		
-		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_PLAN_OBJECT, null, false, 5));
-		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_CREATE_DATE, null, false, 6));
-		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_CHANGE_DATE, null, false, 7));
-		result.add(new ColumnSettings(entityName, IWorkSet.FIELD_VERSION, null, false, 8));
+		result.add(new ColumnSettings(entityMarkName, 	 IMark.FIELD_NAME, null, false, 5));
+		result.add(new ColumnSettings(entityMarkName, 	 IMark.FIELD_CODE, null, false, 6));
+		result.add(new ColumnSettings(entityPlanObjName, IPlanObject.FIELD_NAME, null, false, 7));
+		result.add(new ColumnSettings(entityPlanObjName, IPlanObject.FIELD_CODE, null, false, 8));
+		result.add(new ColumnSettings(entityPlanObjName, IPlanObject.FIELD_CPROJECT, null, false, 9));
+		
+		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_CREATE_DATE, null, false, 10));
+		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_CHANGE_DATE, null, false, 11));
+		result.add(new ColumnSettings(entityWorkSetName, IWorkSet.FIELD_VERSION, null, false, 12));
 		
 		return result;
 	}
@@ -232,6 +245,42 @@ public class CreateDocSettingsJson implements ISettingsJson, Serializable {
 
 	public void setLeftSplitPosition(int leftSplitPosition) {
 		this.leftSplitPosition = leftSplitPosition;
+	}
+
+	
+	public boolean hasRightColumnHeaders() {
+		return rightColumnHeaders != null && !rightColumnHeaders.isEmpty();
+	}
+
+	@JsonIgnore
+	@Override
+	public boolean isShownTree() {
+		return showTree;
+	}
+	@JsonIgnore
+	public void setShowTree(boolean showTree) {
+		this.showTree = showTree;
+	}
+	
+	@JsonIgnore
+	@Override
+	public NodeWrapper getTreeSettings() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@JsonIgnore
+	@Override
+	public List<ColumnSettings> getColumns() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@JsonIgnore
+	@Override
+	public List<ColumnHeaderGroup> getHeaders() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

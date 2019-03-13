@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -14,19 +15,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
+import ru.gzpn.spc.csl.model.WorkSet;
+import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IWorkSetPresenter;
 import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
 import ru.gzpn.spc.csl.model.repositories.WorkSetRepository;
-import ru.gzpn.spc.csl.model.utils.Entities;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
 
@@ -42,22 +45,16 @@ public class WorkSetService implements IWorkSetService {
 	private PlanObjectRepository planObjectRepository;
 	
 	@Override
-	public Order createSortOrder(String fieldName, Direction direction) {
-		return new Order(direction, fieldName);
-	}
-	
-	@Override
-	public WorkSetFilter createWorkSetFilter() {
-		return new WorkSetFilter();
-	}
-	
-	@Override
 	public Stream<IWorkSet> getAllItems(List<Order> sortOrders, int offset, int limit) {
 //		int pageNumber = offset/limit;
 //		PageRequest pageRequest = PageRequest.of(pageNumber, limit, Sort.by(sortOrders));
 		return repository.findAll().stream().map(e -> (IWorkSet)e);
 	}
 	
+	public PlanObjectRepository getPlanObjectRepository() {
+		return planObjectRepository;
+	}
+
 	@Override
 	public Stream<IWorkSet> getItemsByNode(NodeWrapper node, int offset, int limit) {
 //		int pageNumber = offset/limit;
@@ -73,20 +70,20 @@ public class WorkSetService implements IWorkSetService {
 				break;
 			case STAGE:
 				if (node.getParent().getEntityEnum() == Entities.CPROJECT) {
-					result = repository.findWorkSetByCProjectId(node.getParent().getId()/*, pageable*/);
+					result = repository.findWorkSetByCProjectId(node.getParent().getId());
 				} else {
-					result = repository.findWorkSetByStageId(node.getId()/*, pageable*/);
+					result = repository.findWorkSetByStageId(node.getId());
 				}
 				break;
 			case CPROJECT:
-				result = repository.findWorkSetByCProjectId(node.getId()/*, pageable*/);
+				result = repository.findWorkSetByCProjectId(node.getId());
 				break;
 			case PLANOBJECT:
-				result = repository.findByPlanObjectId(node.getId()/*, pageable*/);
+				result = repository.findByPlanObjectId(node.getId());
 				break;
 			case WORKSET:
 				result = repository.getItemsGroupedByFieldValue(node.getEntityName(), 
-							node.getGroupField(), node.getGroupFiledValue(), IWorkSet.class /*, pageable*/).collect(Collectors.toList());
+							node.getGroupField(), node.getGroupFiledValue(), IWorkSet.class).collect(Collectors.toList());
 				break;
 			default:
 				break;
@@ -97,7 +94,7 @@ public class WorkSetService implements IWorkSetService {
 	}
 	
 	@Override
-	public Comparator<IWorkSet> getSortComparator(List<QuerySortOrder> list) {
+	public Comparator<IWorkSetPresenter> getSortComparator(List<QuerySortOrder> list) {
 		return (a, b) -> {
 			int result = 0;
 			for (QuerySortOrder qso : list) {
@@ -113,9 +110,6 @@ public class WorkSetService implements IWorkSetService {
 					break;
 				case IWorkSet.FIELD_SMR:
 					result = a.getSmr().getCode().compareTo(b.getSmr().getCode());
-					break;
-				case IWorkSet.FIELD_PLAN_OBJECT:
-					result = a.getPlanObject().getName().compareTo(b.getPlanObject().getName());
 					break;
 				case IWorkSet.FIELD_ID:
 					result = a.getId().compareTo(b.getId());
@@ -145,7 +139,7 @@ public class WorkSetService implements IWorkSetService {
 		private String  nameFilter;
 		// and some other field filters...
 		
-		private WorkSetFilter() {
+		public WorkSetFilter() {
 			
 		}
 
@@ -204,13 +198,14 @@ public class WorkSetService implements IWorkSetService {
 				result = workset.getCode().toLowerCase().startsWith(commonTextFilter);
 				break;
 			case IWorkSet.FIELD_PIR:
-				result = workset.getPir().getCode().toLowerCase().startsWith(commonTextFilter);
+				if (workset.getPir() != null) {
+					result = workset.getPir().getCode().toLowerCase().startsWith(commonTextFilter);
+				}
 				break;
 			case IWorkSet.FIELD_SMR:
-				result = workset.getSmr().getCode().toLowerCase().startsWith(commonTextFilter);
-				break;
-			case IWorkSet.FIELD_PLAN_OBJECT:
-				result = workset.getPlanObject().getCode().toLowerCase().startsWith(commonTextFilter);
+				if (workset.getSmr() != null) {
+					result = workset.getSmr().getCode().toLowerCase().startsWith(commonTextFilter);
+				}
 				break;
 			case IWorkSet.FIELD_ID:
 				result = workset.getId().toString().startsWith(commonTextFilter);
@@ -228,6 +223,44 @@ public class WorkSetService implements IWorkSetService {
 			}
 			
 			return result;
+		}
+	}
+
+	@Override
+	public MessageSource getMessageSource() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void save(IWorkSet bean) {
+		Optional<WorkSet> workset = this.repository.findById(bean.getId());
+		if (workset.isPresent()) {
+			IWorkSet ws = workset.get();
+			ws.setCode(bean.getCode());
+			ws.setName(bean.getName());
+			ws.setPir(bean.getPir());
+			ws.setSmr(bean.getSmr());
+			ws.setPlanObject(bean.getPlanObject());
+			
+			this.repository.save((WorkSet)ws);
+		}
+	}
+
+	@Override
+	public void save(IWorkSet bean, NodeWrapper parentNode) {
+		if (parentNode.hasParent() && parentNode.hasId()) {
+			if (parentNode.getEntityEnum() == Entities.PLANOBJECT) {
+				bean.setPlanObject(planObjectRepository.findById(parentNode.getId()).get());
+				repository.save((WorkSet)bean);
+			}
+		}
+	}
+	
+	@Override
+	public void remove(IWorkSet bean) {
+		if (bean.getId() != null) {
+			this.repository.deleteById(bean.getId());
 		}
 	}
 }

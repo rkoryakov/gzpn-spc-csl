@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.services.bl;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -13,39 +14,59 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.CProject;
 import ru.gzpn.spc.csl.model.HProject;
+import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IHProject;
 import ru.gzpn.spc.csl.model.repositories.CProjectRepository;
 import ru.gzpn.spc.csl.model.repositories.HProjectRepository;
-import ru.gzpn.spc.csl.model.utils.Entities;
+import ru.gzpn.spc.csl.model.repositories.PlanObjectRepository;
+import ru.gzpn.spc.csl.model.repositories.StageRepository;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.model.utils.ProjectEntityGraph;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 
+@SuppressWarnings("serial")
 @Service
 @Transactional
-public class ProjectService implements IProjectService {
+public class ProjectService implements IProjectService, Serializable {
 	public static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 	@Autowired
 	private HProjectRepository hpRepository;
 	@Autowired
 	private CProjectRepository cpRepository;
+	@Autowired
+	private PlanObjectRepository planObjectRepository;
+	@Autowired
+	private StageRepository stageRepository;
 	
+	@Override
 	public HProjectRepository getBaseRepository() {
 		// we can use any implementation of the BaseRepository - we use HProjectRepository
 		return getHPRepository();
 	}
 	
+	@Override
 	public HProjectRepository getHPRepository() {
 		return hpRepository;
 	}
 	
+	@Override
 	public CProjectRepository getCPRepository() {
 		return cpRepository;
 	}
 	
 	@Override
-	public void saveHProject(IHProject project) {
+	public PlanObjectRepository getPlanObjectRepository() {
+		return planObjectRepository;
+	}
+	
+	@Override
+	public StageRepository getStagesRepository() {
+		return stageRepository;
+	}
+	
+	@Override
+	public void saveHProjectAcls(IHProject project) {
 		Optional<HProject> pr = hpRepository.findById(project.getId());
 		if (pr.isPresent()) {
 			HProject hp = pr.get();
@@ -56,7 +77,7 @@ public class ProjectService implements IProjectService {
 	}
 	
 	@Override
-	public void saveCProject(ICProject project) {
+	public void saveCProjectAcls(ICProject project) {
 		Optional<CProject> pr = cpRepository.findById(project.getId());
 		if (pr.isPresent()) {
 			CProject cp = pr.get();
@@ -111,15 +132,15 @@ public class ProjectService implements IProjectService {
 		Stream<NodeWrapper> result = Stream.empty();
 
 		if (node.isGrouping() && node.hasGroupFieldValue() && node.hasChild()) {
-			if (hasIntermadiateNode(node)) {
-				result = getBaseRepository().getItemsGroupedByFieldValue(node.getEntityName(), node.getChild().getEntityName(), 
-							node.getGroupField(), node.getGroupFiledValue(), node.getChild().getGroupField(), 
-								node.getParent().getId(), node.getParent().getEntityName());
-			} else {
-				result = getBaseRepository().getItemsGroupedByFieldValue(node.getEntityName(), node.getChild().getEntityName(), 
+//			if (hasIntermadiateNode(node)) {
+//				result = getBaseRepository().getItemsGroupedByFieldValue(node.getEntityName(), node.getChild().getEntityName(), 
+//							node.getGroupField(), node.getGroupFiledValue(), node.getChild().getGroupField(), 
+//								node.getParent().getId(), node.getParent().getEntityName());
+//			} else {
+				result = getBaseRepository().getItemsGroupedByFieldValue(node/*.getEntityName(), node.getChild().getEntityName(), 
 							node.getGroupField(), node.getGroupFiledValue(), 
-								node.getChild().getGroupField());
-			}
+								node.getChild().getGroupField()*/);
+//			}
 			/* set parent and child */
 			result = result.peek(e -> {
 				e.setParent(node);
@@ -179,5 +200,4 @@ public class ProjectService implements IProjectService {
 		T result = suplier.get();
 		return result;
 	}
-
 }

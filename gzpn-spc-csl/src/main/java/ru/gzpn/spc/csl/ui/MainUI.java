@@ -33,13 +33,16 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import ru.gzpn.spc.csl.services.bl.Roles;
+import ru.gzpn.spc.csl.model.enums.Role;
+import ru.gzpn.spc.csl.services.bpm.IUserTaskNavigator;
 import ru.gzpn.spc.csl.ui.views.AccessDeniedView;
 import ru.gzpn.spc.csl.ui.views.AdminView;
 import ru.gzpn.spc.csl.ui.views.ContractRegisterView;
 import ru.gzpn.spc.csl.ui.views.CreateDocView;
 import ru.gzpn.spc.csl.ui.views.ErrorView;
 import ru.gzpn.spc.csl.ui.views.EstimateRegisterView;
+import ru.gzpn.spc.csl.ui.views.ProcessManagerView;
+import ru.gzpn.spc.csl.ui.views.SummaryEstimateCardView;
 
 @SuppressWarnings("serial")
 @SpringUI
@@ -48,8 +51,8 @@ import ru.gzpn.spc.csl.ui.views.EstimateRegisterView;
 public class MainUI extends UI {
 	public static final Logger logger = LoggerFactory.getLogger(MainUI.class);
 
-	public static final String REQUEST_PARAM_TASKID = "taskId";
-	public static final String REQUEST_PARAM_VIEWID = "viewId";
+	public static final String REQUEST_PARAM_TASKID = "taskID";
+	public static final String REQUEST_PARAM_VIEWID = "viewID";
 	
 	@Autowired
 	private SpringViewProvider viewProvider;
@@ -58,6 +61,9 @@ public class MainUI extends UI {
 	@Autowired
 	MessageSource messageSource;
 
+	@Autowired
+	IUserTaskNavigator taskNavigator;
+	
 	private Panel viewContainer;
 	private VerticalLayout mainLayout;
 	private AbsoluteLayout head;
@@ -66,11 +72,13 @@ public class MainUI extends UI {
 
 	private String viewId;
 	private String taskId;
+	private String ssrId;
 	
 	@Override
 	protected void init(VaadinRequest request) {
 		viewId = VaadinService.getCurrentRequest().getParameter(REQUEST_PARAM_VIEWID);
 		taskId = VaadinService.getCurrentRequest().getParameter(REQUEST_PARAM_TASKID);
+		ssrId = VaadinService.getCurrentRequest().getParameter("id");
 		
 		head = createHead();
 		mainLayout = createMainLayout();
@@ -91,35 +99,46 @@ public class MainUI extends UI {
 		navigator.setErrorView(errorView);
 		viewProvider.setAccessDeniedViewClass(AccessDeniedView.class);
 		
-		navigateByRole();
+		navigate();
 	}
-
-	private void navigateByRole() {
+	
+	private void navigate() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Set<String> authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
 				.collect(Collectors.toSet());
 		
-		if (CreateDocView.NAME.equals(viewId)) {
-			navigator.navigateTo(CreateDocView.NAME);
+		if (taskId != null) {
+			navigateByTaskId(navigator, taskId);
+			
+		} else if (viewId != null) {
+			if (SummaryEstimateCardView.NAME.equals(viewId)) {
+				navigator.navigateTo(viewId + "/id=" + ssrId);
+			}
 		} else {
-			if (authorities.contains(Roles.CREATOR_ROLE.toString())) {
+			if (authorities.contains(Role.CREATOR_ROLE.toString())) {
 				navigator.navigateTo(CreateDocView.NAME);
-			} else if (authorities.contains(Roles.ADMIN_ROLE.toString())) {
+			} else if (authorities.contains(Role.ADMIN_ROLE.toString())) {
 				navigator.navigateTo(AdminView.NAME);
-			} else if (authorities.contains(Roles.APPROVER_NTC_ROLE.toString())) {
+			} else if (authorities.contains(Role.APPROVER_NTC_ROLE.toString())) {
 				navigator.navigateTo("");
-			} else if (authorities.contains(Roles.CONTRACT_ES_ROLE.toString())) {
+			} else if (authorities.contains(Role.CONTRACT_ES_ROLE.toString())) {
 				navigator.navigateTo("");
-			} else if (authorities.contains(Roles.CONTRACT_EX_ROLE.toString())) {
+			} else if (authorities.contains(Role.CONTRACT_EX_ROLE.toString())) {
 				navigator.navigateTo("");
-			} else if (authorities.contains(Roles.EXPERT_ES_ROLE.toString())) {
-				navigator.navigateTo("");
-			} else if (authorities.contains(Roles.USER_ROLE.toString())) {
+			} else if (authorities.contains(Role.EXPERT_ES_ROLE.toString())) {
+				navigator.navigateTo(EstimateRegisterView.NAME);
+			} else if (authorities.contains(Role.USER_ROLE.toString())) {
 				navigator.navigateTo(CreateDocView.NAME);
 			}
 		}
 	}
 
+	private void navigateByTaskId(Navigator navigator, String taskId) {
+		if (taskId != null) {
+			taskNavigator.navigate(navigator, taskId);
+		}
+	}
+	
 	private AbsoluteLayout createHead() {
 		AbsoluteLayout head = new AbsoluteLayout();
 
@@ -148,7 +167,7 @@ public class MainUI extends UI {
 		VerticalLayout result = new VerticalLayout();
 		result.setMargin(true);
 		result.setSpacing(true);
-		result.setSizeFull();
+		//result.setSizeFull();
 		return result;
 	}
 
@@ -157,33 +176,46 @@ public class MainUI extends UI {
 		final Command cCreateDocument = item -> this.navigator.navigateTo(CreateDocView.NAME);
 		final Command cContractRegister = item -> this.navigator.navigateTo(ContractRegisterView.NAME);
 		final Command cEstimateRegister = item -> this.navigator.navigateTo(EstimateRegisterView.NAME);
-
+		final Command cProcessManager = item -> this.navigator.navigateTo(ProcessManagerView.NAME);
+		menu.setResponsive(true);
 		String sCreateDocument = getI18nText("main.ui.menu.createDocument");
 		String sContractRegister = getI18nText("main.ui.menu.cotractRegister");
 		String sEstimateRegister = getI18nText("main.ui.menu.estimateRegister");
-
+		String sProcessManager = getI18nText("main.ui.menu.processManager");
+		
 		MenuItem createDocumentItem = menu.addItem(sCreateDocument, VaadinIcons.FILE_ADD, cCreateDocument);
 		MenuItem contractRegisterItem = menu.addItem(sContractRegister, VaadinIcons.FILE_TREE_SMALL, cContractRegister);
 		MenuItem estimateRegisterItem = menu.addItem(sEstimateRegister, VaadinIcons.CALC_BOOK, cEstimateRegister);
-	
+		MenuItem processManagerItem = menu.addItem(sProcessManager, VaadinIcons.AUTOMATION, cProcessManager);
+		
 		createDocumentItem.setCheckable(true);
 		contractRegisterItem.setCheckable(true);
-		estimateRegisterItem.setCheckable(true);
-
+		estimateRegisterItem.setCheckable(true);		
+		processManagerItem.setCheckable(true);
+		
 		this.navigator.addViewChangeListener(listener -> {
 			switch (listener.getViewName()) {
 			case CreateDocView.NAME:
 				createDocumentItem.setChecked(true);
+				processManagerItem.setChecked(false);
 				contractRegisterItem.setChecked(false);
 				estimateRegisterItem.setChecked(false);
 				break;
 			case ContractRegisterView.NAME:
 				contractRegisterItem.setChecked(true);
+				processManagerItem.setChecked(false);
 				createDocumentItem.setChecked(false);
 				estimateRegisterItem.setChecked(false);
 				break;
 			case EstimateRegisterView.NAME:
 				estimateRegisterItem.setChecked(true);
+				processManagerItem.setChecked(false);
+				contractRegisterItem.setChecked(false);
+				createDocumentItem.setChecked(false);
+				break;
+			case ProcessManagerView.NAME:
+				processManagerItem.setChecked(true);
+				estimateRegisterItem.setChecked(false);
 				contractRegisterItem.setChecked(false);
 				createDocumentItem.setChecked(false);
 				break;

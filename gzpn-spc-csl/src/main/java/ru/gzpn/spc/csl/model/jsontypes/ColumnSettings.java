@@ -83,8 +83,6 @@ public class ColumnSettings implements Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
 		ColumnSettings other = (ColumnSettings) obj;
 		if (entityFieldName == null) {
 			if (other.entityFieldName != null)
@@ -100,4 +98,12 @@ public class ColumnSettings implements Serializable {
 		}
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "ColumnSettings [width=" + width + ", entityName=" + entityName + ", entityFieldName=" + entityFieldName
+				+ ", orderIndex=" + orderIndex + ", isShown=" + isShown + "]";
+	}
+	
+	
 }

@@ -8,10 +8,6 @@ public interface IStage {
 	
 	public void setName(String name);
 	
-	public List<ICProject> getCprojects();
-
-	public void setCprojects(List<ICProject> cprojects);
-
 	public List<ILocalEstimate> getLocalEstimates();
 
 	public void setLocalEstimates(List<ILocalEstimate> localEstimates);
@@ -19,4 +15,12 @@ public interface IStage {
 	public List<IObjectEstimate> getObjectEstimates();
 
 	public void setObjectEstimates(List<IObjectEstimate> objectEstimates);
+
+	String getCode();
+
+	void setCode(String code);
+
+	void setPlanObjects(List<IPlanObject> planObjects);
+
+	List<IPlanObject> getPlanObjects();
 }

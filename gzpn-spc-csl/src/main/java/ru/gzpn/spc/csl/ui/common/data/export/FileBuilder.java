@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.data.BeanPropertySet;
-import com.vaadin.data.PropertyDefinition;
 import com.vaadin.data.PropertySet;
 import com.vaadin.data.provider.DataCommunicator;
 import com.vaadin.data.provider.Query;
@@ -42,20 +40,23 @@ public abstract class FileBuilder<T> {
     }
 
     private boolean isExportable(Grid.Column column) {
-        return !column.isHidden() && column.getId() != null && !column.getId().isEmpty()
-                && (propertySet == null || propertySet.getProperty(column.getId()).isPresent());
+    	return !column.isHidden() && column.getId() != null && !column.getId().isEmpty();
+//        return !column.isHidden() && column.getId() != null && !column.getId().isEmpty()
+//                && (propertySet == null || propertySet.getProperty(column.getId()).isPresent());
     }
 
     InputStream build() {
+    	FileInputStream result = null;
         try {
             initTempFile();
             resetContent();
             buildFileContent();
             writeToFile();
-            return new FileInputStream(file);
+            result = new FileInputStream(file);
         } catch (Exception e) {
             throw new ExporterException("An error happened during exporting your Grid", e);
         }
+        return result;
     }
 
     private void initTempFile() throws IOException {
@@ -125,13 +126,13 @@ public abstract class FileBuilder<T> {
             onNewRow();
         }
         columns.forEach(column -> {
-            Optional<PropertyDefinition<T, ?>> propertyDefinition = propertySet.getProperty(column.getId());
-            if (propertyDefinition.isPresent()) {
+//            Optional<PropertyDefinition<T, ?>> propertyDefinition = propertySet.getProperty(column.getId());
+//            if (propertyDefinition.isPresent()) {
                 onNewCell();
                 buildCell(column.getValueProvider().apply(item)/*propertyDefinition.get().getGetter().apply(item)*/);
-            } else {
-                throw new ExporterException("Column key: " + column.getId() + " is a property which cannot be found");
-            }
+//            } else {
+//                throw new ExporterException("Column key: " + column.getId() + " is a property which cannot be found");
+//            }
         });
     }
 

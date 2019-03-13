@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -13,6 +14,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.vaadin.data.provider.SortOrder;
 
 import ru.gzpn.spc.csl.model.BaseEntity;
+import ru.gzpn.spc.csl.model.enums.Entities;
+import ru.gzpn.spc.csl.model.interfaces.IBaseEntity;
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
+import ru.gzpn.spc.csl.model.interfaces.IHProject;
+import ru.gzpn.spc.csl.model.interfaces.IPlanObject;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
+import ru.gzpn.spc.csl.ui.common.I18n;
 
 /**
  * Holds the information about the current entity(node) and grouping fields.
@@ -22,7 +30,7 @@ import ru.gzpn.spc.csl.model.BaseEntity;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY)
-public class NodeWrapper implements Serializable {
+public class NodeWrapper implements Serializable, I18n {
 	private static final long serialVersionUID = -6142105774113139782L;
 	public static final Logger logger = LoggerFactory.getLogger(NodeWrapper.class);
 
@@ -52,26 +60,22 @@ public class NodeWrapper implements Serializable {
 	}
 	
 	public NodeWrapper(String entityName, String groupByFiled) {
-		this();
 		this.entityName = entityName;
 		this.groupFiled = groupByFiled;
 	}
 	
 	public NodeWrapper(String entityName) {
-		this();
 		this.entityName = entityName;
 		this.groupFiled = null;
 	}
 	
 	public NodeWrapper(String entityName, String groupByFiledName, Object groupFiledValue) {
-		this();
 		this.entityName = entityName;
 		this.groupFiled = groupByFiledName;
 		this.groupFiledValue = groupFiledValue;
 	}
 	
 	public NodeWrapper(String entityName, String groupByFiledName, Object groupFiledValue, Long id) {
-		this();
 		this.entityName = entityName;
 		this.groupFiled = groupByFiledName;
 		this.groupFiledValue = groupFiledValue;
@@ -79,10 +83,29 @@ public class NodeWrapper implements Serializable {
 	}
 	
 	public NodeWrapper(String entityName, BaseEntity item, Long id) {
-		this();
 		this.entityName = entityName;
 		this.setItem(item);
 		this.id = id;
+	}
+	
+	/**
+	 * Recursive search for the parent node by its entityName filed.
+	 * 
+	 * @param fromNode search from exclusive
+	 * @param entityName 
+	 * @return
+	 */
+	public static NodeWrapper findParentByEntityName(NodeWrapper fromNode, String entityName) {
+		NodeWrapper result = null;
+		while (fromNode != null && fromNode.hasParent()) {
+			fromNode = fromNode.getParent();
+			if (fromNode.getEntityName().equals(entityName)) {
+				result = fromNode;
+				break;
+			}
+		}
+		
+		return result;
 	}
 	
 	public void generateHashCode() {
@@ -112,21 +135,104 @@ public class NodeWrapper implements Serializable {
 	 * Caption for rendering in UI tree
 	 */
 	@JsonIgnore
-	public String getNodeCaption() {
+	public String getNodeCaption(IProjectService service, MessageSource messageSource) {
+		Entities entity = Entities.valueOf(entityName.toUpperCase());
 		String result = "";
-		if (isGrouping()) {
-			result = getGroupFiledValue().toString();
+		
+		switch (entity) {
+		case PLANOBJECT:
+			result = getPlanObjectCaption(entity, service, messageSource);
+			break;
+		case HPROJECT:
+			result = getHProjectCaption(entity, service, messageSource);
+			break;
+		case CPROJECT:
+			result = getCProjectCaption(entity, service, messageSource);
+			break;
+		default:
+			if (isGrouping()) {
+				result = getGroupFiledValue().toString();
+			};
 		}
 		
 		return result;
+	}
+
+	public String getPlanObjectCaption(Entities entity, IProjectService service, MessageSource messageSource) {
+		StringBuilder result = new StringBuilder();
+		
+		result.append(entity.getEntityText(messageSource));
+		result.append(" ");
+		if (this.id != null) {
+			IPlanObject planObject = service.getPlanObjectRepository().findById(id).get();
+			result.append(planObject.getCode());
+			result.append(" - ");
+			result.append(planObject.getName());
+		} else {
+			result.append(this.getGroupFiledValue());
+		}
+		
+		return result.toString();
+	}
+	
+	public String getHProjectCaption(Entities entity, IProjectService service, MessageSource messageSource) {
+		StringBuilder result = new StringBuilder();
+		
+		//result.append(entity.getEntityText(messageSource));
+		//result.append(" ");
+		if (this.id != null) {
+			IHProject hProject = service.getHPRepository().findById(id).get();
+			result.append(hProject.getCode());
+			result.append(" - ");
+			result.append(hProject.getName());
+			
+		} else {
+			result.append(this.getGroupFiledValue());
+		}
+		
+		return result.toString();
+	}
+	
+	public String getCProjectCaption(Entities entity, IProjectService service, MessageSource messageSource) {
+		StringBuilder result = new StringBuilder();
+		
+		result.append(entity.getEntityText(messageSource));
+		result.append(" ");
+		if (this.id != null) {
+			ICProject cProject = service.getCPRepository().findById(id).get();
+			result.append(cProject.getCode());
+			result.append(" - ");
+			result.append(cProject.getName());
+			
+		} else {
+			result.append(this.getGroupFiledValue());
+		}
+		
+		return result.toString();
 	}
 	
 	/**
 	 * Represent Entity name + field name
 	 */
 	@JsonIgnore
-	public String getNodeSettingsCaption() {
-		return getEntityName() + " - " + getGroupField();
+	public String getNodeSettingsCaption(MessageSource messageSource) {
+		Entities entity = Entities.valueOf(entityName.toUpperCase());
+		String entityCaption = entity.getEntityText(messageSource);
+		String fieldCaption = "";
+
+		if (groupFiled != null) {
+			switch (groupFiled) {
+			case IBaseEntity.FIELD_ID:
+			case IBaseEntity.FIELD_VERSION:
+			case IBaseEntity.FIELD_CHANGE_DATE:
+			case IBaseEntity.FIELD_CREATE_DATE:
+				fieldCaption = Entities.getEntityFieldText("BaseEntity." + groupFiled, messageSource);
+				break;
+			default:
+				fieldCaption = Entities.getEntityFieldText(entityName + "." + groupFiled, messageSource);
+			}
+		}
+		return entityCaption + " - " + fieldCaption;
 	}
 	
 	public String getEntityName() {

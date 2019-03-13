@@ -9,9 +9,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import ru.gzpn.spc.csl.model.interfaces.IEstimateCost;
+import ru.gzpn.spc.csl.model.enums.PriceLevel;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IObjectEstimate;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCostPresenter;
 
 @Entity
 @Table(schema = "spc_csl_schema", name = "estimate_costs", 
@@ -19,7 +20,7 @@ indexes = {
 		@Index(name = "spc_csl_idx_estcostoest", columnList = "oest_id"),
 		@Index(name = "spc_csl_idx_estcostlest", columnList = "lest_id")
 })
-public class EstimateCost extends BaseEntity implements IEstimateCost, Serializable {
+public class EstimateCost extends BaseEntity implements IEstimateCostPresenter, Serializable {
 	private static final long serialVersionUID = -4589532334167233950L;
 	
 	// materials
@@ -47,6 +48,11 @@ public class EstimateCost extends BaseEntity implements IEstimateCost, Serializa
 	private BigDecimal other;
 	private BigDecimal total;
 	private BigDecimal services;
+
+	private PriceLevel priceLevel;
+	
+	private BigDecimal overhead;
+	private BigDecimal estimateProfit;
 	
 	@ManyToOne(targetEntity = ObjectEstimate.class)
 	@JoinColumn(name = "oest_id", referencedColumnName = "id")
@@ -199,4 +205,35 @@ public class EstimateCost extends BaseEntity implements IEstimateCost, Serializa
 	public void setLocalEstimate(ILocalEstimate localEstimate) {
 		this.localEstimate = localEstimate;
 	}
+
+	@Override
+	public PriceLevel getPriceLevel() {
+		return priceLevel;
+	}
+	
+	@Override
+	public void setPriceLevel(PriceLevel priceLevel) {
+		this.priceLevel = priceLevel;
+	}
+
+	@Override
+	public BigDecimal getOverhead() {
+		return overhead;
+	}
+
+	@Override
+	public void setOverhead(BigDecimal overhead) {
+		this.overhead = overhead;
+	}
+
+	@Override
+	public BigDecimal getEstimateProfit() {
+		return estimateProfit;
+	}
+
+	@Override
+	public void setEstimateProfit(BigDecimal estimateProfit) {
+		this.estimateProfit = estimateProfit;
+	}
+	
 }

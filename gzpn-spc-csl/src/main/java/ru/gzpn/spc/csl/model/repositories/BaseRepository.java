@@ -19,14 +19,16 @@ public interface BaseRepository<T extends BaseEntity> extends JpaRepository<T, L
 	
 	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String entity, String fieldName, 
 			Object fieldValue, String groupFieldName);
-	
-	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String sourceEntity, String targetEntity, 
-			String sourceFieldName,  Object sourceFieldValue, String targetGroupFieldName);
-	
-	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String sourceEntity, String targetEntity, 
-			String sourceFieldName,  Object sourceFieldValue, String targetGroupFieldName, Long parentId, String parentEntity);
+//	
+//	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String sourceEntity, String targetEntity, 
+//			String sourceFieldName,  Object sourceFieldValue, String targetGroupFieldName);
+//	
+//	public Stream<NodeWrapper> getItemsGroupedByFieldValue(String sourceEntity, String targetEntity, 
+//			String sourceFieldName,  Object sourceFieldValue, String targetGroupFieldName, Long parentId, String parentEntity);
 	
 	long countOfGroupedItems(String entity, String groupField, String filterBy, String filterValue);
 	public <T> Stream<T> getItemsGroupedByFieldValue(String entity, String fieldName, Object fieldValue, Class<T> entityClass);
+	
+	Stream<NodeWrapper> getItemsGroupedByFieldValue(NodeWrapper node);
 	
 }

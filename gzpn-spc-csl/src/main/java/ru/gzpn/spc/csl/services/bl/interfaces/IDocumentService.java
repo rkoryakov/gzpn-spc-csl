@@ -9,11 +9,12 @@ import com.vaadin.data.provider.QuerySortOrder;
 
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
-import ru.gzpn.spc.csl.ui.createdoc.IDocumentPresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IDocumentPresenter;
 
-public interface IDocumentService {
+public interface IDocumentService extends IDataService<IDocument, IDocumentPresenter> {
 	List<IDocument> getDocuments(IWorkSet workset);
 	long getDocumentsCount(IWorkSet workset);
+	
 	Comparator<IDocumentPresenter> getSortComparator(List<QuerySortOrder> list);
 	MessageSource getMessageSource();
 }

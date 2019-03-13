@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:activiti="http://activiti.org/bpmn" id="Definitions_1n41rfz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="3.2.1">
+  <bpmn:collaboration id="Collaboration_1qgk6nx">
+    <bpmn:participant id="Participant_07p3nld" name="Регистрация смет и расчет НМЦ" processRef="EstimateAccounting" />
+    <bpmn:textAnnotation id="TextAnnotation_1gs6m3f">
+      <bpmn:text>Установка необходимых переменных процесса: статус согласования и др.</bpmn:text>
+    </bpmn:textAnnotation>
+  </bpmn:collaboration>
+  <bpmn:process id="EstimateAccounting" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_1o43245">
+      <bpmn:lane id="Lane_0ewnpn6" name="Эксперт-сметчик">
+        <bpmn:flowNodeRef>EstimatesRegistration</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_1cm34hk" name="Сметчик-договорник">
+        <bpmn:flowNodeRef>CalculateMaxLotPrice</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_0gxk7vk</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_0o3rr7u" name="Ответ. исполнитель по договору">
+        <bpmn:flowNodeRef>CreateContract</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ExclusiveGateway_0b90e4e</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_0ji9sp5" name="Согласующий НТЦ">
+        <bpmn:flowNodeRef>EstimatesApproval</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ExclusiveGateway_1xc3ldm</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_1o295p9" name="Роль на создание">
+        <bpmn:flowNodeRef>StartCreateDocumentEvent</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ExclusiveGateway_1goj4pw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CreateDocument</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_042l5z0</bpmn:flowNodeRef>
+        <bpmn:childLaneSet id="LaneSet_0v3kn39" />
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartCreateDocumentEvent">
+      <bpmn:outgoing>SequenceFlow_162n4wn</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="EstimatesApproval" name="Согл. сметного расчета в НТЦ" activiti:formKey="estimatesApprovalView" activiti:candidateGroups="APPROVER_NTC_ROLE">
+      <bpmn:incoming>SequenceFlow_0lqmx1l</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1fgovy0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="CreateContract" name="Создание карточки договора" activiti:formKey="contractView" activiti:candidateGroups="CONTRACT_EX_ROLE">
+      <bpmn:incoming>SequenceFlow_11t1f2u</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_021v1s5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="CalculateMaxLotPrice" name="Расчет начальной макс. цены лота" activiti:formKey="contractView" activiti:candidateGroups="CONTRACT_ES_ROLE">
+      <bpmn:incoming>SequenceFlow_0vmlp2u</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1o72c9j</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="EndEvent_0gxk7vk">
+      <bpmn:incoming>SequenceFlow_1o72c9j</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:parallelGateway id="ExclusiveGateway_0b90e4e" name="Ожид. согласования и созд. карточки">
+      <bpmn:incoming>SequenceFlow_021v1s5</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_approved</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0vmlp2u</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1xc3ldm" name="Согласовано ?">
+      <bpmn:incoming>SequenceFlow_1fgovy0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_hasRemarks</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_approved</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="EstimatesRegistration" name="Регистрация смет" activiti:formKey="summaryEstimateCardView" activiti:candidateGroups="EXPERT_ES_ROLE">
+      <bpmn:incoming>SequenceFlow_05msbcl</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_hasRemarks</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0lqmx1l</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:parallelGateway id="ExclusiveGateway_1goj4pw">
+      <bpmn:incoming>SequenceFlow_00ojaap</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_05msbcl</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_11t1f2u</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:userTask id="CreateDocument" name="Создание документа" activiti:formKey="createDocView" activiti:candidateGroups="CREATOR_ROLE">
+      <bpmn:incoming>SequenceFlow_1nix34k</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_00ojaap</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <bpmn:scriptTask id="Task_042l5z0" name="Иниц. контекста процесса" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_162n4wn</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1nix34k</bpmn:outgoing>
+      <bpmn:script>out:println "Set process variables";
+      		isSsrApproved = false;
+      		comments = "";
+      </bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1o72c9j" sourceRef="CalculateMaxLotPrice" targetRef="EndEvent_0gxk7vk" />
+    <bpmn:sequenceFlow id="SequenceFlow_0vmlp2u" sourceRef="ExclusiveGateway_0b90e4e" targetRef="CalculateMaxLotPrice" />
+    <bpmn:sequenceFlow id="SequenceFlow_021v1s5" sourceRef="CreateContract" targetRef="ExclusiveGateway_0b90e4e" />
+    <bpmn:sequenceFlow id="SequenceFlow_1fgovy0" sourceRef="EstimatesApproval" targetRef="ExclusiveGateway_1xc3ldm" />
+    <bpmn:sequenceFlow id="SequenceFlow_0lqmx1l" sourceRef="EstimatesRegistration" targetRef="EstimatesApproval" />
+    <bpmn:sequenceFlow id="SequenceFlow_hasRemarks" name="Есть замечания" sourceRef="ExclusiveGateway_1xc3ldm" targetRef="EstimatesRegistration">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isSsrApproved == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_approved" sourceRef="ExclusiveGateway_1xc3ldm" targetRef="ExclusiveGateway_0b90e4e">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isSsrApproved == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_162n4wn" sourceRef="StartCreateDocumentEvent" targetRef="Task_042l5z0" />
+    <bpmn:sequenceFlow id="SequenceFlow_00ojaap" sourceRef="CreateDocument" targetRef="ExclusiveGateway_1goj4pw" />
+    <bpmn:sequenceFlow id="SequenceFlow_05msbcl" sourceRef="ExclusiveGateway_1goj4pw" targetRef="EstimatesRegistration" />
+    <bpmn:sequenceFlow id="SequenceFlow_11t1f2u" sourceRef="ExclusiveGateway_1goj4pw" targetRef="CreateContract" />
+    <bpmn:sequenceFlow id="SequenceFlow_1nix34k" sourceRef="Task_042l5z0" targetRef="CreateDocument" />
+    <bpmn:association id="Association_1ulty84" sourceRef="Task_042l5z0" targetRef="TextAnnotation_1gs6m3f" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="EstimateAccountingDiagram">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1qgk6nx">
+      <bpmndi:BPMNShape id="Participant_07p3nld_di" bpmnElement="Participant_07p3nld" isHorizontal="true">
+        <dc:Bounds x="156" y="169" width="710" height="709" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartCreateDocumentEvent">
+        <dc:Bounds x="236" y="211" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ParallelGateway_0mxw3wg_di" bpmnElement="ExclusiveGateway_1goj4pw">
+        <dc:Bounds x="659" y="204" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1i24opa_di" bpmnElement="CreateDocument">
+        <dc:Bounds x="521" y="189" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1uu6c83_di" bpmnElement="EstimatesRegistration">
+        <dc:Bounds x="634" y="325" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0jhxo5p_di" bpmnElement="EstimatesApproval">
+        <dc:Bounds x="513" y="484" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0wurbxr_di" bpmnElement="CreateContract">
+        <dc:Bounds x="644" y="641" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ParallelGateway_1arykzw_di" bpmnElement="ExclusiveGateway_0b90e4e">
+        <dc:Bounds x="419" y="656" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="404" y="595" width="79" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1fn5b4t_di" bpmnElement="CalculateMaxLotPrice">
+        <dc:Bounds x="521" y="778" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0gxk7vk_di" bpmnElement="EndEvent_0gxk7vk">
+        <dc:Bounds x="676" y="800" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1o72c9j_di" bpmnElement="SequenceFlow_1o72c9j">
+        <di:waypoint x="621" y="818" />
+        <di:waypoint x="676" y="818" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0vmlp2u_di" bpmnElement="SequenceFlow_0vmlp2u">
+        <di:waypoint x="444" y="706" />
+        <di:waypoint x="444" y="818" />
+        <di:waypoint x="521" y="818" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_hasRemarks_di" bpmnElement="SequenceFlow_hasRemarks">
+        <di:waypoint x="280" y="499" />
+        <di:waypoint x="280" y="365" />
+        <di:waypoint x="634" y="365" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="280" y="345" width="82" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_approved_di" bpmnElement="SequenceFlow_approved">
+        <di:waypoint x="280" y="549" />
+        <di:waypoint x="280" y="681" />
+        <di:waypoint x="419" y="681" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1fgovy0_di" bpmnElement="SequenceFlow_1fgovy0">
+        <di:waypoint x="513" y="524" />
+        <di:waypoint x="305" y="524" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_021v1s5_di" bpmnElement="SequenceFlow_021v1s5">
+        <di:waypoint x="644" y="681" />
+        <di:waypoint x="469" y="681" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_11t1f2u_di" bpmnElement="SequenceFlow_11t1f2u">
+        <di:waypoint x="709" y="229" />
+        <di:waypoint x="827" y="229" />
+        <di:waypoint x="827" y="681" />
+        <di:waypoint x="744" y="681" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0lqmx1l_di" bpmnElement="SequenceFlow_0lqmx1l">
+        <di:waypoint x="684" y="405" />
+        <di:waypoint x="684" y="524" />
+        <di:waypoint x="613" y="524" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_05msbcl_di" bpmnElement="SequenceFlow_05msbcl">
+        <di:waypoint x="684" y="254" />
+        <di:waypoint x="684" y="325" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_00ojaap_di" bpmnElement="SequenceFlow_00ojaap">
+        <di:waypoint x="621" y="229" />
+        <di:waypoint x="659" y="229" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_162n4wn_di" bpmnElement="SequenceFlow_162n4wn">
+        <di:waypoint x="272" y="229" />
+        <di:waypoint x="350" y="229" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Lane_1o295p9_di" bpmnElement="Lane_1o295p9" isHorizontal="true">
+        <dc:Bounds x="186" y="169" width="680" height="131" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0ji9sp5_di" bpmnElement="Lane_0ji9sp5" isHorizontal="true">
+        <dc:Bounds x="186" y="445" width="680" height="138" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0o3rr7u_di" bpmnElement="Lane_0o3rr7u" isHorizontal="true">
+        <dc:Bounds x="186" y="583" width="680" height="153" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1cm34hk_di" bpmnElement="Lane_1cm34hk" isHorizontal="true">
+        <dc:Bounds x="186" y="736" width="680" height="142" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0ewnpn6_di" bpmnElement="Lane_0ewnpn6" isHorizontal="true">
+        <dc:Bounds x="186" y="300" width="680" height="145" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_18uhvhr_di" bpmnElement="ExclusiveGateway_1xc3ldm" isMarkerVisible="true">
+        <dc:Bounds x="255" y="499" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="302" y="492" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1nix34k_di" bpmnElement="SequenceFlow_1nix34k">
+        <di:waypoint x="450" y="229" />
+        <di:waypoint x="521" y="229" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1q3t8t5_di" bpmnElement="Task_042l5z0">
+        <dc:Bounds x="350" y="189" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1gs6m3f_di" bpmnElement="TextAnnotation_1gs6m3f">
+        <dc:Bounds x="474" y="81" width="206" height="54" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1ulty84_di" bpmnElement="Association_1ulty84">
+        <di:waypoint x="449" y="195" />
+        <di:waypoint x="538" y="135" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

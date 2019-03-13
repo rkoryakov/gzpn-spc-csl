@@ -5,7 +5,7 @@ import java.util.List;
 import ru.gzpn.spc.csl.model.enums.DocType;
 
 public interface IDocument extends IBaseEntity {
-	public static final String ENTITYNAME_DOT = "document.";
+	public static final String ENTITYNAME_DOT = "Document.";
 	
 	public static final String FIELD_NAME = ENTITYNAME_DOT + "name";
 	public static final String FIELD_CODE = ENTITYNAME_DOT + "code";
