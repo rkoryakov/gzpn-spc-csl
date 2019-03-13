@@ -112,7 +112,9 @@ window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnViewer = function() {
   
   var previousHighlitedElementId;
   
+  var thisScope = this;
   this.registerRpc({
+	  
 	  highlight: function(bpmElementId, info) {
 		  
 		  var canvas = bpmnViewer.get('canvas');
@@ -130,9 +132,12 @@ window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnViewer = function() {
 	      					right: 0
 	      				},
 	      				html: '<div class="diagram-note">'
-	      					+ '<b>User:&nbsp</b>' + info.user + '</br>'
-	      					+ '<b>Status:&nbsp</b>' + info.status + '</br>'
-	      					+ '<b>Info:&nbsp</b>' + info.comment 
+	      					+ '<b>Ответственный:&nbsp</b>' + (info.user == null ? 'Не назначен' : info.user) + '</br>'
+	      					+ '<b>Статус:&nbsp</b>' + (info.status == null ? 'Не задан' : info.status) + '</br>'
+	      					+ '<b>Дата создания:&nbsp</b>' + (info.createDate == null ? ' - ' : thisScope.formatDate(info.createDate)) + '</br>'
+	      					+ '<b>Дата открытия:&nbsp</b>' + (info.openDate == null ? ' - ' : thisScope.formatDate(info.openDate)) + '</br>'
+	      					+ '<b>Дата закрытия:&nbsp</b>' + (info.closeDate == null ? ' - ' : thisScope.formatDate(info.closeDate)) + '</br>'
+	      					+ '<b>Информация:&nbsp</b>' + (info.comment == null ? 'Отсутствует' : info.comment) + '</br>'
 	      					+ '</div>'
 	      });
 	      
@@ -140,5 +145,25 @@ window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnViewer = function() {
 	  	  canvas.addMarker(bpmElementId, 'needs-discussion');
 	  }
   });
+  
+  this.formatDate = function(oDate) {
+	  date = new Date(oDate);
+	  dayOfMonth = date.getDate();
+	  month = date.getMonth() + 1;
+	  year = date.getFullYear();
+	  hour = date.getHours();
+	  minutes = date.getMinutes();
+	  seconds = date.getSeconds();
+	  
+	  // formatting
+	  year = year.toString().slice(-2);
+	  month = month < 10 ? '0' + month : month;
+	  dayOfMonth = dayOfMonth < 10 ? '0' + dayOfMonth : dayOfMonth;
+	  seconds = seconds < 10 ? '0' + seconds : seconds;
+	  minutes = minutes < 10 ? '0' + minutes : minutes;
+	  hour = hour < 10 ? '0' + hour : hour;
+	  
+	  return `${dayOfMonth}.${month}.${year} ${hour}:${minutes}:${seconds}`;
+  }
   
 }

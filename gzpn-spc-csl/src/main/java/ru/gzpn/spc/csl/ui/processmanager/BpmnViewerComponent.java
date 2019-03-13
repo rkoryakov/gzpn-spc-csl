@@ -35,6 +35,11 @@ public class BpmnViewerComponent extends AbstractBpmnViewer {
 		super(service);
 	}
 
+	public BpmnViewer getBpmnViewer() {
+		return bpmnViewer;
+	}
+	
+
 	@Override
 	public VerticalLayout createBodyLayout() {
 		VerticalLayout body = new VerticalLayout();
@@ -51,13 +56,16 @@ public class BpmnViewerComponent extends AbstractBpmnViewer {
 	
 	private Component createBpmnViewer() {
 		bpmnViewerLayout = new VerticalLayout();
+		bpmnViewerLayout.setMargin(false);
 		bpmnViewerLayout.setSizeFull();
+		bpmnViewerLayout.setSpacing(false);
 		return bpmnViewerLayout;
 	}
 
 	public void updateBpmnViewer(ProcessInstance processInstance) {
 		bpmnViewerLayout.removeAllComponents();
 		bpmnViewer = new BpmnViewer();
+		bpmnViewer.setElementClickListener(getElementClickListeners());
 		bpmnViewerLayout.addComponent(bpmnViewer);
 		
 		ProcessDefinition processDefinition = service.getProcessService().getProcessEngine()
@@ -83,6 +91,10 @@ public class BpmnViewerComponent extends AbstractBpmnViewer {
 	}
 
 	public void updateBpmnViewer(HistoricProcessInstance processInstance) {
+		bpmnViewerLayout.removeAllComponents();
+		bpmnViewer = new BpmnViewer();
+		bpmnViewer.setElementClickListener(getElementClickListeners());
+		bpmnViewerLayout.addComponent(bpmnViewer);
 		
 		ProcessDefinition processDefinition = service.getProcessService().getProcessEngine()
 										.getRepositoryService().createProcessDefinitionQuery()
@@ -98,7 +110,7 @@ public class BpmnViewerComponent extends AbstractBpmnViewer {
 			streamData = new byte[is.available()];
 			is.read(streamData, 0, is.available());
 			bpmnViewer.setBpmnXml(new String(streamData, "UTF-8"));
-			//bpmnViewer.setElementInfos(getProcessElementInfos());
+			bpmnViewer.setElementInfos(getHistoricProcessElementInfos(processInstance));
 			
 		} catch (IOException e) {
 			logger.error(e.getMessage());
@@ -118,14 +130,18 @@ public class BpmnViewerComponent extends AbstractBpmnViewer {
 			if (task.getAssignee() != null) {
 				info.user = task.getAssignee();
 				info.status = "В работе";
+				info.openDate = task.getClaimTime();
+				info.isActive = true;
 			} else {
 				info.user = "На задан";
 				info.status = "Ожидает назначения";
+				info.isActive = false;
 			}
 			
+			info.createDate = task.getCreateTime();
 			info.isCompleted = false;
-			info.isActive = true;
-			
+			info.comment = task.getDescription();
+					
 			if (task.isSuspended()) {
 				info.status = "Приостановлено";
 			}
@@ -141,8 +157,78 @@ public class BpmnViewerComponent extends AbstractBpmnViewer {
 			info.isCompleted = true;
 			info.user = hTask.getAssignee();
 			info.status ="Завершено";
+			info.createDate = hTask.getCreateTime();
+			info.openDate = hTask.getClaimTime();
+			info.closeDate = hTask.getEndTime();
+			info.comment = hTask.getDescription();
 			result.add(info);
 		}
 		return result;
+	}
+	
+	private List<ElementInfo> getHistoricProcessElementInfos(HistoricProcessInstance processInstance) {
+		List<ElementInfo> result = new ArrayList<>();
+		HistoryService historyService = service.getProcessService().getProcessEngine().getHistoryService();
+		
+		/* completed tasks */
+		List<HistoricTaskInstance> historicTaskInstances = historyService.createHistoricTaskInstanceQuery()
+					.processInstanceId(processInstance.getId()).finished().list();
+		for (HistoricTaskInstance hTask : historicTaskInstances) {
+			ElementInfo info = new ElementInfo(hTask.getTaskDefinitionKey());
+			info.isActive = false;
+			info.isCompleted = true;
+			info.user = hTask.getAssignee();
+			info.status ="Завершено";
+			info.createDate = hTask.getCreateTime();
+			info.openDate = hTask.getClaimTime();
+			info.closeDate = hTask.getEndTime();
+			info.comment = hTask.getDescription();
+			result.add(info);
+		}
+		return result;
+	}
+	
+	public void highlight(String taskId) {
+		TaskService taskService = service.getProcessService().getProcessEngine().getTaskService();
+		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+		
+		ElementInfo info = new ElementInfo(task.getTaskDefinitionKey());
+		if (task.getAssignee() != null) {
+			info.user = task.getAssignee();
+			info.status = "В работе";
+			info.openDate = task.getClaimTime();
+		} else {
+			info.user = "Не задан";
+			info.status = "Ожидает назначения";
+			info.isActive = false;
+		}
+		
+		info.createDate = task.getCreateTime();
+		info.isCompleted = false;
+		info.isActive = true;
+		info.comment = task.getDescription();
+				
+		if (task.isSuspended()) {
+			info.status = "Приостановлено";
+		}
+		
+		bpmnViewer.highlight(info.elementId, info);
+	}
+
+	public void highlightHistoric(String taskId) {
+		HistoryService historyService = service.getProcessService().getProcessEngine().getHistoryService();
+		HistoricTaskInstance hTask = historyService.createHistoricTaskInstanceQuery().taskId(taskId).singleResult();
+		
+		ElementInfo info = new ElementInfo(hTask.getTaskDefinitionKey());
+		info.isActive = false;
+		info.isCompleted = true;
+		info.user = hTask.getAssignee();
+		info.status ="Завершено";
+		info.createDate = hTask.getCreateTime();
+		info.openDate = hTask.getClaimTime();
+		info.closeDate = hTask.getEndTime();
+		info.comment = hTask.getDescription();
+		
+		bpmnViewer.highlight(info.elementId, info);
 	}
 }
