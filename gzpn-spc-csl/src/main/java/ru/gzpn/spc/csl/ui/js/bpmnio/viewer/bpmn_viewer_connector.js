@@ -163,7 +163,7 @@ window.ru_gzpn_spc_csl_ui_js_bpmnio_viewer_BpmnViewer = function() {
 	  minutes = minutes < 10 ? '0' + minutes : minutes;
 	  hour = hour < 10 ? '0' + hour : hour;
 	  
-	  return `${dayOfMonth}.${month}.${year} ${hour}:${minutes}:${seconds}`;
+	  return dayOfMonth + '.' + month + '.' + year + ' ' + hour + ':' + minutes + ':' + seconds;
   }
   
 }
