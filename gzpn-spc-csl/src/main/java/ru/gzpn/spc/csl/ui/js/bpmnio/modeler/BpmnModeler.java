@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.js.bpmnio;
+package ru.gzpn.spc.csl.ui.js.bpmnio.modeler;
 
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.annotations.StyleSheet;

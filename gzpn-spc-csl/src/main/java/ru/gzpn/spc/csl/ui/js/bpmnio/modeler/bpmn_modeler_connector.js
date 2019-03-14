@@ -1,4 +1,4 @@
-window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnModeler = function() {
+window.ru_gzpn_spc_csl_ui_js_bpmnio_modeler_BpmnModeler = function() {
   var element = $(this.getElement());
 
   
@@ -36,34 +36,34 @@ window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnModeler = function() {
       var elementRegistry = bpmnModeler.get('elementRegistry');
       var shape = elementRegistry.get('EstimatesApproval');
 
-      var $overlayHtml =
-    	    $('<div class="completed-overlay">')
-    	      .css({
-    	        width: shape.width,
-    	        height: shape.height
-    	      });
+//      var $overlayHtml =
+//    	    $('<div class="completed-overlay">')
+//    	      .css({
+//    	        width: shape.width,
+//    	        height: shape.height
+//    	      });
       
       // zoom to fit full viewport
      // canvas.zoom('fit-viewport');
       // attach an overlay to a node
-      overlays.add('EstimatesApproval', 'note', {
-        position: {
-          bottom: 0,
-          right: 0
-        },
-        html: '<div class="diagram-note">Mixed up the labels?</div>'
-      });
+//      overlays.add('EstimatesApproval', 'note', {
+//        position: {
+//          bottom: 0,
+//          right: 0
+//        },
+//        html: '<div class="diagram-note">Mixed up the labels?</div>'
+//      });
       
-      overlays.add('EstimatesApproval', {
-    	    position: {
-    	      top: 0,
-    	      left: 0
-    	    },
-    	    html: $overlayHtml
-    	  });
-      
-      // add marker
-      canvas.addMarker('EstimatesApproval', 'needs-discussion');
+//      overlays.add('EstimatesApproval', {
+//    	    position: {
+//    	      top: 0,
+//    	      left: 0
+//    	    },
+//    	    html: $overlayHtml
+//    	  });
+//      
+//      // add marker
+//      canvas.addMarker('EstimatesApproval', 'needs-discussion');
     });
   }
   // load external diagram file via AJAX and open it

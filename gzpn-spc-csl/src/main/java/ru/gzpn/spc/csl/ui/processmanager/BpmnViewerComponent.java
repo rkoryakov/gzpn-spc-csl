@@ -3,7 +3,9 @@ package ru.gzpn.spc.csl.ui.processmanager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.TaskService;
@@ -19,8 +21,8 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessManagerService;
-import ru.gzpn.spc.csl.ui.js.bpmnio.BpmnViewer;
-import ru.gzpn.spc.csl.ui.js.bpmnio.ElementInfo;
+import ru.gzpn.spc.csl.ui.js.bpmnio.modeler.ElementInfo;
+import ru.gzpn.spc.csl.ui.js.bpmnio.viewer.BpmnViewer;
 /**
  * Process instance viewer
  * 
@@ -119,6 +121,7 @@ public class BpmnViewerComponent extends AbstractBpmnViewer {
 
 	private List<ElementInfo> getProcessElementInfos(ProcessInstance processInstance) {
 		List<ElementInfo> result = new ArrayList<>();
+		Set<String> definitionKeys = new HashSet<>();
 		TaskService taskService = service.getProcessService().getProcessEngine().getTaskService();
 		HistoryService historyService = service.getProcessService().getProcessEngine().getHistoryService();
 		
@@ -146,22 +149,26 @@ public class BpmnViewerComponent extends AbstractBpmnViewer {
 				info.status = "Приостановлено";
 			}
 			result.add(info);
+			definitionKeys.add(task.getTaskDefinitionKey());
 		}
 		
 		/* completed tasks */
 		List<HistoricTaskInstance> historicTaskInstances = historyService.createHistoricTaskInstanceQuery()
 					.processInstanceId(processInstance.getId()).finished().list();
 		for (HistoricTaskInstance hTask : historicTaskInstances) {
-			ElementInfo info = new ElementInfo(hTask.getTaskDefinitionKey());
-			info.isActive = false;
-			info.isCompleted = true;
-			info.user = hTask.getAssignee();
-			info.status ="Завершено";
-			info.createDate = hTask.getCreateTime();
-			info.openDate = hTask.getClaimTime();
-			info.closeDate = hTask.getEndTime();
-			info.comment = hTask.getDescription();
-			result.add(info);
+			if (!definitionKeys.contains(hTask.getTaskDefinitionKey())) {
+				ElementInfo info = new ElementInfo(hTask.getTaskDefinitionKey());
+				info.isActive = false;
+				info.isCompleted = true;
+				info.user = hTask.getAssignee();
+				info.status = "Завершено";
+				info.createDate = hTask.getCreateTime();
+				info.openDate = hTask.getClaimTime();
+				info.closeDate = hTask.getEndTime();
+				info.comment = hTask.getDescription();
+				result.add(info);
+				definitionKeys.add(hTask.getTaskDefinitionKey());
+			}
 		}
 		return result;
 	}
@@ -169,21 +176,24 @@ public class BpmnViewerComponent extends AbstractBpmnViewer {
 	private List<ElementInfo> getHistoricProcessElementInfos(HistoricProcessInstance processInstance) {
 		List<ElementInfo> result = new ArrayList<>();
 		HistoryService historyService = service.getProcessService().getProcessEngine().getHistoryService();
-		
+		Set<String> definitionKeys = new HashSet<>();
 		/* completed tasks */
 		List<HistoricTaskInstance> historicTaskInstances = historyService.createHistoricTaskInstanceQuery()
 					.processInstanceId(processInstance.getId()).finished().list();
 		for (HistoricTaskInstance hTask : historicTaskInstances) {
-			ElementInfo info = new ElementInfo(hTask.getTaskDefinitionKey());
-			info.isActive = false;
-			info.isCompleted = true;
-			info.user = hTask.getAssignee();
-			info.status ="Завершено";
-			info.createDate = hTask.getCreateTime();
-			info.openDate = hTask.getClaimTime();
-			info.closeDate = hTask.getEndTime();
-			info.comment = hTask.getDescription();
-			result.add(info);
+			if (!definitionKeys.contains(hTask.getTaskDefinitionKey())) {
+				ElementInfo info = new ElementInfo(hTask.getTaskDefinitionKey());
+				info.isActive = false;
+				info.isCompleted = true;
+				info.user = hTask.getAssignee();
+				info.status = "Завершено";
+				info.createDate = hTask.getCreateTime();
+				info.openDate = hTask.getClaimTime();
+				info.closeDate = hTask.getEndTime();
+				info.comment = hTask.getDescription();
+				result.add(info);
+				definitionKeys.add(hTask.getTaskDefinitionKey());
+			}
 		}
 		return result;
 	}

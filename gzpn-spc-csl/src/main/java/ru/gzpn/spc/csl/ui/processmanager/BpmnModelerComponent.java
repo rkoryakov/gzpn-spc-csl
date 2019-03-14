@@ -12,7 +12,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.services.bl.ProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessManagerService;
-import ru.gzpn.spc.csl.ui.js.bpmnio.BpmnModeler;
+import ru.gzpn.spc.csl.ui.js.bpmnio.modeler.BpmnModeler;
 
 @SuppressWarnings("serial")
 public class BpmnModelerComponent extends AbstractBpmnModelerComponent {

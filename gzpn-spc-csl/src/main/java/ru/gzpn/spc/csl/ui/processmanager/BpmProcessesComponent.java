@@ -134,9 +134,6 @@ public class BpmProcessesComponent extends AbstractBpmProcessesComponent {
 				bpmnViewerComponent.highlight(selectedItem.get().getTaskId());
 			}
 		});
-		bpmnViewerComponent.addOnElementClickListener(clickEvent -> {
-			
-		});
 		return activeTasksGrid;
 	}
 

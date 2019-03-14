@@ -1,4 +1,4 @@
-window.ru_gzpn_spc_csl_ui_js_bpmnio_BpmnViewer = function() {
+window.ru_gzpn_spc_csl_ui_js_bpmnio_viewer_BpmnViewer = function() {
   var element = $(this.getElement());
   var rpcProxy = this.getRpcProxy();
   

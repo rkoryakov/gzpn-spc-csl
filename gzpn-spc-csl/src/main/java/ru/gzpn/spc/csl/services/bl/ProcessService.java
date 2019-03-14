@@ -98,6 +98,11 @@ public class ProcessService implements IProcessService, Serializable {
 	}
 
 	@Override
+	public void completeTask(String taskId) {
+		taskService.complete(taskId);
+	}
+	
+	@Override
 	public boolean isAssigneeForTask(String taskId, String user) {
 		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 		return user.equals(task.getAssignee());

@@ -9,13 +9,11 @@ import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 @SuppressWarnings("serial")
 public class LocalEstimatesApprovalComponent extends AbstractLocalEstimatesApprovalComponent {
 
-	private String taskId;
 	private LocalEstimatesApprovalGridComponent approvalGrid;
 	private VerticalLayout estimatesLayout;
 	
 	public LocalEstimatesApprovalComponent(IUIService service, String taskId) {
-		super(service);
-		this.taskId = taskId;
+		super(service, taskId);
 	}
 
 	@Override

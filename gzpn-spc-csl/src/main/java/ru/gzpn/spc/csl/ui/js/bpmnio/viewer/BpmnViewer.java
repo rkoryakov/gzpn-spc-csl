@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.js.bpmnio;
+package ru.gzpn.spc.csl.ui.js.bpmnio.viewer;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +13,9 @@ import com.vaadin.annotations.JavaScript;
 import com.vaadin.annotations.StyleSheet;
 import com.vaadin.event.Action;
 import com.vaadin.ui.AbstractJavaScriptComponent;
+
+import ru.gzpn.spc.csl.ui.js.bpmnio.modeler.BpmnState;
+import ru.gzpn.spc.csl.ui.js.bpmnio.modeler.ElementInfo;
 
 
 @SuppressWarnings("serial")

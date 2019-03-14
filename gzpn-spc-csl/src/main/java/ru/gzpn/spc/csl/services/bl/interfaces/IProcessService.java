@@ -21,5 +21,6 @@ public interface IProcessService {
 	Object getProcessVariableByTaskId(String taskId, String varName);
 	void setProcessVariable(String taskId, String varName, Object value);
 	Object getProcessVariable(String processInstanceId, String varName);
+	void completeTask(String taskId);
 	
 }
