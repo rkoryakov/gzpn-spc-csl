@@ -17,15 +17,12 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
-import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
 import ru.gzpn.spc.csl.ui.common.I18n;
 
 public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayout implements I18n {
@@ -195,26 +192,7 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 		sendForApprovalButton = new Button(getI18nText(I18N_SENDFORAPPROVALBUTTON_CAP, messageSource));
 		sendForApprovalButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		sendForApprovalButton.addClickListener(listener -> {
-			getUI().addWindow((new ConfirmDialogWindow("Подтвердите операцию",
-					"Передать карточку ССР на согласование?", "Да", "Отмена",
-					confirmClickEvent -> {
-						(new Thread() {
-							@Override
-							public void run() {
-//								Map<String, Object> processVariables = new HashMap<>();
-//								processVariables.put(IProcessService.INITIATOR, currentUser);
-//								processVariables.put(IProcessService.DOCUMENTS, documentsGrid.getSelectedItems());
-//								processVariables.put(IProcessService.COMMENTS, descriptionField.getValue());
-								
-								processService.completeTask(taskId);
-							}
-						}).start();
-						Notification notification = new Notification("Отправлено на согласование",
-								"Процесс регистрации смет переходит к следующему шагу - Согласование сметного расчета в НТЦ",
-								Type.TRAY_NOTIFICATION);
-						notification.setDelayMsec(8000);
-						notification.show(getUI().getPage());
-					})));
+			onSendForApproval();
 		});
 		return sendForApprovalButton;
 	}

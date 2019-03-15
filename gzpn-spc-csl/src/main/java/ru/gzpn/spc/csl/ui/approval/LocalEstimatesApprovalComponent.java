@@ -1,9 +1,16 @@
 package ru.gzpn.spc.csl.ui.approval;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 
+import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
+import ru.gzpn.spc.csl.services.bl.LocalEstimatesApprovalService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimatesApprovalService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
 
 @SuppressWarnings("serial")
@@ -39,7 +46,15 @@ public class LocalEstimatesApprovalComponent extends AbstractLocalEstimatesAppro
 		approvalGrid = new LocalEstimatesApprovalGridComponent(null, 
 																approvalService.getLocalEstimateService(), 
 																approvalService.getUserSettingsService());
-		
+		((LocalEstimatesApprovalDataProvider) approvalGrid.getGridDataProvider()).getIds().clear();
+		((LocalEstimatesApprovalDataProvider) approvalGrid.getGridDataProvider()).getIds().addAll(getLocalEstimatesIds());
 		estimatesLayout.addComponent(approvalGrid);
+	}
+
+	private Collection<? extends Long> getLocalEstimatesIds() {
+		Long ssrId = (Long)service.getProcessService().getProcessVariableByTaskId(taskId, IProcessService.SSR_ID);
+		List<ILocalEstimate> estimates = ((LocalEstimatesApprovalService)service).getLocalEstimateService()
+											.getLocalEstimatesByCalculationId(ssrId);
+		return estimates.stream().map(item -> item.getId()).collect(Collectors.toList());
 	}
 }

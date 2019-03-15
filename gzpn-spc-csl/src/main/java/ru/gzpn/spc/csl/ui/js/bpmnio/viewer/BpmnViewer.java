@@ -36,21 +36,14 @@ public class BpmnViewer extends AbstractJavaScriptComponent implements BpmnHighl
 		registerRpc(new BpmnOverElementRpc() {
 			@Override
 			public void onElementOver(String elementId) {
-				//logger.debug("elementId = {}", elementId);
 				highlight(elementId, getElementInfo(elementId));
-				
-				//logger.debug("getElementInfo(elementId) = {}", getElementInfo(elementId));
-				//logger.debug("getState().getElementInfos() = {}", getState().getElementInfos());
 			}
 		});
 		
 		registerRpc(new BpmnClickElementRpc() {
 			@Override
 			public void onElementClick(String elementId) {
-				//BpmnViewer.this.onElementClick();
-				//Notification.show("BPMN element with id = " + elementId + " was clicked");
 			}
-			
 		});
 		setSizeFull();
 	}
@@ -91,7 +84,7 @@ public class BpmnViewer extends AbstractJavaScriptComponent implements BpmnHighl
 	
 	protected void handleAction(Action action, String elementId) {
 		for (Listener listener : listeners.get(action)) {
-		//	listener.componentEvent(new EventObject(elementId));
+			//listener.componentEvent(new Event(elementId));
 		}
 	}
 	

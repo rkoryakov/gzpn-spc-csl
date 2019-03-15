@@ -10,7 +10,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Hibernate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ import ru.gzpn.spc.csl.model.EstimateCalculation;
 import ru.gzpn.spc.csl.model.LocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
-import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCost;
+import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
 import ru.gzpn.spc.csl.model.repositories.EstimateCalculationRepository;
 import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
@@ -34,7 +35,8 @@ import ru.gzpn.spc.csl.ui.common.IGridFilter;
 @Service
 @Transactional
 public class LocalEstimateService implements ILocalEstimateService {
-
+	public static final Logger logger = LoggerFactory.getLogger(LocalEstimateService.class);
+	
 	@Autowired
 	private LocalEstimateRepository localEstimateRepository;
 	@Autowired
@@ -49,10 +51,11 @@ public class LocalEstimateService implements ILocalEstimateService {
 		List<ILocalEstimate> result = new ArrayList<>();
 		if (calculationId != null) {
 			Optional<EstimateCalculation> c = estimateCalculationsRepository.findById(calculationId);
-			if (c.isPresent()) {
-				result = c.get().getEstimates();
-				Hibernate.initialize(result);
-			}
+			result = localEstimateRepository.findByEstimateCalculation(c.get());
+//			if (c.isPresent()) {
+//				result = c.get().getEstimates();
+//				Hibernate.initialize(result);
+//			}
 		}
 		return result;
 	}
@@ -92,7 +95,7 @@ public class LocalEstimateService implements ILocalEstimateService {
 	}
 	
 	@Override
-	public Comparator<IEstimateCost> getSortComparator(List<QuerySortOrder> list) {
+	public Comparator<ILocalEstimatePresenter> getSortComparator(List<QuerySortOrder> list) {
 
 		return (a, b) -> {
 			int result = 0;
@@ -154,7 +157,7 @@ public class LocalEstimateService implements ILocalEstimateService {
 	}
 	
 	
-	public static final class LocalEstimateFilter implements IGridFilter<IEstimateCost> {
+	public static final class LocalEstimateFilter implements IGridFilter<ILocalEstimatePresenter> {
 		private String commonTextFilter;
 		
 		public LocalEstimateFilter() {
@@ -169,7 +172,7 @@ public class LocalEstimateService implements ILocalEstimateService {
 			this.commonTextFilter = commonTextFilter.toLowerCase();
 		}
 
-		public Predicate<IEstimateCost> getFilterPredicate(List<ColumnSettings> shownColumns) {
+		public Predicate<ILocalEstimatePresenter> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// only common filter is working now
 			return p -> {
 				boolean result = false;
@@ -190,8 +193,8 @@ public class LocalEstimateService implements ILocalEstimateService {
 		private boolean applyColumnFilter(ILocalEstimate localEstimate, ColumnSettings column) {
 			boolean result = false;
 
-			if (localEstimate instanceof IEstimateCost) {
-				IEstimateCost localEstimatePresenter = (IEstimateCost)localEstimate;
+			if (localEstimate instanceof ILocalEstimate) {
+				ILocalEstimatePresenter localEstimatePresenter = (ILocalEstimatePresenter)localEstimate;
 				switch (column.getEntityFieldName()) {
 				case ILocalEstimate.FIELD_NAME:
 					result = localEstimatePresenter.getName().toLowerCase().startsWith(commonTextFilter);
@@ -256,29 +259,13 @@ public class LocalEstimateService implements ILocalEstimateService {
 	
 	@Override
 	public void save(ILocalEstimate bean) {
-		localEstimateRepository.save((LocalEstimate) bean);
-//		if (bean.getId() != null) {
-//			Optional<LocalEstimate> localEstimate = localEstimateRepository.findById(bean.getId());
-//
-//			if (localEstimate.isPresent()) {
-//				ILocalEstimate le = localEstimate.get();
-//				le.setCode(bean.getCode());
-//				le.setName(bean.getName());
-//				le.setChangedBy(userSettings.getCurrentUser());
-//				le.setComment(bean.getComment());
-//				le.setDocument(bean.getDocument());
-//				le.setDrawing(bean.getDrawing());
-//				le.setEstimateCalculation(bean.getEstimateCalculation());
-//				le.setEstimateCosts(bean.getEstimateCosts());
-//				le.setEstimateHead(bean.getEstimateHead());
-//				le.setObjectEstimate(bean.getObjectEstimate());
-//				le.setStage(bean.getStage());
-//				le.setStatus(bean.getStatus());
-//				le.setWorks(bean.getWorks());
-//
-//				localEstimateRepository.save((LocalEstimate) le);
-//			}
-//		}
+
+		if (bean instanceof ILocalEstimatePresenter) {
+			ILocalEstimate le = ((ILocalEstimatePresenter)bean).getLocalEstimate();
+			localEstimateRepository.save((LocalEstimate)le);
+		} else {
+			localEstimateRepository.save((LocalEstimate)bean);
+		}
 	}
 
 	@Override

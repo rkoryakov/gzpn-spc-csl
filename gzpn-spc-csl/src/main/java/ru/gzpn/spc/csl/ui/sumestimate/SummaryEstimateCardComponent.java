@@ -41,6 +41,7 @@ import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ISummaryEstimateCardService;
+import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
 import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.common.data.imp.LocalEstimateExcelParser;
 
@@ -68,7 +69,6 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	
 	public static final String XLS_MIME = "application/vnd.ms-excel";
 	public static final String XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
 	
 	
 	private CssLayout calculationFieldsLayout;
@@ -93,18 +93,37 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	private LocalEstimatesTreeGridComponent objectEstimatesTreeGrid;
 
 	private VerticalLayout localEstimatesFeautures;
-
 	private TabSheet localEstimateFeautureTabSheet;
-
 	private ISummaryEstimateCardService estimateCardService;
-
 	private CostsTreeGridComponent costGrid;
-
 	private TextArea comment;
 
 	
 	public SummaryEstimateCardComponent(ISummaryEstimateCardService service, Long estimateCalculationId, String taskId) {
 		super(service, estimateCalculationId, taskId);
+		createEventListeners();
+	}
+
+	private void createEventListeners() {
+		addOnSendForApprovalListener(event -> {			
+			getUI().addWindow((new ConfirmDialogWindow(getI18nText(ConfirmDialogWindow.I18N_CONFIRM_MESSAGE, messageSource),
+					getI18nText(ConfirmDialogWindow.I18N_SEND_SSR_FOR_APPROVAL, messageSource), 
+					getI18nText(ConfirmDialogWindow.I18N_YES, messageSource), 
+					getI18nText(ConfirmDialogWindow.I18N_CANCEL, messageSource),
+					confirmClickEvent -> {
+						(new Thread() {
+							@Override
+							public void run() {
+								processService.completeTask(taskId);
+							}
+						}).start();
+						Notification notification = new Notification("Отправлено на согласование",
+								"Процесс регистрации смет переходит к следующему шагу - Согласование сметного расчета в НТЦ",
+								Type.TRAY_NOTIFICATION);
+						notification.setDelayMsec(8000);
+						notification.show(getUI().getPage());
+					})));
+		});
 	}
 
 	@Override
