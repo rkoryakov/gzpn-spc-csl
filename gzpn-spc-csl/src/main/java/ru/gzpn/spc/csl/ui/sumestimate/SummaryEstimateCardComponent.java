@@ -283,9 +283,9 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 			NodeWrapper parentNode = new NodeWrapper(LocalEstimate.class.getSimpleName());
 			parentNode.setId(localEstimatesTreeGrid.getSelectedGridItem().getId());
 			costGrid.getGridDataProvider().setParentNode(parentNode);
-			
-			localEstimateFieldsBinder.readBean(localEstimatesTreeGrid.getSelectedGridItem());
+			logger.debug("[SummaryEstimateCardComponent] onGridItemSelect");
 			localEstimateFieldsBinder.forField(comment).bind(ILocalEstimate::getComment, ILocalEstimate::setComment);
+			localEstimateFieldsBinder.readBean(localEstimatesTreeGrid.getSelectedGridItem());
 		});
 		
 		createUpoadFileTarget(localEstimatesTreeGrid);
@@ -330,6 +330,8 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		public static final String I18N_UPLOADCANCLEBTN_CAP = "SummaryEstimateCardComponent.uploadProgressWindow.cancelButton.cap";
 		public static final String I18N_UPLOADTOBACKBTN_CAP = "SummaryEstimateCardComponent.uploadProgressWindow.toBackgroundButton.cap";
 		public static final String I18N_UPLOADPROGRESSLABEL = "SummaryEstimateCardComponent.uploadProgressWindow.uploadingProgress.cap";
+		public static final String I18N_TOBACKGROUNDNOTIFICATION_CAP = "SummaryEstimateCardComponent.uploadProgressWindow.toBackgroundNotification.cap";
+		public static final String I18N_TOBACKGROUNDNOTIFICATION_DES = "SummaryEstimateCardComponent.uploadProgressWindow.toBackgroundNotification.des";
 		
 		final ByteArrayOutputStream bas = new ByteArrayOutputStream();
 		
@@ -349,16 +351,18 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 			final HorizontalLayout stateLayout = new HorizontalLayout();
 			stateLayout.setSpacing(true);
 	        cancelButton = new Button(getI18nText(I18N_UPLOADCANCLEBTN_CAP, messageSource));
-	        toBackgroundButton = new Button(getI18nText(I18N_UPLOADTOBACKBTN_CAP, messageSource));
 	        cancelButton.addClickListener(event -> interrupted = true);
-	        
 	        cancelButton.setStyleName("small");
+	        
+	        toBackgroundButton = new Button(getI18nText(I18N_UPLOADTOBACKBTN_CAP, messageSource));
 	        toBackgroundButton.addClickListener(event -> {
-	        	Notification.show("Переключение в фоновый режим", "По завершению операции на Ваш E-mail будет отправлено уведомление.", Type.TRAY_NOTIFICATION);
+	        	Notification.show(getI18nText(I18N_TOBACKGROUNDNOTIFICATION_CAP, messageSource), 
+	        			getI18nText(I18N_TOBACKGROUNDNOTIFICATION_DES, messageSource), Type.TRAY_NOTIFICATION);
 	        	this.close();
 	        });
 	        toBackgroundButton.setEnabled(false);
 	        toBackgroundButton.setStyleName("small");
+	        
 	        stateLayout.addComponent(progressStateLabel);
 	        stateLayout.addComponent(cancelButton);
 	        stateLayout.addComponent(toBackgroundButton);
@@ -402,7 +406,7 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 			(new Thread(() -> {
 				ByteArrayInputStream inp = new ByteArrayInputStream(bas.toByteArray());
 				LocalEstimateExcelParser parser = new LocalEstimateExcelParser(inp);
-				parser.setOnProcess(() -> {uploadingProgress.setValue(0.5f + parser.getProcessed()/parser.getTotalAmount()*0.5f);});
+				parser.setOnProcess(() -> {uploadingProgress.setValue(0.5f + parser.getProcessed() / parser.getTotalAmount()*0.5f);});
 				for (int i = 1; i <= parser.getLastRow(); i ++) {
 					Optional<LocalEstimate> le = parser.getBean(i);
 					if (le.isPresent()) {

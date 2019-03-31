@@ -345,13 +345,13 @@ public class SummaryEstimateCardSettingsJson implements ISettingsJson, Serializa
 	
 	public List<ColumnSettings> getLocalEstimatesColumns() {
 		if (Objects.isNull(localEstimatesColumns)) {
-			estimateCalculationsColumns = getDefaultLocalEstimatesColumns();
+			localEstimatesColumns = getDefaultLocalEstimatesColumns();
 		}
 
-		return estimateCalculationsColumns;
+		return localEstimatesColumns;
 	}
 	public void setLocalEstimatesColumns(List<ColumnSettings> columns) {
-		estimateCalculationsColumns = columns;
+		localEstimatesColumns = columns;
 	}
 	
 	public List<ColumnSettings> getObjectEstimateColumns() {

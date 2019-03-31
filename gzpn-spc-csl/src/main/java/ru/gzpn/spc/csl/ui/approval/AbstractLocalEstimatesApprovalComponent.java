@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.MessageSource;
 
 import com.vaadin.event.Action;
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -28,7 +27,6 @@ import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
 import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.common.RegistryComponent;
-import ru.gzpn.spc.csl.ui.createdoc.CreateDocSettingsWindow;
 
 public abstract class AbstractLocalEstimatesApprovalComponent extends VerticalLayout implements I18n {
 	public static final Logger logger = LogManager.getLogger(RegistryComponent.class);
@@ -94,19 +92,19 @@ public abstract class AbstractLocalEstimatesApprovalComponent extends VerticalLa
 		listeners.put(REJECT_ACTION, new HashSet<>());
 	}
 	
-	public Component createSettingsButton() {
-		userLayoutSettingsButton = new Button();
-		userLayoutSettingsButton.setIcon(VaadinIcons.COG_O);
-		userLayoutSettingsButton.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC, messageSource, I18N_USERLAYOUTSETTINGS_DESC));
-		userLayoutSettingsButton.addClickListener(event -> {
-			CreateDocSettingsWindow settingsWindow = new CreateDocSettingsWindow(userSettingsService, messageSource);
-			settingsWindow.addOnSaveAndCloseListener(closeEvent -> {
-				refreshUiElements();
-			});
-			getUI().getUI().addWindow(settingsWindow);
-		});
-		return userLayoutSettingsButton;
-	}
+//	public Component createSettingsButton() {
+//		userLayoutSettingsButton = new Button();
+//		userLayoutSettingsButton.setIcon(VaadinIcons.COG_O);
+//		userLayoutSettingsButton.setDescription(getI18nText(I18N_USERLAYOUTSETTINGS_DESC, messageSource, I18N_USERLAYOUTSETTINGS_DESC));
+//		userLayoutSettingsButton.addClickListener(event -> {
+//			CreateDocSettingsWindow settingsWindow = new CreateDocSettingsWindow(userSettingsService, messageSource);
+//			settingsWindow.addOnSaveAndCloseListener(closeEvent -> {
+//				refreshUiElements();
+//			});
+//			getUI().getUI().addWindow(settingsWindow);
+//		});
+//		return userLayoutSettingsButton;
+//	}
 	
 	public void createBody() {
 		refreshUiElements();
@@ -225,6 +223,9 @@ public abstract class AbstractLocalEstimatesApprovalComponent extends VerticalLa
 		return rejectButton;
 	}
 	
+	public TextArea getCommentField() {
+		return commentField;
+	}
 	
 	public void approve() {
 		onApprove();

@@ -259,12 +259,26 @@ public class LocalEstimateService implements ILocalEstimateService {
 	
 	@Override
 	public void save(ILocalEstimate bean) {
-
-		if (bean instanceof ILocalEstimatePresenter) {
-			ILocalEstimate le = ((ILocalEstimatePresenter)bean).getLocalEstimate();
-			localEstimateRepository.save((LocalEstimate)le);
-		} else {
-			localEstimateRepository.save((LocalEstimate)bean);
+		Optional<LocalEstimate> ole = localEstimateRepository.findById(bean.getId());
+		if (ole.isPresent()) {
+			LocalEstimate le = ole.get();
+			le.setChangedBy(bean.getChangedBy());
+			le.setCode(bean.getCode());
+			le.setComment(bean.getComment());
+			le.setDocument(bean.getDocument());
+			le.setDrawing(bean.getDrawing());
+			le.setEstimateCalculation(bean.getEstimateCalculation());
+			le.setEstimateCosts(bean.getEstimateCosts());
+			le.setEstimateHead(bean.getEstimateHead());
+			le.setHistory(bean.getHistory());
+			le.setId(bean.getId());
+			le.setName(bean.getName());
+			le.setObjectEstimate(bean.getObjectEstimate());
+			le.setStage(bean.getStage());
+			le.setStatus(bean.getStatus());
+			le.setWorks(bean.getWorks());
+			
+			localEstimateRepository.save(le);
 		}
 	}
 

@@ -146,6 +146,9 @@ public class ProcessService implements IProcessService, Serializable {
 				if (taskRole == Role.EXPERT_ES_ROLE) {
 					comment = (String) runtimeService.getVariable(taskEntity.getProcessInstanceId(),
 							IProcessService.COMMENTS);
+				} else if (taskRole == Role.APPROVER_NTC_ROLE) {
+					comment = (String) runtimeService.getVariable(taskEntity.getProcessInstanceId(),
+							IProcessService.COMMENTS);
 				}
 				
 				for (User user : identityService.createUserQuery().memberOfGroup(taskRole.name()).list()) {

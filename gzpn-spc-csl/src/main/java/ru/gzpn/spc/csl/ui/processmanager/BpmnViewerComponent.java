@@ -136,7 +136,7 @@ public class BpmnViewerComponent extends AbstractBpmnViewer {
 				info.openDate = task.getClaimTime();
 				info.isActive = true;
 			} else {
-				info.user = "На задан";
+				info.user = "Не задан";
 				info.status = "Ожидает назначения";
 				info.isActive = false;
 			}
