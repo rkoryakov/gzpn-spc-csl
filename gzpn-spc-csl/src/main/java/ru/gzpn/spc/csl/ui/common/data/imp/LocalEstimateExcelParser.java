@@ -31,6 +31,7 @@ public class LocalEstimateExcelParser extends ExcelParser implements IProgress {
 		
 		if (getCode(row).isPresent()) {
 			LocalEstimate le = new LocalEstimate();
+			result = Optional.of(le);
 			le.setDrawing(getDrawing(row).orElse(null));
 			le.setCode(getCode(row).get());
 			le.setName(getName(row).orElse(null));
@@ -123,7 +124,7 @@ public class LocalEstimateExcelParser extends ExcelParser implements IProgress {
 	
 	@Override
 	public int getTotalAmount() {
-		return getLastRow() + 1;
+		return getLastRowNumber() + 1;
 	}
 
 	@Override

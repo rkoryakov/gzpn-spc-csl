@@ -406,15 +406,20 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 			(new Thread(() -> {
 				ByteArrayInputStream inp = new ByteArrayInputStream(bas.toByteArray());
 				LocalEstimateExcelParser parser = new LocalEstimateExcelParser(inp);
-				parser.setOnProcess(() -> {uploadingProgress.setValue(0.5f + parser.getProcessed() / parser.getTotalAmount()*0.5f);});
-				for (int i = 1; i <= parser.getLastRow(); i ++) {
+				parser.setOnProcess(() -> {
+					logger.debug("[UploadProgressWindow] uploadingProgress " + (0.5f + (parser.getProcessed() / (float)parser.getTotalAmount())*0.5f) );
+					uploadingProgress.setValue(0.5f + parser.getProcessed() / (float)parser.getTotalAmount()*0.5f);
+				});
+				
+				logger.debug("[UploadProgressWindow] excel rows = " + parser.getLastRowNumber());
+				
+				for (int i = 1; i <= parser.getLastRowNumber(); i ++) {
 					Optional<LocalEstimate> le = parser.getBean(i);
 					if (le.isPresent()) {
-						
+						logger.debug("[UploadProgressWindow] load excel LS code = " + le.get().getCode());
 					}
 				}
-				
-				
+
 			})).start();
 		}
 		@Override
