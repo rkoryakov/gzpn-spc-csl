@@ -55,10 +55,10 @@ public class LocalEstimateExcelParser extends ExcelParser implements IProgress {
 			Stage stage = new Stage();
 			stage.setCode(getStageCode(row).orElse(null));
 			le.setStage(stage);
-			
-			processedRow = row;
-			progressListener.run();
 		}
+		processedRow = row;
+		progressListener.run();
+		
 		return result;
 	}
 
@@ -124,7 +124,7 @@ public class LocalEstimateExcelParser extends ExcelParser implements IProgress {
 	
 	@Override
 	public int getTotalAmount() {
-		return getLastRowNumber() + 1;
+		return getLastRowNumber();
 	}
 
 	@Override

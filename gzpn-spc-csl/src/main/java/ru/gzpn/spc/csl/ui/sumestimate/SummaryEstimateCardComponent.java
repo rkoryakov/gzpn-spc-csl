@@ -3,6 +3,8 @@ package ru.gzpn.spc.csl.ui.sumestimate;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Optional;
 
 import com.vaadin.data.Binder;
@@ -332,6 +334,8 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		public static final String I18N_UPLOADPROGRESSLABEL = "SummaryEstimateCardComponent.uploadProgressWindow.uploadingProgress.cap";
 		public static final String I18N_TOBACKGROUNDNOTIFICATION_CAP = "SummaryEstimateCardComponent.uploadProgressWindow.toBackgroundNotification.cap";
 		public static final String I18N_TOBACKGROUNDNOTIFICATION_DES = "SummaryEstimateCardComponent.uploadProgressWindow.toBackgroundNotification.des";
+		public static final String I18N_SUCCESSFULYPROCESSED_CAP = "SummaryEstimateCardComponent.uploadProgressWindow.success.cap";
+		public static final String I18N_SUCCESSFULYPROCESSED_DES = "SummaryEstimateCardComponent.uploadProgressWindow.success.des";
 		
 		final ByteArrayOutputStream bas = new ByteArrayOutputStream();
 		
@@ -402,8 +406,11 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		@Override
 		public void streamingFinished(final StreamingEndEvent event) {
 			progressStateLabel.setValue(ProgressState.INPROGRESS.getText());
+			UI currentUi = UI.getCurrent();
 			toBackgroundButton.setEnabled(true);
+			
 			(new Thread(() -> {
+				LocalTime startTime = LocalTime.now();
 				ByteArrayInputStream inp = new ByteArrayInputStream(bas.toByteArray());
 				LocalEstimateExcelParser parser = new LocalEstimateExcelParser(inp);
 				parser.setOnProcess(() -> {
@@ -412,14 +419,23 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 				});
 				
 				logger.debug("[UploadProgressWindow] excel rows = " + parser.getLastRowNumber());
-				
+				IEstimateCalculation calculation = estimateCardService.getEstimateCalculationService().getEstimateCalculation(estimateCalculationId).get();
 				for (int i = 1; i <= parser.getLastRowNumber(); i ++) {
 					Optional<LocalEstimate> le = parser.getBean(i);
 					if (le.isPresent()) {
 						logger.debug("[UploadProgressWindow] load excel LS code = " + le.get().getCode());
+						// set current ssr
+						le.get().setEstimateCalculation(calculation);
+						estimateCardService.getLocalEstimateService().save(le.get());
 					}
 				}
-
+				
+				Duration duration = Duration.between(startTime, LocalTime.now());
+				UI.setCurrent(currentUi);
+				Notification.show(getI18nText(I18N_SUCCESSFULYPROCESSED_CAP, messageSource),
+						getI18nText(I18N_SUCCESSFULYPROCESSED_DES, new Object[] {event.getFileName(), duration.toSeconds()}, messageSource), 
+						Type.TRAY_NOTIFICATION);
+				close();
 			})).start();
 		}
 		@Override

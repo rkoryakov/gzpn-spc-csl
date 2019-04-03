@@ -21,12 +21,17 @@ import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
 import ru.gzpn.spc.csl.model.EstimateCalculation;
+import ru.gzpn.spc.csl.model.EstimateCost;
 import ru.gzpn.spc.csl.model.LocalEstimate;
+import ru.gzpn.spc.csl.model.interfaces.IEstimateCost;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
+import ru.gzpn.spc.csl.model.interfaces.IStage;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
 import ru.gzpn.spc.csl.model.repositories.EstimateCalculationRepository;
+import ru.gzpn.spc.csl.model.repositories.EstimateCostRepository;
 import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
+import ru.gzpn.spc.csl.model.repositories.StageRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
 import ru.gzpn.spc.csl.ui.common.IGridFilter;
@@ -45,6 +50,10 @@ public class LocalEstimateService implements ILocalEstimateService {
 	private MessageSource messageSource;
 	@Autowired
 	private IUserSettigsService userSettings;
+	@Autowired
+	StageRepository stageRepository;
+	@Autowired 
+	EstimateCostRepository estimateCost;
 	
 	@Override
 	public List<ILocalEstimate> getLocalEstimatesByCalculationId(Long calculationId) {
@@ -259,22 +268,49 @@ public class LocalEstimateService implements ILocalEstimateService {
 	
 	@Override
 	public void save(ILocalEstimate bean) {
-		Optional<LocalEstimate> ole = localEstimateRepository.findById(bean.getId());
+		Optional<LocalEstimate> ole;
+		if (bean.getId() != null) {
+			ole = localEstimateRepository.findById(bean.getId());
+		} else if (bean.getCode() != null) {
+			ole = localEstimateRepository.findByCode(bean.getCode());
+		} else {
+			ole = Optional.of((LocalEstimate)bean);
+		}
+		
 		if (ole.isPresent()) {
 			LocalEstimate le = ole.get();
+			
+			if (bean.getStage() != null) {
+				IStage stage = stageRepository.findByCode(bean.getStage().getCode());
+				if (stage != null) {
+					le.setStage(stage);
+				} else {
+					le.setStage(null);
+				}
+			}
+			
 			le.setChangedBy(bean.getChangedBy());
 			le.setCode(bean.getCode());
 			le.setComment(bean.getComment());
+			
 			le.setDocument(bean.getDocument());
 			le.setDrawing(bean.getDrawing());
 			le.setEstimateCalculation(bean.getEstimateCalculation());
-			le.setEstimateCosts(bean.getEstimateCosts());
+			
+			if (bean.getEstimateCosts() != null) {
+				List<IEstimateCost> estimateCosts = bean.getEstimateCosts();
+				List<IEstimateCost> savedCosts = new ArrayList<>();
+				for (IEstimateCost cost : estimateCosts) {
+					savedCosts.add(estimateCost.save((EstimateCost)cost));
+				}
+				le.setEstimateCosts(savedCosts);
+			}
+			
 			le.setEstimateHead(bean.getEstimateHead());
 			le.setHistory(bean.getHistory());
-			le.setId(bean.getId());
 			le.setName(bean.getName());
 			le.setObjectEstimate(bean.getObjectEstimate());
-			le.setStage(bean.getStage());
+			
 			le.setStatus(bean.getStatus());
 			le.setWorks(bean.getWorks());
 			
