@@ -285,6 +285,7 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 			NodeWrapper parentNode = new NodeWrapper(LocalEstimate.class.getSimpleName());
 			parentNode.setId(localEstimatesTreeGrid.getSelectedGridItem().getId());
 			costGrid.getGridDataProvider().setParentNode(parentNode);
+			costGrid.getGridDataProvider().refreshAll();
 			logger.debug("[SummaryEstimateCardComponent] onGridItemSelect");
 			localEstimateFieldsBinder.forField(comment).bind(ILocalEstimate::getComment, ILocalEstimate::setComment);
 			localEstimateFieldsBinder.readBean(localEstimatesTreeGrid.getSelectedGridItem());
@@ -351,6 +352,9 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 			setResizable(false);
 			setDraggable(false);
 			addStyleName("upload-info");
+			addCloseListener(event -> {
+				refreshLocalEstimatesGrid();
+			});
 			
 			final HorizontalLayout stateLayout = new HorizontalLayout();
 			stateLayout.setSpacing(true);

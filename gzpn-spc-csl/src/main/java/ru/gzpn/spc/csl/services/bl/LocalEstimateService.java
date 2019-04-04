@@ -272,7 +272,7 @@ public class LocalEstimateService implements ILocalEstimateService {
 		if (bean.getId() != null) {
 			ole = localEstimateRepository.findById(bean.getId());
 		} else if (bean.getCode() != null) {
-			ole = localEstimateRepository.findByCode(bean.getCode());
+			ole = localEstimateRepository.findByCode(bean.getCode()).or(() -> Optional.of((LocalEstimate)bean));
 		} else {
 			ole = Optional.of((LocalEstimate)bean);
 		}
@@ -303,7 +303,7 @@ public class LocalEstimateService implements ILocalEstimateService {
 				for (IEstimateCost cost : estimateCosts) {
 					savedCosts.add(estimateCost.save((EstimateCost)cost));
 				}
-				le.setEstimateCosts(savedCosts);
+				le.getEstimateCosts().addAll(savedCosts);
 			}
 			
 			le.setEstimateHead(bean.getEstimateHead());
