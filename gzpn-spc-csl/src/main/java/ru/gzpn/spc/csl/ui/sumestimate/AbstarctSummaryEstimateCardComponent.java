@@ -62,6 +62,7 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 	protected Button closeButton;
 	protected CssLayout calculationFieldsLayout;
 	protected Long estimateCalculationId;
+	protected String taskId;
 	
 	public abstract VerticalLayout createBodyLayout();
 	
@@ -73,6 +74,7 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 		this.user = userSettingsService.getCurrentUser();
 		this.estimateCalculationId = estimateCalculationId;
 		this.processService = service.getProcessService();
+		this.taskId = taskId;
 		
 		logger.debug("taskId= {} ", taskId);
 		logger.debug("user= {} ", user);
@@ -190,7 +192,7 @@ public abstract class AbstarctSummaryEstimateCardComponent extends VerticalLayou
 		sendForApprovalButton = new Button(getI18nText(I18N_SENDFORAPPROVALBUTTON_CAP, messageSource));
 		sendForApprovalButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		sendForApprovalButton.addClickListener(listener -> {
-
+			onSendForApproval();
 		});
 		return sendForApprovalButton;
 	}

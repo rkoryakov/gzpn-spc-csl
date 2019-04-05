@@ -48,8 +48,8 @@ public class AnalyticsComponent extends AbstractAnalyticsComponent {
 		Label caption = new Label(getI18nText(I18N_LASTWEEK_APPROVE_ESTIMATES_CALC_CAP, service.getMessageSource()));
 		layout.addComponent(caption);
 		HorizontalLayout horizontalLayout = new HorizontalLayout();		
-		approvedLastWeekEstimatesCalcPlot = createPlot(7, getI18nText(I18N_APPROVE_ESTIMATES_CALC_CAP, service.getMessageSource()),"600px", "300px");
-		rejectedLastWeekEstimatesCalcPlot = createPlot(7, getI18nText(I18N_REJECT_ESTIMATES_CALC_CAP, service.getMessageSource()), "600px", "300px");
+		approvedLastWeekEstimatesCalcPlot = createPlot(7, getI18nText(I18N_APPROVE_ESTIMATES_CALC_CAP, service.getMessageSource()),"600px", "300px", false);
+		rejectedLastWeekEstimatesCalcPlot = createPlot(7, getI18nText(I18N_REJECT_ESTIMATES_CALC_CAP, service.getMessageSource()), "600px", "300px", true);
 		rejectedLastWeekEstimatesCalcPlot.getState().color = "#FFA07A";
 		horizontalLayout.addComponents(approvedLastWeekEstimatesCalcPlot, rejectedLastWeekEstimatesCalcPlot);
 		
@@ -63,8 +63,8 @@ public class AnalyticsComponent extends AbstractAnalyticsComponent {
 		Label caption = new Label(getI18nText(I18N_LASTMONTH_APPROVE_ESTIMATES_CALC_CAP, service.getMessageSource()));
 		layout.addComponent(caption);
 		HorizontalLayout horizontalLayout = new HorizontalLayout();		
-		approvedLastMonthEstimatesCalcPlot = createPlot(30, getI18nText(I18N_APPROVE_ESTIMATES_CALC_CAP, service.getMessageSource()), "600px", "300px");
-		rejectedLastMonthEstimatesCalcPlot = createPlot(30, getI18nText(I18N_REJECT_ESTIMATES_CALC_CAP, service.getMessageSource()),  "600px", "300px");
+		approvedLastMonthEstimatesCalcPlot = createPlot(30, getI18nText(I18N_APPROVE_ESTIMATES_CALC_CAP, service.getMessageSource()), "600px", "300px", false);
+		rejectedLastMonthEstimatesCalcPlot = createPlot(30, getI18nText(I18N_REJECT_ESTIMATES_CALC_CAP, service.getMessageSource()),  "600px", "300px", true);
 		rejectedLastMonthEstimatesCalcPlot.getState().color = "#FFA07A";
 		horizontalLayout.addComponents(approvedLastMonthEstimatesCalcPlot, rejectedLastMonthEstimatesCalcPlot);
 		
@@ -72,10 +72,16 @@ public class AnalyticsComponent extends AbstractAnalyticsComponent {
 		return layout;
 	}
 	
-	private Flot createPlot(int days, String label, String width, String height) {
+	private Flot createPlot(int days, String label, String width, String height, boolean notApproved) {
 		Flot plot = new Flot(width, height);
+		//List<HistoricTaskInstance> listTasks = (int)service.getProcessService().getProcessEngine().getHistoryService().createHistoricTaskInstanceQuery().processDefinitionKey("EstimatesRegistration").list();
+		
 		
 		for (int i = 0; i < days; i ++) {
+//			Date closeDate = new Date (Instant.now().minus(Duration.ofDays(i)).getEpochSecond());
+//			for (HistoricTaskInstance task : listTasks) {
+//				if (task.getEndTime().before(when))
+//			}
 			plot.addSeries(Instant.now().minus(Duration.ofDays(i)).getEpochSecond()*1000, Math.random()*10);
 		}
 		

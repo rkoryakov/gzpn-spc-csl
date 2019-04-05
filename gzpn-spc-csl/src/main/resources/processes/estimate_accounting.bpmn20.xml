@@ -79,6 +79,7 @@
       <bpmn:outgoing>SequenceFlow_1nix34k</bpmn:outgoing>
       <bpmn:script>out:println "Set process variables";
       		isSsrApproved = false;
+      		isSsrCreated = false;
       		comments = "";
       </bpmn:script>
     </bpmn:scriptTask>

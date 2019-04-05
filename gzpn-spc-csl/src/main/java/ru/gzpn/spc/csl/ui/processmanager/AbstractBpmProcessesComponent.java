@@ -1,5 +1,9 @@
 package ru.gzpn.spc.csl.ui.processmanager;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.activiti.engine.history.HistoricProcessInstance;
@@ -18,6 +22,8 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import ru.gzpn.spc.csl.model.CProject;
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessManagerService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
@@ -203,7 +209,8 @@ public abstract class AbstractBpmProcessesComponent extends VerticalLayout imple
 			int result = 0;
 			if (historyProcessInstance != null) {
 				result = (int)service.getProcessService().getProcessEngine()
-							.getHistoryService().createHistoricTaskInstanceQuery().count();
+							.getHistoryService().createHistoricTaskInstanceQuery()
+								.processInstanceId(historyProcessInstance.getId()).count();
 			}
 			return result;
 		}
@@ -219,6 +226,8 @@ public abstract class AbstractBpmProcessesComponent extends VerticalLayout imple
 		private Button removeHistoricProcessButton;
 		
 		private AbstractBackEndDataProvider dataProvider;
+		private String cProjectCode;
+		private ICProject cProject;
 		
 		public ProcessPresenter(IProcessManagerService service, ProcessInstance processInstance, AbstractBackEndDataProvider dataProvider) {
 			this.service = service;
@@ -254,11 +263,29 @@ public abstract class AbstractBpmProcessesComponent extends VerticalLayout imple
 		}
 		
 		public String getProjectCode() {
-			return (String)
-					service.getProcessService().getProcessVariable(processInstance.getId(), IProcessService.CPROJECT_CODE);
-
+			if (cProjectCode == null) {
+				cProjectCode = (String) service.getProcessService().getProcessVariable(processInstance.getId(),
+						IProcessService.CPROJECT_CODE);
+			}
+			return cProjectCode;
 		}
 		
+		public ICProject getProject() {
+			if (cProject == null) { 
+				Optional<CProject> project = service.getProjectService().getCPRepository().findCProjectByCode(getProjectCode());
+				cProject = project.orElse(null);
+			}
+			return cProject;
+		}
+		
+		public String getProjectCaption() {
+			String result = "";
+			ICProject project = getProject();
+			if (project != null) {
+				result = project.getCode() + " - " + project.getName();
+			}
+			return result;
+		}
 		public String getHistoricProcessId() {
 			return historyProcessInstance.getId();
 		}
@@ -282,6 +309,7 @@ public abstract class AbstractBpmProcessesComponent extends VerticalLayout imple
 				completeButton.setIcon(VaadinIcons.STOP);
 				completeButton.setDescription("Завершить принудительно");
 				completeButton.setStyleName(ValoTheme.BUTTON_BORDERLESS);
+				completeButton.addStyleName(ValoTheme.BUTTON_LINK);
 				completeButton.addClickListener(clickEvent -> {
 					service.getProcessService().getProcessEngine()
 						.getRuntimeService().deleteProcessInstance(processInstance.getId(), "Принудительно завершен");
@@ -298,6 +326,7 @@ public abstract class AbstractBpmProcessesComponent extends VerticalLayout imple
 				removeHistoricProcessButton.setIcon(VaadinIcons.TRASH);
 				removeHistoricProcessButton.setDescription("Удалить из истории");
 				removeHistoricProcessButton.setStyleName(ValoTheme.BUTTON_BORDERLESS);
+				removeHistoricProcessButton.addStyleName(ValoTheme.BUTTON_LINK);
 				removeHistoricProcessButton.addClickListener(clickEvent -> {
 					service.getProcessService().getProcessEngine()
 						.getHistoryService().deleteHistoricProcessInstance(historyProcessInstance.getId());
@@ -327,6 +356,84 @@ public abstract class AbstractBpmProcessesComponent extends VerticalLayout imple
 			this.service = service;
 		}
 		
+		public String getExecutor() {
+			String result = null;
+			if (task != null) {
+				result = task.getAssignee();
+			} else if (historicTaskInstance != null) {
+				result = historicTaskInstance.getAssignee();
+			}
+			return result;
+		}
+		
+		public String getStatus() {
+			String result = null;
+			if (task != null) {
+				if (task.getAssignee() != null) {
+					result = "В работе";
+				} else if (task.isSuspended()) {
+					result = "Приостановлено";
+				} else {
+					result = "Ожидает назначения";
+				}
+			} else if (historicTaskInstance != null) {
+				result = "Завершено";
+			}
+			return result;
+		}
+		
+		public Date getCreateDate() {
+			Date result = null;
+			if (task != null) {
+				result = task.getCreateTime();
+			} else if (historicTaskInstance != null) {
+				result = historicTaskInstance.getCreateTime();
+			}
+			return result;
+		}
+		
+		public LocalDateTime getCreateLocalDateTime() {
+			LocalDateTime result = null;
+			if (getCreateDate() != null) {
+				result = LocalDateTime.ofInstant(getCreateDate().toInstant(), ZoneId.systemDefault());
+			}
+			return result;
+		}
+		
+		public Date getOpenDate() {
+			Date result = null;
+			if (task != null) {
+				result = task.getClaimTime();
+			} else if (historicTaskInstance != null) {
+				result = historicTaskInstance.getClaimTime();
+			}
+			return result;
+		}
+		
+		public LocalDateTime getOpenLocalDateTime() {
+			LocalDateTime result = null;
+			if (getOpenDate() != null) {
+				result = LocalDateTime.ofInstant(getOpenDate().toInstant(), ZoneId.systemDefault());
+			}
+			return result;
+		}
+		
+		public Date getCloseDate() {
+			Date result = null;
+			if (historicTaskInstance != null) {
+				result = historicTaskInstance.getEndTime();
+			}
+			return result;
+		}
+
+		public LocalDateTime getCloseLocalDateTime() {
+			LocalDateTime result = null;
+			if (getCloseDate() != null) {
+				result = LocalDateTime.ofInstant(getCloseDate().toInstant(), ZoneId.systemDefault());
+			}
+			return result;
+		}
+		
 		public String getTaskId() {
 			return task.getId();
 		}
@@ -342,13 +449,14 @@ public abstract class AbstractBpmProcessesComponent extends VerticalLayout imple
 		public String getHistoricTaskDefName() {
 			return historicTaskInstance.getName();
 		}
-		
+	
 		public Button getCompleteButton() {
 			if (completeButton == null) {
 				completeButton = new Button();
 				completeButton.setIcon(VaadinIcons.STOP);
 				completeButton.setDescription("Завершить принудительно");
 				completeButton.setStyleName(ValoTheme.BUTTON_BORDERLESS);
+				completeButton.addStyleName(ValoTheme.BUTTON_LINK);
 			}
 			
 			return completeButton;
@@ -360,6 +468,7 @@ public abstract class AbstractBpmProcessesComponent extends VerticalLayout imple
 				removeHistoricTaskButton.setIcon(VaadinIcons.TRASH);
 				removeHistoricTaskButton.setDescription("Удалить из истории");
 				removeHistoricTaskButton.setStyleName(ValoTheme.BUTTON_BORDERLESS);
+				removeHistoricTaskButton.addStyleName(ValoTheme.BUTTON_LINK);
 			}
 			return removeHistoricTaskButton;
 		}

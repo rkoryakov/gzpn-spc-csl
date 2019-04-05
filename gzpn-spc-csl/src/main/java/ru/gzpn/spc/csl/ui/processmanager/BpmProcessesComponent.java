@@ -2,11 +2,15 @@ package ru.gzpn.spc.csl.ui.processmanager;
 
 import java.util.Optional;
 
+import com.vaadin.data.Binder;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.DateTimeField;
+import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
@@ -29,6 +33,12 @@ public class BpmProcessesComponent extends AbstractBpmProcessesComponent {
 	private VerticalLayout completedProcTasksLayout;
 	private VerticalLayout propertiesPanelLayout;
 	private Panel propertiesPanel;
+	private TextField executorField;
+	private TextField statusField;
+	private Binder<TaskPresenter> propertiesFieldsBinder;
+	private DateTimeField createDate;
+	private DateTimeField openDate;
+	private DateTimeField closeDate;
 
 	public BpmProcessesComponent(IUIService service) {
 		super(service);
@@ -44,7 +54,7 @@ public class BpmProcessesComponent extends AbstractBpmProcessesComponent {
 
 	public Component createHorizontalSplitPanel() {
 		horizontalSplitPanel = new HorizontalSplitPanel();
-		horizontalSplitPanel.setSplitPosition(35f, Unit.PERCENTAGE);
+		horizontalSplitPanel.setSplitPosition(40f, Unit.PERCENTAGE);
 		horizontalSplitPanel.setFirstComponent(createProcTasksPanel());
 		horizontalSplitPanel.setSecondComponent(createBpmPanel());
 		return horizontalSplitPanel;
@@ -76,7 +86,7 @@ public class BpmProcessesComponent extends AbstractBpmProcessesComponent {
 		activeProcessesDataProvider = new ActiveProcessesDataProvider(service);
 		activeProcessesGrid.setDataProvider(activeProcessesDataProvider);
 		activeProcessesGrid.addColumn(ProcessPresenter::getProcessId).setCaption("Ид.").setWidth(110);
-		activeProcessesGrid.addColumn(ProcessPresenter::getProjectCode).setCaption("Проект");
+		activeProcessesGrid.addColumn(ProcessPresenter::getProjectCaption).setCaption("Проект");
 		activeProcessesGrid.addComponentColumn(ProcessPresenter::getCompleteButton).setWidth(90);
 		activeProcessesGrid.setSizeFull();
 		activeProcessesGrid.addSelectionListener(selectEvent -> {
@@ -117,6 +127,13 @@ public class BpmProcessesComponent extends AbstractBpmProcessesComponent {
 		activeTasksGrid.addColumn(TaskPresenter::getTaskDefName).setCaption("Задача");
 		activeTasksGrid.addComponentColumn(TaskPresenter::getCompleteButton).setWidth(90);
 		activeTasksGrid.setSizeFull();
+		activeTasksGrid.addSelectionListener(selectEvent -> {
+			Optional<TaskPresenter> selectedItem = selectEvent.getFirstSelectedItem();
+			if (selectedItem.isPresent()) {
+				propertiesFieldsBinder.readBean(selectedItem.get());
+				bpmnViewerComponent.highlight(selectedItem.get().getTaskId());
+			}
+		});
 		return activeTasksGrid;
 	}
 
@@ -128,11 +145,19 @@ public class BpmProcessesComponent extends AbstractBpmProcessesComponent {
 		completedTasksGrid.addColumn(TaskPresenter::getHistoricTaskDefName).setCaption("Задача");
 		completedTasksGrid.addComponentColumn(TaskPresenter::getRemoveHistoricTaskButton).setWidth(90);
 		completedTasksGrid.setSizeFull();
+		completedTasksGrid.addSelectionListener(selectEvent -> {
+			Optional<TaskPresenter> selectedItem = selectEvent.getFirstSelectedItem();
+			if (selectedItem.isPresent()) {
+				propertiesFieldsBinder.readBean(selectedItem.get());
+				bpmnViewerComponent.highlightHistoric(selectedItem.get().getHistoricTaskId());
+			}
+		});
 		return completedTasksGrid;
 	}
 	
 	public Component createBpmPanel() {
 		bpmVerticalLayout = new VerticalLayout();
+		bpmVerticalLayout.setMargin(false);
 		bpmVerticalLayout.addComponent(createBpmViewer());
 		bpmVerticalLayout.addComponent(createTaskPropertiesPanel());
 //		bpmVerticalLayout.setExpandRatio(bpmVerticalLayout.getComponent(0), 3.0f);
@@ -149,6 +174,40 @@ public class BpmProcessesComponent extends AbstractBpmProcessesComponent {
 	public Component createTaskPropertiesPanel() {
 		propertiesPanel = new Panel("Атрибуты задачи");		
 		propertiesPanel.setSizeFull();
+		propertiesFieldsBinder = new Binder<>();
+		FormLayout formLayout = new FormLayout();
+		formLayout.setSizeFull();
+		formLayout.setMargin(true);
+		propertiesPanel.setContent(formLayout);
+		
+		executorField = new TextField();
+		executorField.setCaption("Ответственный пользователь");
+		executorField.setReadOnly(true);
+		statusField = new TextField();
+		statusField.setCaption("Статус задачи");
+		statusField.setReadOnly(true);
+		createDate = new DateTimeField();
+		createDate.setCaption("Дата создания задачи");
+		createDate.setReadOnly(true);
+		openDate = new DateTimeField();
+		openDate.setCaption("Дата открытия задачи");
+		openDate.setReadOnly(true);
+		closeDate = new DateTimeField();
+		closeDate.setCaption("Дата закрытия задачи");
+		closeDate.setReadOnly(true);
+		
+		formLayout.addComponent(executorField);
+		formLayout.addComponent(statusField);
+		formLayout.addComponent(createDate);
+		formLayout.addComponent(openDate);
+		formLayout.addComponent(closeDate);
+	
+		propertiesFieldsBinder.forField(executorField).bind(TaskPresenter::getExecutor, null);
+		propertiesFieldsBinder.forField(statusField).bind(TaskPresenter::getStatus, null);
+		propertiesFieldsBinder.forField(createDate).bind(TaskPresenter::getCreateLocalDateTime, null);
+		propertiesFieldsBinder.forField(openDate).bind(TaskPresenter::getOpenLocalDateTime, null);
+		propertiesFieldsBinder.forField(closeDate).bind(TaskPresenter::getCloseLocalDateTime, null);
+		
 		return propertiesPanel;
 	}
 }

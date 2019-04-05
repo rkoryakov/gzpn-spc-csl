@@ -7,4 +7,5 @@ import ru.gzpn.spc.csl.model.interfaces.IStage;
 
 public interface StageRepository extends BaseRepository<Stage> {
 	public List<IStage> findByName(String stage);
+	public IStage findByCode(String code);
 }

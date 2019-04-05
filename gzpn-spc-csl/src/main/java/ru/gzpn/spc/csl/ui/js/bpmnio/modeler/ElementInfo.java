@@ -1,13 +1,19 @@
-package ru.gzpn.spc.csl.ui.js.bpmnio;
+package ru.gzpn.spc.csl.ui.js.bpmnio.modeler;
 
 import java.io.Serializable;
+import java.util.Date;
 
+@SuppressWarnings("serial")
 public class ElementInfo implements Serializable {
 		public String elementId;
 		public String user;
 		public String role;
 		public String status;
 		public String comment;
+		public Date createDate;
+		public Date openDate;
+		public Date closeDate;
+		
 		public boolean isActive;
 		public boolean isCompleted;
 		

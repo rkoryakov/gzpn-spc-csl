@@ -23,7 +23,7 @@ import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.SummaryEstimateCardSettingsJson;
-import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCost;
+import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
@@ -34,18 +34,18 @@ import ru.gzpn.spc.csl.ui.common.AbstractTreeGridSettingsWindow;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
 
 @SuppressWarnings("serial")
-public class LocalEstimatesTreeGridComponent extends AbstractTreeGridComponent<IEstimateCost> {
+public class LocalEstimatesTreeGridComponent extends AbstractTreeGridComponent<ILocalEstimatePresenter> {
 
 	private static final String I18N_ADDITEMBUTTON_DESC = "LocalEstimatesTreeGridComponent.addItemButton.desc";
 	private static final String I18N_REMOVEITEMBUTTON_DESC = "LocalEstimatesTreeGridComponent.removeItemButton.desc";
 	private boolean treeVisibility = false;
-	private AbstractRegistryDataProvider<IEstimateCost, Void> gridDataProvider;
+	private AbstractRegistryDataProvider<ILocalEstimatePresenter, Void> gridDataProvider;
 	private ProjectTreeDataProvider treeDataProvider;
 	private Button addItemButton;
 	private Button removeItemButton;
 	
 	public LocalEstimatesTreeGridComponent(IProjectService treeDataService,
-			IDataService<ILocalEstimate, IEstimateCost> gridDataService, IUserSettigsService userSettingsService) {
+			IDataService<ILocalEstimate, ILocalEstimatePresenter> gridDataService, IUserSettigsService userSettingsService) {
 		super(treeDataService, gridDataService, userSettingsService);
 	}
 
@@ -59,7 +59,7 @@ public class LocalEstimatesTreeGridComponent extends AbstractTreeGridComponent<I
 	}
 
 	@Override
-	public AbstractRegistryDataProvider<IEstimateCost, ?> getGridDataProvider() {
+	public AbstractRegistryDataProvider<ILocalEstimatePresenter, ?> getGridDataProvider() {
 		if (gridDataProvider == null) {
 			gridDataProvider = new LocalEstimateDataProvider((ILocalEstimateService)gridDataService);
 		}
@@ -131,67 +131,67 @@ public class LocalEstimatesTreeGridComponent extends AbstractTreeGridComponent<I
 	public void createGridColumn(ColumnSettings column) {
 		switch (column.getEntityFieldName()) {		
 		case ILocalEstimate.FIELD_NAME:
-			createGridColumn(column, IEstimateCost::getName, ILocalEstimate.FIELD_NAME)
-				.setEditorComponent(new TextField(), IEstimateCost::setName).setEditable(true);
+			createGridColumn(column, ILocalEstimatePresenter::getName, ILocalEstimate.FIELD_NAME)
+				.setEditorComponent(new TextField(), ILocalEstimatePresenter::setName).setEditable(true);
 			break;
 		case ILocalEstimate.FIELD_CODE:
-			createGridColumn(column, IEstimateCost::getCode, ILocalEstimate.FIELD_CODE)
-				.setEditorComponent(new TextField(), IEstimateCost::setCode).setEditable(true);
+			createGridColumn(column, ILocalEstimatePresenter::getCode, ILocalEstimate.FIELD_CODE)
+				.setEditorComponent(new TextField(), ILocalEstimatePresenter::setCode).setEditable(true);
 			break;
 		case ILocalEstimate.FIELD_STAGE:
-			createGridColumn(column, IEstimateCost::getStage, ILocalEstimate.FIELD_STAGE)
+			createGridColumn(column, ILocalEstimatePresenter::getStage, ILocalEstimate.FIELD_STAGE)
 				.setEditorComponent(new ComboBox<IStage>("", treeDataService.getStagesRepository()
 																.findAll().stream().map(item -> (IStage)item)
 																		.collect(Collectors.toList())), 
-																			IEstimateCost::setStage).setEditable(true);
+						ILocalEstimate::setStage).setEditable(true);
 			break;
 		case ILocalEstimate.FIELD_STATUS:
-			createGridColumn(column, IEstimateCost::getStatus, ILocalEstimate.FIELD_STATUS);
+			createGridColumn(column, ILocalEstimate::getStatus, ILocalEstimate.FIELD_STATUS);
 			break;
 		case ILocalEstimate.FIELD_CHANGEDBY:
-			createGridColumn(column, IEstimateCost::getChangeDatePresenter, ILocalEstimate.FIELD_CHANGE_DATE);
+			createGridColumn(column, ILocalEstimate::getChangeDate, ILocalEstimate.FIELD_CHANGE_DATE);
 			break;
 		case ILocalEstimate.FIELD_COMMENT:
-			createGridColumn(column, IEstimateCost::getComment, ILocalEstimate.FIELD_COMMENT)
-				.setEditorComponent(new TextField(), IEstimateCost::setComment).setEditable(true);
+			createGridColumn(column, ILocalEstimate::getComment, ILocalEstimate.FIELD_COMMENT)
+				.setEditorComponent(new TextField(), ILocalEstimate::setComment).setEditable(true);
 			break;
 		case ILocalEstimate.FIELD_DOCUMENT:
-			createGridColumn(column, IEstimateCost::getDocumentCaption, ILocalEstimate.FIELD_DOCUMENT);
+			createGridColumn(column, ILocalEstimatePresenter::getDocumentCaption, ILocalEstimate.FIELD_DOCUMENT);
 			break;
 		case ILocalEstimate.FIELD_DRAWING:
-			createGridColumn(column, IEstimateCost::getDrawing, ILocalEstimate.FIELD_DRAWING);
+			createGridColumn(column, ILocalEstimate::getDrawing, ILocalEstimate.FIELD_DRAWING);
 			break;
 		case ILocalEstimate.FIELD_ESTIMATEHEAD:
-			createGridColumn(column, IEstimateCost::getEstimateHeadCaption, ILocalEstimate.FIELD_ESTIMATEHEAD);
+			createGridColumn(column, ILocalEstimatePresenter::getEstimateHeadCaption, ILocalEstimate.FIELD_ESTIMATEHEAD);
 			break;
 		case ILocalEstimate.FIELD_ESTIMATECALCULATION:
-			createGridColumn(column, IEstimateCost::getEstimateCalculationCaption, ILocalEstimate.FIELD_ESTIMATECALCULATION);
+			createGridColumn(column, ILocalEstimatePresenter::getEstimateCalculationCaption, ILocalEstimate.FIELD_ESTIMATECALCULATION);
 			break;
 		case ILocalEstimate.FIELD_OBJECTESTIMATE:
-			createGridColumn(column, IEstimateCost::getObjectEstimateCaption, ILocalEstimate.FIELD_OBJECTESTIMATE);
+			createGridColumn(column, ILocalEstimatePresenter::getObjectEstimateCaption, ILocalEstimate.FIELD_OBJECTESTIMATE);
 			break;
 		case ILocalEstimate.FIELD_ID:
-			createGridColumn(column, IEstimateCost::getId, ILocalEstimate.FIELD_ID);
+			createGridColumn(column, ILocalEstimate::getId, ILocalEstimate.FIELD_ID);
 			break;
 		case ILocalEstimate.FIELD_VERSION:
-			createGridColumn(column, IEstimateCost::getVersion, ILocalEstimate.FIELD_VERSION);
+			createGridColumn(column, ILocalEstimate::getVersion, ILocalEstimate.FIELD_VERSION);
 			break;
 		case ILocalEstimate.FIELD_CREATE_DATE:
-			createGridColumn(column, IEstimateCost::getCreateDatePresenter, ILocalEstimate.BASE_FIELD_CREATE_DATE);
+			createGridColumn(column, ILocalEstimatePresenter::getCreateDatePresenter, ILocalEstimate.BASE_FIELD_CREATE_DATE);
 			break;
 		case ILocalEstimate.FIELD_CHANGE_DATE:
-			createGridColumn(column, IEstimateCost::getChangeDatePresenter, ILocalEstimate.BASE_FIELD_CHANGE_DATE);
+			createGridColumn(column, ILocalEstimatePresenter::getChangeDatePresenter, ILocalEstimate.BASE_FIELD_CHANGE_DATE);
 			break;
 			default:
 		}
 		
 	}
 
-	public <T> Column<IEstimateCost, T> createGridColumn(ColumnSettings columnSettings, 
-													ValueProvider<IEstimateCost, T> provider, 
+	public <T> Column<ILocalEstimatePresenter, T> createGridColumn(ColumnSettings columnSettings, 
+													ValueProvider<ILocalEstimatePresenter, T> provider, 
 													String field) {
 		
-		Column<IEstimateCost, T> column = this.grid.addColumn(provider);
+		Column<ILocalEstimatePresenter, T> column = this.grid.addColumn(provider);
 		column.setSortProperty(columnSettings.getEntityFieldName());
 		column.setSortable(true);
 		column.setCaption(Entities.getEntityFieldText(field, messageSource));
@@ -248,9 +248,7 @@ public class LocalEstimatesTreeGridComponent extends AbstractTreeGridComponent<I
 	}
 	
 	@Override
-	public void saveGridItem(IEstimateCost item) {
+	public void saveGridItem(ILocalEstimatePresenter item) {
 		gridDataService.save(item);
-		
 	}
-
 }

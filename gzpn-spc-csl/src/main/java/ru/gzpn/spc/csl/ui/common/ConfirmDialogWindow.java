@@ -11,6 +11,11 @@ import com.vaadin.ui.themes.ValoTheme;
 @SuppressWarnings("serial")
 public class ConfirmDialogWindow extends Window {
 
+	public static final String I18N_CONFIRM_MESSAGE = "ConfirmDialogWindow.confirmMessage";
+	public static final String I18N_YES = "ConfirmDialogWindow.yes";
+	public static final String I18N_CANCEL = "ConfirmDialogWindow.cancel";
+	public static final String I18N_SEND_SSR_FOR_APPROVAL = "ConfirmDialogWindow.sendSsrForApproval";
+	
 	private Button okButton;
 	private Button closeButton;
 	private VerticalLayout body;

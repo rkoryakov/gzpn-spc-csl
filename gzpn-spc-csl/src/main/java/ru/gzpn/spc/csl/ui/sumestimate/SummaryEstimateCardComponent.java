@@ -3,6 +3,8 @@ package ru.gzpn.spc.csl.ui.sumestimate;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Optional;
 
 import com.vaadin.data.Binder;
@@ -41,6 +43,7 @@ import ru.gzpn.spc.csl.model.presenters.interfaces.IEstimateCalculationPresenter
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ISummaryEstimateCardService;
+import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
 import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.common.data.imp.LocalEstimateExcelParser;
 
@@ -68,7 +71,6 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	
 	public static final String XLS_MIME = "application/vnd.ms-excel";
 	public static final String XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
 	
 	
 	private CssLayout calculationFieldsLayout;
@@ -93,18 +95,37 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	private LocalEstimatesTreeGridComponent objectEstimatesTreeGrid;
 
 	private VerticalLayout localEstimatesFeautures;
-
 	private TabSheet localEstimateFeautureTabSheet;
-
 	private ISummaryEstimateCardService estimateCardService;
-
 	private CostsTreeGridComponent costGrid;
-
 	private TextArea comment;
 
 	
 	public SummaryEstimateCardComponent(ISummaryEstimateCardService service, Long estimateCalculationId, String taskId) {
 		super(service, estimateCalculationId, taskId);
+		createEventListeners();
+	}
+
+	private void createEventListeners() {
+		addOnSendForApprovalListener(event -> {			
+			getUI().addWindow((new ConfirmDialogWindow(getI18nText(ConfirmDialogWindow.I18N_CONFIRM_MESSAGE, messageSource),
+					getI18nText(ConfirmDialogWindow.I18N_SEND_SSR_FOR_APPROVAL, messageSource), 
+					getI18nText(ConfirmDialogWindow.I18N_YES, messageSource), 
+					getI18nText(ConfirmDialogWindow.I18N_CANCEL, messageSource),
+					confirmClickEvent -> {
+						(new Thread() {
+							@Override
+							public void run() {
+								processService.completeTask(taskId);
+							}
+						}).start();
+						Notification notification = new Notification("Отправлено на согласование",
+								"Процесс регистрации смет переходит к следующему шагу - Согласование сметного расчета в НТЦ",
+								Type.TRAY_NOTIFICATION);
+						notification.setDelayMsec(8000);
+						notification.show(getUI().getPage());
+					})));
+		});
 	}
 
 	@Override
@@ -264,9 +285,10 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 			NodeWrapper parentNode = new NodeWrapper(LocalEstimate.class.getSimpleName());
 			parentNode.setId(localEstimatesTreeGrid.getSelectedGridItem().getId());
 			costGrid.getGridDataProvider().setParentNode(parentNode);
-			
-			localEstimateFieldsBinder.readBean(localEstimatesTreeGrid.getSelectedGridItem());
+			costGrid.getGridDataProvider().refreshAll();
+			logger.debug("[SummaryEstimateCardComponent] onGridItemSelect");
 			localEstimateFieldsBinder.forField(comment).bind(ILocalEstimate::getComment, ILocalEstimate::setComment);
+			localEstimateFieldsBinder.readBean(localEstimatesTreeGrid.getSelectedGridItem());
 		});
 		
 		createUpoadFileTarget(localEstimatesTreeGrid);
@@ -311,6 +333,10 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		public static final String I18N_UPLOADCANCLEBTN_CAP = "SummaryEstimateCardComponent.uploadProgressWindow.cancelButton.cap";
 		public static final String I18N_UPLOADTOBACKBTN_CAP = "SummaryEstimateCardComponent.uploadProgressWindow.toBackgroundButton.cap";
 		public static final String I18N_UPLOADPROGRESSLABEL = "SummaryEstimateCardComponent.uploadProgressWindow.uploadingProgress.cap";
+		public static final String I18N_TOBACKGROUNDNOTIFICATION_CAP = "SummaryEstimateCardComponent.uploadProgressWindow.toBackgroundNotification.cap";
+		public static final String I18N_TOBACKGROUNDNOTIFICATION_DES = "SummaryEstimateCardComponent.uploadProgressWindow.toBackgroundNotification.des";
+		public static final String I18N_SUCCESSFULYPROCESSED_CAP = "SummaryEstimateCardComponent.uploadProgressWindow.success.cap";
+		public static final String I18N_SUCCESSFULYPROCESSED_DES = "SummaryEstimateCardComponent.uploadProgressWindow.success.des";
 		
 		final ByteArrayOutputStream bas = new ByteArrayOutputStream();
 		
@@ -326,20 +352,25 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 			setResizable(false);
 			setDraggable(false);
 			addStyleName("upload-info");
+			addCloseListener(event -> {
+				refreshLocalEstimatesGrid();
+			});
 			
 			final HorizontalLayout stateLayout = new HorizontalLayout();
 			stateLayout.setSpacing(true);
 	        cancelButton = new Button(getI18nText(I18N_UPLOADCANCLEBTN_CAP, messageSource));
-	        toBackgroundButton = new Button(getI18nText(I18N_UPLOADTOBACKBTN_CAP, messageSource));
 	        cancelButton.addClickListener(event -> interrupted = true);
-	        
 	        cancelButton.setStyleName("small");
+	        
+	        toBackgroundButton = new Button(getI18nText(I18N_UPLOADTOBACKBTN_CAP, messageSource));
 	        toBackgroundButton.addClickListener(event -> {
-	        	Notification.show("Переключение в фоновый режим", "По завершению операции на Ваш E-mail будет отправлено уведомление.", Type.TRAY_NOTIFICATION);
+	        	Notification.show(getI18nText(I18N_TOBACKGROUNDNOTIFICATION_CAP, messageSource), 
+	        			getI18nText(I18N_TOBACKGROUNDNOTIFICATION_DES, messageSource), Type.TRAY_NOTIFICATION);
 	        	this.close();
 	        });
 	        toBackgroundButton.setEnabled(false);
 	        toBackgroundButton.setStyleName("small");
+	        
 	        stateLayout.addComponent(progressStateLabel);
 	        stateLayout.addComponent(cancelButton);
 	        stateLayout.addComponent(toBackgroundButton);
@@ -379,19 +410,36 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		@Override
 		public void streamingFinished(final StreamingEndEvent event) {
 			progressStateLabel.setValue(ProgressState.INPROGRESS.getText());
+			UI currentUi = UI.getCurrent();
 			toBackgroundButton.setEnabled(true);
+			
 			(new Thread(() -> {
+				LocalTime startTime = LocalTime.now();
 				ByteArrayInputStream inp = new ByteArrayInputStream(bas.toByteArray());
 				LocalEstimateExcelParser parser = new LocalEstimateExcelParser(inp);
-				parser.setOnProcess(() -> {uploadingProgress.setValue(0.5f + parser.getProcessed()/parser.getTotalAmount()*0.5f);});
-				for (int i = 1; i <= parser.getLastRow(); i ++) {
+				parser.setOnProcess(() -> {
+					logger.debug("[UploadProgressWindow] uploadingProgress " + (0.5f + (parser.getProcessed() / (float)parser.getTotalAmount())*0.5f) );
+					uploadingProgress.setValue(0.5f + parser.getProcessed() / (float)parser.getTotalAmount()*0.5f);
+				});
+				
+				logger.debug("[UploadProgressWindow] excel rows = " + parser.getLastRowNumber());
+				IEstimateCalculation calculation = estimateCardService.getEstimateCalculationService().getEstimateCalculation(estimateCalculationId).get();
+				for (int i = 1; i <= parser.getLastRowNumber(); i ++) {
 					Optional<LocalEstimate> le = parser.getBean(i);
 					if (le.isPresent()) {
-						
+						logger.debug("[UploadProgressWindow] load excel LS code = " + le.get().getCode());
+						// set current ssr
+						le.get().setEstimateCalculation(calculation);
+						estimateCardService.getLocalEstimateService().save(le.get());
 					}
 				}
 				
-				
+				Duration duration = Duration.between(startTime, LocalTime.now());
+				UI.setCurrent(currentUi);
+				Notification.show(getI18nText(I18N_SUCCESSFULYPROCESSED_CAP, messageSource),
+						getI18nText(I18N_SUCCESSFULYPROCESSED_DES, new Object[] {event.getFileName(), duration.toSeconds()}, messageSource), 
+						Type.TRAY_NOTIFICATION);
+				close();
 			})).start();
 		}
 		@Override

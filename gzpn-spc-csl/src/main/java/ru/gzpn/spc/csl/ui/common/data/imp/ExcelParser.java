@@ -32,7 +32,7 @@ public abstract class ExcelParser {
 		}
 	}
 	
-	public int getLastRow() {
+	public int getLastRowNumber() {
 		return lastRow;
 	}
 	

@@ -10,10 +10,10 @@ html, body, #canvas {
 	color: White;
 	border-radius: 5px;
 	font-family: Arial;
-	font-size: 12px;
+	font-size: 14px;
 	padding: 5px;
 	min-height: 16px;
-	width: 200px;
+	width: 230px;
 }
 
 .needs-discussion:not (.djs-connection ) .djs-visual>:nth-child(1) {
@@ -27,22 +27,22 @@ html, body, #canvas {
 }
 
 .completed-overlay {
-	background-color: blue; 
-	opacity: 0.3;
+	background-color: green; 
+	opacity: 0.4;
 	pointer-events: none;
 	border-radius: 5px;
 }
 
 .active-overlay {
 	background-color: green;
-	opacity: 0.3;
+	opacity: 0.1;
 	pointer-events: none;
 	border-radius: 5px;
 }
 
 .created-overlay {
 	background-color: yellow;
-	opacity: 0.3;
+	opacity: 0.2;
 	pointer-events: none;
 	border-radius: 5px;
 }

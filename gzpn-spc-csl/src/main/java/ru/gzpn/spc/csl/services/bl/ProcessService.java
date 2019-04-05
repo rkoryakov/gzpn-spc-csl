@@ -98,6 +98,11 @@ public class ProcessService implements IProcessService, Serializable {
 	}
 
 	@Override
+	public void completeTask(String taskId) {
+		taskService.complete(taskId);
+	}
+	
+	@Override
 	public boolean isAssigneeForTask(String taskId, String user) {
 		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 		return user.equals(task.getAssignee());
@@ -139,6 +144,9 @@ public class ProcessService implements IProcessService, Serializable {
 
 				String comment = " ";
 				if (taskRole == Role.EXPERT_ES_ROLE) {
+					comment = (String) runtimeService.getVariable(taskEntity.getProcessInstanceId(),
+							IProcessService.COMMENTS);
+				} else if (taskRole == Role.APPROVER_NTC_ROLE) {
 					comment = (String) runtimeService.getVariable(taskEntity.getProcessInstanceId(),
 							IProcessService.COMMENTS);
 				}

@@ -235,5 +235,47 @@ public class EstimateCost extends BaseEntity implements IEstimateCostPresenter, 
 	public void setEstimateProfit(BigDecimal estimateProfit) {
 		this.estimateProfit = estimateProfit;
 	}
+
+	@Override
+	public String getCreateDatePresenter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getChangeDatePresenter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getDocumentCaption() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getStageCaption() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEstimateCalculationCaption() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getObjectEstimateCaption() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEstimateHeadCaption() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

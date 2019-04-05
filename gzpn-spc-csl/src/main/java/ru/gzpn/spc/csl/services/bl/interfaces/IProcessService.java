@@ -12,6 +12,7 @@ public interface IProcessService {
 	public static final String DOCUMENTS = "documents";
 	public static final String ESTIMATES_FOR_APPROVAL = "estimatesForApproval";
 	public static final String SSR_IS_APPROVED = "isSsrApproved";
+	public static final String SSR_IS_CREATED = "isSsrCreated";
 	public static final String CPROJECT_CODE = "cprojectCode";
 	public static final String SSR_ID = "ssrId";
 	
@@ -21,5 +22,6 @@ public interface IProcessService {
 	Object getProcessVariableByTaskId(String taskId, String varName);
 	void setProcessVariable(String taskId, String varName, Object value);
 	Object getProcessVariable(String processInstanceId, String varName);
+	void completeTask(String taskId);
 	
 }

@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.js.bpmnio;
+package ru.gzpn.spc.csl.ui.js.bpmnio.modeler;
 
 import java.util.ArrayList;
 import java.util.List;
