@@ -27,7 +27,7 @@ import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCostService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.AbstractTreeGridComponent;
 import ru.gzpn.spc.csl.ui.common.AbstractTreeGridSettingsWindow;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
@@ -44,7 +44,7 @@ public class CostsTreeGridComponent extends AbstractTreeGridComponent<IEstimateC
 	private Button removeItemButton;
 	
 	public CostsTreeGridComponent(IProjectService treeDataService,
-			IDataService<IEstimateCost, IEstimateCost> gridDataService, IUserSettigsService userSettingsService) {
+			IDataService<IEstimateCost, IEstimateCost> gridDataService, IUserSettingsService userSettingsService) {
 		super(treeDataService, gridDataService, userSettingsService);
 	}
 

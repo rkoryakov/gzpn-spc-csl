@@ -32,6 +32,8 @@ public interface IEstimateCost extends IBaseEntity {
 	public static final String FIELD_OBJECTESTIMATE = ENTITYNAME_DOT + "objectEstimate";
 	public static final String FIELD_LOCALESTIMATE = ENTITYNAME_DOT + "localEstimate";
 	
+	public static final String FIELD_PRICELEVEL = ENTITYNAME_DOT + "priceLevel";
+	
 	/* Overridden fields */
 	public static final String FIELD_ID = ENTITYNAME_DOT + IBaseEntity.FIELD_ID;
 	public static final String FIELD_CHANGE_DATE = ENTITYNAME_DOT + IBaseEntity.FIELD_CHANGE_DATE;

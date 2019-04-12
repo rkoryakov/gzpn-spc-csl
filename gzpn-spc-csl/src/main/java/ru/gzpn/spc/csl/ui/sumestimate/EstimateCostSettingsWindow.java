@@ -9,7 +9,7 @@ import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.SummaryEstimateCardSettingsJson;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.AbstractTreeGridSettingsWindow;
 
 @SuppressWarnings("serial")
@@ -17,7 +17,7 @@ public class EstimateCostSettingsWindow extends AbstractTreeGridSettingsWindow {
 
 	private SummaryEstimateCardSettingsJson changedSummaryEstimateCardSettingsJson = null;
 	
-	public EstimateCostSettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
+	public EstimateCostSettingsWindow(IUserSettingsService settingsService, MessageSource messageSource) {
 		super(settingsService, messageSource);
 	}
 

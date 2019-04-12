@@ -3,30 +3,53 @@ package ru.gzpn.spc.csl.services.bl;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.vaadin.data.provider.QuerySortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 
+import ru.gzpn.spc.csl.model.Contract;
+import ru.gzpn.spc.csl.model.enums.ContractType;
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IContract;
+import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
-import ru.gzpn.spc.csl.model.presenters.interfaces.IContractPresenter;
+import ru.gzpn.spc.csl.model.presenters.interfaces.IDocumentPresenter;
 import ru.gzpn.spc.csl.model.repositories.ContractRepository;
-import ru.gzpn.spc.csl.services.bl.interfaces.IContractService;
+import ru.gzpn.spc.csl.model.repositories.DocumentRepository;
+import ru.gzpn.spc.csl.services.bl.interfaces.IContractCardService;
+import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 @Service
 @Transactional
-public class ContractService implements IContractService {
+public class ContractCardService implements IContractCardService {
 
 	@Autowired
 	ContractRepository contractRepository;
+	@Autowired 
+	MessageSource messageSource;
+	@Autowired
+	IUserSettingsService userSettingsService; 
+	@Autowired
+	IProcessService processService;
+	@Autowired
+	IProjectService projectService;
+	@Autowired
+	ILocalEstimateService estimatesService;
+	@Autowired
+	private DocumentRepository documentRepository;
 	
 	@Override
 	public List<IContract> getContracts() {
@@ -34,7 +57,12 @@ public class ContractService implements IContractService {
 	}
 	
 	@Override
-	public Comparator<IContractPresenter> getSortComparator(List<QuerySortOrder> list) {
+	public IContract getContract(Long id) {
+		return (IContract)contractRepository.getOne(id);
+	}
+	
+	@Override
+	public Comparator<IContract> getSortComparator(List<QuerySortOrder> list) {
 
 		return (a, b) -> {
 			int result = 0;
@@ -90,7 +118,7 @@ public class ContractService implements IContractService {
 	}
 	
 	
-	public static final class ContractFilter implements IGridFilter<IContractPresenter> {
+	public static final class ContractFilter implements IGridFilter<IContract> {
 		private String commonTextFilter;
 		
 		public ContractFilter() {
@@ -105,7 +133,7 @@ public class ContractService implements IContractService {
 			this.commonTextFilter = commonTextFilter.toLowerCase();
 		}
 
-		public Predicate<IContractPresenter> getFilterPredicate(List<ColumnSettings> shownColumns) {
+		public Predicate<IContract> getFilterPredicate(List<ColumnSettings> shownColumns) {
 			// only common filter is working now
 			return p -> {
 				boolean result = false;
@@ -126,8 +154,8 @@ public class ContractService implements IContractService {
 		private boolean applyColumnFilter(IContract contract, ColumnSettings column) {
 			boolean result = false;
 
-			if (contract instanceof IContractPresenter) {
-				IContractPresenter contractPresenter = (IContractPresenter)contract;
+			if (contract instanceof IContract) {
+				IContract contractPresenter = (IContract)contract;
 				switch (column.getEntityFieldName()) {
 				case IContract.FIELD_NAME:
 					result = contractPresenter.getName().toLowerCase().startsWith(commonTextFilter);
@@ -162,16 +190,52 @@ public class ContractService implements IContractService {
 				case IContract.FIELD_VERSION:
 					result = contractPresenter.getVersion().toString().toLowerCase().startsWith(commonTextFilter);
 					break;
-				case IContract.FIELD_CREATE_DATE:
-					result = contractPresenter.getCreateDatePresenter().toLowerCase().startsWith(commonTextFilter);
-					break;
-				case IContract.FIELD_CHANGE_DATE:
-					result = contractPresenter.getChangeDatePresenter().toLowerCase().startsWith(commonTextFilter);
-					break;
+				
 				default:
 				}
 			}
 			return result;
 		}
+	}
+
+
+	@Override
+	public MessageSource getMessageSource() {
+		return messageSource;
+	}
+
+	@Override
+	public IUserSettingsService getUserSettingsService() {
+		return userSettingsService;
+	}
+
+	@Override
+	public IProcessService getProcessService() {
+		return processService;
+	}
+	
+	@Override
+	public ILocalEstimateService getLocalEstimateService() {
+		return this.estimatesService;
+	}
+	
+	@Override
+	public IProjectService getProjectService() {
+		return this.projectService;
+	}
+	
+	@Override
+	public IContract createContract(Set<IDocumentPresenter> docs) {
+		IDocument firstDocument = docs.iterator().next();
+		
+		firstDocument = documentRepository.findById(firstDocument.getId()).get();
+		ICProject project = firstDocument.getWorkset().getPlanObject().getCproject();
+		
+		IContract contract = new Contract();
+		contract = contractRepository.save((Contract)contract);
+		contract.setCode(project.getCode() + "-" + contract.getId());
+		contract.setContractType(ContractType.CONTRACT);
+		contract.setProject(project);
+		return contract;
 	}
 }

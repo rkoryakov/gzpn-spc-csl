@@ -33,7 +33,7 @@ import ru.gzpn.spc.csl.model.repositories.EstimateCostRepository;
 import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
 import ru.gzpn.spc.csl.model.repositories.StageRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 
@@ -49,7 +49,7 @@ public class LocalEstimateService implements ILocalEstimateService {
 	@Autowired
 	private MessageSource messageSource;
 	@Autowired
-	private IUserSettigsService userSettings;
+	private IUserSettingsService userSettings;
 	@Autowired
 	StageRepository stageRepository;
 	@Autowired 

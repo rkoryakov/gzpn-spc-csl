@@ -15,6 +15,7 @@ public interface IProcessService {
 	public static final String SSR_IS_CREATED = "isSsrCreated";
 	public static final String CPROJECT_CODE = "cprojectCode";
 	public static final String SSR_ID = "ssrId";
+	public static final String CONTRACT_ID = "contractId";
 	
 	public ProcessInstance startEstimateAccountingProcess(Map<String, Object> processVariables);
 	public ProcessEngine getProcessEngine();

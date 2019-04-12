@@ -2,7 +2,7 @@ package ru.gzpn.spc.csl.services.bl.interfaces;
 
 import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
 
-public interface IUserSettigsService {
+public interface IUserSettingsService {
 
 	public ISettingsJson getCreateDocUserSettings(String userId);
 	ISettingsJson getCreateDocUserSettings(String userId, ISettingsJson defaultValue);
@@ -21,4 +21,7 @@ public interface IUserSettigsService {
 	
 	ISettingsJson getLocalEstimatesApprovalSettings(String userId, ISettingsJson defaultValue);
 	ISettingsJson getLocalEstimatesApprovalSettings(String userId);
+	
+	ISettingsJson getContractCardSettings(String userId, ISettingsJson defaultValue);
+	ISettingsJson getContractCardSettings(String userId);
 }

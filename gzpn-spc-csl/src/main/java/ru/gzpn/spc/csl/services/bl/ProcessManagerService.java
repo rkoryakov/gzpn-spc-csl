@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessManagerService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 
 @Service
 public class ProcessManagerService implements IProcessManagerService {
@@ -15,7 +15,7 @@ public class ProcessManagerService implements IProcessManagerService {
 	@Autowired
 	private MessageSource messageSource;
 	@Autowired
-	private IUserSettigsService userSettingsService;
+	private IUserSettingsService userSettingsService;
 	@Autowired
 	private IProcessService processService;
 	@Autowired
@@ -27,7 +27,7 @@ public class ProcessManagerService implements IProcessManagerService {
 	}
 
 	@Override
-	public IUserSettigsService getUserSettingsService() {
+	public IUserSettingsService getUserSettingsService() {
 		return this.userSettingsService;
 	}
 

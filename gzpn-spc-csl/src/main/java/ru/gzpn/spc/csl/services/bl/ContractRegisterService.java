@@ -5,24 +5,24 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractRegisterService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IContractService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IContractCardService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 
 @Service
 public class ContractRegisterService implements IContractRegisterService {
 
 	@Autowired
-	private IContractService contractService;
+	private IContractCardService contractService;
 	@Autowired
-	private IUserSettigsService userSettingsService;
+	private IUserSettingsService userSettingsService;
 	@Autowired
 	private MessageSource messageSource;
 	@Autowired
 	private IProcessService processService;
 	
 	@Override
-	public IContractService getContractService() {
+	public IContractCardService getContractService() {
 		return contractService;
 	}
 
@@ -32,7 +32,7 @@ public class ContractRegisterService implements IContractRegisterService {
 	}
 
 	@Override
-	public IUserSettigsService getUserSettingsService() {
+	public IUserSettingsService getUserSettingsService() {
 		return userSettingsService;
 	}
 

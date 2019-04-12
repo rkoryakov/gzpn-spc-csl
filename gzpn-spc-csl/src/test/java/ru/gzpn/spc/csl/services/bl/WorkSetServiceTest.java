@@ -18,14 +18,14 @@ import ru.gzpn.spc.csl.model.interfaces.IWorkSet;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class WorkSetServiceTest extends WorkSetService {
 	private static final int MAX_RESULTS = 100;
 	@Autowired
-	IUserSettigsService settings;
+	IUserSettingsService settings;
 	@Autowired 
 	IProjectService projetcService;
 	

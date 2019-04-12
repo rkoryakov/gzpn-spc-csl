@@ -15,6 +15,7 @@ public class ConfirmDialogWindow extends Window {
 	public static final String I18N_YES = "ConfirmDialogWindow.yes";
 	public static final String I18N_CANCEL = "ConfirmDialogWindow.cancel";
 	public static final String I18N_SEND_SSR_FOR_APPROVAL = "ConfirmDialogWindow.sendSsrForApproval";
+	public static final String I18N_SAVE_CONTRACT_CARD = "ConfirmDialogWindow.saveContractCard";
 	
 	private Button okButton;
 	private Button closeButton;

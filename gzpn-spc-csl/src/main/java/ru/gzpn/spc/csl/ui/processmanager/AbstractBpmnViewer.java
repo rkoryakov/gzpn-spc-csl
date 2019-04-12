@@ -13,14 +13,14 @@ import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessManagerService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.I18n;
 
 @SuppressWarnings("serial")
 public abstract class AbstractBpmnViewer extends VerticalLayout implements I18n {
 	protected IProcessManagerService service;
 	protected MessageSource messageSource;
-	protected IUserSettigsService userSettingsService;
+	protected IUserSettingsService userSettingsService;
 	protected String user;
 	protected VerticalLayout bodyLayout;
 	protected ProcessInstance processInstance;

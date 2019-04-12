@@ -30,11 +30,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.enums.MessageType;
 import ru.gzpn.spc.csl.model.enums.Role;
+import ru.gzpn.spc.csl.model.interfaces.IContract;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.presenters.interfaces.IDocumentPresenter;
+import ru.gzpn.spc.csl.services.bl.interfaces.IContractCardService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCalculationService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.services.bpm.ITaskNotificationService;
 import ru.gzpn.spc.csl.ui.views.CreateDocView;
 
@@ -56,9 +58,11 @@ public class ProcessService implements IProcessService, Serializable {
 	@Autowired
 	ITaskNotificationService notificationService;
 	@Autowired
-	IUserSettigsService userSettings;
+	IUserSettingsService userSettings;
 	@Autowired
 	IEstimateCalculationService estimateCalculationService;
+	@Autowired
+	IContractCardService contractService;
 	
 	@PostConstruct
 	public void initProcessEngine() {
@@ -87,6 +91,9 @@ public class ProcessService implements IProcessService, Serializable {
 		logger.debug("[startEstimateAccountingProcess] ssr = {}", ssr);
 		logger.debug("[startEstimateAccountingProcess] ssrId  = {}", ssr.getId());
 		logger.debug("[startEstimateAccountingProcess] user = {}", user);
+		
+		/* create contract */
+		IContract contract = contractService.createContract(docs);
 		
 		runtimeService.setVariable(instance.getId(), SSR_ID, ssr.getId());
 		runtimeService.setVariable(instance.getId(), CPROJECT_CODE, ssr.getProject().getCode());

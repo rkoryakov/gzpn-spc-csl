@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.ui.Notification;
 
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.views.TaskAlreadyAssignedView;
 import ru.gzpn.spc.csl.ui.views.TaskAlreadyClosedView;
 
@@ -23,7 +23,7 @@ public class UserTaskNavigator implements IUserTaskNavigator {
 	@Autowired
 	TaskService taskService;
 	@Autowired 
-	IUserSettigsService settingsService;
+	IUserSettingsService settingsService;
 	@Autowired
 	HistoryService historyService;
 	

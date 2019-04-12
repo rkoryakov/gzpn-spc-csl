@@ -47,7 +47,7 @@ import ru.gzpn.spc.csl.model.presenters.interfaces.IDocumentPresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.ICreateDocService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
 import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.common.JoinedLayout;
@@ -68,7 +68,7 @@ class WorkSetDocumentationComponent extends VerticalLayout implements I18n {
 	public static final double DOCUMENT_GRID_ROWS = 10;
 
 	private String currentUser;
-	private IUserSettigsService settingsService;
+	private IUserSettingsService settingsService;
 	private MessageSource messageSource;
 	private IDocumentService documentService;
 	private IProcessService processService;

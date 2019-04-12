@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 
 import ru.gzpn.spc.csl.model.interfaces.IUserSettings;
+import ru.gzpn.spc.csl.model.jsontypes.ContractCardSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.ContractsRegSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.EstimateCalculationsRegSettingsJson;
@@ -44,6 +45,9 @@ public class UserSettings extends BaseEntity implements IUserSettings, Serializa
 	@Column
 	@Type(type="LocalEstimatesApprovalJsonType")
 	private LocalEstimatesApprovalJson localEstimatesApprovalJson;
+	
+	@Type(type = "ContractCardSettingsJsonType")
+	private ContractCardSettingsJson cardSettingsJson;
 	
 	public UserSettings() {
 	}
@@ -107,6 +111,14 @@ public class UserSettings extends BaseEntity implements IUserSettings, Serializa
 	public void setLocalEstimatesApprovalJson(LocalEstimatesApprovalJson localEstimatesApprovalJson) {
 		this.localEstimatesApprovalJson = localEstimatesApprovalJson;
 	}
-	
-	
+
+	@Override
+	public ContractCardSettingsJson getContractCardSettingsJson() {
+		return cardSettingsJson;
+	}
+
+	@Override
+	public void setContractCardSettingsJson(ContractCardSettingsJson cardSettingsJson) {
+		this.cardSettingsJson = cardSettingsJson;
+	}
 }

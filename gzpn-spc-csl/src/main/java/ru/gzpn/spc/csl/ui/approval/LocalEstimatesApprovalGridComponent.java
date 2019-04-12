@@ -22,7 +22,7 @@ import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.AbstractTreeGridComponent;
 import ru.gzpn.spc.csl.ui.common.AbstractTreeGridSettingsWindow;
 
@@ -35,7 +35,7 @@ public class LocalEstimatesApprovalGridComponent extends AbstractTreeGridCompone
 	
 	public LocalEstimatesApprovalGridComponent(IProjectService treeDataService,
 			IDataService<? super ILocalEstimate, ILocalEstimatePresenter> gridDataService,
-			IUserSettigsService userSettingsService) {
+			IUserSettingsService userSettingsService) {
 		super(treeDataService, gridDataService, userSettingsService);
 	}
 

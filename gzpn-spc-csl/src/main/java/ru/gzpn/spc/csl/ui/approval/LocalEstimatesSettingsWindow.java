@@ -13,14 +13,14 @@ import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.LocalEstimatesApprovalJson;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.AbstractTreeGridSettingsWindow;
 
 @SuppressWarnings("serial")
 public class LocalEstimatesSettingsWindow extends AbstractTreeGridSettingsWindow {
 	private LocalEstimatesApprovalJson changedLocalEstimatesApprovalJson = null;
 	
-	public LocalEstimatesSettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
+	public LocalEstimatesSettingsWindow(IUserSettingsService settingsService, MessageSource messageSource) {
 		super(settingsService, messageSource);
 	}
 	

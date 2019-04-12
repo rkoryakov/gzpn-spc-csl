@@ -27,13 +27,13 @@ import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessManagerService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.I18n;
 
 public abstract class AbstractBpmProcessesComponent extends VerticalLayout implements I18n {
 	protected IProcessManagerService service;
 	protected MessageSource messageSource;
-	protected IUserSettigsService userSettingsService;
+	protected IUserSettingsService userSettingsService;
 	protected String user;
 	protected VerticalLayout bodyLayout;
 	

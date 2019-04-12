@@ -17,7 +17,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 
 public abstract class AbstractUiSettingsWindow extends Window implements I18n {
 
@@ -39,7 +39,7 @@ public abstract class AbstractUiSettingsWindow extends Window implements I18n {
 	public static final Action CLOSE_ACTION = new Action("closeAction");
 	public static final Action SAVE_AND_CLOSE_ACTION = new Action("save&closeAction");
 	
-	protected IUserSettigsService settingsService;
+	protected IUserSettingsService settingsService;
 	protected MessageSource messageSource;
 	protected String currentUser;
 	
@@ -59,7 +59,7 @@ public abstract class AbstractUiSettingsWindow extends Window implements I18n {
 	public abstract void refreshSettings();
 	
 	
-	public AbstractUiSettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
+	public AbstractUiSettingsWindow(IUserSettingsService settingsService, MessageSource messageSource) {
 		this.settingsService = settingsService;
 		this.currentUser = settingsService.getCurrentUser();
 		this.messageSource = messageSource;
