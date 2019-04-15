@@ -88,6 +88,8 @@ public class ProcessService implements IProcessService, Serializable {
 		@SuppressWarnings("unchecked")
 		Set<IDocumentPresenter> docs = (Set<IDocumentPresenter>) processVariables.get(DOCUMENTS);
 		IEstimateCalculation ssr = estimateCalculationService.createEstimateCalculationByDocuments(docs);
+		
+		/* TODO:  create contract card and set the variable  IProcessService.CONTRACT_ID */
 		logger.debug("[startEstimateAccountingProcess] ssr = {}", ssr);
 		logger.debug("[startEstimateAccountingProcess] ssrId  = {}", ssr.getId());
 		logger.debug("[startEstimateAccountingProcess] user = {}", user);

@@ -29,7 +29,7 @@ import ru.gzpn.spc.csl.ui.sumestimate.LocalEstimatesTreeGridComponent;
 @SuppressWarnings("serial")
 public class ContractCardComponent extends AbstarctContractCardComponent implements I18n {
 	
-	public static final String I18N_CONTRACTCARDFILEDS_CAP = "ContractCardComponent.fileds.cap";
+	public static final String I18N_CONTRACTCARDFILEDS_CAP = "ContractCardComponent.fields.cap";
 	
 	public static final String I18N_SAVED_NOTIFICATION_CAP = "ContractCardComponent.notifications.save.cap";
 	public static final String I18N_SAVED_NOTIFICATION_DES = "ContractCardComponent.notifications.save.des";
