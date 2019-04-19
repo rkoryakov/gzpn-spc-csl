@@ -47,7 +47,7 @@ public class UserSettings extends BaseEntity implements IUserSettings, Serializa
 	private LocalEstimatesApprovalJson localEstimatesApprovalJson;
 	
 	@Type(type = "ContractCardSettingsJsonType")
-	private ContractCardSettingsJson cardSettingsJson;
+	private ContractCardSettingsJson contractCardSettingsJson;
 	
 	public UserSettings() {
 	}
@@ -114,11 +114,11 @@ public class UserSettings extends BaseEntity implements IUserSettings, Serializa
 
 	@Override
 	public ContractCardSettingsJson getContractCardSettingsJson() {
-		return cardSettingsJson;
+		return contractCardSettingsJson;
 	}
 
 	@Override
 	public void setContractCardSettingsJson(ContractCardSettingsJson cardSettingsJson) {
-		this.cardSettingsJson = cardSettingsJson;
+		this.contractCardSettingsJson = cardSettingsJson;
 	}
 }

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.UserSettings;
 import ru.gzpn.spc.csl.model.interfaces.IUserSettings;
+import ru.gzpn.spc.csl.model.jsontypes.ContractCardSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.ContractsRegSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.EstimateCalculationsRegSettingsJson;
@@ -222,6 +223,8 @@ public class UserSettigsService implements IUserSettingsService {
 			settings.setSummaryEstimateCardSettingsJson((SummaryEstimateCardSettingsJson)settingsJson);
 		} else if (settingsJson instanceof LocalEstimatesApprovalJson) {
 			settings.setLocalEstimatesApprovalJson((LocalEstimatesApprovalJson)settingsJson);
+		} else if (settingsJson instanceof ContractCardSettingsJson) {
+			settings.setContractCardSettingsJson((ContractCardSettingsJson)settingsJson);
 		}
 	}
 }

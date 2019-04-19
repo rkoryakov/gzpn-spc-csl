@@ -60,11 +60,9 @@ public class LocalEstimateService implements ILocalEstimateService {
 		List<ILocalEstimate> result = new ArrayList<>();
 		if (calculationId != null) {
 			Optional<EstimateCalculation> c = estimateCalculationsRepository.findById(calculationId);
-			result = localEstimateRepository.findByEstimateCalculation(c.get());
-//			if (c.isPresent()) {
-//				result = c.get().getEstimates();
-//				Hibernate.initialize(result);
-//			}
+			if (c.isPresent()) {
+				result = localEstimateRepository.findByEstimateCalculation(c.get());
+			}
 		}
 		return result;
 	}

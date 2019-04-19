@@ -108,7 +108,7 @@ public class MainUI extends UI {
 				.collect(Collectors.toSet());
 		
 		if (taskId != null) {
-			navigateByTaskId(navigator, taskId);
+			taskNavigator.navigate(navigator, taskId);
 			
 		} else if (viewId != null) {
 			if (SummaryEstimateCardView.NAME.equals(viewId)) {
@@ -130,12 +130,6 @@ public class MainUI extends UI {
 			} else if (authorities.contains(Role.USER_ROLE.toString())) {
 				navigator.navigateTo(CreateDocView.NAME);
 			}
-		}
-	}
-
-	private void navigateByTaskId(Navigator navigator, String taskId) {
-		if (taskId != null) {
-			taskNavigator.navigate(navigator, taskId);
 		}
 	}
 	

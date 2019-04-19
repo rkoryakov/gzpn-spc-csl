@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -41,11 +42,11 @@ public class Contract extends BaseEntity implements IContract, Serializable {
 	private String executorBank;
 	private ContractType contractType;
 	
-	@OneToMany(targetEntity = Milestone.class)
+	@OneToMany(targetEntity = Milestone.class, fetch = FetchType.EAGER)
 	@JoinColumn(name = "cont_id", referencedColumnName = "id")
 	private List<IMilestone> milestones;
 
-	@OneToOne(targetEntity = CProject.class)
+	@OneToOne(targetEntity = CProject.class, fetch = FetchType.EAGER)
 	@JoinColumn(name = "cp_id", referencedColumnName = "id")
 	private ICProject project;
 	
@@ -139,7 +140,7 @@ public class Contract extends BaseEntity implements IContract, Serializable {
 	}
 	@Override
 	public ICProject getProject() {
-		return project;
+		return this.project;
 	}
 	@Override
 	public void setProject(ICProject project) {
@@ -151,7 +152,7 @@ public class Contract extends BaseEntity implements IContract, Serializable {
 		for (IMilestone m : getMilestones()) {
 			result = m.getStartDate().isBefore(result) ? m.getStartDate() : result;
 		}
-		return result;
+		return result.isEqual(LocalDate.MAX) ? LocalDate.now() : result;
 	}
 	@Override
 	public LocalDate getEndDate() {
@@ -159,7 +160,7 @@ public class Contract extends BaseEntity implements IContract, Serializable {
 		for (IMilestone m : getMilestones()) {
 			result = m.getStartDate().isAfter(result) ? m.getStartDate() : result;
 		}
-		return result;
+		return result.isEqual(LocalDate.MIN) ? LocalDate.now() : result;
 	}
 	
 	

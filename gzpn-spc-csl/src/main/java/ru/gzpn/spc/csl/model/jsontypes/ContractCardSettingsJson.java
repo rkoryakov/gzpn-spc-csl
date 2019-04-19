@@ -35,8 +35,8 @@ public class ContractCardSettingsJson implements ISettingsJson, Serializable {
 	public List<ColumnHeaderGroup> coefficientsColumnHeaders;
 	
 	public boolean showTree;
-	@JsonIgnore
-	public List<ColumnSettings> getMilestonrColumns() {
+	
+	public List<ColumnSettings> getMilestonesColumns() {
 		if (milestonesColumns == null) {
 			milestonesColumns = new ArrayList<>();
 			String milestones = Milestone.class.getSimpleName();
@@ -52,7 +52,6 @@ public class ContractCardSettingsJson implements ISettingsJson, Serializable {
 		return milestonesColumns;
 	}
 	
-	@JsonIgnore
 	public List<ColumnSettings> getLocalEstimatesColumns() {
 		if (localEstimatesColumns == null) {
 			localEstimatesColumns = new ArrayList<>();
@@ -85,8 +84,7 @@ public class ContractCardSettingsJson implements ISettingsJson, Serializable {
 		}
 		return localEstimatesColumns;
 	}
-
-	@JsonIgnore
+	
 	public NodeWrapper getMilestonesTreeGroup() {
 		if (milestonesTreeGroup == null) {
 			milestonesTreeGroup = new NodeWrapper("HProject", "name");
@@ -96,7 +94,6 @@ public class ContractCardSettingsJson implements ISettingsJson, Serializable {
 		return milestonesTreeGroup;
 	}
 	
-	@JsonIgnore
 	public NodeWrapper getLocalEstimatesTreeGroup() {
 		if (localEstimatesTreeGroup == null) {
 			localEstimatesTreeGroup = new NodeWrapper("HProject", "name");
@@ -104,6 +101,20 @@ public class ContractCardSettingsJson implements ISettingsJson, Serializable {
 					.addChild(new NodeWrapper("EstimateCost", "name"));
 		}
 		return localEstimatesTreeGroup;
+	}
+	
+	public List<ColumnHeaderGroup> getMilestonesColumnHeaders() {
+		if (milestonesColumnHeaders == null) {
+			milestonesColumnHeaders = new ArrayList<>();
+		}
+		return milestonesColumnHeaders;
+	}
+	
+	public List<ColumnHeaderGroup> getLocalEstimatesColumnHeaders() {
+		if (localEstimatesColumnHeaders == null) {
+			localEstimatesColumnHeaders = new ArrayList<>();
+		}
+		return localEstimatesColumnHeaders;
 	}
 	
 	@Override

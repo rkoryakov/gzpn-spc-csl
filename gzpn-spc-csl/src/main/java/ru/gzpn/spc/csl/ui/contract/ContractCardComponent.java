@@ -1,5 +1,8 @@
 package ru.gzpn.spc.csl.ui.contract;
 
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import com.vaadin.data.Binder;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.ComboBox;
@@ -15,7 +18,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.model.EstimateCalculation;
-import ru.gzpn.spc.csl.model.LocalEstimate;
 import ru.gzpn.spc.csl.model.enums.ContractType;
 import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IContract;
@@ -24,7 +26,6 @@ import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractCardService;
 import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
 import ru.gzpn.spc.csl.ui.common.I18n;
-import ru.gzpn.spc.csl.ui.sumestimate.LocalEstimatesTreeGridComponent;
 
 @SuppressWarnings("serial")
 public class ContractCardComponent extends AbstarctContractCardComponent implements I18n {
@@ -139,10 +140,10 @@ public class ContractCardComponent extends AbstarctContractCardComponent impleme
 		
 		IContractCardService service = (IContractCardService)this.service;
 		
-		IContract contract = service.getContract(contractCardId);
-
-		contractFieldsBinder.readBean(contract);
-		
+		Optional<IContract> contract = service.getContract(contractCardId);
+		if (contract.isPresent()) {
+			contractFieldsBinder.readBean(contract.get());
+		}
 		return panel;
 	}
 
@@ -168,14 +169,17 @@ public class ContractCardComponent extends AbstarctContractCardComponent impleme
 	}
 
 	public ComboBox<ContractType> createContractTypeField() {
-		contractTypeField = new ComboBox<>();
+		contractTypeField = new ComboBox<>("", ContractType.getAll());
 		contractFieldsBinder.forField(contractTypeField)
 				.bind(IContract::getContractType, IContract::setContractType);
 		return contractTypeField;
 	}
 
 	public ComboBox<ICProject> createProjectField() {
-		projectField = new ComboBox<>();
+		projectField = new ComboBox<>("", ((IContractCardService)service).getProjectService()
+				.getCPRepository().findAll().stream()
+					.map(item -> (ICProject)item)
+						.collect(Collectors.toList()));
 		contractFieldsBinder.forField(projectField)
 				.bind(IContract::getProject, IContract::setProject);
 		return projectField;
@@ -262,10 +266,11 @@ public class ContractCardComponent extends AbstarctContractCardComponent impleme
 																	 contractCardService.getLocalEstimateService(), 
 																	 contractCardService.getUserSettingsService());
 		localEstimatesTreeGrid.addOnGridItemSelect(itemSelect -> {
-			NodeWrapper parentNode = new NodeWrapper(LocalEstimate.class.getSimpleName());
+			//NodeWrapper parentNode = new NodeWrapper(LocalEstimate.class.getSimpleName());
 		
 		});
 		NodeWrapper parentNode = new NodeWrapper(EstimateCalculation.class.getSimpleName());
+		//contractFieldsBinder.getBean().getProject().get
 		parentNode.setId(this.contractCardId);
 		localEstimatesTreeGrid.getGridDataProvider().setParentNode(parentNode);
 		estimatesLayout.addComponent(localEstimatesTreeGrid);

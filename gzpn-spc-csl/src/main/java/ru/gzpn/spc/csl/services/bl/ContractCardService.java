@@ -3,6 +3,7 @@ package ru.gzpn.spc.csl.services.bl;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -57,8 +58,8 @@ public class ContractCardService implements IContractCardService {
 	}
 	
 	@Override
-	public IContract getContract(Long id) {
-		return (IContract)contractRepository.getOne(id);
+	public Optional<IContract> getContract(Long id) {
+		return contractRepository.findById(id).map(item -> (IContract)item);
 	}
 	
 	@Override

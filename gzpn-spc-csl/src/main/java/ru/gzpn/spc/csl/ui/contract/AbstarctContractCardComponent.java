@@ -18,6 +18,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
@@ -168,19 +169,18 @@ public abstract class AbstarctContractCardComponent extends VerticalLayout imple
 
 	public Component createSaveButton() {
 		saveButton = new Button(getI18nText(I18N_SAVEBUTTON_CAP, messageSource));
+		saveButton.setStyleName(ValoTheme.BUTTON_FRIENDLY);
 		saveButton.addClickListener(event -> {
-			
+			onSaveAction();
 		});
-		
 		return saveButton;
 	}
 	
 	public Component createCloseButton() {
 		closeButton = new Button(getI18nText(I18N_CLOSEBUTTON_CAP, messageSource));
 		closeButton.addClickListener(clickEvent -> {
-			
+			close();
 		});
-		
 		return closeButton;
 	}
 

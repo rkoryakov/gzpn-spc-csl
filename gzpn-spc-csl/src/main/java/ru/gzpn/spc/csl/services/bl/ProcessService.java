@@ -88,8 +88,7 @@ public class ProcessService implements IProcessService, Serializable {
 		@SuppressWarnings("unchecked")
 		Set<IDocumentPresenter> docs = (Set<IDocumentPresenter>) processVariables.get(DOCUMENTS);
 		IEstimateCalculation ssr = estimateCalculationService.createEstimateCalculationByDocuments(docs);
-		
-		/* TODO:  create contract card and set the variable  IProcessService.CONTRACT_ID */
+	
 		logger.debug("[startEstimateAccountingProcess] ssr = {}", ssr);
 		logger.debug("[startEstimateAccountingProcess] ssrId  = {}", ssr.getId());
 		logger.debug("[startEstimateAccountingProcess] user = {}", user);
@@ -99,6 +98,8 @@ public class ProcessService implements IProcessService, Serializable {
 		
 		runtimeService.setVariable(instance.getId(), SSR_ID, ssr.getId());
 		runtimeService.setVariable(instance.getId(), CPROJECT_CODE, ssr.getProject().getCode());
+		runtimeService.setVariable(instance.getId(), IProcessService.CONTRACT_ID, contract.getId());
+		
 		logger.debug("[startEstimateAccountingProcess] ssrId from process  = {}", runtimeService.getVariable(instance.getId(), "ssrId"));
 		/* complete */
 		taskService.complete(task.getId());		
