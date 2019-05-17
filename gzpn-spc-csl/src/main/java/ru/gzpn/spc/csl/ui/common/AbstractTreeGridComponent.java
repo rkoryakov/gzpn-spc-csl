@@ -40,7 +40,7 @@ import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
 import ru.gzpn.spc.csl.ui.createdoc.ProjectItemIconGenerator;
 
@@ -65,7 +65,7 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 	
 	protected IDataService<? super T, T> gridDataService;
 	protected IProjectService treeDataService;
-	protected IUserSettigsService userSettingsService;
+	protected IUserSettingsService userSettingsService;
 	protected MessageSource messageSource;
 	protected String user;
 	
@@ -92,7 +92,7 @@ public abstract class AbstractTreeGridComponent<T extends IBaseEntity> extends V
 	public abstract void createGridColumn(ColumnSettings column);
 	public abstract void saveGridItem(T item);
 	
-	public AbstractTreeGridComponent(IProjectService treeDataService, IDataService<? super T, T> gridDataService, IUserSettigsService userSettingsService) {
+	public AbstractTreeGridComponent(IProjectService treeDataService, IDataService<? super T, T> gridDataService, IUserSettingsService userSettingsService) {
 		this.treeDataService = treeDataService;
 		this.gridDataService = gridDataService;
 		this.userSettingsService = userSettingsService;

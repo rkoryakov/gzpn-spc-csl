@@ -17,7 +17,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 
 public abstract class ItemCreatingWindow extends Window implements I18n {
 	private static final long serialVersionUID = 1L;
@@ -30,7 +30,7 @@ public abstract class ItemCreatingWindow extends Window implements I18n {
 	public static final Action CLOSE_ACTION = new Action("closelAction");
 
 	private IUIService service;
-	private IUserSettigsService userSettingsService;
+	private IUserSettingsService userSettingsService;
 	protected MessageSource messageSource;
 	protected String user;
 	

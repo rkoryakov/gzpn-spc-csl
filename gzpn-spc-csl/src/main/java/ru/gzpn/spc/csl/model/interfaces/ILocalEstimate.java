@@ -67,5 +67,6 @@ public interface ILocalEstimate extends IBaseEntity {
 	
 	List<IEstimateCost> getEstimateCosts();
 	void setEstimateCosts(List<IEstimateCost> estimateCosts);
+	IMilestone getMilestone();
 	
 }

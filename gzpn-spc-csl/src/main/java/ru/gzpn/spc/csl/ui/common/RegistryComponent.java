@@ -25,7 +25,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.model.dataproviders.AbstractRegistryDataProvider;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.data.export.Exporter;
 
 public abstract class RegistryComponent extends VerticalLayout implements I18n {
@@ -48,7 +48,7 @@ public abstract class RegistryComponent extends VerticalLayout implements I18n {
 
 
 		protected IUIService service;
-		protected IUserSettigsService userSettingsService;
+		protected IUserSettingsService userSettingsService;
 		protected MessageSource messageSource;
 		protected String user;
 		

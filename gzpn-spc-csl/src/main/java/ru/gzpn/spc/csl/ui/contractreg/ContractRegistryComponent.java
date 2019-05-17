@@ -24,7 +24,6 @@ import ru.gzpn.spc.csl.model.interfaces.IContract;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.ContractsRegSettingsJson;
-import ru.gzpn.spc.csl.model.presenters.interfaces.IContractPresenter;
 import ru.gzpn.spc.csl.services.bl.interfaces.IContractRegisterService;
 import ru.gzpn.spc.csl.ui.common.AbstractTreeGridSettingsWindow;
 import ru.gzpn.spc.csl.ui.common.RegistryComponent;
@@ -32,7 +31,7 @@ import ru.gzpn.spc.csl.ui.common.RegistryComponent;
 @SuppressWarnings("serial")
 public class ContractRegistryComponent extends RegistryComponent {
 
-	private Grid<IContractPresenter> contractGrid;
+	private Grid<IContract> contractGrid;
 	private ContractDataProvider contractDataProvider;
 	private static final int CONTRACT_GRID_ROWS = 11;
 	
@@ -54,7 +53,7 @@ public class ContractRegistryComponent extends RegistryComponent {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public AbstractRegistryDataProvider<IContractPresenter, Void> getDataProvider() {
+	public AbstractRegistryDataProvider<IContract, Void> getDataProvider() {
 		if (contractDataProvider == null) {
 			contractDataProvider = new ContractDataProvider(((IContractRegisterService)service).getContractService());
 		}
@@ -63,7 +62,7 @@ public class ContractRegistryComponent extends RegistryComponent {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Grid<IContractPresenter> getRegisterGrid() {
+	public Grid<IContract> getRegisterGrid() {
 		return contractGrid;
 	}
 
@@ -186,24 +185,24 @@ public class ContractRegistryComponent extends RegistryComponent {
 	public void addContractGridColumn(ColumnSettings settings) {
 		switch (settings.getEntityFieldName()) {
 		case IContract.FIELD_CODE:
-			addContractGridColumn(settings, IContractPresenter::getCode, IContract.FIELD_CODE);
+			addContractGridColumn(settings, IContract::getCode, IContract.FIELD_CODE);
 			break;
 		case IContract.FIELD_CUSTOMERNAME:
-			addContractGridColumn(settings, IContractPresenter::getCustomerName, IContract.FIELD_CUSTOMERNAME);
+			addContractGridColumn(settings, IContract::getCustomerName, IContract.FIELD_CUSTOMERNAME);
 			break;
 		case IContract.FIELD_EXECUTORNAME:
-			addContractGridColumn(settings, IContractPresenter::getExecutorName, IContract.FIELD_EXECUTORNAME);
+			addContractGridColumn(settings, IContract::getExecutorName, IContract.FIELD_EXECUTORNAME);
 			break;
 		case IContract.FIELD_SIGNINGDATE:
-			addContractGridColumn(settings, IContractPresenter::getCreateDatePresenter, IContract.FIELD_CREATE_DATE);
+			addContractGridColumn(settings, IContract::getCreateDate, IContract.FIELD_CREATE_DATE);
 			break;
 			default:
 		}
 	}
 	
-	public <T> void addContractGridColumn(ColumnSettings settings, ValueProvider<IContractPresenter, T> provider, String field) {
+	public <T> void addContractGridColumn(ColumnSettings settings, ValueProvider<IContract, T> provider, String field) {
 		
-		Column<IContractPresenter, T> column = contractGrid.addColumn(provider);
+		Column<IContract, T> column = contractGrid.addColumn(provider);
 		column.setSortProperty(settings.getEntityFieldName());
 		column.setSortable(true);
 		column.setCaption(Entities.getEntityFieldText(field, messageSource));

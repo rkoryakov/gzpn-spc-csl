@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ru.gzpn.spc.csl.model.UserSettings;
+import ru.gzpn.spc.csl.model.interfaces.IUserSettings;
+import ru.gzpn.spc.csl.model.jsontypes.ContractCardSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.ContractsRegSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.EstimateCalculationsRegSettingsJson;
@@ -20,11 +22,11 @@ import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.LocalEstimatesApprovalJson;
 import ru.gzpn.spc.csl.model.jsontypes.SummaryEstimateCardSettingsJson;
 import ru.gzpn.spc.csl.model.repositories.UserSettingsRepository;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 
 @Service
 @Transactional
-public class UserSettigsService implements IUserSettigsService {
+public class UserSettigsService implements IUserSettingsService {
 	public static final Logger logger = LoggerFactory.getLogger(UserSettigsService.class);
 	@Autowired
 	private UserSettingsRepository repository;
@@ -168,9 +170,32 @@ public class UserSettigsService implements IUserSettigsService {
 	
 	@Override
 	public ISettingsJson getLocalEstimatesApprovalSettings(String userId) {
-		return getLocalEstimatesApprovalSettings(userId);
+		return getLocalEstimatesApprovalSettings(userId, null);
 	}
 	
+	@Override
+	public ISettingsJson getContractCardSettings(String userId, ISettingsJson defaultValue) {
+		IUserSettings userSettings = repository.findByUserId(userId);
+		ISettingsJson result = null;
+		
+		if (userSettings != null) {
+			result = userSettings.getContractCardSettingsJson();
+			// JSON field is empty
+			if (Objects.isNull(result)) {
+				result = defaultValue;
+			}
+		// no such user settings
+		} else {
+			result = defaultValue;
+		}
+		
+		return result;
+	}
+
+	@Override
+	public ISettingsJson getContractCardSettings(String userId) {
+		return getContractCardSettings(userId, null);
+	}
 	
 	@Override
 	public void save(String userId, ISettingsJson settingsJson) {
@@ -198,6 +223,8 @@ public class UserSettigsService implements IUserSettigsService {
 			settings.setSummaryEstimateCardSettingsJson((SummaryEstimateCardSettingsJson)settingsJson);
 		} else if (settingsJson instanceof LocalEstimatesApprovalJson) {
 			settings.setLocalEstimatesApprovalJson((LocalEstimatesApprovalJson)settingsJson);
+		} else if (settingsJson instanceof ContractCardSettingsJson) {
+			settings.setContractCardSettingsJson((ContractCardSettingsJson)settingsJson);
 		}
 	}
 }

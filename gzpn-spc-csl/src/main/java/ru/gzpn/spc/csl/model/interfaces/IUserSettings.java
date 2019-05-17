@@ -1,5 +1,6 @@
 package ru.gzpn.spc.csl.model.interfaces;
 
+import ru.gzpn.spc.csl.model.jsontypes.ContractCardSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.ContractsRegSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.EstimateCalculationsRegSettingsJson;
@@ -31,4 +32,8 @@ public interface IUserSettings {
 	LocalEstimatesApprovalJson getLocalEstimatesApprovalJson();
 
 	void setLocalEstimatesApprovalJson(LocalEstimatesApprovalJson localEstimatesApprovalJson);
+
+	ContractCardSettingsJson getContractCardSettingsJson();
+
+	void setContractCardSettingsJson(ContractCardSettingsJson cardSettingsJson);
 }

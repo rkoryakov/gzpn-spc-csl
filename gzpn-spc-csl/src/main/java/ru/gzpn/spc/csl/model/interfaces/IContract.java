@@ -3,6 +3,8 @@ package ru.gzpn.spc.csl.model.interfaces;
 import java.time.LocalDate;
 import java.util.List;
 
+import ru.gzpn.spc.csl.model.enums.ContractType;
+
 public interface IContract extends IBaseEntity {
 	public static final String ENTITYNAME_DOT = "Contract.";
 	
@@ -52,4 +54,10 @@ public interface IContract extends IBaseEntity {
 	
 	void setMilestones(List<IMilestone> milestones);
 	List<IMilestone> getMilestones();
+	ContractType getContractType();
+	void setContractType(ContractType contractType);
+	ICProject getProject();
+	void setProject(ICProject project);
+	LocalDate getEndDate();
+	LocalDate getStartDate();
 }

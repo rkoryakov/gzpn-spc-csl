@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-public enum DocType {
-	LOCAL_ESTIMATE("ru.gzpn.spc.csl.model.enums.DocType.local_estimate"),
-	SET_OF_DRAWINGS("ru.gzpn.spc.csl.model.enums.DocType.set_of_drawings");
+public enum ContractType {
+	SELECTION("ru.gzpn.spc.csl.model.enums.ContractType.selection"),
+	CONTRACT("ru.gzpn.spc.csl.model.enums.ContractType.contract");
 	
 	private String i18n;
 	private String i18Value;
@@ -19,10 +19,10 @@ public enum DocType {
 		messageSource.setBasename("i18n/captions");
 	}
 	
-	private DocType(String i18n) {
+	ContractType(String i18n) {
 		this.i18n = i18n;
 	}
-
+	
 	public String getI18n() {
 		return i18n;
 	}
@@ -38,10 +38,10 @@ public enum DocType {
 						.collect(Collectors.toList());
 	}
 	
-	public static List<DocType> getAll() {
+	public static List<ContractType> getAll() {
 		return Arrays.asList(values())
-					.stream()
-						.collect(Collectors.toList());
+				.stream()
+					.collect(Collectors.toList());
 	}
 	
 	@Override

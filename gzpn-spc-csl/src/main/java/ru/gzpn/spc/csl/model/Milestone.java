@@ -34,7 +34,7 @@ public class Milestone extends BaseEntity implements IMilestone, Serializable {
 	private String name;
 	private String code;
 	private int ppNum;
-	private int MilNum;
+	private int milNum;
 	private LocalDate startDate;
 	private LocalDate endDate;
 	
@@ -134,10 +134,15 @@ public class Milestone extends BaseEntity implements IMilestone, Serializable {
 	}
 
 	public int getMilNum() {
-		return MilNum;
+		return milNum;
 	}
 
 	public void setMilNum(int milNum) {
-		MilNum = milNum;
+		this.milNum = milNum;
+	}
+	
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

@@ -68,6 +68,8 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	public static final String I18N_UPLOADLIMIT_MESSAGE_CAP = "SummaryEstimateCardComponent.uploadLimitMessage.cap";
 	private static final String I18N_UPLOADMIMETYPE_MESSAGE_CAP = "SummaryEstimateCardComponent.uploadMimeTypeMessage.cap";
 	private static final String I18N_UPLOADMIMETYPE_MESSAGE = "SummaryEstimateCardComponent.uploadMimeTypeMessage";
+	public static final String I18N_SENT_TO_APPROVAL_CAP = "SummaryEstimateCardComponent.sentToApproval.cap";
+	public static final String I18N_SENT_TO_APPROVAL_DES = "SummaryEstimateCardComponent.sentToApproval.des";
 	
 	public static final String XLS_MIME = "application/vnd.ms-excel";
 	public static final String XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -107,7 +109,7 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 	}
 
 	private void createEventListeners() {
-		addOnSendForApprovalListener(event -> {			
+		addOnSendForApprovalListener(event -> {
 			getUI().addWindow((new ConfirmDialogWindow(getI18nText(ConfirmDialogWindow.I18N_CONFIRM_MESSAGE, messageSource),
 					getI18nText(ConfirmDialogWindow.I18N_SEND_SSR_FOR_APPROVAL, messageSource), 
 					getI18nText(ConfirmDialogWindow.I18N_YES, messageSource), 
@@ -119,8 +121,8 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 								processService.completeTask(taskId);
 							}
 						}).start();
-						Notification notification = new Notification("Отправлено на согласование",
-								"Процесс регистрации смет переходит к следующему шагу - Согласование сметного расчета в НТЦ",
+						Notification notification = new Notification(getI18nText(I18N_SENT_TO_APPROVAL_CAP, messageSource),
+								getI18nText(I18N_SENT_TO_APPROVAL_DES, messageSource),
 								Type.TRAY_NOTIFICATION);
 						notification.setDelayMsec(8000);
 						notification.show(getUI().getPage());
@@ -135,7 +137,7 @@ public class SummaryEstimateCardComponent extends AbstarctSummaryEstimateCardCom
 		body.addComponent(createEstimateCalculationFileds());
 		body.addComponent(createViewAttributes());
 		body.addComponent(createEstimatesGrid());
-		//body.addComponent(create);
+
 		return body;
 	}
 

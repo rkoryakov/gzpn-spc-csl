@@ -33,7 +33,7 @@ import ru.gzpn.spc.csl.model.repositories.EstimateCostRepository;
 import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
 import ru.gzpn.spc.csl.model.repositories.StageRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 
@@ -49,7 +49,7 @@ public class LocalEstimateService implements ILocalEstimateService {
 	@Autowired
 	private MessageSource messageSource;
 	@Autowired
-	private IUserSettigsService userSettings;
+	private IUserSettingsService userSettings;
 	@Autowired
 	StageRepository stageRepository;
 	@Autowired 
@@ -60,11 +60,9 @@ public class LocalEstimateService implements ILocalEstimateService {
 		List<ILocalEstimate> result = new ArrayList<>();
 		if (calculationId != null) {
 			Optional<EstimateCalculation> c = estimateCalculationsRepository.findById(calculationId);
-			result = localEstimateRepository.findByEstimateCalculation(c.get());
-//			if (c.isPresent()) {
-//				result = c.get().getEstimates();
-//				Hibernate.initialize(result);
-//			}
+			if (c.isPresent()) {
+				result = localEstimateRepository.findByEstimateCalculation(c.get());
+			}
 		}
 		return result;
 	}

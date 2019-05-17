@@ -10,14 +10,14 @@ import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.jsontypes.CreateDocSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.AbstractTreeGridSettingsWindow;
 
 @SuppressWarnings("serial")
 public class CreateDocSettingsWindow extends AbstractTreeGridSettingsWindow {
 	private CreateDocSettingsJson changedCreateDocSettingsJson = null;
 	
-	public CreateDocSettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
+	public CreateDocSettingsWindow(IUserSettingsService settingsService, MessageSource messageSource) {
 		super(settingsService, messageSource);
 	}
 

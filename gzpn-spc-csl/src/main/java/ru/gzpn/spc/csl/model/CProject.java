@@ -106,5 +106,9 @@ public class CProject extends ACLBasedEntity implements ICProject, Serializable 
 	public void setEstimateCalculations(List<IEstimateCalculation> estimateCalculations) {
 		this.estimateCalculations = estimateCalculations;
 	}
-	
+
+	@Override
+	public String toString() {
+		return name;
+	}
 }

@@ -47,7 +47,7 @@ import ru.gzpn.spc.csl.model.presenters.interfaces.IWorkSetPresenter;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.ICreateDocService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
 import ru.gzpn.spc.csl.ui.common.DraggableTree;
 import ru.gzpn.spc.csl.ui.common.I18n;
@@ -78,7 +78,7 @@ public class CreateDocComponent extends HorizontalSplitPanel implements I18n {
 	private String currentUser;
 	
 	private IProjectService projectService;
-	private IUserSettigsService settingsService;
+	private IUserSettingsService settingsService;
 	private MessageSource messageSource;
 	private IWorkSetService worksetService;
 	private ICreateDocService createDocService;

@@ -23,7 +23,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
 import ru.gzpn.spc.csl.ui.common.I18n;
 import ru.gzpn.spc.csl.ui.common.RegistryComponent;
@@ -42,7 +42,7 @@ public abstract class AbstractLocalEstimatesApprovalComponent extends VerticalLa
 	private static final String I18N_COMMENTFIELD_PLACEHOLDER = "LocalEstimatesApprovalComponent.commentField.placeholder";
 
 	protected IUIService service;
-	protected IUserSettigsService userSettingsService;
+	protected IUserSettingsService userSettingsService;
 	protected MessageSource messageSource;
 	protected String user;
 	

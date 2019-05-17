@@ -25,7 +25,7 @@ import ru.gzpn.spc.csl.model.repositories.EstimateCalculationRepository;
 import ru.gzpn.spc.csl.model.repositories.EstimateCostRepository;
 import ru.gzpn.spc.csl.model.repositories.LocalEstimateRepository;
 import ru.gzpn.spc.csl.services.bl.interfaces.IEstimateCostService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.IGridFilter;
 
 @Service
@@ -42,7 +42,7 @@ public class EstimateCostServie implements IEstimateCostService {
 	@Autowired
 	private MessageSource messageSource;
 	@Autowired
-	private IUserSettigsService userSettings;
+	private IUserSettingsService userSettings;
 	
 	@Override
 	public List<IEstimateCost> getEstimateCostsByLocal(Long localEstimateId) {

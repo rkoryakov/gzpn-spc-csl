@@ -8,7 +8,7 @@ import ru.gzpn.spc.csl.services.bl.interfaces.ICreateDocService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDocumentService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IWorkSetService;
 
 @Service
@@ -17,7 +17,7 @@ public class CreateDocService implements ICreateDocService {
 	@Autowired
 	private IProjectService projectService;
 	@Autowired
-	private IUserSettigsService userSettingsService;
+	private IUserSettingsService userSettingsService;
 	@Autowired
 	private IWorkSetService workSetService;
 	@Autowired
@@ -33,7 +33,7 @@ public class CreateDocService implements ICreateDocService {
 	}
 
 	@Override
-	public IUserSettigsService getUserSettingsService() {
+	public IUserSettingsService getUserSettingsService() {
 		return userSettingsService;
 	}
 

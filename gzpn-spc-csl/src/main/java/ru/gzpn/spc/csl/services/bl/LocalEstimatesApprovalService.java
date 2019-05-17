@@ -8,13 +8,13 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimatesApprovalService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 
 @Service
 @Transactional
 public class LocalEstimatesApprovalService implements ILocalEstimatesApprovalService {
 	@Autowired
-	private IUserSettigsService userSettingsService;
+	private IUserSettingsService userSettingsService;
 	@Autowired
 	private MessageSource messageSource;
 	@Autowired
@@ -28,7 +28,7 @@ public class LocalEstimatesApprovalService implements ILocalEstimatesApprovalSer
 	}
 
 	@Override
-	public IUserSettigsService getUserSettingsService() {
+	public IUserSettingsService getUserSettingsService() {
 		return userSettingsService;
 	}
 

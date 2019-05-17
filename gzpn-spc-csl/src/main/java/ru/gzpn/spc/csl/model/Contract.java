@@ -6,11 +6,15 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import ru.gzpn.spc.csl.model.enums.ContractType;
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IContract;
 import ru.gzpn.spc.csl.model.interfaces.IMilestone;
 
@@ -36,11 +40,16 @@ public class Contract extends BaseEntity implements IContract, Serializable {
 	@Column(length = 16)
 	private String executorINN;
 	private String executorBank;
+	private ContractType contractType;
 	
-	@OneToMany(targetEntity = Milestone.class)
+	@OneToMany(targetEntity = Milestone.class, fetch = FetchType.EAGER)
 	@JoinColumn(name = "cont_id", referencedColumnName = "id")
 	private List<IMilestone> milestones;
 
+	@OneToOne(targetEntity = CProject.class, fetch = FetchType.EAGER)
+	@JoinColumn(name = "cp_id", referencedColumnName = "id")
+	private ICProject project;
+	
 	@Override
 	public String getName() {
 		return name;
@@ -120,5 +129,43 @@ public class Contract extends BaseEntity implements IContract, Serializable {
 	@Override
 	public void setMilestones(List<IMilestone> milestones) {
 		this.milestones = milestones;
+	}
+	@Override
+	public ContractType getContractType() {
+		return contractType;
+	}
+	@Override
+	public void setContractType(ContractType contractType) {
+		this.contractType = contractType;
+	}
+	@Override
+	public ICProject getProject() {
+		return this.project;
+	}
+	@Override
+	public void setProject(ICProject project) {
+		this.project = project;
+	}
+	@Override
+	public LocalDate getStartDate() {
+		LocalDate result = LocalDate.MAX;
+		for (IMilestone m : getMilestones()) {
+			result = m.getStartDate().isBefore(result) ? m.getStartDate() : result;
+		}
+		return result.isEqual(LocalDate.MAX) ? LocalDate.now() : result;
+	}
+	@Override
+	public LocalDate getEndDate() {
+		LocalDate result = LocalDate.MIN;
+		for (IMilestone m : getMilestones()) {
+			result = m.getStartDate().isAfter(result) ? m.getStartDate() : result;
+		}
+		return result.isEqual(LocalDate.MIN) ? LocalDate.now() : result;
+	}
+	
+	
+	@Override
+	public String toString() {
+		return getCode();
 	}
 }

@@ -13,13 +13,13 @@ import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimateService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProcessService;
 import ru.gzpn.spc.csl.services.bl.interfaces.IProjectService;
 import ru.gzpn.spc.csl.services.bl.interfaces.ISummaryEstimateCardService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 @Service
 @Transactional
 public class SummaryEstimateCardService implements ISummaryEstimateCardService {
 
 	@Autowired
-	private IUserSettigsService userSettingsService;
+	private IUserSettingsService userSettingsService;
 	@Autowired
 	private MessageSource messageSource;
 	@Autowired
@@ -39,7 +39,7 @@ public class SummaryEstimateCardService implements ISummaryEstimateCardService {
 	}
 
 	@Override
-	public IUserSettigsService getUserSettingsService() {
+	public IUserSettingsService getUserSettingsService() {
 		return userSettingsService;
 	}
 

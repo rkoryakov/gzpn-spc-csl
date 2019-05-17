@@ -5,7 +5,7 @@ import org.springframework.context.MessageSource;
 import com.vaadin.ui.VerticalLayout;
 
 import ru.gzpn.spc.csl.services.bl.interfaces.IUIService;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.common.I18n;
 
 @SuppressWarnings("serial")
@@ -13,7 +13,7 @@ public abstract class AbstractAnalyticsComponent extends VerticalLayout implemen
 	
 	protected IUIService service;
 	private MessageSource messageSource;
-	private IUserSettigsService userSettingsService;
+	private IUserSettingsService userSettingsService;
 	private String user;
 	private VerticalLayout bodyLayout;
 

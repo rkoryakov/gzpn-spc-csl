@@ -2,6 +2,7 @@ package ru.gzpn.spc.csl.ui.views;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,9 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-import ru.gzpn.spc.csl.services.bl.interfaces.ILocalEstimatesApprovalService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IContractCardService;
 import ru.gzpn.spc.csl.ui.common.ConfirmDialogWindow;
+import ru.gzpn.spc.csl.ui.contract.ContractCardComponent;
 
 @SuppressWarnings("serial")
 @SpringView(name = ContractView.NAME)
@@ -32,7 +34,7 @@ public class ContractView extends VerticalLayout implements View {
 	public static final Logger logger = LogManager.getLogger(ContractView.class);
 
 	@Autowired
-	private ILocalEstimatesApprovalService service;
+	private IContractCardService service;
 	private String taskId;
 
 	public ContractView() {
@@ -44,17 +46,22 @@ public class ContractView extends VerticalLayout implements View {
 	void init() {
 	}
 
+
 	@Override
 	public void enter(ViewChangeEvent event) {
 		if (event.getParameters() != null) {
+			String contractId = event.getParameterMap().get("id");
 			String taskId = event.getParameterMap().get(REQUEST_PARAM_TASKID);
-			logger.debug("[enter ] taskId = {}", taskId);
-			this.taskId = taskId;
-			/* replace with separate component */
+			logger.debug(event.getParameters());
+			logger.debug(event.getParameterMap());
 			
-			createFooter();
-			
-			
+			Long id = null;
+
+			if (contractId != null && StringUtils.isNumeric(contractId)) {
+				id = Long.parseLong(contractId);
+			}
+			ContractCardComponent layout = new ContractCardComponent(service, id, taskId);
+			addComponent(layout);			
 		}
 	}
 

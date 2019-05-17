@@ -1,4 +1,4 @@
-package ru.gzpn.spc.csl.ui.sumestimate;
+package ru.gzpn.spc.csl.ui.contract;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,12 +17,14 @@ import ru.gzpn.spc.csl.model.dataproviders.AbstractRegistryDataProvider;
 import ru.gzpn.spc.csl.model.dataproviders.LocalEstimateDataProvider;
 import ru.gzpn.spc.csl.model.dataproviders.ProjectTreeDataProvider;
 import ru.gzpn.spc.csl.model.enums.Entities;
+import ru.gzpn.spc.csl.model.interfaces.IEstimateCost;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
+import ru.gzpn.spc.csl.model.interfaces.IMilestone;
 import ru.gzpn.spc.csl.model.interfaces.IStage;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
+import ru.gzpn.spc.csl.model.jsontypes.ContractCardSettingsJson;
 import ru.gzpn.spc.csl.model.jsontypes.ISettingsJson;
-import ru.gzpn.spc.csl.model.jsontypes.SummaryEstimateCardSettingsJson;
 import ru.gzpn.spc.csl.model.presenters.interfaces.ILocalEstimatePresenter;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
 import ru.gzpn.spc.csl.services.bl.interfaces.IDataService;
@@ -63,16 +65,15 @@ public class LocalEstimatesTreeGridComponent extends AbstractTreeGridComponent<I
 		if (gridDataProvider == null) {
 			gridDataProvider = new LocalEstimateDataProvider((ILocalEstimateService)gridDataService);
 		}
-		
 		return  gridDataProvider;
 	}
 
 	@Override
 	public ProjectTreeDataProvider getTreeDataProvider() {
 		if (treeDataProvider == null) {
-			SummaryEstimateCardSettingsJson settings = (SummaryEstimateCardSettingsJson)
-					userSettingsService.getSummaryEstimateCardSettings(user, new SummaryEstimateCardSettingsJson());
-			treeDataProvider = new ProjectTreeDataProvider(treeDataService, settings.getDefaultLocalEstimatesTreeGroup());
+			ContractCardSettingsJson settings = (ContractCardSettingsJson)
+					userSettingsService.getContractCardSettings(user, new ContractCardSettingsJson());
+			treeDataProvider = new ProjectTreeDataProvider(treeDataService, settings.getLocalEstimatesTreeGroup());
 		}
 		return treeDataProvider;
 	}
@@ -89,10 +90,9 @@ public class LocalEstimatesTreeGridComponent extends AbstractTreeGridComponent<I
 
 	@Override
 	public ISettingsJson getSettings() {
-		SummaryEstimateCardSettingsJson settings = new SummaryEstimateCardSettingsJson();
-		settings.setSplitPosition(30);
-		settings.setShowTree(false);
-		ISettingsJson settingsJson = userSettingsService.getSummaryEstimateCardSettings(user, settings);
+		ContractCardSettingsJson settings = new ContractCardSettingsJson();
+		settings.showTree = false;
+		ISettingsJson settingsJson = userSettingsService.getContractCardSettings(user, settings);
 		
 		return new ISettingsJson() {
 			@Override
@@ -102,24 +102,24 @@ public class LocalEstimatesTreeGridComponent extends AbstractTreeGridComponent<I
 
 			@Override
 			public NodeWrapper getTreeSettings() {
-				return ((SummaryEstimateCardSettingsJson)settingsJson).getLocalEstimatesTreeGroup();
+				return ((ContractCardSettingsJson)settingsJson).getLocalEstimatesTreeGroup();
 			}
 
 			@Override
 			public List<ColumnSettings> getColumns() {
-				return ((SummaryEstimateCardSettingsJson)settingsJson).getLocalEstimatesColumns();
+				return ((ContractCardSettingsJson)settingsJson).getLocalEstimatesColumns();
 			}
 
 			@Override
 			public List<ColumnHeaderGroup> getHeaders() {
-				return ((SummaryEstimateCardSettingsJson)settingsJson).getLocalEstimatesColumnHeaders();
+				return ((ContractCardSettingsJson)settingsJson).localEstimatesColumnHeaders;
 			}
 		};
 	}
 
 	@Override
 	public float getSplitPosition() {
-		return ((SummaryEstimateCardSettingsJson)getSettings()).getSplitPosition();
+		return 0;
 	}
 
 	@Override
@@ -130,16 +130,14 @@ public class LocalEstimatesTreeGridComponent extends AbstractTreeGridComponent<I
 	@Override
 	public void createGridColumn(ColumnSettings column) {
 		switch (column.getEntityFieldName()) {		
-		case ILocalEstimate.FIELD_NAME:
-			createGridColumn(column, ILocalEstimatePresenter::getName, ILocalEstimate.FIELD_NAME)
-				.setEditorComponent(new TextField(), ILocalEstimatePresenter::setName).setEditable(true);
+		case IMilestone.FIELD_NAME:
+			createGridColumn(column, ILocalEstimate::getMilestone, IMilestone.FIELD_NAME);
 			break;
 		case ILocalEstimate.FIELD_CODE:
-			createGridColumn(column, ILocalEstimatePresenter::getCode, ILocalEstimate.FIELD_CODE)
-				.setEditorComponent(new TextField(), ILocalEstimatePresenter::setCode).setEditable(true);
+			createGridColumn(column, ILocalEstimate::getCode, ILocalEstimate.FIELD_CODE);
 			break;
-		case ILocalEstimate.FIELD_STAGE:
-			createGridColumn(column, ILocalEstimatePresenter::getStage, ILocalEstimate.FIELD_STAGE)
+		case IEstimateCost.FIELD_MAT_PERCENT_MANUAL_SUPPLY:
+			createGridColumn(column, ILocalEstimatePresenter::getStage, IEstimateCost.FIELD_MAT_PERCENT_MANUAL_SUPPLY)
 				.setEditorComponent(new ComboBox<IStage>("", treeDataService.getStagesRepository()
 																.findAll().stream().map(item -> (IStage)item)
 																		.collect(Collectors.toList())), 
@@ -184,7 +182,6 @@ public class LocalEstimatesTreeGridComponent extends AbstractTreeGridComponent<I
 			break;
 			default:
 		}
-		
 	}
 
 	public <T> Column<ILocalEstimatePresenter, T> createGridColumn(ColumnSettings columnSettings, 

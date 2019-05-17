@@ -41,7 +41,7 @@ import ru.gzpn.spc.csl.model.enums.Entities;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnHeaderGroup;
 import ru.gzpn.spc.csl.model.jsontypes.ColumnSettings;
 import ru.gzpn.spc.csl.model.utils.NodeWrapper;
-import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettigsService;
+import ru.gzpn.spc.csl.services.bl.interfaces.IUserSettingsService;
 import ru.gzpn.spc.csl.ui.createdoc.ProjectItemIconGenerator;
 
 @SuppressWarnings("serial")
@@ -82,7 +82,7 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 	public abstract List<ColumnHeaderGroup> getHeaderSettings();
 	public abstract void setHeaderSettings(List<ColumnHeaderGroup> headers);
 	
-	public AbstractTreeGridSettingsWindow(IUserSettigsService settingsService, MessageSource messageSource) {
+	public AbstractTreeGridSettingsWindow(IUserSettingsService settingsService, MessageSource messageSource) {
 		super(settingsService, messageSource);
 		this.center();
 		this.setCaption(getI18nText(I18N_WINDOW_CAPTION, messageSource));
@@ -538,9 +538,9 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 	public static class ColumnSettingsPresenter extends ColumnSettings implements I18n {
 		CheckBox visibilityCheckBox;
 		ComboBox<String> mergedHeadComboBox;
-		IUserSettigsService settingsService;
+		IUserSettingsService settingsService;
 		
-		public ColumnSettingsPresenter(ColumnSettings columnSettings, IUserSettigsService settingsService) {
+		public ColumnSettingsPresenter(ColumnSettings columnSettings, IUserSettingsService settingsService) {
 			this.setWidth(columnSettings.getWidth());
 			this.setEntityFieldName(columnSettings.getEntityFieldName());
 			this.setEntityName(columnSettings.getEntityName());
@@ -585,12 +585,12 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 		CheckBox visibilityCheckBox;
 		ComboBox<String> mergedHeadComboBox;
 		Button removeButton;
-		IUserSettigsService settingsService;
+		IUserSettingsService settingsService;
 		
 		public ColumnHeaderPresenter() {
 			super();
 		}
-		public ColumnHeaderPresenter(ColumnHeaderGroup item, IUserSettigsService settingsService) {
+		public ColumnHeaderPresenter(ColumnHeaderGroup item, IUserSettingsService settingsService) {
 			this.setCaption(item.getCaption());
 			this.setShown(item.isShown());
 			this.setChildren(item.getChildren());
@@ -626,11 +626,11 @@ public abstract class AbstractTreeGridSettingsWindow extends AbstractUiSettingsW
 			this.removeButton = removeButton;
 		}
 
-		public IUserSettigsService getSettingsService() {
+		public IUserSettingsService getSettingsService() {
 			return settingsService;
 		}
 
-		public void setSettingsService(IUserSettigsService settingsService) {
+		public void setSettingsService(IUserSettingsService settingsService) {
 			this.settingsService = settingsService;
 		}
 	

@@ -16,12 +16,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import ru.gzpn.spc.csl.model.enums.LocalEstimateStatus;
+import ru.gzpn.spc.csl.model.interfaces.ICProject;
 import ru.gzpn.spc.csl.model.interfaces.IDocument;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCalculation;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateCost;
 import ru.gzpn.spc.csl.model.interfaces.IEstimateHead;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimate;
 import ru.gzpn.spc.csl.model.interfaces.ILocalEstimateHistory;
+import ru.gzpn.spc.csl.model.interfaces.IMilestone;
 import ru.gzpn.spc.csl.model.interfaces.IObjectEstimate;
 import ru.gzpn.spc.csl.model.interfaces.IStage;
 import ru.gzpn.spc.csl.model.interfaces.IWork;
@@ -237,6 +239,18 @@ public class LocalEstimate extends BaseEntity implements ILocalEstimate, Seriali
 	@Override
 	public void setEstimateCosts(List<IEstimateCost> estimateCosts) {
 		this.estimateCosts = estimateCosts;
+	}
+	
+	@Override
+	public IMilestone getMilestone() {
+		IMilestone milestone = null;
+		if (getEstimateCalculation() != null) {
+			ICProject p = getEstimateCalculation().getProject();
+			if (p != null) {
+				milestone = p.getMilestone();
+			}
+		}
+		return milestone;
 	}
 	
 	@Override
