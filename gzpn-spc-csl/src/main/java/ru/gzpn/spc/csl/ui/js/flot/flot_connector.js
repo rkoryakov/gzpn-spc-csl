@@ -29,7 +29,7 @@ window.ru_gzpn_spc_csl_ui_js_flot_Flot = function() {
     }],
     
     {
-    	series: { grow: { active: true, duration: 1300 } },
+    	series: { grow: { active: true, duration: 2500 } },
     	xaxis: {
     
     		mode: "time",
